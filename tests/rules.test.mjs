@@ -3,6 +3,7 @@ import { facilityId, useFacility } from '../dist/facilities.js';
 import { ISLANDS, NODES, islandDocks, islandAt, harvest } from '../dist/islands.js';
 import assert from 'node:assert/strict';
 import { contract, craftContract } from '../dist/taming.js';
+import { normalizeBag, bagCap, bagUsed, bagRoom, deposit, upgradeBag, give } from '../dist/bag.js';
 import { makeGenome, phenotype, crossGenome, genomeValid, seeded, LOCI, dnaCode } from '../dist/genetics.js';
 import {
   createState,
@@ -13,7 +14,8 @@ import {
   breed,
   tickSystems,
   validateSave,
-  useSupply
+  useSupply,
+  canPay
 } from '../dist/rules.js';
 import { makeCreature, IntroFilm } from '../dist/world.js';
 import { Box3 } from '../dist/vendor/three.module.min.js';
@@ -75,6 +77,8 @@ test('Whole main quest is completable, consumes materials, and produces fresh wa
     ['beacon', 2, 0]
   ])
     assert.equal(placeBuilding(s, ...t).ok, true);
+  // leave room in the bag for the water
+  for (const k of Object.keys(s.resources)) s.resources[k] = k === 'water' ? 10 : 0;
   const before = s.resources.water;
   assert.ok(tickSystems(s, 36).some(e => e.type === 'chapter'));
   assert.equal(s.completed, true);
@@ -394,5 +398,36 @@ test('Housing transfer, explicit swaps and egg reservations cannot exceed capaci
   tickSystems(s, 31, true);
   assert.equal(s.tamed.find(p => p.id === 'egg').penId, b);
   assert.equal(used(s, b), 3);
+});
+test('The bag has a limit; the desk stores the rest and the bag can be enlarged there', () => {
+  const s = normalizeBag(createState(9));
+  const desk = s.buildings.find(b => b.type === 'desk');
+  Object.assign(s.player, { mode: 'foot', x: desk.x * 3.6, z: desk.z * 3.6 });
+  assert.equal(bagCap(s), 40);
+  s.resources.wood = 40 - (bagUsed(s) - s.resources.wood);
+  assert.equal(bagRoom(s), 0);
+  s.loot = [{ id: 'l', kind: 0, x: s.player.x, z: s.player.z }];
+  const r = salvage(s, 'l');
+  assert.equal(r.ok, false);
+  assert.ok(r.full);
+  assert.equal(s.loot.length, 1, 'a full bag leaves the drift where it is');
+  const wood = s.resources.wood;
+  assert.ok(deposit(s).ok);
+  assert.equal(s.resources.wood, 0);
+  assert.equal(s.storage.wood, wood);
+  assert.ok(s.resources.food > 0, 'supplies stay in the bag');
+  // at home, costs draw on the desk too
+  assert.ok(canPay(s, { wood: wood }));
+  s.player.x = 200;
+  assert.equal(canPay(s, { wood: 1 }), false);
+  s.player.x = desk.x * 3.6;
+  s.storage.fiber = 10;
+  assert.ok(upgradeBag(s).ok);
+  assert.equal(bagCap(s), 60);
+  assert.equal(s.storage.wood, wood - 8);
+  // rewards that do not fit are sent home, never lost
+  s.resources.wood = 60;
+  give(s, { crystal: 3 });
+  assert.equal(s.storage.crystal, 3);
 });
 console.log(`\n${checks} meaningful checks passed.`);

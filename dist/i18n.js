@@ -8,8 +8,8 @@
 //   4. splitting at separators (·, ：, ，, 、, ／ …) and translating each piece.
 // localize(root) / watch() apply tr() to DOM text and to title / aria-label / alt / placeholder attributes,
 // so every panel, toast and label is covered without touching the code that builds them.
-import EN from './i18n/en.js?v=0.12.1';
-import { SPECIES, FAMILIES } from './genetics.js?v=0.12.1';
+import EN from './i18n/en.js?v=0.13.0';
+import { SPECIES, FAMILIES } from './genetics.js?v=0.13.0';
 
 const KEY = 'beastidal-lang';
 const CJK = /[\u3400-\u9fff\uff00-\uffef\u3000-\u303f]/;
@@ -163,7 +163,10 @@ function localizeText(node) {
 function localizeAttrs(el) {
   for (const a of ATTRS) {
     const v = el.getAttribute?.(a);
-    if (v && CJK.test(v)) el.setAttribute(a, tr(v));
+    if (!v || !CJK.test(v)) continue;
+    // only write a change: rewriting an untranslatable value would wake the observer again, forever
+    const t = tr(v);
+    if (t !== v) el.setAttribute(a, t);
   }
 }
 export function localize(root) {

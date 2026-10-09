@@ -1,3 +1,4 @@
+import { bagRoom, bagFullError } from './bag.js?v=0.13.0';
 export const facilityId = b => `facility:${b.type}:${b.x}:${b.z}${b.level ? ':1' : ''}`;
 export const findFacility = (s, id) => s.buildings.find(b => facilityId(b) === id);
 export function useFacility(s, id, action) {
@@ -14,10 +15,11 @@ export function useFacility(s, id, action) {
     return { ok: true, message: '休息完成，體力恢復 45。' };
   }
   if (action === 'collect' && b.type === 'collector') {
-    const n = Math.max(0, b.waterStored || 0);
-    if (!n) return { ok: false, error: '尚無淡水，蒸餾器每 35 秒產出 2 份。' };
+    if (!(b.waterStored > 0)) return { ok: false, error: '尚無淡水，蒸餾器每 35 秒產出 2 份。' };
+    const n = Math.min(b.waterStored, bagRoom(s));
+    if (!n) return { ok: false, error: bagFullError };
     s.resources.water += n;
-    b.waterStored = 0;
+    b.waterStored -= n;
     return { ok: true, message: `取出 ${n} 份淡水。` };
   }
   if (action === 'signal' && b.type === 'beacon') {

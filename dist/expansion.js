@@ -1,7 +1,8 @@
-import { phenotype, clamp } from './genetics.js?v=0.12.1';
-import { NODES, harvest } from './islands.js?v=0.12.1';
-import { restPlace, canDeploy } from './ship.js?v=0.12.1';
-import { dayOf, dayPhase } from './clock.js?v=0.12.1';
+import { phenotype, clamp } from './genetics.js?v=0.13.0';
+import { NODES, harvest } from './islands.js?v=0.13.0';
+import { restPlace, canDeploy } from './ship.js?v=0.13.0';
+import { dayOf, dayPhase } from './clock.js?v=0.13.0';
+import { spend, give, stow } from './bag.js?v=0.13.0';
 export const EXPLORE = [
   { id: 'palm-cache', name: '漂流者寶箱', x: 57, z: 33, kind: 'chest', rewards: { wood: 8, food: 5, metal: 3 } },
   { id: 'archive', name: '御獸文明石碑', x: 34, z: -81, kind: 'ruin', rewards: { crystal: 3 } },
@@ -67,14 +68,8 @@ export function normalizeExpansion(s) {
 export const activePet = s => s.tamed.find(p => p.id === s.expedition?.activeId);
 export const stormAt = s => dayPhase(s) > 0.6 && dayPhase(s) < 0.76;
 const fail = error => ({ ok: false, error });
-const pay = (s, cost) => {
-  if (Object.entries(cost).some(([k, v]) => s.resources[k] < v)) return false;
-  for (const [k, v] of Object.entries(cost)) s.resources[k] -= v;
-  return true;
-};
-const reward = (s, cost) => {
-  for (const [k, v] of Object.entries(cost || {})) s.resources[k] += v;
-};
+const pay = spend;
+const reward = (s, items) => give(s, items || {});
 export function trainPet(s, id) {
   normalizeExpansion(s);
   const p = s.tamed.find(p => p.id === id);
@@ -294,7 +289,7 @@ export function tickExpansion(s, dt, safe = false) {
       } else if (!e.diving) {
         const l = s.loot.find(l => Math.hypot(l.x - s.player.x, l.z - s.player.z) < 12);
         if (l) {
-          reward(s, l.kind === 3 ? { crystal: 1, metal: 2 } : { wood: 3, fiber: 1 });
+          stow(s, l.kind === 3 ? { crystal: 1, metal: 2 } : { wood: 3, fiber: 1 });
           s.loot = s.loot.filter(v => v !== l);
           s.salvaged++;
           got = true;

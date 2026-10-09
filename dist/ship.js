@@ -1,6 +1,7 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.12.1';
-import { dayOf } from './clock.js?v=0.12.1';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.13.0';
+import { dayOf } from './clock.js?v=0.13.0';
+import { spend, give, bagRoom } from './bag.js?v=0.13.0';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
@@ -50,11 +51,7 @@ export const SHIP_POINTS = [
 const fail = error => ({ ok: false, error });
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 const HOME = { x: 1.8, z: 1.8 };
-const pay = (s, cost) => {
-  if (Object.entries(cost).some(([k, v]) => (s.resources[k] || 0) < v)) return false;
-  for (const [k, v] of Object.entries(cost)) s.resources[k] -= v;
-  return true;
-};
+const pay = spend;
 const count = (s, t) => s.buildings.filter(b => b.type === t).length;
 export function hullHalfBeam(z) {
   if (z > 4) return SHIP_BEAM * Math.cos((Math.min(1, (z - 4) / 11) * Math.PI) / 2);
@@ -91,8 +88,9 @@ export function normalizeShip(s) {
       p.cargo[k] = Math.max(0, Math.floor(p.cargo[k] || 0));
     p.lounge = (p.lounge || []).filter(id => s.tamed.some(t => t.id === id)).slice(0, LOUNGE_CAPACITY);
     p.lastCannon ??= -999;
-    s.boat = { x: p.x, z: p.z, heading: p.heading };
-    if (!['ship', 'aboard', 'foot'].includes(s.player.mode)) s.player.mode = 'ship';
+    s.skiff = !!s.skiff;
+    if (!s.skiff) s.boat = { x: p.x, z: p.z, heading: p.heading };
+    if (!['ship', 'aboard', 'foot', ...(s.skiff ? ['boat'] : [])].includes(s.player.mode)) s.player.mode = 'ship';
     if (s.player.mode === 'aboard') {
       s.player.deck = Math.max(0, Math.min(4, s.player.deck | 0));
       if (!deckWalk(s.player.deck, s.player.lx, s.player.lz)) {
@@ -203,7 +201,7 @@ export function tickShip(s) {
   }
   if (s.ship) {
     if (s.player.mode === 'aboard') syncAboard(s);
-    if (!s.expedition?.mounted || s.player.mode !== 'ship')
+    if (!s.skiff && (!s.expedition?.mounted || s.player.mode !== 'ship'))
       s.boat = { x: s.ship.x, z: s.ship.z, heading: s.ship.heading };
   }
   return events;
@@ -304,10 +302,17 @@ export function shipDockOption(s) {
     };
   }
   if (m === 'ship') return { mode: 'leave-helm', near: true, label: '離開舵輪', detail: '在駕駛室內自由走動' };
+  if (m === 'boat' && s.skiff)
+    return nearShip(s, SKIFF_REACH)
+      ? { mode: 'stow-skiff', near: true, label: '收回小艇', detail: '登上比斯泰德號' }
+      : null;
   if (m === 'aboard') {
     const g = SHIP_POINTS.find(p => p.id === 'gangway');
     const atGang = s.player.deck === 3 && Math.hypot(s.player.lx - g.lx, s.player.lz - g.lz) < 3;
     const spot = shoreSpot(s);
+    // anywhere else on the main deck: lower the skiff and explore on your own
+    if (s.player.deck === 3 && !(atGang && spot) && !s.skiff)
+      return { mode: 'launch-skiff', near: true, label: '放下小艇', detail: '駕小艇單獨探索' };
     return {
       mode: 'disembark',
       near: atGang && !!spot,
@@ -316,6 +321,30 @@ export function shipDockOption(s) {
     };
   }
   return null;
+}
+// The skiff: after the fusion the little boat still rides on the warship and can be lowered to explore alone
+// (shallows and island coves the warship cannot reach), then hauled back aboard beside the hull.
+export const SKIFF_REACH = 9;
+export function launchSkiff(s) {
+  if (!s.ship) return fail('尚未擁有戰艦。');
+  if (s.skiff) return fail('小艇已經下水了。');
+  if (s.player.mode !== 'aboard' || s.player.deck !== 3) return fail('到主甲板才能放下小艇。');
+  if (s.expedition?.mounted) return fail('請先解除騎乘。');
+  const side = toWorld(s.ship, -(hullHalfBeam(0) + 2.4), 0);
+  s.skiff = true;
+  Object.assign(s.player, { mode: 'boat', x: side.x, z: side.z, heading: s.ship.heading, level: 0 });
+  s.boat = { x: side.x, z: side.z, heading: s.ship.heading };
+  return { ok: true, message: '小艇下水了。單獨去探索吧，回到戰艦旁按 Q 收回。' };
+}
+export function stowSkiff(s) {
+  if (!s.skiff) return fail('小艇沒有下水。');
+  if (s.player.mode !== 'boat' || !nearShip(s, SKIFF_REACH)) return fail('把小艇開回戰艦旁。');
+  if (s.expedition?.mounted) return fail('請先解除騎乘。');
+  s.skiff = false;
+  Object.assign(s.player, { mode: 'aboard', deck: 3, lx: 2.6, lz: 1, level: 0 });
+  syncAboard(s);
+  s.boat = { x: s.ship.x, z: s.ship.z, heading: s.ship.heading };
+  return { ok: true, message: '小艇收回甲板，回到比斯泰德號上。' };
 }
 export function boardShip(s) {
   if (!s.ship) return fail('尚未擁有戰艦。');
@@ -391,8 +420,8 @@ export function transferCargo(s, kind, amount) {
     c[kind] += n;
     return { ok: true, message: '存入 ' + n + '。' };
   }
-  const n = Math.min(-amount, c[kind]);
-  if (n <= 0) return fail('貨艙沒有這項物資。');
+  const n = Math.min(-amount, c[kind], bagRoom(s));
+  if (n <= 0) return fail(c[kind] ? '背包滿了。' : '貨艙沒有這項物資。');
   c[kind] -= n;
   s.resources[kind] += n;
   return { ok: true, message: '取出 ' + n + '。' };
@@ -448,7 +477,7 @@ export function fireCannon(s) {
   if (target.hp <= 0) {
     if (target === b) {
       b.defeated = true;
-      for (const [k, v] of Object.entries({ crystal: 12, metal: 15, food: 5 })) s.resources[k] += v;
+      give(s, { crystal: 12, metal: 15, food: 5 });
       s.log.unshift({
         day: dayOf(s),
         title: '深海守望者沉入海溝',
@@ -457,8 +486,7 @@ export function fireCannon(s) {
       return { ok: true, message: '艦砲擊退深海守望者！異晶 +12、金屬 +15、口糧 +5。' };
     }
     s.wild = s.wild.filter(w => w !== target);
-    s.resources.crystal += 1;
-    s.resources.food += 2;
+    give(s, { crystal: 1, food: 2 });
     return { ok: true, message: '艦砲擊退敵對生物。' };
   }
   return { ok: true, message: '命中！造成 ' + CANNON.damage + ' 傷害，敵人剩餘 ' + Math.ceil(target.hp) + '。' };

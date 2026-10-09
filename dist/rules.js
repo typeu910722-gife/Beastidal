@@ -1,9 +1,10 @@
-import { limitError } from './ship.js?v=0.12.1';
-import { dayOf } from './clock.js?v=0.12.1';
-import { normalizeExpansion } from './expansion.js?v=0.12.1';
-import { normalizeHousing, freePen } from './housing.js?v=0.12.1';
-import { dockingSpots } from './navigation.js?v=0.12.1';
-import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.12.1';
+import { limitError } from './ship.js?v=0.13.0';
+import { dayOf } from './clock.js?v=0.13.0';
+import { normalizeExpansion } from './expansion.js?v=0.13.0';
+import { normalizeHousing, freePen } from './housing.js?v=0.13.0';
+import { dockingSpots } from './navigation.js?v=0.13.0';
+import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.13.0';
+import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag } from './bag.js?v=0.13.0';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
 export const RESOURCE_NAMES = {
   wood: '漂流木',
@@ -127,6 +128,8 @@ export function createState(seed = Date.now() >>> 0) {
     elapsed: 0,
     player: { x: 7, z: 10, heading: 0 },
     resources: { wood: 3, metal: 1, fiber: 2, crystal: 0, food: 4, water: 5, bait: 0 },
+    storage: { wood: 0, metal: 0, fiber: 0, crystal: 0, food: 0, water: 0, bait: 0 },
+    bagLevel: 0,
     vitals: { health: 100, food: 100, water: 100 },
     buildings: [
       { type: 'floor', x: 0, z: 0, rot: 0 },
@@ -201,14 +204,9 @@ export { dayOf };
 export function count(s, t) {
   return s.buildings.filter(b => b.type === t).length;
 }
-export function canPay(s, cost) {
-  return Object.entries(cost).every(([k, v]) => s.resources[k] >= v);
-}
-export function pay(s, cost) {
-  if (!canPay(s, cost)) return false;
-  for (const [k, v] of Object.entries(cost)) s.resources[k] -= v;
-  return true;
-}
+// costs come out of the bag, and out of the desk's storage too while you are home (see bag.js)
+export const canPay = canAfford;
+export const pay = spend;
 export function log(s, title, text) {
   s.log.unshift({ day: dayOf(s), title, text });
   s.log = s.log.slice(0, 70);
@@ -228,8 +226,8 @@ export function salvage(s, id) {
   const l = s.loot[i];
   if (Math.hypot(l.x - s.player.x, l.z - s.player.z) > 10.5)
     return { ok: false, error: '再靠近一點，打撈距離為 10 公尺。' };
-  const rewards = lootYield(l.kind);
-  for (const [k, v] of Object.entries(rewards)) s.resources[k] += v;
+  if (!bagRoom(s)) return { ok: false, error: bagFullError, full: true };
+  const rewards = stow(s, lootYield(l.kind));
   s.loot.splice(i, 1);
   s.salvaged++;
   return { ok: true, rewards };
@@ -296,7 +294,7 @@ export function craftBait(s) {
   return { ok: true };
 }
 // Feeding and contracts live in taming.js (0.12).
-export { feed } from './taming.js?v=0.12.1';
+export { feed } from './taming.js?v=0.13.0';
 export function breed(s, aId, bId, rng = Math.random) {
   normalizeHousing(s);
   normalizeExpansion(s);
@@ -358,11 +356,13 @@ export function tickSystems(s, dt, safe = false, rng = Math.random) {
     s.lastPassive = s.elapsed;
     for (const pet of s.tamed) {
       const p = phenotype(pet.genome);
-      if (p.ability === 0) s.resources.wood += 1 + Math.floor(p.affinity / 40);
-      if (p.ability === 2) s.resources.crystal++;
-      if (p.ability === 3) s.resources.metal++;
+      // what the beasts bring home goes onto the desk
+      normalizeBag(s);
+      if (p.ability === 0) s.storage.wood += 1 + Math.floor(p.affinity / 40);
+      if (p.ability === 2) s.storage.crystal++;
+      if (p.ability === 3) s.storage.metal++;
     }
-    if (s.tamed.length) s.resources.food += Math.ceil(s.tamed.length / 3);
+    if (s.tamed.length) s.storage.food += Math.ceil(s.tamed.length / 3);
   }
   const hatched = s.eggs.filter(e => e.readyAt <= s.elapsed);
   s.eggs = s.eggs.filter(e => e.readyAt > s.elapsed);

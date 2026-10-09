@@ -2000,3 +2000,549 @@ body.focus-on #beast-bar {
 body.focus-on .contract-btn {
   display: none;
 }
+
+/* ---------------------------------------------------------------- compact HUD
+   Top-left: the clock, the quest and quick eat / drink. Bottom centre: one dock holding the three vitals and only
+   the buttons that fit where you are (on the raft: build + device; at sea: device + expeditions). */
+#hud .left-hud {
+  top: 18px;
+  width: 262px;
+}
+#hud .time-row {
+  margin-bottom: 10px;
+}
+#hud .mission h2 {
+  font-size: 17px;
+  margin: 4px 0 8px;
+}
+#hud .quest-item {
+  margin: 7px 0;
+}
+#hud .mission .quiet {
+  display: none;
+}
+#hud .secret-hint {
+  margin-top: 12px;
+}
+.supply-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  pointer-events: auto;
+}
+.supply-row button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid #bfd9cb33;
+  background: #0b3039b3;
+  font-size: 12px;
+}
+.supply-row b {
+  font-weight: 500;
+  color: var(--gold);
+}
+.supply-row button:disabled {
+  opacity: 0.45;
+}
+#hud .bottom-hud {
+  left: 50%;
+  right: auto;
+  bottom: 20px;
+  transform: translateX(-50%);
+  align-items: center;
+  gap: 14px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 12px;
+  border: 1px solid #bfd9cb21;
+  background: #0829377a;
+  backdrop-filter: blur(8px);
+}
+#hud .vitals {
+  position: static;
+  width: 150px;
+}
+#hud .vital {
+  margin: 4px 0;
+  gap: 8px;
+  font-size: 11px;
+  transform: none;
+}
+#hud #save-status {
+  position: absolute;
+  left: 16px;
+  bottom: calc(100% + 6px);
+  margin: 0;
+  white-space: nowrap;
+}
+#hud .action-bar {
+  padding: 0;
+  border: 0;
+  background: none;
+  backdrop-filter: none;
+}
+#hud .action-bar button {
+  width: 72px;
+  height: 58px;
+}
+#hud .action-bar .tool-icon {
+  font-size: 22px;
+}
+#hud .control-hint {
+  position: absolute;
+  right: 30px;
+  bottom: 24px;
+}
+#hud #travel-status {
+  display: none;
+}
+.landscape-play #hud .left-hud {
+  top: 10px;
+  width: 200px;
+}
+.landscape-play #hud .time-row {
+  margin-bottom: 5px;
+}
+.landscape-play #hud .mission h2 {
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+.landscape-play #hud .quest-item {
+  margin: 5px 0;
+}
+.landscape-play .supply-row {
+  margin-top: 8px;
+  gap: 6px;
+}
+.landscape-play .supply-row button {
+  min-height: 30px;
+  padding: 3px 10px;
+  font-size: 11px;
+}
+.landscape-play #hud .bottom-hud {
+  left: 50%;
+  right: auto;
+  bottom: var(--edge-bottom);
+  height: auto;
+  display: flex;
+  gap: 8px;
+  padding: 5px 5px 5px 10px;
+}
+.landscape-play #hud .action-bar {
+  position: static;
+  transform: none;
+  padding: 0;
+  background: none;
+}
+.landscape-play #hud .vitals {
+  width: 112px;
+}
+.landscape-play #hud .vital {
+  margin: 2px 0;
+  gap: 6px;
+  font-size: 9px;
+}
+
+/* ---------------------------------------------------------------- beast storage (device app) */
+.bx-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-width: min(100%, 62vh);
+  margin: 0 auto;
+}
+.bx-cell {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid #bfe6dc26;
+  background: radial-gradient(circle at 50% 40%, #1e4a55, #0a1f26);
+}
+.bx-cell.empty {
+  opacity: 0.35;
+}
+.bx-cell canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.bx-cell span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 3px 4px;
+  font-size: 11px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: linear-gradient(transparent, #050f12d9);
+}
+.bx-cell:hover,
+.bx-cell:focus-visible {
+  border-color: #9ff0d8aa;
+}
+.bx-pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.bx-pager button {
+  min-width: 40px;
+  min-height: 32px;
+  padding: 0;
+}
+.bx-back {
+  margin-bottom: 8px;
+  background: transparent;
+  border: 0;
+  padding: 4px 0;
+  font-size: 13px;
+}
+.bx-detail {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.bx-detail canvas {
+  width: 46%;
+  max-width: 220px;
+  aspect-ratio: 32 / 22;
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 40%, #1e4a55, #0a1f26);
+  flex-shrink: 0;
+}
+.bx-info {
+  min-width: 0;
+}
+.bx-info h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 500;
+}
+.bx-info h3 small {
+  margin-left: 8px;
+  font-size: 11px;
+  color: #8fb8b0;
+}
+.bx-stats {
+  display: flex;
+  gap: 10px;
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: #a9c2bd;
+}
+.bx-stats b {
+  color: #e5eeea;
+  font-weight: 500;
+}
+.bx-info .gene-chips {
+  margin: 4px 0;
+}
+.bx-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.bx-actions button {
+  flex: 1 1 auto;
+  min-height: 40px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- backpack capacity */
+.resource.bag-load.full b {
+  color: #f0a594;
+}
+.bag-meter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+.bag-meter i {
+  flex: 1;
+  height: 6px;
+  border-radius: 6px;
+  background: #ffffff1a;
+  overflow: hidden;
+}
+.bag-meter b {
+  display: block;
+  height: 100%;
+  background: #9fe0c8;
+}
+.bag-meter.full b {
+  background: #e98d7a;
+}
+.bag-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.bag-slot {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 7px 4px;
+  border-radius: 10px;
+  border: 1px solid #bfe6dc1f;
+  background: #0b2a3199;
+  font-size: 18px;
+}
+.bag-slot b {
+  font-size: 15px;
+  font-weight: 500;
+}
+.bag-slot small {
+  font-size: 10px;
+  color: #a9c2bd;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- build menu: a grid of tiles, no scrolling */
+.build-floors {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #a9c2bd;
+}
+.build-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 6px;
+}
+.build-tile {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 2px;
+  min-height: 0;
+  padding: 8px 4px 7px;
+  border-radius: 10px;
+  text-align: center;
+}
+.build-tile > span {
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--gold);
+}
+.build-tile b {
+  font-size: 12px;
+  font-weight: 500;
+}
+.build-tile small {
+  font-size: 9.5px;
+  line-height: 1.3;
+  color: #a9c2bd;
+}
+.build-tile:disabled {
+  opacity: 0.42;
+}
+.landscape-play .build-grid {
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.landscape-play .build-tile {
+  padding: 7px 4px;
+}
+.landscape-play .build-tile > span {
+  font-size: 20px;
+}
+.landscape-play .build-tile b {
+  font-size: 12px;
+}
+.landscape-play .build-tile small {
+  font-size: 10px;
+}
+
+/* ---------------------------------------------------------------- paged journal, codex and achievements */
+.journal-entry.compact {
+  padding: 8px 0;
+}
+.journal-entry.compact p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 2px 0 0;
+}
+.codex-count {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #a9c2bd;
+}
+.codex-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.codex-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1.25;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid #bfe6dc22;
+  background: radial-gradient(circle at 50% 40%, #1e4a55, #0a1f26);
+}
+.codex-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.codex-tile span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2px 3px;
+  font-size: 10px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: linear-gradient(transparent, #050f12d9);
+}
+.codex-tile.tamed {
+  border-color: #e8c27a88;
+}
+.codex-tile.unknown b {
+  font-size: 22px;
+  color: #ffffff33;
+}
+.codex-tile.unknown span {
+  color: #8fb8b0;
+}
+.codex-page {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.codex-page img {
+  width: 48%;
+  max-width: 260px;
+  border-radius: 12px;
+  background: #0a1f26;
+}
+.codex-page h3 {
+  margin: 2px 0 4px;
+  font-size: 17px;
+  font-weight: 500;
+}
+.codex-page p {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 6px;
+}
+.achievement-list.compact .achievement {
+  padding: 6px 8px;
+}
+.landscape-play .codex-tiles {
+  grid-template-columns: repeat(4, 1fr);
+}
+.landscape-play .codex-tile {
+  aspect-ratio: 1.7;
+}
+.landscape-play .codex-count {
+  display: none;
+}
+.achievement-list.compact {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+.achievement-list.compact .achievement {
+  margin: 0;
+  gap: 8px;
+}
+.achievement-list.compact .achievement small {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.landscape-play .achievement-list.compact .achievement {
+  padding: 4px 6px;
+}
+
+/* ---------------------------------------------------------------- expedition panel, compact */
+.beast-row {
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  border: 1px solid #bfe6dc1f;
+  background: #0b2a3199;
+}
+.beast-row-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+.beast-row-head span {
+  font-size: 11px;
+  color: #a9c2bd;
+}
+.beast-row .bond-meter {
+  margin: 5px 0;
+}
+.beast-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.beast-row-actions button {
+  flex: 1 1 auto;
+  min-height: 32px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+.boat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.boat-row button {
+  min-height: 34px;
+  font-size: 12px;
+}
+.site-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+.site-tile {
+  min-height: 40px;
+  padding: 6px 8px;
+  font-size: 12px;
+  text-align: left;
+}
+.site-tile.done {
+  opacity: 0.6;
+}
+.site-tile.boss {
+  grid-column: 1 / -1;
+  border-color: #e98d7a66;
+}

@@ -10,13 +10,16 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.12.1';
-import { renderAdventure } from './expansion-ui.js?v=0.12.1';
+} from './expansion.js?v=0.13.0';
+import { renderAdventure } from './expansion-ui.js?v=0.13.0';
 import {
   normalizeShip,
   tickShip,
   shipDockOption,
   boardShip,
+  launchSkiff,
+  stowSkiff,
+  nearShip,
   disembark,
   takeHelm,
   leaveHelm,
@@ -38,9 +41,9 @@ import {
   nearBeastHome,
   restIsland,
   dockMoor
-} from './ship.js?v=0.12.1';
-import { monologue, markGuide } from './guide.js?v=0.12.1';
-import { climb, demolish, relocate } from './construction.js?v=0.12.1';
+} from './ship.js?v=0.13.0';
+import { monologue, markGuide } from './guide.js?v=0.13.0';
+import { climb, demolish, relocate } from './construction.js?v=0.13.0';
 import {
   normalizeHousing,
   penId,
@@ -52,20 +55,20 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.12.1';
-import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.12.1';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.12.1';
-import { OceanWorld, IntroFilm } from './world.js?v=0.12.1';
-import { QUALITY } from './realism.js?v=0.12.1';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.12.1';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.12.1';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.12.1';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.12.1';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.12.1';
-import { CONFIG } from './config.js?v=0.12.1';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.12.1';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.12.1';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.12.1';
+} from './housing.js?v=0.13.0';
+import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.13.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.13.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.13.0';
+import { QUALITY } from './realism.js?v=0.13.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.13.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.13.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.13.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.13.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.13.0';
+import { CONFIG } from './config.js?v=0.13.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.13.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.13.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.13.0';
 import {
   RARITY,
   FRENZY,
@@ -76,11 +79,26 @@ import {
   rollTame,
   craftContract,
   contract
-} from './taming.js?v=0.12.1';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.12.1';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.12.1';
-export const GAME_VERSION = '0.12.1';
-import { CloudSave } from './cloud-save.js?v=0.12.1';
+} from './taming.js?v=0.13.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.13.0';
+import { BeastStage } from './beast-stage.js?v=0.13.0';
+import {
+  funds,
+  normalizeBag,
+  migrateBag,
+  bagUsed,
+  bagCap,
+  bagRoom,
+  bagFullError,
+  give,
+  deposit,
+  takeSupplies,
+  upgradeBag,
+  nextBag
+} from './bag.js?v=0.13.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.13.0';
+export const GAME_VERSION = '0.13.0';
+import { CloudSave } from './cloud-save.js?v=0.13.0';
 import {
   readLocal,
   writeLocal,
@@ -97,9 +115,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.12.1';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.12.1';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.12.1';
+} from './save-store.js?v=0.13.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.13.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.13.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -118,8 +136,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.12.1';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.12.1';
+} from './rules.js?v=0.13.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.13.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -459,8 +477,15 @@ async function fullscreen() {
     toast('此瀏覽器未啟用全螢幕，仍可手動橫放手機遊玩。');
   }
 }
+// With the warship the dock button follows the ship, except while the skiff is out exploring on its own.
+const shipControls = () => {
+  if (!state.ship) return false;
+  const m = state.player.mode;
+  if (!state.skiff || m === 'aboard' || m === 'ship') return true;
+  return m === 'boat' ? !!shipDockOption(state) : !state.player.level && !state.inCave && nearShip(state, 6);
+};
 function updateDock() {
-  if (state.ship) {
+  if (shipControls()) {
     const o = shipDockOption(state),
       m = state.player.mode;
     $('dock-btn').hidden = !running || paused || !!panel || !!buildType || !!salvaging || !o;
@@ -522,9 +547,19 @@ function dock() {
       $('salvage-progress').hidden = true;
     }
   }
-  if (state.ship) {
-    const m = state.player.mode;
-    const res = m === 'foot' ? boardShip(state) : m === 'ship' ? leaveHelm(state) : disembark(state);
+  if (shipControls()) {
+    const m = state.player.mode,
+      o = shipDockOption(state);
+    const res =
+      o?.mode === 'stow-skiff'
+        ? stowSkiff(state)
+        : o?.mode === 'launch-skiff'
+          ? launchSkiff(state)
+          : m === 'foot'
+            ? boardShip(state)
+            : m === 'ship'
+              ? leaveHelm(state)
+              : disembark(state);
     toast(res.ok ? res.message : res.error, !res.ok);
     if (res.ok) {
       destination = null;
@@ -1299,6 +1334,7 @@ function toggleView() {
 }
 function beginGame(fresh = false) {
   state.hero ??= 'male';
+  migrateBag(state);
   normalizeWildlife(state);
   normalizeTaming(state);
   normalizeDevice(state);
@@ -1597,9 +1633,7 @@ function interact() {
   } else if (t.type === 'buoy') {
     state.secret = true;
     state.buoyFound = true;
-    state.resources.bait += 6;
-    state.resources.crystal += 3;
-    state.resources.fiber += 4;
+    give(state, { bait: 6, crystal: 3, fiber: 4 });
     log(
       state,
       '隱藏航線：共生計畫',
@@ -1655,6 +1689,10 @@ function interact() {
 // Throwing a line: the salvage reels the item in while the player keeps moving; it fails only if the line overstretches.
 function startSalvage(t) {
   if (salvaging) return;
+  if (!bagRoom(state)) {
+    bagFullNotice();
+    return;
+  }
   const d = Math.hypot(t.x - state.player.x, t.z - state.player.z);
   salvaging = { id: t.id, x: t.x, z: t.z, remaining: 0.8 + d * 0.1, duration: 0.8 + d * 0.1 };
   $('salvage-progress').hidden = false;
@@ -1694,8 +1732,16 @@ function tickSalvage(dt) {
   }
 }
 // Auto pickup: sailing over drift reels it in, walking past a ready node gathers it.
+// a full bag says so once in a while, not on every pickup it passes over
+let bagFullAt = -99;
+function bagFullNotice() {
+  if (state.elapsed - bagFullAt < 6) return;
+  bagFullAt = state.elapsed;
+  toast(bagFullError, true);
+}
 function autoPickup() {
   if (!running || paused || panel || buildType || salvaging || world.settings.autoPickup === false) return;
+  if (!bagRoom(state)) return;
   const px = state.player.x,
     pz = state.player.z;
   if (state.player.mode === 'boat' && !state.expedition.diving) {
@@ -1764,6 +1810,7 @@ function repel() {
 }
 function closePanel() {
   panel = null;
+  beastStage.clear();
   deviceMode = false;
   $('drawer').hidden = true;
   $('drawer').classList.remove('device');
@@ -1794,7 +1841,7 @@ function openPanel(name, inDevice = false) {
 }
 // The handheld from the raft desk: phone-style hub. Apps reuse the regular panels, rendered inside the device frame.
 let deviceMode = false;
-const DEVICE_PANEL = { bag: 'bag', beasts: 'creatures', journal: 'journal', codex: 'journal', achievements: 'journal' };
+const DEVICE_PANEL = { bag: 'bag', beasts: 'beasts', journal: 'journal', codex: 'journal', achievements: 'journal' };
 function openDevice(app = null) {
   if (!running || paused || film) return;
   normalizeDevice(state);
@@ -1813,7 +1860,7 @@ function openDevice(app = null) {
     else openSettings(back);
     return;
   }
-  if (app === 'beasts') geneTab = 'collection';
+  if (app === 'beasts') beastPick = null;
   if (app === 'journal' || app === 'codex' || app === 'achievements') journalTab = app === 'journal' ? 'log' : app;
   const name = app ? DEVICE_PANEL[app] || app : 'device';
   panel = null;
@@ -1824,41 +1871,94 @@ function deviceClock() {
   return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 }
 function deviceHome(body) {
-  const v = state.vitals,
-    bar = (label, val, cls) =>
-      `<div class="dv-vital ${cls}"><span>${label}</span><i><b style="width:${Math.round(val)}%"></b></i><em>${Math.round(val)}</em></div>`;
-  const where =
-    state.player.mode === 'foot'
-      ? state.inCave
-        ? '晶窟'
-        : '木筏／陸地'
-      : state.player.mode === 'aboard'
-        ? '比斯泰德號'
-        : '海上';
-  body.innerHTML = `<section class="dv-widget"><div class="dv-widget-head"><strong>${deviceClock()}</strong><span>第 ${dayOf(state)} 日 · ${where}</span></div>${bar('體力', v.health, 'hp')}${bar('水分', v.water, 'wt')}${bar('飽食', v.food, 'fd')}<small>座標 ${state.player.x.toFixed(0)}, ${state.player.z.toFixed(0)} · 異晶訊號 ${state.secret ? '已解讀' : '未知'}</small></section>
-  <div class="dv-apps">${DEVICE_APPS.map(a => `<button type="button" data-app="${a.id}"><span>${a.icon}</span><small>${a.name}</small></button>`).join('')}</div>
-  <p class="dv-note">${state.device.laptop ? '書桌上的筆電還在等待修復。' : '書桌上那台筆電好像還能開機……'}</p>`;
+  body.innerHTML = `<section class="dv-widget"><div class="dv-widget-head"><strong>${deviceClock()}</strong><span>第 ${dayOf(state)} 日</span></div></section>
+  <div class="dv-apps">${DEVICE_APPS.map(a => `<button type="button" data-app="${a.id}"><span>${a.icon}</span><small>${a.name}</small></button>`).join('')}</div>`;
   body.querySelectorAll('[data-app]').forEach(b => (b.onclick = () => openDevice(b.dataset.app)));
 }
-function deviceStatus(body) {
-  const v = state.vitals,
-    c = codexProgress(state),
-    boat = state.expedition?.boatLevel || 0,
-    sc = stormClock(state.elapsed);
-  const rows = [
-    ['體力', Math.round(v.health) + ' / 100'],
-    ['水分', Math.round(v.water) + ' / 100'],
-    ['飽食', Math.round(v.food) + ' / 100'],
-    ['天氣', sc?.phase === 'storm' ? '暴風中' : sc ? '暴風將至' : '平靜'],
-    ['所在', `${state.player.x.toFixed(1)}, ${state.player.z.toFixed(1)}`],
-    ['小艇等級', 'LV ' + boat],
-    ['木筏', `${count(state, 'floor')} 格地基 · ${state.buildings.length} 件設施`],
-    ['御獸', `${state.tamed.length} 隻 · 孵育 ${state.eggs.length}`],
-    ['圖鑑', `${c.seen} / ${c.total}`],
-    ['成就', `${achievementCount(state)} / ${ACHIEVEMENTS.length}`],
-    ['遊玩時間', formatDuration(state.stats?.playSeconds || 0)]
-  ];
-  body.innerHTML = `<div class="dv-status-list">${rows.map(([k, val]) => `<span>${k}</span><b>${val}</b>`).join('')}</div><p class="dv-note">感測器：${state.vitals.water < 30 ? '脫水警告。' : state.vitals.food < 30 ? '能量不足。' : '生命徵象穩定。'}</p>`;
+// Beast storage: a 3 × 3 grid of your beasts, alive and turning; tap one for its details and what you can do.
+const beastStage = new BeastStage();
+let beastPage = 0,
+  beastPick = null;
+function renderBeastStorage(body) {
+  const pets = state.tamed,
+    p = pets.find(p => p.id === beastPick);
+  if (!p) beastPick = null;
+  if (!state.secret || !pets.length) {
+    beastStage.clear();
+    body.innerHTML = `<p class="dv-note">${state.secret ? '還沒有御獸。餵誘餌建立信任，再用契約書締結。' : '還沒有御獸。先調查東北方的研究浮標。'}</p>`;
+    return;
+  }
+  if (p) {
+    const ph = phenotype(p.genome),
+      active = state.expedition?.activeId === p.id;
+    body.innerHTML = `<button type="button" class="bx-back">‹ 全部御獸</button><div class="bx-detail"><canvas width="320" height="220"></canvas><div class="bx-info"><h3>${esc(p.name)}<small>第 ${p.generation} 代</small></h3><p class="bx-stats"><span>羈絆 <b>${Math.round(p.bond || 0)}</b></span><span>體力 <b>${Math.round(p.health ?? 100)}</b></span><span>精力 <b>${Math.round(p.stamina ?? 100)}</b></span></p><div class="gene-chips">${describeGenes(
+      p.genome
+    )
+      .slice(0, 4)
+      .map(t => `<span>${esc(t)}</span>`)
+      .join(
+        ''
+      )}</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small></div></div><div class="bx-actions"><button type="button" class="primary" data-bx="train">默契訓練 · 口糧 2 / 異晶 1</button><button type="button" data-bx="go">${active ? '讓牠回去休息' : '帶牠出發'}</button><button type="button" data-bx="rename">改名</button></div><form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
+    const done = r => {
+      toast(r.ok ? r.message : r.error, !r.ok);
+      if (r.ok) {
+        world.sync(state);
+        save(true);
+        updateUI();
+      }
+      renderPanel();
+    };
+    body.querySelector('.bx-back').onclick = () => {
+      beastPick = null;
+      renderPanel();
+    };
+    body.querySelector('[data-bx=train]').onclick = () => done(trainPet(state, p.id));
+    body.querySelector('[data-bx=go]').onclick = () => done(commandPet(state, p.id, active ? 'home' : 'follow'));
+    const form = body.querySelector('.focus-rename');
+    body.querySelector('[data-bx=rename]').onclick = () => {
+      form.hidden = false;
+      form.querySelector('input').focus();
+    };
+    form.onsubmit = e => {
+      e.preventDefault();
+      const r = renamePet(state, p.id, form.querySelector('input').value);
+      done(r.ok ? { ok: true, message: `改名為「${r.name}」。` } : r);
+    };
+    beastStage.show([{ canvas: body.querySelector('canvas'), key: p.id, genome: p.genome }]);
+    return;
+  }
+  const pages = Math.ceil(pets.length / 9);
+  beastPage = clamp(beastPage, 0, pages - 1);
+  const shown = pets.slice(beastPage * 9, beastPage * 9 + 9);
+  body.innerHTML = `<div class="bx-grid">${Array.from({ length: 9 }, (_, i) =>
+    shown[i]
+      ? `<button type="button" class="bx-cell" data-pet="${esc(shown[i].id)}"><canvas width="160" height="160"></canvas><span>${esc(shown[i].name)}</span></button>`
+      : '<div class="bx-cell empty"></div>'
+  ).join('')}</div>${
+    pages > 1
+      ? `<div class="bx-pager"><button type="button" data-page="-1" ${beastPage ? '' : 'disabled'}>‹</button><span>${beastPage + 1} / ${pages}</span><button type="button" data-page="1" ${beastPage < pages - 1 ? '' : 'disabled'}>›</button></div>`
+      : ''
+  }`;
+  body.querySelectorAll('[data-pet]').forEach(
+    b =>
+      (b.onclick = () => {
+        beastPick = b.dataset.pet;
+        renderPanel();
+      })
+  );
+  body.querySelectorAll('[data-page]').forEach(
+    b =>
+      (b.onclick = () => {
+        beastPage += Number(b.dataset.page);
+        renderPanel();
+      })
+  );
+  beastStage.show(
+    [...body.querySelectorAll('[data-pet]')].map(b => {
+      const pet = pets.find(x => x.id === b.dataset.pet);
+      return { canvas: b.querySelector('canvas'), key: pet.id, genome: pet.genome };
+    })
+  );
 }
 function decorateDevice(body) {
   const d = $('drawer');
@@ -1868,7 +1968,8 @@ function decorateDevice(body) {
   $('drawer-eyebrow').innerHTML =
     `<span>無訊號</span><span>${deviceClock()}</span><span>▮ ${Math.round(state.device.battery ?? 64)}%</span>`;
   $('drawer-title').textContent = panel === 'device' ? '隨身裝置' : app ? app.name : $('drawer-title').textContent;
-  if (panel !== 'device') {
+  // (a beast's details bring their own way back to the grid)
+  if (panel !== 'device' && !body.querySelector('.bx-back')) {
     body.insertAdjacentHTML('afterbegin', '<button type="button" class="dv-back">‹ 主畫面</button>');
     body.querySelector('.dv-back').onclick = () => {
       panel = null;
@@ -1878,7 +1979,8 @@ function decorateDevice(body) {
 }
 function deviceAppFor() {
   if (panel === 'creatures') return 'beasts';
-  if (panel === 'journal') return journalTab === 'log' ? 'journal' : journalTab;
+  if (panel === 'beasts') return 'beasts';
+  if (panel === 'journal') return ['log', 'routes'].includes(journalTab) ? 'journal' : journalTab;
   return panel;
 }
 function handleExploration(id) {
@@ -1962,99 +2064,12 @@ function updateBeastHUD() {
   $('boss-bar').hidden = b.defeated || state.inCave || Math.hypot(b.x - state.player.x, b.z - state.player.z) > 35;
   $('boss-bar').textContent = `深海守望者  ${Math.max(0, Math.ceil(b.hp))} / 480`;
 }
-function appendDesk(body, b) {
-  normalizeDevice(state);
-  const near = state.player.mode === 'foot' && Math.hypot(state.player.x - b.x * 3.6, state.player.z - b.z * 3.6) < 5.5;
-  body.insertAdjacentHTML(
-    'beforeend',
-    `${state.device.owned ? '' : `<button id="take-device" class="primary full-button" ${near ? '' : 'disabled'}>拿起隨身裝置</button>`}<button id="read-laptop" class="full-button" ${near ? '' : 'disabled'}>查看破舊筆電</button>${near ? '' : '<p class="note">登上木筏，走到書桌旁才能操作。</p>'}`
-  );
-  if ($('take-device'))
-    $('take-device').onclick = () => {
-      const r = takeDevice(state);
-      toast(r.ok ? r.message : r.error, !r.ok);
-      if (!r.ok) return;
-      haptic('discover');
-      log(
-        state,
-        '隨身裝置',
-        '螢幕裂了一角，電量只剩一點，但還能開機。沒有訊號——這裡沒有任何基地台。至少它能幫我記住每一件事。'
-      );
-      world.sync(state);
-      save(true);
-      updateUI();
-      openDevice();
-    };
-  $('read-laptop').onclick = () => {
-    const r = readLaptop(state);
-    if (!r.ok) {
-      toast(r.error, true);
-      return;
-    }
-    if (r.first) log(state, '破舊筆電', '開機畫面停在修復模式。最後一筆同步，是我出車禍的那個早上。');
-    closePanel();
-    modal(
-      'LAPTOP · 系統修復模式',
-      '一台不屬於這個世界的筆電',
-      `<pre class="laptop-screen">${r.lines.map(esc).join('\n')}</pre><p class="note">（電源鍵按不太下去。也許哪天找到零件，可以把它修好。）</p>`,
-      [{ label: '闔上', primary: true, action: closeModal }]
-    );
-    save(true);
-  };
-}
 function appendConstruction(body, b) {
-  if (b.type === 'desk') appendDesk(body, b);
-  const near = Math.hypot(state.player.x - b.x * 3.6, state.player.z - b.z * 3.6) < 5.5;
-  if (['stairs', 'chair', 'table', 'lamp'].includes(b.type)) {
-    body.insertAdjacentHTML(
-      'beforeend',
-      `<button id="furniture-action" class="primary full-button" ${near ? '' : 'disabled'}>${{ stairs: state.player.level ? '下樓' : '上樓', chair: '坐下休息 · 口糧 1 / 體力 +15', table: '開啟背包與工作檯', lamp: b.off ? '點亮立燈' : '關閉立燈' }[b.type]}</button>`
-    );
-    $('furniture-action').onclick = () => {
-      if (b.type === 'stairs') {
-        const r = climb(state, b);
-        toast(r.ok ? r.message : r.error, !r.ok);
-        if (r.ok) closePanel();
-      } else if (b.type === 'table') {
-        openPanel('bag');
-        return;
-      } else if (b.type === 'lamp') b.off = !b.off;
-      else {
-        if (state.vitals.health >= 98 || state.resources.food < 1) {
-          toast('目前不需要休息，或口糧不足。');
-          return;
-        }
-        state.resources.food--;
-        state.vitals.health = Math.min(100, state.vitals.health + 15);
-        toast('休息恢復體力 15。');
-      }
-      world.sync(state);
-      save(true);
-      if (panel) renderPanel();
-    };
-  }
   body.insertAdjacentHTML(
     'beforeend',
-    `<details class="building-tools"><summary>移動／拆除建築</summary><p>目前格位 (${b.x}, ${b.z}) · ${b.level ? '二樓' : '一樓'}。搬移不收材料；展示池住民會一起搬家。</p>${!['floor', 'upperfloor', 'stairs'].includes(b.type) ? `<div class="building-coords"><label>X 格<input id="move-x" type="number" step="1" min="-10" max="10" value="${b.x}"></label><label>Z 格<input id="move-z" type="number" step="1" min="-10" max="10" value="${b.z}"></label><label>樓層<select id="move-level"><option value="0" ${!b.level ? 'selected' : ''}>一樓</option><option value="1" ${b.level ? 'selected' : ''}>二樓</option></select></label></div><button id="move-building" class="full-button">確認搬移</button>` : '<p>地板與樓梯需拆除後重建。</p>'}<button id="remove-building" class="full-button">拆除 · 回收約半數材料</button><p>有住民的池子不能拆除；地基不可切斷木筏連接。</p></details>`
+    `<section class="building-tools"><p class="dv-note">${b.level ? '二樓' : '一樓'} · 格位 (${b.x}, ${b.z})${b.type === 'pen' ? ' · 住民會一起搬家' : ''}</p>${!['floor', 'upperfloor', 'stairs'].includes(b.type) ? '<button id="move-building" class="full-button">拖動搬移</button>' : ''}<button id="remove-building" class="full-button">拆除 · 回收約半數材料</button></section>`
   );
-  if ($('move-building'))
-    $('move-building').onclick = () => {
-      const r = relocate(
-        state,
-        activeFacility,
-        Number($('move-x').value),
-        Number($('move-z').value),
-        Number($('move-level').value)
-      );
-      toast(r.ok ? r.message : r.error, !r.ok);
-      if (r.ok) {
-        activeFacility = facilityId(b);
-        normalizeTravel(state);
-        world.sync(state);
-        save(true);
-        renderPanel();
-      }
-    };
+  if ($('move-building')) $('move-building').onclick = () => startMove(activeFacility);
   let confirmed = false;
   $('remove-building').onclick = () => {
     if (!confirmed) {
@@ -2238,7 +2253,7 @@ function warshipCard() {
   const checks = fusionChecks(state),
     f = state.shipFusion,
     ready = checks.every(([, ok]) => ok);
-  return `<article class="warship-card"><div class="warship-head"><span>⚓</span><div><small>HIDDEN BLUEPRINT · 隱藏藍圖</small><h3>戰艦 · 比斯泰德號</h3></div></div><p>將帆布避難所與 LV3 小艇融合，鍛造五層甲板的遠洋戰艦：駕駛室、主甲板砲列、御獸休息室、兩層物資艙。登船後必須在駕駛室掌舵才能航行。</p>${
+  return `<article class="warship-card"><div class="warship-head"><span>⚓</span><div><small>HIDDEN BLUEPRINT · 隱藏藍圖</small><h3>戰艦 · 比斯泰德號</h3></div></div><p>避難所與 LV3 小艇融合成五層甲板的戰艦；小艇仍可放下單獨探索。</p>${
     state.ship
       ? '<div class="info-strip">✓ 戰艦已完成，停泊於停靠站外海。</div>'
       : f
@@ -2248,7 +2263,7 @@ function warshipCard() {
           )
             .map(
               ([k, v]) =>
-                `<span class="${state.resources[k] >= v ? '' : 'short'}">${RESOURCE_NAMES[k]} ${state.resources[k]}/${v}</span>`
+                `<span class="${funds(state, k) >= v ? '' : 'short'}">${RESOURCE_NAMES[k]} ${funds(state, k)}/${v}</span>`
             )
             .join(
               ''
@@ -2298,7 +2313,8 @@ function gather(id) {
   if (r.ok) {
     flyResources({ [r.node.kind]: r.node.yield }, r.node.x, 1, r.node.z);
     haptic('pickup');
-  } else toast(r.error, true);
+  } else if (r.full) bagFullNotice();
+  else toast(r.error, true);
   if (r.ok) {
     audio.note(720, 0.14);
     save(true);
@@ -2331,7 +2347,8 @@ const FOCUS_ITEMS = {
   table: [{ key: 'bench', label: '工作檯', at: [0, 1.45, 0] }],
   desk: [
     { key: 'laptop', label: '破舊筆電', at: [-0.25, 1.55, -0.1] },
-    { key: 'device', label: '隨身裝置', at: [0.45, 1.45, 0.12] }
+    { key: 'device', label: '隨身裝置', at: [0.45, 1.45, 0.12] },
+    { key: 'locker', label: '儲物箱', at: [0.1, 1.05, 0.95] }
   ],
   pen: [], // the beasts themselves, see focusItems()
   dock: []
@@ -2491,7 +2508,7 @@ function focusCard(b, item, near) {
     act('掃描島嶼訊號', () => focusDone(useFacility(state, focus.id, 'signal')), { primary: true, disabled: !near });
     act('島嶼航線', () => {
       exitFocus();
-      journalTab = 'log';
+      journalTab = 'routes';
       openPanel('journal');
     });
   } else if (item.key === 'dome') {
@@ -2534,6 +2551,18 @@ function focusCard(b, item, near) {
       card.extra = `<pre class="laptop-screen">${(r.lines || []).map(esc).join('\n')}</pre>`;
       card.info = '（電源鍵按不太下去。也許哪天找到零件，可以把它修好。）';
     }
+  } else if (item.key === 'locker') {
+    normalizeBag(state);
+    const stored = Object.values(state.storage).reduce((a, b) => a + b, 0),
+      next = nextBag(state);
+    card.eyebrow = '漂流書桌 · 儲物箱';
+    card.info = `背包 ${bagUsed(state)} / ${bagCap(state)} · 書桌存放 ${stored} 件。在家時，建造會一併使用書桌上的材料。`;
+    act('存入材料', () => focusDone(deposit(state)), { primary: true, disabled: !near });
+    act('取出補給（口糧、淡水、誘餌）', () => focusDone(takeSupplies(state)), { disabled: !near });
+    if (next)
+      act(`加大背包 → ${next.cap} 件 · ${costLabel(next.cost)}`, () => focusDone(upgradeBag(state)), {
+        disabled: !near || !canPay(state, next.cost)
+      });
   } else if (item.key === 'device') {
     act(
       '拿起隨身裝置',
@@ -2794,7 +2823,7 @@ function openFacility(id) {
 }
 function islandMenu() {
   return (
-    '<p class="section-label">ARCHIPELAGO · 島嶼航線</p><p>靠近海岸按 Q 登岸，上島後按 E 採集。採集點每 120 秒恢復。</p>' +
+    '<p class="dv-note">選一座島設定航線；靠岸按 Q 登島。</p>' +
     ISLANDS.map(
       i =>
         `<button class="full-button island-route" data-island="${i.id}">△ ${i.name} · ${Math.round(Math.hypot(i.x - state.player.x, i.z - state.player.z))}m <small>設定航線 →</small></button>`
@@ -2829,51 +2858,10 @@ function renderFacility(body) {
     body.innerHTML = '<p>找不到此設施。</p>';
     return;
   }
-  const recipe = RECIPES[b.type],
-    d = Math.hypot(state.player.x - b.x * 3.6, state.player.z - b.z * 3.6);
-  const title = b.type === 'pen' ? penLabel(state, penId(b)) : recipe.name;
+  // Management only: using a facility happens in the world (tap it, then the things in it).
+  const title = b.type === 'pen' ? penLabel(state, penId(b)) : RECIPES[b.type].name;
   $('drawer-title').textContent = title;
-  body.innerHTML = `<div class="facility-hero"><span>${recipe.icon}</span><div><small>海上生活設施</small><h3>${esc(title)}</h3></div></div><p>${recipe.desc}</p><div class="info-strip">${Math.round(d)} 公尺 · ${d <= 5.5 ? '可操作' : '靠近至 5 公尺內即可操作'}</div>`;
-  const actions = {
-    shelter: ['rest', '休息 · 口糧 1 / 淡水 1 → 體力 +45'],
-    collector: ['collect', '取出所有淡水'],
-    beacon: ['signal', '掃描島嶼訊號']
-  };
-  if (b.type === 'collector') body.innerHTML += `<p id="tank-status">儲水 ${b.waterStored || 0} / 20 · 每 35 秒 +2</p>`;
-  if (actions[b.type]) {
-    const [action, label] = actions[b.type];
-    body.innerHTML += `<button id="facility-use" class="primary full-button" ${d > 5.5 ? 'disabled' : ''}>${label}</button>`;
-    $('facility-use').onclick = () => {
-      const r = useFacility(state, activeFacility, action);
-      toast(r.ok ? r.message : r.error, !r.ok);
-      save(true);
-      updateUI();
-      renderPanel();
-    };
-  }
-  if (b.type === 'pen') {
-    const pets = occupants(state, penId(b));
-    body.innerHTML +=
-      `<p class="section-label">${esc(penLabel(state, penId(b)))} · 本池 ${pets.length} / 3 隻 · 預留 ${reserved(state, penId(b)).length}</p>` +
-      pets
-        .map(
-          p =>
-            `<article class="creature-card pool-resident"><img class="specimen-image" alt="${esc(p.name)}" src="${world.thumbnail(p.genome, p.id)}"><h3>${esc(p.name)} · 第 ${p.generation} 代</h3></article>`
-        )
-        .join('');
-    if (!pets.length) body.innerHTML += '<p>尚未入住生物，帶誘餌出海尋找夥伴。</p>';
-  }
-  if (b.type === 'pen' || b.type === 'hatchery') {
-    body.innerHTML += `<button id="facility-research" class="primary full-button" ${d > 5.5 ? 'disabled' : ''}>${b.type === 'hatchery' ? '開啟基因配對與孵育' : '管理生物住處與圖鑑'}</button>`;
-    $('facility-research').onclick = () => {
-      geneTab = b.type === 'hatchery' ? 'breed' : 'collection';
-      openPanel('creatures');
-    };
-  }
-  if (b.type === 'beacon') {
-    body.insertAdjacentHTML('beforeend', islandMenu());
-    bindIslandMenu(body);
-  }
+  body.innerHTML = '';
   if (b.type === 'pen') {
     const id = penId(b);
     body.insertAdjacentHTML('beforeend', housingMarkup(occupants(state, id), id));
@@ -2928,13 +2916,20 @@ function renderPanel() {
     cargo: ['CARGO HOLD', '物資艙'],
     lounge: ['BEAST LOUNGE', '御獸休息室'],
     device: ['HANDHELD', '隨身裝置'],
-    status: ['STATUS', '狀態']
+    beasts: ['BEASTS', '御獸倉庫']
   };
   $('drawer-eyebrow').textContent = settings[panel][0];
   $('drawer-title').textContent = settings[panel][1];
   const body = $('drawer-body');
-  if (panel === 'device' || panel === 'status') {
-    (panel === 'device' ? deviceHome : deviceStatus)(body);
+  if (panel === 'beasts') {
+    renderBeastStorage(body);
+    decorateDevice(body);
+    promptPanel(body);
+    return;
+  }
+  beastStage.clear();
+  if (panel === 'device') {
+    deviceHome(body);
     decorateDevice(body);
     promptPanel(body);
     return;
@@ -2963,16 +2958,37 @@ function renderPanel() {
     return;
   }
   if (panel === 'build') {
+    // a compact grid: icon, name and cost on each tile (the description as its tooltip); tap a tile to place it.
+    // Existing buildings are managed by tapping them in the world (管理), not from a list here.
+    const upper = count(state, 'upperfloor') > 0;
+    if (!upper) buildLevel = 0;
     body.innerHTML =
-      `<p>回到木筏附近，選擇設施後放在綠色格子。擴建地基與展示池需連接木筏邊缘。</p><div class="info-strip">已建 ${count(state, 'floor')} 格地基 · ${count(state, 'shelter') ? '已有遮蔽' : '尚無遮蔽'} · ${count(state, 'collector') ? '有淡水產出' : '缺少淡水來源'}</div>` +
-      Object.entries(RECIPES)
-        .filter(([k, r]) => !r.fixed && (!r.hidden || state.secret) && (!r.unlock || r.unlock(state)))
-        .map(
-          ([k, r]) =>
-            `<article class="build-card"><span>${r.icon}</span><div><h3>${r.name}</h3><p>${r.desc}</p><div class="cost">${costLabel(r.cost)}</div>${LIMITS[k] ? `<div class="limit">避難所上限 ${count(state, k)} / ${LIMITS[k]}</div>` : ''}</div><button data-build="${k}" ${!canPay(state, r.cost) || (LIMITS[k] && count(state, k) >= LIMITS[k]) ? 'disabled' : ''}>${LIMITS[k] && count(state, k) >= LIMITS[k] ? '已達上限' : '建造'}</button></article>`
-        )
-        .join('') +
-      warshipCard();
+      (upper
+        ? `<div class="build-floors"><span>施工樓層</span><span class="seg">${[
+            [0, '一樓'],
+            [1, '二樓']
+          ]
+            .map(
+              ([v, l]) =>
+                `<button type="button" data-level="${v}" class="${buildLevel === v ? 'active' : ''}">${l}</button>`
+            )
+            .join('')}</span></div>`
+        : '') +
+      `<div class="build-grid">${Object.entries(RECIPES)
+        .filter(([, r]) => !r.fixed && (!r.hidden || state.secret) && (!r.unlock || r.unlock(state)))
+        .map(([k, r]) => {
+          const full = LIMITS[k] && count(state, k) >= LIMITS[k];
+          return `<button type="button" class="build-tile" data-build="${k}" title="${esc(r.desc)}" ${full || !canPay(state, r.cost) ? 'disabled' : ''}><span>${r.icon}</span><b>${r.name}</b><small>${full ? `已達上限 ${LIMITS[k]}` : costLabel(r.cost)}</small></button>`;
+        })
+        .join('')}</div>` +
+      (warshipRevealed(state) && !state.ship ? warshipCard() : '');
+    body.querySelectorAll('[data-level]').forEach(
+      b =>
+        (b.onclick = () => {
+          buildLevel = Number(b.dataset.level);
+          renderPanel();
+        })
+    );
     body.querySelectorAll('[data-build]').forEach(b => (b.onclick = () => startBuild(b.dataset.build)));
     if ($('fuse-btn'))
       $('fuse-btn').onclick = () => {
@@ -2989,21 +3005,23 @@ function renderPanel() {
       };
   }
   if (panel === 'bag') {
+    normalizeBag(state);
+    const used = bagUsed(state),
+      cap = bagCap(state);
     body.innerHTML =
-      '<p>補充水分與口糧，準備下一次遠航。</p>' +
-      Object.keys(RESOURCE_NAMES)
+      `<div class="bag-meter${used >= cap ? ' full' : ''}"><span>背包 ${used} / ${cap}</span><i><b style="width:${Math.min(100, (used / cap) * 100)}%"></b></i></div>` +
+      `<div class="bag-grid">${Object.keys(RESOURCE_NAMES)
         .map(
           k =>
-            `<div class="inventory-row"><span>${RESOURCE_ICONS[k]} &nbsp;${RESOURCE_NAMES[k]}</span><b>${state.resources[k]}</b></div>`
+            `<div class="bag-slot"><span>${RESOURCE_ICONS[k]}</span><b>${state.resources[k]}</b><small>${RESOURCE_NAMES[k]}${state.storage[k] ? ` · 書桌 ${state.storage[k]}` : ''}</small></div>`
         )
-        .join('') +
-      `<div class="inventory-row"><span>📜 &nbsp;契約書</span><b>${state.contracts || 0}</b></div>` +
-      `<div class="button-row"><button id="drink" ${state.resources.water ? '' : 'disabled'}>喝水 · 恢復 35</button><button id="eat" ${state.resources.food ? '' : 'disabled'}>進食 · 恢復 35</button></div>` +
+        .join(
+          ''
+        )}<div class="bag-slot"><span>📜</span><b>${state.contracts || 0}</b><small>契約書</small></div></div>` +
+      (used >= cap ? `<p class="dv-note">${bagFullError}</p>` : '') +
       (state.secret
-        ? `<p class="section-label">生物誘餌</p><div class="info-strip">1 口糧 + 1 纖維 → 3 份誘餌。<br>展示池中的生物會定期提供口糧與專長物資。</div><button class="full-button" id="craft-bait" ${canPay(state, { food: 1, fiber: 1 }) ? '' : 'disabled'}>製作 3 份誘餌</button>`
+        ? `<button class="full-button" id="craft-bait" ${canPay(state, { food: 1, fiber: 1 }) ? '' : 'disabled'}>製作誘餌 · 口糧 1 + 纖維 1 → 3 份</button>`
         : '');
-    $('drink').onclick = () => consume('water');
-    $('eat').onclick = () => consume('food');
     if ($('craft-bait'))
       $('craft-bait').onclick = () => {
         const r = craftBait(state);
@@ -3013,25 +3031,26 @@ function renderPanel() {
         save(true);
       };
   }
-  if (panel === 'journal' && journalTab !== 'log') {
+  if (panel === 'journal' && journalTab === 'routes') {
+    body.innerHTML = journalTabs() + islandMenu();
+    bindIslandMenu(body);
+    bindJournalTabs(body);
+  } else if (panel === 'journal' && journalTab !== 'log') {
     body.innerHTML = journalTabs() + (journalTab === 'codex' ? codexHTML() : achievementsHTML());
     bindJournalTabs(body);
   } else if (panel === 'journal') {
+    const page = paged('log', state.log, compactPanels() ? 3 : 5);
     body.innerHTML =
       journalTabs() +
-      islandMenu() +
-      '<div class="info-strip">' +
-      (state.completed
-        ? '主線第一章已完成，仍可自由擴建與培育。'
-        : '主線：打撈物資 → 擴建 2 格地基 → 避難所 → 集水器 → 訊號塔。') +
-      '</div>' +
-      state.log
-        .map(
-          l =>
-            `<article class="journal-entry"><small>DAY ${l.day.toString().padStart(2, '0')}</small><h3>${esc(l.title)}</h3><p>${esc(l.text)}</p></article>`
-        )
-        .join('');
-    bindIslandMenu(body);
+      (page.items.length
+        ? page.items
+            .map(
+              l =>
+                `<article class="journal-entry compact"><small>DAY ${l.day.toString().padStart(2, '0')}</small><h3>${esc(l.title)}</h3><p>${esc(l.text)}</p></article>`
+            )
+            .join('')
+        : '<p class="dv-note">還沒有紀錄。</p>') +
+      page.bar;
     bindJournalTabs(body);
   }
   if (panel === 'creatures') {
@@ -3131,26 +3150,6 @@ function renderPanel() {
       };
     }
   }
-  if (panel === 'build') {
-    body.insertAdjacentHTML(
-      'afterbegin',
-      `<label class="field-label" for="build-level">施工樓層</label><select class="gene-select" id="build-level"><option value="0" ${buildLevel === 0 ? 'selected' : ''}>一樓／海面</option><option value="1" ${buildLevel === 1 ? 'selected' : ''}>二樓（需二樓地板）</option></select><p>先蓋二樓地板，再在同格建樓梯。點樓梯或靠近按 E 上下樓。家具可放在兩層。</p>`
-    );
-    $('build-level').onchange = () => {
-      buildLevel = Number($('build-level').value);
-    };
-    body.insertAdjacentHTML(
-      'beforeend',
-      '<p class="section-label">已建設施 · 移動與拆除</p>' +
-        state.buildings
-          .map(
-            b =>
-              `<button class="full-button" data-manage="${facilityId(b)}">${b.type === 'pen' ? esc(penLabel(state, penId(b))) : RECIPES[b.type].name} · ${b.level ? '二樓' : '一樓'} (${b.x}, ${b.z})</button>`
-          )
-          .join('')
-    );
-    body.querySelectorAll('[data-manage]').forEach(b => (b.onclick = () => openFacility(b.dataset.manage)));
-  }
   if (panel === 'creatures' && state.secret && geneTab === 'collection') {
     body.insertAdjacentHTML('afterbegin', housingMarkup(state.tamed));
     bindHousing(body);
@@ -3200,14 +3199,12 @@ function startBuild(type) {
 // How many more of this item the current materials (and the shelter's limits) allow.
 function buildsLeft(type) {
   const cost = RECIPES[type].cost;
-  let n = Math.min(
-    99,
-    ...Object.entries(cost).map(([k, v]) => (v > 0 ? Math.floor((state.resources[k] || 0) / v) : 99))
-  );
+  let n = Math.min(99, ...Object.entries(cost).map(([k, v]) => (v > 0 ? Math.floor(funds(state, k) / v) : 99)));
   if (LIMITS[type]) n = Math.min(n, LIMITS[type] - count(state, type));
   return Math.max(0, n);
 }
 function updateBuildBanner() {
+  if (moving) return;
   const n = buildsLeft(buildType);
   $('build-banner-name').textContent = `${RECIPES[buildType].name} · 材料還夠蓋 ${n} 個`;
   $('build-banner').querySelector('span').textContent = gamepadActive
@@ -3218,11 +3215,66 @@ function updateBuildBanner() {
 }
 function cancelBuild() {
   buildType = null;
+  if (moving) {
+    moving = null;
+    world?.home.children.forEach(g => (g.visible = true));
+  }
   if (world) world.setPlacement(null, state);
   $('build-banner').hidden = true;
 }
+// Moving a building: it lifts off and follows your finger or mouse over the free cells; let go to set it down
+// (a tap on a cell, Enter / E, or the gamepad's A work too). It goes through the build mode's ghost and grid.
+let moving = null;
+function startMove(id) {
+  const b = findFacility(state, id);
+  if (!b) return;
+  if (['floor', 'upperfloor', 'stairs'].includes(b.type)) return toast('地板與樓梯請用拆除、重建調整。', true);
+  if (Math.hypot(state.player.x - 1.8, state.player.z - 1.8) > 27) return toast('請返回避難所管理建築。', true);
+  closePanel();
+  exitFocus();
+  cancelBuild();
+  buildType = b.type;
+  buildRot = b.rot || 0;
+  moving = id;
+  destination = null;
+  // free cells are judged as if the building were already lifted (and its materials never count)
+  const lifted = {
+    ...state,
+    buildings: state.buildings.filter(v => v !== b),
+    resources: Object.fromEntries(Object.keys(state.resources).map(k => [k, 99999]))
+  };
+  world.setPlacement(b.type, lifted, b.level || 0);
+  world.ghostCell = { x: b.x, z: b.z };
+  world.home.children.forEach(g => g.userData.facilityId === id && (g.visible = false));
+  $('build-banner').hidden = false;
+  $('build-banner-name').textContent = `搬移 ${b.type === 'pen' ? penLabel(state, penId(b)) : RECIPES[b.type].name}`;
+  $('build-banner').querySelector('span').textContent = gamepadActive
+    ? '左搖桿選格 · A 放下 · B 取消'
+    : '拖動到綠色格子，放開即完成 · Esc 取消';
+}
+function finishMove() {
+  const b = findFacility(state, moving),
+    { x, z } = world.ghostCell;
+  if (!b) return cancelBuild();
+  if (x === b.x && z === b.z) {
+    b.rot = buildRot;
+    cancelBuild();
+    world.sync(state);
+    return;
+  }
+  const r = relocate(state, moving, x, z, b.level || 0);
+  toast(r.ok ? r.message : r.error, !r.ok);
+  if (!r.ok) return;
+  b.rot = buildRot;
+  cancelBuild();
+  normalizeTravel(state);
+  world.sync(state);
+  audio.note(450, 0.2);
+  save(true);
+}
 function place() {
   if (!buildType) return;
+  if (moving) return finishMove();
   const { x, z } = world.ghostCell;
   if (
     state.player.mode === 'foot' &&
@@ -3330,7 +3382,10 @@ function updateUI() {
       k =>
         `<div class="resource"><span class="r-icon">${RESOURCE_ICONS[k]}</span><b>${state.resources[k]}</b><small>${RESOURCE_NAMES[k]}</small></div>`
     )
-    .join('');
+    .join('')
+    .concat(
+      `<div class="resource bag-load${bagRoom(state) ? '' : ' full'}" title="背包容量"><span class="r-icon">▤</span><b>${bagUsed(state)}/${bagCap(state)}</b><small>背包</small></div>`
+    );
   for (const key of ['health', 'food', 'water']) {
     $(key + '-bar').style.width = state.vitals[key] + '%';
     $(key + '-val').textContent = Math.ceil(state.vitals[key]);
@@ -3416,8 +3471,14 @@ function updateUI() {
       )
       .join('');
   }
-  $('creature-tool').classList.toggle('locked', !state.secret);
-  $('creature-tool-text').textContent = state.secret ? '共生研究' : '未知訊號';
+  // the bottom bar follows where you are: on the raft, build and the device; at sea, the device and expeditions
+  const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard';
+  $('build-tool').hidden = !onFoot || Math.hypot(state.player.x - 1.8, state.player.z - 1.8) > 27;
+  $('adventure-btn').hidden = onFoot;
+  $('drink-count').textContent = state.resources.water || 0;
+  $('eat-count').textContent = state.resources.food || 0;
+  $('drink-btn').disabled = !state.resources.water || state.vitals.water >= 98;
+  $('eat-btn').disabled = !state.resources.food || state.vitals.food >= 98;
   $('secret-hint').innerHTML = state.secret
     ? `<span>◇</span><div><strong>隱藏航線 · 共生計畫</strong><p>${!count(state, 'pen') ? '建造展示池，迎接第一位夥伴。' : state.tamed.length < 2 ? '馴化兩隻生物，探索基因的祕密。' : !count(state, 'hatchery') ? '建造孵化台，重組生命的可能。' : '打開共生研究，培育新的生命。'}</p></div>`
     : '<span>◇</span><div><strong>來自海下的訊號</strong><p>東北方那座浮標，好像在呼喚你。</p></div>';
@@ -3472,7 +3533,8 @@ let journalTab = 'log',
 function journalTabs() {
   const c = codexProgress(state);
   return `<div class="tabs journal-tabs">${[
-    ['log', '航海日誌'],
+    ['log', '日誌'],
+    ['routes', '航線'],
     ['codex', `圖鑑 ${c.seen}/${c.total}`],
     ['achievements', `成就 ${achievementCount(state)}/${ACHIEVEMENTS.length}`]
   ]
@@ -3483,6 +3545,20 @@ function journalTabs() {
     .join('')}</div>`;
 }
 function bindJournalTabs(body) {
+  body.querySelectorAll('[data-codex]').forEach(
+    b =>
+      (b.onclick = () => {
+        codexPick = b.dataset.codex;
+        renderPanel();
+      })
+  );
+  const back = body.querySelector('[data-codex-back]');
+  if (back)
+    back.onclick = () => {
+      codexPick = null;
+      renderPanel();
+    };
+  bindPagers(body);
   body.querySelectorAll('[data-journal-tab]').forEach(
     b =>
       (b.onclick = () => {
@@ -3491,26 +3567,58 @@ function bindJournalTabs(body) {
       })
   );
 }
+// Long lists in the drawer turn pages instead of scrolling.
+const pages = {};
+const compactPanels = () => innerHeight < 520;
+function paged(key, items, per) {
+  const n = Math.max(1, Math.ceil(items.length / per));
+  pages[key] = clamp(pages[key] || 0, 0, n - 1);
+  const i = pages[key];
+  return {
+    items: items.slice(i * per, i * per + per),
+    bar:
+      n > 1
+        ? `<div class="bx-pager" data-pager="${key}"><button type="button" data-page-step="-1" ${i ? '' : 'disabled'}>‹</button><span>${i + 1} / ${n}</span><button type="button" data-page-step="1" ${i < n - 1 ? '' : 'disabled'}>›</button></div>`
+        : ''
+  };
+}
+function bindPagers(body) {
+  body.querySelectorAll('[data-pager]').forEach(p =>
+    p.querySelectorAll('[data-page-step]').forEach(
+      b =>
+        (b.onclick = () => {
+          pages[p.dataset.pager] += Number(b.dataset.pageStep);
+          renderPanel();
+        })
+    )
+  );
+}
+// The codex: a grid of species (pictures for the ones you have met); tap one for its page.
+let codexPick = null;
 function codexHTML() {
-  const c = codexProgress(state);
-  return `<div class="info-strip">靠近生物就會記錄到圖鑑；親手馴化或孵化的物種會加上徽章。已記錄 ${c.seen} / ${c.total} 種，馴化 ${c.tamed} 種。</div><div class="codex-grid">${codexEntries(
-    state
-  )
+  const c = codexProgress(state),
+    entries = codexEntries(state),
+    pick = entries.find(e => e.id === codexPick && e.seen);
+  if (pick)
+    return `<button type="button" class="bx-back" data-codex-back>‹ 圖鑑</button><article class="codex-page ${pick.tamed ? 'tamed' : ''}"><img alt="${esc(pick.name)}" src="${world.thumbnail(pick.seen.genome, 'codex-' + pick.id)}"><div><small>${esc(pick.familyName)}${pick.tamed ? ' · 🎖 已馴化' : ''}</small><h3>${esc(pick.name)}</h3><p>${esc(pick.lore)}</p><small>第 ${pick.seen.day} 日首次記錄 · 遇見 ${pick.seen.count} 次</small></div></article>`;
+  const page = paged('codex', entries, compactPanels() ? 4 : 12);
+  return `<p class="codex-count">已記錄 ${c.seen} / ${c.total} · 馴化 ${c.tamed}</p><div class="codex-tiles">${page.items
     .map(e =>
       e.seen
-        ? `<article class="codex-card ${e.tamed ? 'tamed' : ''}"><img alt="${esc(e.name)}" src="${world.thumbnail(e.seen.genome, 'codex-' + e.id)}"><div><small>${esc(e.familyName)}${e.tamed ? ' · 🎖 已馴化' : ''}</small><h3>${esc(e.name)}</h3><p>${esc(e.lore)}</p><small>第 ${e.seen.day} 日首次記錄 · 遇見 ${e.seen.count} 次</small></div></article>`
-        : `<article class="codex-card unknown"><div class="codex-unknown">？</div><div><small>${esc(e.familyName)}</small><h3>未發現的物種</h3><p>${e.family === 'land' ? '也許在某座島上……' : e.family === 'deep' ? '據說離家越遠，海越深。' : e.family === 'flora' ? '異晶讓某些生物開始長出植物。' : '就在附近的海裡。'}</p></div></article>`
+        ? `<button type="button" class="codex-tile ${e.tamed ? 'tamed' : ''}" data-codex="${esc(e.id)}"><img alt="" src="${world.thumbnail(e.seen.genome, 'codex-' + e.id)}"><span>${esc(e.name)}</span></button>`
+        : `<div class="codex-tile unknown"><b>？</b><span>${esc(e.familyName)}</span></div>`
     )
-    .join('')}</div>`;
+    .join('')}</div>${page.bar}`;
 }
 function achievementsHTML() {
   const got = state.achievements || {};
-  return `<div class="info-strip">已解鎖 ${achievementCount(state)} / ${ACHIEVEMENTS.length} 個成就。成就跟著存檔走。</div><div class="achievement-list">${ACHIEVEMENTS.map(
-    a => {
+  const page = paged('achievements', ACHIEVEMENTS, compactPanels() ? 4 : 8);
+  return `<div class="achievement-list compact">${page.items
+    .map(a => {
       const u = got[a.id];
       return `<div class="achievement ${u ? 'done' : 'locked'}"><span class="ach-icon">${u || !a.hidden ? a.icon : '❔'}</span><div><strong>${u || !a.hidden ? esc(a.name) : '隱藏成就'}</strong><small>${u || !a.hidden ? esc(a.desc) : '繼續冒險，也許就會發現。'}</small></div><em>${u ? '第 ' + u.day + ' 日' : ''}</em></div>`;
-    }
-  ).join('')}</div>`;
+    })
+    .join('')}</div>${page.bar}`;
 }
 function showNextAchievement() {
   if (achievementShowing || !achievementQueue.length) return;
@@ -4291,6 +4399,8 @@ function gamepad(dt) {
 }
 function setupEvents() {
   $('adventure-btn').onclick = () => openPanel('adventure');
+  $('drink-btn').onclick = () => consume('water');
+  $('eat-btn').onclick = () => consume('food');
   $('monologue').onclick = () => {
     const el = $('monologue');
     if (el.classList.contains('collapsed')) {
@@ -4538,6 +4648,11 @@ function setupEvents() {
     p.x = e.clientX;
     p.y = e.clientY;
     if (Math.hypot(e.clientX - p.startX, e.clientY - p.startY) > 9) p.moved = true;
+    if (moving && !p.right && canvasTouches().length < 2) {
+      const sp = world.seaPoint(e.clientX, e.clientY);
+      if (sp) world.ghostCell = { x: Math.round(sp.x / 3.6), z: Math.round(sp.z / 3.6) };
+      return;
+    }
     const t = canvasTouches();
     if (p.touch && t.length >= 2) {
       if (p !== t[0] && p !== t[1]) return;
@@ -4562,6 +4677,8 @@ function setupEvents() {
   };
   cvs.addEventListener('pointerup', e => {
     const p = release(e);
+    // let go of a dragged building to set it down
+    if (p && moving && p.moved && !p.right && running && !paused) return place();
     if (p && !p.moved && !p.right && running && !paused && pointers.size === 0 && performance.now() - p.t < 600)
       tapAt(e);
   });
@@ -4880,5 +4997,6 @@ function frame(now) {
   world.update(dt, state, { title: !running, destination, salvaging });
   world.render();
   placeFocusSpots();
+  if (panel === 'beasts') beastStage.update(dt);
 }
 initialize();

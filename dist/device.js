@@ -1,15 +1,12 @@
 // The battered handheld found on the raft desk. Once picked up it is the player's hub: a phone-style UI with apps
 // for the bag, vitals/status, beast storage, logbook, codex, achievements and stats (see game.js openDevice).
-import { RECIPES, buildError } from './rules.js?v=0.12.1';
+import { RECIPES, buildError } from './rules.js?v=0.13.0';
 
 export const DEVICE_APPS = [
   { id: 'bag', icon: '▤', name: '背包' },
-  { id: 'status', icon: '♥', name: '狀態' },
   { id: 'beasts', icon: '◎', name: '御獸倉庫' },
   { id: 'journal', icon: '☷', name: '航海日誌' },
   { id: 'codex', icon: '◈', name: '圖鑑' },
-  { id: 'achievements', icon: '✦', name: '成就' },
-  { id: 'stats', icon: '▥', name: '統計' },
   { id: 'settings', icon: '⚙', name: '設定' }
 ];
 

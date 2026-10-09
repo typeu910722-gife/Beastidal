@@ -1,3 +1,4 @@
+import { stow, bagRoom, bagFullError } from './bag.js?v=0.13.0';
 // Stable coordinates keep existing saves compatible with the new archipelago.
 export const ISLANDS = [
   { id: 'palm', name: '棕櫚環礁', x: 53, z: 32, rx: 11, rz: 9, tint: 0x749b67 },
@@ -46,7 +47,8 @@ export function harvest(s, id) {
   s.harvested ??= {};
   const remaining = (s.harvested[id] ?? -1) - s.elapsed;
   if (remaining > 0) return { ok: false, error: `此處正在恢復，還需 ${Math.ceil(remaining)} 秒。` };
-  s.resources[n.kind] += n.yield;
+  if (!bagRoom(s)) return { ok: false, error: bagFullError, full: true };
+  stow(s, { [n.kind]: n.yield });
   s.harvested[id] = s.elapsed + 120;
   return { ok: true, node: n };
 }

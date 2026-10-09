@@ -1,21 +1,21 @@
-import { expansionModels } from './expansion-models.js?v=0.12.1';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.12.1';
-import { normalizeHousing, penId } from './housing.js?v=0.12.1';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.12.1';
-export { makeCreature } from './creatures.js?v=0.12.1';
-import { makeIslands } from './island-models.js?v=0.12.1';
-import { facilityId } from './facilities.js?v=0.12.1';
+import { expansionModels } from './expansion-models.js?v=0.13.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.13.0';
+import { normalizeHousing, penId } from './housing.js?v=0.13.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.13.0';
+export { makeCreature } from './creatures.js?v=0.13.0';
+import { makeIslands } from './island-models.js?v=0.13.0';
+import { facilityId } from './facilities.js?v=0.13.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.12.1';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.12.1';
-import { PostFX } from './postfx.js?v=0.12.1';
-import { makeHuman, animateHuman } from './human.js?v=0.12.1';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.12.1';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.12.1';
-import { buildError } from './rules.js?v=0.12.1';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.12.1';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.12.1';
-import { dayPhase } from './clock.js?v=0.12.1';
+import { phenotype, seeded } from './genetics.js?v=0.13.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.13.0';
+import { PostFX } from './postfx.js?v=0.13.0';
+import { makeHuman, animateHuman } from './human.js?v=0.13.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.13.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.13.0';
+import { buildError } from './rules.js?v=0.13.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.13.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.13.0';
+import { dayPhase } from './clock.js?v=0.13.0';
 const V = T.Vector3;
 const ISLAND_GROUND = 0.42; // top of the island terrain where land beasts stand
 const colors = {
@@ -880,9 +880,11 @@ export class OceanWorld {
     const v = new V();
     return this.ray.ray.intersectPlane(this.plane, v) ? v : null;
   }
+  // s: the state the free cells are judged against (when moving a building, one without that building)
   setPlacement(type, s, level = 0) {
     this.buildLevel = type === 'upperfloor' ? 1 : level;
     this.placement = type;
+    this.placementState = type ? s : null;
     this.gridGroup.clear();
     if (type) {
       for (let x = -7; x <= 7; x++)
@@ -913,7 +915,9 @@ export class OceanWorld {
   updateGhost(s) {
     this.ghost.position.set(this.ghostCell.x * 3.6, 0.52 + (this.buildLevel || 0) * 3.3, this.ghostCell.z * 3.6);
     this.ghost.material.color.set(
-      buildError(s, this.placement, this.ghostCell.x, this.ghostCell.z, this.buildLevel) ? 0xed8b6c : 0xace4bd
+      buildError(this.placementState || s, this.placement, this.ghostCell.x, this.ghostCell.z, this.buildLevel)
+        ? 0xed8b6c
+        : 0xace4bd
     );
   }
   update(dt, s, opts = {}) {
@@ -998,7 +1002,7 @@ export class OceanWorld {
     this.boat.position.set(boat.x, pose.y, boat.z);
     this.boat.rotation.set(pose.pitch, boat.heading, pose.roll);
     this.boatHeave = pose.y;
-    this.boat.visible = !s.ship;
+    this.boat.visible = !s.ship || !!s.skiff;
     this.boat.userData.human.visible = !foot && !riding && !s.ship;
     this.walker.visible = this.onFoot || riding;
     this.walker.position.set(
@@ -1282,7 +1286,7 @@ export class OceanWorld {
   updateShip(s, t, aboard, helm) {
     const ship = this.ship,
       bands = ship.userData.bands;
-    this.hasShip = !!s.ship;
+    this.hasShip = !!s.ship && !s.skiff;
     const fusing = s.shipFusion;
     ship.visible = !!s.ship || !!fusing;
     for (const [id, c] of this.islandModels.claims) {

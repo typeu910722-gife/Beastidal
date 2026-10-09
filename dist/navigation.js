@@ -1,6 +1,6 @@
-import { CAVE } from './expansion.js?v=0.12.1';
-import { moveAboard, moveShip } from './ship.js?v=0.12.1';
-import { islandAt, onIsland, islandDocks, clearLand } from './islands.js?v=0.12.1';
+import { CAVE } from './expansion.js?v=0.13.0';
+import { moveAboard, moveShip } from './ship.js?v=0.13.0';
+import { islandAt, onIsland, islandDocks, clearLand } from './islands.js?v=0.13.0';
 // All travel modes share world coordinates. The boat stays moored while walking.
 export const TILE_SIZE = 3.6;
 const SIDES = [
@@ -62,7 +62,8 @@ export function normalizeTravel(s) {
   s.player.level = s.player.mode === 'foot' && s.player.level === 1 ? 1 : 0;
   s.player.mode =
     s.player.mode === 'foot' || (s.ship && ['ship', 'aboard'].includes(s.player.mode)) ? s.player.mode : 'boat';
-  if (s.ship && s.player.mode === 'boat') s.player.mode = 'ship';
+  // with the warship, 'boat' only means the skiff lowered from it (see launchSkiff)
+  if (s.ship && !s.skiff && s.player.mode === 'boat') s.player.mode = 'ship';
   if (!s.boat || !Number.isFinite(s.boat.x) || !Number.isFinite(s.boat.z))
     s.boat = { x: s.player.x, z: s.player.z, heading: s.player.heading || 0 };
   if (s.player.mode === 'foot' && !canWalk(s, s.player.x, s.player.z)) {
@@ -76,7 +77,7 @@ export function normalizeTravel(s) {
       s.player.z = s.boat.z;
     }
   }
-  if (!s.ship && s.player.mode === 'foot' && boatBlocked(s, s.boat.x, s.boat.z)) {
+  if ((!s.ship || s.skiff) && s.player.mode === 'foot' && boatBlocked(s, s.boat.x, s.boat.z)) {
     const spot = dockingSpots(s).sort((a, b) => distance(a.boat, s.boat) - distance(b.boat, s.boat))[0];
     if (spot) Object.assign(s.boat, spot.boat);
   }
@@ -171,7 +172,7 @@ export function moveTravel(s, dx, dz) {
   const allowed =
     s.player.mode === 'foot'
       ? (x, z) => canWalk(s, x, z)
-      : s.ship
+      : s.ship && !s.skiff
         ? (x, z) => !islandAt(x, z, 1)
         : (x, z) => !boatBlocked(s, x, z);
   // Substeps prevent tunneling over deck gaps at low frame rates.

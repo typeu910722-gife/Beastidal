@@ -12,11 +12,11 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./brand/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./style.css?v=0.12.1" />
-    <link rel="stylesheet" href="./mobile.css?v=0.12.1" />
-    <link rel="stylesheet" href="./panels.css?v=0.12.1" />
-    <link rel="stylesheet" href="./expansion.css?v=0.12.1" />
-    <link rel="stylesheet" href="./beastidal.css?v=0.12.1" />
+    <link rel="stylesheet" href="./style.css?v=0.13.0" />
+    <link rel="stylesheet" href="./mobile.css?v=0.13.0" />
+    <link rel="stylesheet" href="./panels.css?v=0.13.0" />
+    <link rel="stylesheet" href="./expansion.css?v=0.13.0" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.13.0" />
   </head>
   <body>
     <!-- Studio splash (about 7 s, tap or any key to skip): the YZ mark assembles, then the studio name rises. -->
@@ -133,6 +133,13 @@
             <div id="quest-list"></div>
             <p id="quest-hint" class="quiet"></p>
           </section>
+          <div class="supply-row">
+            <button id="drink-btn" type="button" title="喝水 · 水分 +35">
+              <span aria-hidden="true">💧</span>喝水<b id="drink-count">0</b></button
+            ><button id="eat-btn" type="button" title="進食 · 飽食 +35">
+              <span aria-hidden="true">🍖</span>進食<b id="eat-count">0</b>
+            </button>
+          </div>
           <div id="secret-hint" class="secret-hint">
             <span>◇</span>
             <div>
@@ -207,21 +214,19 @@
             <small id="save-status">存檔僅保存在此裝置</small>
           </section>
           <nav class="action-bar" aria-label="遊戲功能">
-            <button data-panel="build"><span class="tool-icon">⌂</span><span>建造</span><kbd>B</kbd></button
+            <button data-panel="build" id="build-tool">
+              <span class="tool-icon">⌂</span><span>建造</span><kbd>B</kbd></button
             ><button data-panel="device" id="device-tool">
               <span class="tool-icon">▯</span><span>裝置</span><kbd>I</kbd></button
-            ><button data-panel="journal"><span class="tool-icon">☷</span><span>航海日誌</span><kbd>J</kbd></button
-            ><button data-panel="creatures" id="creature-tool" class="locked">
-              <span class="tool-icon">◇</span><span id="creature-tool-text">未知訊號</span><kbd>C</kbd></button
             ><button id="adventure-btn" data-panel="adventure">
               <kbd>K</kbd><span class="tool-icon">✦</span><span>御獸遠航</span>
             </button>
           </nav>
-          <div class="control-hint">
-            <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 駕艇</span
-            ><span><kbd>滑鼠右鍵</kbd> 環視 · <kbd>滾輪</kbd> 縮放</span
-            ><span><kbd>點擊海面</kbd> 航行 · <kbd>空白鍵</kbd> 驅離</span>
-          </div>
+        </div>
+        <div class="control-hint">
+          <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 駕艇</span
+          ><span><kbd>滑鼠右鍵</kbd> 環視 · <kbd>滾輪</kbd> 縮放</span
+          ><span><kbd>點擊海面</kbd> 航行 · <kbd>空白鍵</kbd> 驅離</span>
         </div>
         <div id="beast-bar" hidden>
           <span id="beast-status"></span>
@@ -279,7 +284,7 @@
         <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
       </section>
     </main>
-    <script type="module" src="./game.js?v=0.12.1"></script>
+    <script type="module" src="./game.js?v=0.13.0"></script>
     <script>
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));

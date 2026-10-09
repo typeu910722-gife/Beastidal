@@ -1,23 +1,11 @@
-import {
-  EXPLORE,
-  STAGES,
-  normalizeExpansion,
-  activePet,
-  trainPet,
-  commandPet,
-  upgradeBoat,
-  awaken
-} from './expansion.js?v=0.12.1';
-import { penLabel } from './housing.js?v=0.12.1';
-import { restPlace, restIsland } from './ship.js?v=0.12.1';
-import { phenotype, FORMS } from './genetics.js?v=0.12.1';
-let tab = 'beasts';
+import { EXPLORE, STAGES, normalizeExpansion, commandPet, upgradeBoat, awaken } from './expansion.js?v=0.13.0';
+let tab = 'beasts',
+  page = 0;
 const esc = s =>
   String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 export function renderAdventure(body, s, ctx) {
   normalizeExpansion(s);
-  const e = s.expedition,
-    p = activePet(s);
+  const e = s.expedition;
   body.innerHTML = `<div class="tabs"><button data-exp-tab="beasts" class="${tab === 'beasts' ? 'active' : ''}">御獸夥伴</button><button data-exp-tab="voyage" class="${tab === 'voyage' ? 'active' : ''}">航務與遺跡</button></div>`;
   const run = (r, close = false) => {
     ctx.toast(r.ok ? r.message : r.error, !r.ok);
@@ -27,26 +15,36 @@ export function renderAdventure(body, s, ctx) {
     else ctx.refresh();
   };
   if (tab === 'beasts') {
-    body.innerHTML += `<div class="info-strip">羈絆 ${STAGES.map(([n, label]) => n + ' ' + label).join(' → ')}<br>訓練每次 +4（沒有冷卻）；同行每分鐘 +0.75、成功協採 +1。配對需要雙親各 35。<br>出戰只帶 1 隻，保留原池名額；回池會恢復耐力與體力。</div>`;
-    if (!s.tamed.length)
-      body.innerHTML +=
-        '<p>先調查研究浮標，建造展示池，再反覆接觸野生生命。投餌間隔 18 秒，約需 10–20 次；途中記得準備物資。</p>';
-    for (const pet of s.tamed) {
-      const ph = phenotype(pet.genome);
-      body.innerHTML += `<article class="beast-card"><div class="beast-heading"><h3>${esc(pet.name)}</h3><span>${pet.awakened ? '契印覺醒' : esc(STAGES.filter(([n]) => pet.bond >= n).at(-1)[1])}</span></div><p>${esc(penLabel(s, pet.penId))} · 休息於${esc({ lounge: '戰艦休息室', island: '領地 ' + (restIsland(s)?.name || ''), pen: '展示池' }[restPlace(s, pet)])} · ${e.activeId === pet.id ? '正在出戰' : '休息中'} · ${FORMS[ph.body]}${ph.fusion ? ' × ' + FORMS[ph.secondary] : ''}</p><div class="bond-meter"><i style="width:${pet.bond}%"></i></div><div class="beast-stats">羈絆 ${pet.bond.toFixed(1)} / 100 · 耐力 ${Math.ceil(pet.stamina)} · 體力 ${Math.ceil(pet.health)}</div><div class="button-row"><button data-train="${pet.id}">訓練／照護 · 口糧 2 / 異晶 1</button><button data-pet="${pet.id}" data-order="follow">跟隨</button><button data-pet="${pet.id}" data-order="gather">協助採集</button><button data-pet="${pet.id}" data-order="guard">守護協戰</button>${e.activeId === pet.id ? `<button data-pet="${pet.id}" data-order="home">回展示池</button>` : ''}<button data-awaken="${pet.id}" ${pet.awakened ? 'disabled' : ''}>喚醒契印</button></div></article>`;
+    // three companions per page: name, bond stage, bond bar and the orders; training lives in the beast storage
+    const per = innerHeight < 520 ? 2 : 4,
+      pages = Math.max(1, Math.ceil(s.tamed.length / per));
+    page = Math.min(Math.max(0, page), pages - 1);
+    if (!s.tamed.length) body.innerHTML += '<p class="dv-note">還沒有御獸夥伴。</p>';
+    for (const pet of s.tamed.slice(page * per, page * per + per)) {
+      const out = e.activeId === pet.id;
+      body.innerHTML += `<article class="beast-row"><div class="beast-row-head"><b>${esc(pet.name)}</b><span>${pet.awakened ? '契印覺醒' : esc(STAGES.filter(([n]) => pet.bond >= n).at(-1)[1])} · 羈絆 ${Math.floor(pet.bond)}${out ? ' · 出戰中' : ''}</span></div><div class="bond-meter"><i style="width:${pet.bond}%"></i></div><div class="beast-row-actions"><button data-pet="${pet.id}" data-order="follow">跟隨</button><button data-pet="${pet.id}" data-order="gather">協採</button><button data-pet="${pet.id}" data-order="guard">協戰</button>${out ? `<button data-pet="${pet.id}" data-order="home">回池</button>` : ''}${pet.bond >= 85 && !pet.awakened ? `<button data-awaken="${pet.id}">喚醒契印</button>` : ''}</div></article>`;
     }
-    body.innerHTML +=
-      '<p>雙親各傳下一個形態等位基因：第一親代決定主體，第二親代的翼、甲殼、觸鬚或尾刃會保留在混種外形。基因突變可能改變部位。</p>';
+    if (pages > 1)
+      body.innerHTML += `<div class="bx-pager"><button type="button" data-exp-page="-1" ${page ? '' : 'disabled'}>‹</button><span>${page + 1} / ${pages}</span><button type="button" data-exp-page="1" ${page < pages - 1 ? '' : 'disabled'}>›</button></div>`;
   } else {
-    body.innerHTML += `${s.ship ? '<div class="info-strip">⚓ 比斯泰德號 · 五層戰艦<br>艦砲傷害 34／裝填 5 秒（每發 1 廢金屬）· 掌舵時按空白鍵<br>風暴與海怪對戰艦的傷害大幅降低。</div>' : `<div class="info-strip">小艇 LV ${e.boatLevel} / 3 · 速度 +${(e.boatLevel * 0.7).toFixed(1)} · 暴風傷害降低<br>每次世界循環的後段會出現約 77 秒風暴；可上岸、返家避風。${e.boatLevel < 3 ? `<br>下次升級：木材 ${12 + e.boatLevel * 8} / 金屬 ${8 + e.boatLevel * 6} / 異晶 ${2 + e.boatLevel * 2}` : ''}</div><button id="upgrade-boat" class="full-button">返回避難所附近升級船隻</button>`}<p class="section-label">御獸文明 · 契印之路</p>`;
-    body.innerHTML += EXPLORE.filter(v => v.kind !== 'exit')
-      .map(
-        site =>
-          `<article class="explore-row"><h3>${e.collected.includes(site.id) ? '✓' : '◇'} ${site.name}</h3><p>${site.deep ? '海底 8 公尺 · 騎乘潛水' : site.cave ? '異晶洞窟內 · 先解讀御獸石碑' : site.kind === 'entrance' ? '異晶礁島 · 登岸進入' : site.kind === 'ruin' ? '沉城遺島 · 開啟封印的知識' : '棕櫚環礁 · 一次性物資補給'}</p><button data-route="${site.id}">標記探索點</button></article>`
-      )
-      .join('');
-    body.innerHTML += `<article class="explore-row"><h3>${e.boss.defeated ? '✓' : '⚠'} 深海守望者</h3><p>東方海域 (100, 40) · 巨型敵對生物<br>體力 ${Math.max(0, Math.ceil(e.boss.hp))} / 480 · 建議升級船體並培養羈絆 30 以上夥伴。<br>完成三段記錄與海怪挑戰，羈絆 85 可消耗 12 異晶喚醒契印。</p><button data-route="boss">標記海怪海域</button></article>`;
+    body.innerHTML += s.ship
+      ? '<p class="dv-note">⚓ 比斯泰德號 · 掌舵時按空白鍵開砲（每發 1 廢金屬）</p>'
+      : `<div class="boat-row"><span>小艇 LV ${e.boatLevel} / 3</span>${e.boatLevel < 3 ? `<button id="upgrade-boat">升級 · 木 ${12 + e.boatLevel * 8} / 金 ${8 + e.boatLevel * 6} / 晶 ${2 + e.boatLevel * 2}</button>` : ''}</div>`;
+    const site = v =>
+      `<button type="button" class="site-tile${e.collected.includes(v.id) ? ' done' : ''}" data-route="${v.id}" title="${v.deep ? '海底 8 公尺 · 騎乘潛水' : v.cave ? '異晶洞窟內' : v.kind === 'entrance' ? '異晶礁島 · 登岸進入' : v.kind === 'ruin' ? '沉城遺島' : '棕櫚環礁'}">${e.collected.includes(v.id) ? '✓' : '◇'} ${v.name}</button>`;
+    body.innerHTML += `<div class="site-grid">${EXPLORE.filter(v => v.kind !== 'exit')
+      .map(site)
+      .join(
+        ''
+      )}<button type="button" class="site-tile boss${e.boss.defeated ? ' done' : ''}" data-route="boss">${e.boss.defeated ? '✓' : '⚠'} 深海守望者 · ${Math.max(0, Math.ceil(e.boss.hp))}</button></div>`;
   }
+  body.querySelectorAll('[data-exp-page]').forEach(
+    b =>
+      (b.onclick = () => {
+        page += Number(b.dataset.expPage);
+        ctx.refresh();
+      })
+  );
   body.querySelectorAll('[data-exp-tab]').forEach(
     b =>
       (b.onclick = () => {
@@ -54,7 +52,6 @@ export function renderAdventure(body, s, ctx) {
         ctx.refresh();
       })
   );
-  body.querySelectorAll('[data-train]').forEach(b => (b.onclick = () => run(trainPet(s, b.dataset.train))));
   body
     .querySelectorAll('[data-pet]')
     .forEach(b => (b.onclick = () => run(commandPet(s, b.dataset.pet, b.dataset.order), true)));

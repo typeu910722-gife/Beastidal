@@ -1,6 +1,7 @@
-import { RECIPES, buildError } from './rules.js?v=0.12.1';
-import { findFacility } from './facilities.js?v=0.12.1';
-import { penId, used } from './housing.js?v=0.12.1';
+import { RECIPES, buildError } from './rules.js?v=0.13.0';
+import { findFacility } from './facilities.js?v=0.13.0';
+import { penId, used } from './housing.js?v=0.13.0';
+import { give } from './bag.js?v=0.13.0';
 const fail = error => ({ ok: false, error });
 export function climb(s, b) {
   if (
@@ -62,7 +63,7 @@ export function demolish(s, id) {
   const error = removable(s, b);
   if (error) return fail(error);
   s.buildings = s.buildings.filter(v => v !== b);
-  for (const [k, v] of Object.entries(RECIPES[b.type].cost)) s.resources[k] += Math.floor(v / 2);
+  give(s, Object.fromEntries(Object.entries(RECIPES[b.type].cost).map(([k, v]) => [k, Math.floor(v / 2)])));
   return { ok: true, message: '已拆除，回收約一半材料。' };
 }
 export function relocate(s, id, x, z, level = 0) {

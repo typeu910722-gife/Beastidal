@@ -21,6 +21,8 @@ import {
   fireCannon,
   deckWalk,
   shipDockOption,
+  launchSkiff,
+  stowSkiff,
   restPlace,
   LIMITS,
   FUSION_COST,
@@ -175,6 +177,8 @@ test('Five decks connect by ladders; cargo holds and lounge enforce their rules'
   assert.ok(transferCargo(s, 'wood', 50).ok);
   assert.equal(s.ship.cargo.wood, 50);
   assert.equal(s.resources.wood, wood - 50);
+  // taking cargo out needs room in the bag
+  for (const k of Object.keys(s.resources)) s.resources[k] = 0;
   assert.ok(transferCargo(s, 'wood', -20).ok);
   assert.equal(s.ship.cargo.wood, 30);
   assert.equal(go('down-1').ok, false);
@@ -220,4 +224,29 @@ test('Warship model builds five cut-away deck bands', () => {
   );
   assert.equal(g.userData.bands.length, 5);
   assert.ok(g.userData.bands.every(b => b.children.length > 5));
+});
+test('After the fusion the skiff can still be lowered to explore alone and hauled back aboard', () => {
+  const s = shipState();
+  Object.assign(s.player, { x: s.ship.x, z: s.ship.z });
+  assert.ok(boardShip(s).ok);
+  // away from the gangway, the main deck offers the skiff
+  Object.assign(s.player, { lx: 0, lz: 8 });
+  assert.equal(shipDockOption(s).mode, 'launch-skiff');
+  assert.ok(launchSkiff(s).ok);
+  assert.equal(s.player.mode, 'boat');
+  assert.ok(s.skiff);
+  // the skiff stays a skiff across a save and reload
+  const loaded = normalizeTravel(normalizeShip(JSON.parse(JSON.stringify(s))));
+  assert.equal(loaded.player.mode, 'boat');
+  // it sails on its own while the warship waits at anchor
+  const ship = { ...s.ship };
+  moveTravel(s, 30, 0);
+  assert.ok(Math.hypot(s.player.x - ship.x, s.player.z - ship.z) > 20);
+  assert.deepEqual({ x: s.ship.x, z: s.ship.z }, { x: ship.x, z: ship.z });
+  assert.equal(stowSkiff(s).ok, false, 'too far from the warship');
+  Object.assign(s.player, { x: ship.x + 8, z: ship.z });
+  assert.equal(shipDockOption(s).mode, 'stow-skiff');
+  assert.ok(stowSkiff(s).ok);
+  assert.equal(s.player.mode, 'aboard');
+  assert.equal(s.skiff, false);
 });
