@@ -1,6 +1,4 @@
 {
   "version": "0.0.1",
-  "configurations": [
-    {"name": "beastidal", "runtimeExecutable": "node", "runtimeArgs": ["server.mjs"], "port": 8080}
-  ]
+  "configurations": [{ "name": "beastidal", "runtimeExecutable": "node", "runtimeArgs": ["server.mjs"], "port": 8080 }]
 }

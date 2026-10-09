@@ -1,34 +1,337 @@
-import{phenotype,clamp}from'./genetics.js?v=0.9.0';
-import{NODES,harvest}from'./islands.js?v=0.9.0';
-import{restPlace,canDeploy}from'./ship.js?v=0.9.0';
-export const EXPLORE=[
- {id:'palm-cache',name:'漂流者寶箱',x:57,z:33,kind:'chest',rewards:{wood:8,food:5,metal:3}},
- {id:'archive',name:'御獸文明石碑',x:34,z:-81,kind:'ruin',rewards:{crystal:3}},
- {id:'cave-door',name:'晶窟入口',x:-66,z:-37,kind:'entrance'},
- {id:'cave-exit',name:'返回晶礁海岸',x:120,z:-106,kind:'exit',cave:true},
- {id:'cave-heart',name:'晶窟封印寶箱',x:120,z:-112,kind:'chest',cave:true,rewards:{crystal:8,metal:6}},
- {id:'deep-memory',name:'深海記憶核心',x:22,z:-34,kind:'deep',deep:true,rewards:{crystal:6,metal:4}}
+import { phenotype, clamp } from './genetics.js?v=0.9.0';
+import { NODES, harvest } from './islands.js?v=0.9.0';
+import { restPlace, canDeploy } from './ship.js?v=0.9.0';
+export const EXPLORE = [
+  { id: 'palm-cache', name: '漂流者寶箱', x: 57, z: 33, kind: 'chest', rewards: { wood: 8, food: 5, metal: 3 } },
+  { id: 'archive', name: '御獸文明石碑', x: 34, z: -81, kind: 'ruin', rewards: { crystal: 3 } },
+  { id: 'cave-door', name: '晶窟入口', x: -66, z: -37, kind: 'entrance' },
+  { id: 'cave-exit', name: '返回晶礁海岸', x: 120, z: -106, kind: 'exit', cave: true },
+  {
+    id: 'cave-heart',
+    name: '晶窟封印寶箱',
+    x: 120,
+    z: -112,
+    kind: 'chest',
+    cave: true,
+    rewards: { crystal: 8, metal: 6 }
+  },
+  {
+    id: 'deep-memory',
+    name: '深海記憶核心',
+    x: 22,
+    z: -34,
+    kind: 'deep',
+    deep: true,
+    rewards: { crystal: 6, metal: 4 }
+  }
 ];
-export const CAVE={x:120,z:-110,r:6};
-export const STAGES=[[0,'初識'],[15,'同行'],[30,'協戰'],[45,'騎乘'],[60,'深潛'],[85,'契印']];
-export function normalizeExpansion(s){s.expedition??={};const e=s.expedition;e.boatLevel??=0;e.activeId??=null;e.order??='follow';e.oxygen??=90;e.collected??=[];e.boss??={x:100,z:40,hp:480,maxHp:480,defeated:false,lastAttack:-999};e.lastStorm??=s.elapsed;e.lastGather??=s.elapsed;e.lastBond??=s.elapsed;s.player.level??=0;for(const p of[...s.tamed,...s.eggs]){p.bond??=10;p.stamina??=100;p.health??=100;p.lastTrain??=-999;p.lastAttack??=-999;p.awakened??=false;}if(!s.tamed.some(p=>p.id===e.activeId)){e.activeId=null;e.mounted=false;e.diving=false;}if(!e.mounted)e.diving=false;return s;}
-export const activePet=s=>s.tamed.find(p=>p.id===s.expedition?.activeId);
-export const stormAt=s=>s.elapsed%480/480>.6&&s.elapsed%480/480<.76;
-const fail=error=>({ok:false,error});
-const pay=(s,cost)=>{if(Object.entries(cost).some(([k,v])=>s.resources[k]<v))return false;for(const[k,v]of Object.entries(cost))s.resources[k]-=v;return true;};
-const reward=(s,cost)=>{for(const[k,v]of Object.entries(cost||{}))s.resources[k]+=v;};
-export function trainPet(s,id){normalizeExpansion(s);const p=s.tamed.find(p=>p.id===id);if(!p)return fail('找不到這隻夥伴。');if(p.bond>=100)return fail('羈絆已滿。');if(s.elapsed-p.lastTrain<90)return fail(`訓練後需要休息 ${Math.ceil(90-s.elapsed+p.lastTrain)} 秒。`);if(!pay(s,{food:2,crystal:1}))return fail('訓練需要 2 口糧與 1 異晶。');p.lastTrain=s.elapsed;p.bond=Math.min(100,p.bond+4);p.stamina=Math.min(100,p.stamina+15);p.health=Math.min(100,p.health+15);return{ok:true,message:'默契訓練完成：羈絆 +4。再次訓練需等待 90 秒。'};}
-export function commandPet(s,id,order='follow'){normalizeExpansion(s);const p=s.tamed.find(p=>p.id===id);if(!p)return fail('請先馴化生物。');if(s.expedition.mounted)return fail('請先回到小艇解除騎乘。');if(order==='home'){s.expedition.activeId=null;return{ok:true,message:'夥伴已返回原展示池。'};}if(!['follow','gather','guard'].includes(order))return fail('未知指令。');if(!p.penId)return fail('請先替牠安排展示池。');{const away=canDeploy(s,p);if(away)return fail(away);}if(p.bond<(order==='guard'?30:15))return fail(order==='guard'?'羈絆 30 才能協戰。':'羈絆 15 才願意跟隨與採集。');if(p.health<15||p.stamina<10)return fail('夥伴需要回池休息或訓練照護。');s.expedition.activeId=id;s.expedition.order=order;return{ok:true,message:p.name+'：'+({follow:'跟隨',gather:'協助採集',guard:'守護協戰'})[order]+'。原池名額會保留。'};}
-export function toggleRide(s){normalizeExpansion(s);const e=s.expedition,p=activePet(s);if(e.mounted){if(e.diving)return fail('請先浮上海面。');if(Math.hypot(s.player.x-s.boat.x,s.player.z-s.boat.z)>(s.ship?16:7))return fail(s.ship?'請回到戰艦 16 公尺內解除騎乘。':'請回到停泊的小艇 7 公尺內解除騎乘。');e.mounted=false;e.diving=false;Object.assign(s.player,{x:s.boat.x,z:s.boat.z});return{ok:true,message:'已返回小艇。'};}if(!p||p.bond<45)return fail('先派出羈絆 45 的夥伴。');if(s.player.mode==='foot')return fail('請先登艇，再騎乘夥伴。');if(s.player.mode==='aboard')return fail('請在駕駛室掌舵時再騎乘出海。');if(p.stamina<25)return fail('騎乘需要至少 25 耐力。');e.mounted=true;return{ok:true,message:'已騎乘。小艇會留在原地；回到小艇附近即可解除。'};}
-export function toggleDive(s){normalizeExpansion(s);const e=s.expedition,p=activePet(s);if(e.diving){e.diving=false;return{ok:true,message:'已浮上海面。'};}if(!e.mounted||!p||p.bond<60)return fail('深潛需要騎乘羈絆 60 的夥伴。');if(e.oxygen<25||p.stamina<20)return fail('先浮上水面補充氧氣與耐力。');e.diving=true;return{ok:true,message:'潛入 8 公尺深處。氧氣耗尽會自動浮上；尋找深海記憶核心。'};}
-export function upgradeBoat(s){normalizeExpansion(s);const lv=s.expedition.boatLevel;if(s.ship)return fail('小艇已融合為戰艦。');if(lv>=3)return fail('船隻已升到最高 3 級。');if(s.player.mode==='foot'&&s.inCave||Math.hypot(s.player.x-1.8,s.player.z-1.8)>20||s.expedition.mounted)return fail('請駕艇返回避難所附近升級。');const cost={wood:12+lv*8,metal:8+lv*6,crystal:2+lv*2};if(!pay(s,cost))return fail('升級材料不足。');s.expedition.boatLevel++;return{ok:true,message:`小艇升至 ${lv+1} 級：航速提升，風暴傷害降低。`};}
-export function explore(s,id){normalizeExpansion(s);const e=s.expedition,site=EXPLORE.find(p=>p.id===id);if(!site)return fail('找不到探索點。');if(!!site.cave!==!!s.inCave)return fail('探索點不在目前區域。');if(Math.hypot(site.x-s.player.x,site.z-s.player.z)>4.5)return fail('請靠近探索點至 4 公尺內。');if(site.deep&&!e.diving)return fail('此遺物在海面下 8 公尺，需要騎乘潛水。');if(!site.deep&&s.player.mode!=='foot')return fail('請先登岸。');if(site.kind==='entrance'){s.caveReturn={x:s.player.x,z:s.player.z};s.inCave=true;s.player.x=CAVE.x;s.player.z=CAVE.z+3;s.player.level=0;return{ok:true,message:'進入異晶洞窟。出口在身後。'};}if(site.kind==='exit'){s.inCave=false;Object.assign(s.player,s.caveReturn||{x:-66,z:-37});return{ok:true,message:'已返回海岸。'};}if(e.collected.includes(id))return fail('這裡的遺物已經回收。');if(id==='cave-heart'&&!e.collected.includes('archive'))return fail('封印需要沉城遺島的御獸石碑知識。');e.collected.push(id);reward(s,site.rewards);const texts={archive:'石碑：御獸不是支配。與生命同行、共戰、深入海淵，才能獲得契印。','cave-heart':'晶窟記錄：雙親的形態基因可以共存，混種生命並非錯誤。','deep-memory':'深海記憶：擊退深海守望者後，羈絆 85 的夥伴可喚醒契印。','palm-cache':'補給箱中找到漂流者留下的食物與材料。'};s.log.unshift({day:1+Math.floor(s.elapsed/480),title:site.name,text:texts[id]});return{ok:true,message:texts[id]};}
-export function attack(s){normalizeExpansion(s);const e=s.expedition,p=activePet(s);if(!p||p.bond<30)return fail('需要羈絆 30 的出戰夥伴。');if(p.health<15||p.stamina<6)return fail('夥伴已疲累，請回池休息。');if(s.elapsed-p.lastAttack<3)return fail('攻擊恢復中。');const b=e.boss;let target=!b.defeated&&Math.hypot(s.player.x-b.x,s.player.z-b.z)<17?b:s.wild.filter(w=>w.hostile&&Math.hypot(w.x-s.player.x,w.z-s.player.z)<14).sort((a,b)=>Math.hypot(a.x-s.player.x,a.z-s.player.z)-Math.hypot(b.x-s.player.x,b.z-s.player.z))[0];if(!target)return fail('附近沒有可攻擊的敵對生物。');p.stamina-=6;p.lastAttack=s.elapsed;const ph=phenotype(p.genome),damage=Math.round(8+ph.armor*.07+ph.speed*.06+(p.awakened?12:0));target.hp=(target.hp??60)-damage;e.attackFlashUntil=s.elapsed+.25;if(target.hp<=0){if(target===b){b.defeated=true;reward(s,{crystal:12,metal:15,food:5});p.bond=Math.min(100,p.bond+6);s.log.unshift({day:1+Math.floor(s.elapsed/480),title:'深海守望者沉入海溝',text:'我們並肩度過了風浪。守望者留下的契印回應了夥伴的光。'});}else{s.wild=s.wild.filter(w=>w!==target);reward(s,{crystal:1,food:2});p.bond=Math.min(100,p.bond+1);}return{ok:true,message:target===b?'擊退巨型海怪！異晶 +12、金屬 +15、口糧 +5。':'擊退敵對生物。'};}return{ok:true,message:`夥伴造成 ${damage} 傷害；敵人體力 ${Math.ceil(target.hp)}。`};}
-export function awaken(s,id){normalizeExpansion(s);const p=s.tamed.find(p=>p.id===id),e=s.expedition;if(!p||p.bond<85)return fail('需要羈絆 85。');if(p.awakened)return fail('此夥伴已喚醒契印。');if(!e.boss.defeated||!['archive','cave-heart','deep-memory'].every(id=>e.collected.includes(id)))return fail('先完成御獸石碑、晶窟封印、深海記憶與守望者挑戰。');if(!pay(s,{crystal:12}))return fail('契印覺醒需要 12 異晶。');p.awakened=true;return{ok:true,message:'契印覺醒：戰鬥傷害 +12，夥伴獲得環形靈光。幻獸之路的第一步。'};}
-export function tickExpansion(s,dt,safe=false){normalizeExpansion(s);const e=s.expedition,p=activePet(s),events=[];for(const pet of s.tamed){if(pet!==p){const k=({island:1.6,lounge:1.3,pen:1})[restPlace(s,pet)];pet.stamina=Math.min(100,pet.stamina+dt*.7*k);pet.health=Math.min(100,pet.health+dt*.45*k);}}
- if(e.diving){e.oxygen=Math.max(0,e.oxygen-dt);if(e.oxygen===0){e.diving=false;events.push('氧氣不足，夥伴已帶你浮上海面。');}}else e.oxygen=Math.min(90,e.oxygen+dt*7);
- if(p){p.stamina=clamp(p.stamina+dt*(e.diving?-.36:e.mounted?-.12:.12),0,100);if(!safe&&s.elapsed-e.lastBond>=60){e.lastBond=s.elapsed;p.bond=Math.min(100,p.bond+.75);}if(p.stamina<=1&&e.mounted){e.diving=false;e.mounted=false;Object.assign(s.player,{x:s.boat.x,z:s.boat.z});s.vitals.health=Math.max(1,s.vitals.health-8);events.push('夥伴力竭，緊急返回小艇；體力 -8。');}
- if(!safe&&e.order==='gather'&&p.stamina>=12&&s.elapsed-e.lastGather>=45){e.lastGather=s.elapsed;let got=false;if(s.player.mode==='foot'&&!s.inCave){const node=NODES.find(n=>Math.hypot(n.x-s.player.x,n.z-s.player.z)<=4&&(s.harvested?.[n.id]||0)<=s.elapsed);if(node)got=harvest(s,node.id).ok;}else if(!e.diving){const l=s.loot.find(l=>Math.hypot(l.x-s.player.x,l.z-s.player.z)<12);if(l){reward(s,l.kind===3?{crystal:1,metal:2}:{wood:3,fiber:1});s.loot=s.loot.filter(v=>v!==l);s.salvaged++;got=true;}}if(got){p.stamina-=8;p.bond=Math.min(100,p.bond+1);events.push('夥伴協助採集，物資已放入背包，羈絆 +1。');}}
- if(!safe&&e.order==='guard'&&s.elapsed-p.lastAttack>=4){const r=attack(s);if(r.ok)events.push(r.message);}}
- if(!safe&&!s.inCave&&!e.diving&&stormAt(s)&&s.player.mode!=='foot'&&s.elapsed-e.lastStorm>10){e.lastStorm=s.elapsed;s.vitals.health=Math.max(0,s.vitals.health-Math.max(.5,5-(s.ship?6:e.boatLevel)*1.5));events.push(s.ship?'暴風浪拍打戰艦船身，艦體穩住了。':'暴風浪拍擊！返回避難所或升級船體可降低風險。');}
- const b=e.boss,d=Math.hypot(s.player.x-b.x,s.player.z-b.z);if(!safe&&!s.inCave&&!b.defeated&&s.player.mode!=='foot'&&d<30){if(d>6){b.x+=(s.player.x-b.x)/d*dt*1.5;b.z+=(s.player.z-b.z)/d*dt*1.5;}if(d<9&&s.elapsed-b.lastAttack>=4){b.lastAttack=s.elapsed;const damage=10-(s.ship?6:e.boatLevel)*1.5;s.vitals.health=Math.max(0,s.vitals.health-damage);if(p)p.health=Math.max(0,p.health-4);events.push('深海守望者撞擊！命令夥伴攻擊，或立刻撤離。');}}else if(d>45&&!b.defeated){b.x+=(100-b.x)*Math.min(1,dt*.25);b.z+=(40-b.z)*Math.min(1,dt*.25);}return events;}
+export const CAVE = { x: 120, z: -110, r: 6 };
+export const STAGES = [
+  [0, '初識'],
+  [15, '同行'],
+  [30, '協戰'],
+  [45, '騎乘'],
+  [60, '深潛'],
+  [85, '契印']
+];
+export function normalizeExpansion(s) {
+  s.expedition ??= {};
+  const e = s.expedition;
+  e.boatLevel ??= 0;
+  e.activeId ??= null;
+  e.order ??= 'follow';
+  e.oxygen ??= 90;
+  e.collected ??= [];
+  e.boss ??= { x: 100, z: 40, hp: 480, maxHp: 480, defeated: false, lastAttack: -999 };
+  e.lastStorm ??= s.elapsed;
+  e.lastGather ??= s.elapsed;
+  e.lastBond ??= s.elapsed;
+  s.player.level ??= 0;
+  for (const p of [...s.tamed, ...s.eggs]) {
+    p.bond ??= 10;
+    p.stamina ??= 100;
+    p.health ??= 100;
+    p.lastTrain ??= -999;
+    p.lastAttack ??= -999;
+    p.awakened ??= false;
+  }
+  if (!s.tamed.some(p => p.id === e.activeId)) {
+    e.activeId = null;
+    e.mounted = false;
+    e.diving = false;
+  }
+  if (!e.mounted) e.diving = false;
+  return s;
+}
+export const activePet = s => s.tamed.find(p => p.id === s.expedition?.activeId);
+export const stormAt = s => (s.elapsed % 480) / 480 > 0.6 && (s.elapsed % 480) / 480 < 0.76;
+const fail = error => ({ ok: false, error });
+const pay = (s, cost) => {
+  if (Object.entries(cost).some(([k, v]) => s.resources[k] < v)) return false;
+  for (const [k, v] of Object.entries(cost)) s.resources[k] -= v;
+  return true;
+};
+const reward = (s, cost) => {
+  for (const [k, v] of Object.entries(cost || {})) s.resources[k] += v;
+};
+export function trainPet(s, id) {
+  normalizeExpansion(s);
+  const p = s.tamed.find(p => p.id === id);
+  if (!p) return fail('找不到這隻夥伴。');
+  if (p.bond >= 100) return fail('羈絆已滿。');
+  if (s.elapsed - p.lastTrain < 90) return fail(`訓練後需要休息 ${Math.ceil(90 - s.elapsed + p.lastTrain)} 秒。`);
+  if (!pay(s, { food: 2, crystal: 1 })) return fail('訓練需要 2 口糧與 1 異晶。');
+  p.lastTrain = s.elapsed;
+  p.bond = Math.min(100, p.bond + 4);
+  p.stamina = Math.min(100, p.stamina + 15);
+  p.health = Math.min(100, p.health + 15);
+  return { ok: true, message: '默契訓練完成：羈絆 +4。再次訓練需等待 90 秒。' };
+}
+export function commandPet(s, id, order = 'follow') {
+  normalizeExpansion(s);
+  const p = s.tamed.find(p => p.id === id);
+  if (!p) return fail('請先馴化生物。');
+  if (s.expedition.mounted) return fail('請先回到小艇解除騎乘。');
+  if (order === 'home') {
+    s.expedition.activeId = null;
+    return { ok: true, message: '夥伴已返回原展示池。' };
+  }
+  if (!['follow', 'gather', 'guard'].includes(order)) return fail('未知指令。');
+  if (!p.penId) return fail('請先替牠安排展示池。');
+  {
+    const away = canDeploy(s, p);
+    if (away) return fail(away);
+  }
+  if (p.bond < (order === 'guard' ? 30 : 15))
+    return fail(order === 'guard' ? '羈絆 30 才能協戰。' : '羈絆 15 才願意跟隨與採集。');
+  if (p.health < 15 || p.stamina < 10) return fail('夥伴需要回池休息或訓練照護。');
+  s.expedition.activeId = id;
+  s.expedition.order = order;
+  return {
+    ok: true,
+    message: p.name + '：' + { follow: '跟隨', gather: '協助採集', guard: '守護協戰' }[order] + '。原池名額會保留。'
+  };
+}
+export function toggleRide(s) {
+  normalizeExpansion(s);
+  const e = s.expedition,
+    p = activePet(s);
+  if (e.mounted) {
+    if (e.diving) return fail('請先浮上海面。');
+    if (Math.hypot(s.player.x - s.boat.x, s.player.z - s.boat.z) > (s.ship ? 16 : 7))
+      return fail(s.ship ? '請回到戰艦 16 公尺內解除騎乘。' : '請回到停泊的小艇 7 公尺內解除騎乘。');
+    e.mounted = false;
+    e.diving = false;
+    Object.assign(s.player, { x: s.boat.x, z: s.boat.z });
+    return { ok: true, message: '已返回小艇。' };
+  }
+  if (!p || p.bond < 45) return fail('先派出羈絆 45 的夥伴。');
+  if (s.player.mode === 'foot') return fail('請先登艇，再騎乘夥伴。');
+  if (s.player.mode === 'aboard') return fail('請在駕駛室掌舵時再騎乘出海。');
+  if (p.stamina < 25) return fail('騎乘需要至少 25 耐力。');
+  e.mounted = true;
+  return { ok: true, message: '已騎乘。小艇會留在原地；回到小艇附近即可解除。' };
+}
+export function toggleDive(s) {
+  normalizeExpansion(s);
+  const e = s.expedition,
+    p = activePet(s);
+  if (e.diving) {
+    e.diving = false;
+    return { ok: true, message: '已浮上海面。' };
+  }
+  if (!e.mounted || !p || p.bond < 60) return fail('深潛需要騎乘羈絆 60 的夥伴。');
+  if (e.oxygen < 25 || p.stamina < 20) return fail('先浮上水面補充氧氣與耐力。');
+  e.diving = true;
+  return { ok: true, message: '潛入 8 公尺深處。氧氣耗尽會自動浮上；尋找深海記憶核心。' };
+}
+export function upgradeBoat(s) {
+  normalizeExpansion(s);
+  const lv = s.expedition.boatLevel;
+  if (s.ship) return fail('小艇已融合為戰艦。');
+  if (lv >= 3) return fail('船隻已升到最高 3 級。');
+  if (
+    (s.player.mode === 'foot' && s.inCave) ||
+    Math.hypot(s.player.x - 1.8, s.player.z - 1.8) > 20 ||
+    s.expedition.mounted
+  )
+    return fail('請駕艇返回避難所附近升級。');
+  const cost = { wood: 12 + lv * 8, metal: 8 + lv * 6, crystal: 2 + lv * 2 };
+  if (!pay(s, cost)) return fail('升級材料不足。');
+  s.expedition.boatLevel++;
+  return { ok: true, message: `小艇升至 ${lv + 1} 級：航速提升，風暴傷害降低。` };
+}
+export function explore(s, id) {
+  normalizeExpansion(s);
+  const e = s.expedition,
+    site = EXPLORE.find(p => p.id === id);
+  if (!site) return fail('找不到探索點。');
+  if (!!site.cave !== !!s.inCave) return fail('探索點不在目前區域。');
+  if (Math.hypot(site.x - s.player.x, site.z - s.player.z) > 4.5) return fail('請靠近探索點至 4 公尺內。');
+  if (site.deep && !e.diving) return fail('此遺物在海面下 8 公尺，需要騎乘潛水。');
+  if (!site.deep && s.player.mode !== 'foot') return fail('請先登岸。');
+  if (site.kind === 'entrance') {
+    s.caveReturn = { x: s.player.x, z: s.player.z };
+    s.inCave = true;
+    s.player.x = CAVE.x;
+    s.player.z = CAVE.z + 3;
+    s.player.level = 0;
+    return { ok: true, message: '進入異晶洞窟。出口在身後。' };
+  }
+  if (site.kind === 'exit') {
+    s.inCave = false;
+    Object.assign(s.player, s.caveReturn || { x: -66, z: -37 });
+    return { ok: true, message: '已返回海岸。' };
+  }
+  if (e.collected.includes(id)) return fail('這裡的遺物已經回收。');
+  if (id === 'cave-heart' && !e.collected.includes('archive')) return fail('封印需要沉城遺島的御獸石碑知識。');
+  e.collected.push(id);
+  reward(s, site.rewards);
+  const texts = {
+    archive: '石碑：御獸不是支配。與生命同行、共戰、深入海淵，才能獲得契印。',
+    'cave-heart': '晶窟記錄：雙親的形態基因可以共存，混種生命並非錯誤。',
+    'deep-memory': '深海記憶：擊退深海守望者後，羈絆 85 的夥伴可喚醒契印。',
+    'palm-cache': '補給箱中找到漂流者留下的食物與材料。'
+  };
+  s.log.unshift({ day: 1 + Math.floor(s.elapsed / 480), title: site.name, text: texts[id] });
+  return { ok: true, message: texts[id] };
+}
+export function attack(s) {
+  normalizeExpansion(s);
+  const e = s.expedition,
+    p = activePet(s);
+  if (!p || p.bond < 30) return fail('需要羈絆 30 的出戰夥伴。');
+  if (p.health < 15 || p.stamina < 6) return fail('夥伴已疲累，請回池休息。');
+  if (s.elapsed - p.lastAttack < 3) return fail('攻擊恢復中。');
+  const b = e.boss;
+  let target =
+    !b.defeated && Math.hypot(s.player.x - b.x, s.player.z - b.z) < 17
+      ? b
+      : s.wild
+          .filter(w => w.hostile && Math.hypot(w.x - s.player.x, w.z - s.player.z) < 14)
+          .sort(
+            (a, b) => Math.hypot(a.x - s.player.x, a.z - s.player.z) - Math.hypot(b.x - s.player.x, b.z - s.player.z)
+          )[0];
+  if (!target) return fail('附近沒有可攻擊的敵對生物。');
+  p.stamina -= 6;
+  p.lastAttack = s.elapsed;
+  const ph = phenotype(p.genome),
+    damage = Math.round(8 + ph.armor * 0.07 + ph.speed * 0.06 + (p.awakened ? 12 : 0));
+  target.hp = (target.hp ?? 60) - damage;
+  e.attackFlashUntil = s.elapsed + 0.25;
+  if (target.hp <= 0) {
+    if (target === b) {
+      b.defeated = true;
+      reward(s, { crystal: 12, metal: 15, food: 5 });
+      p.bond = Math.min(100, p.bond + 6);
+      s.log.unshift({
+        day: 1 + Math.floor(s.elapsed / 480),
+        title: '深海守望者沉入海溝',
+        text: '我們並肩度過了風浪。守望者留下的契印回應了夥伴的光。'
+      });
+    } else {
+      s.wild = s.wild.filter(w => w !== target);
+      reward(s, { crystal: 1, food: 2 });
+      p.bond = Math.min(100, p.bond + 1);
+    }
+    return { ok: true, message: target === b ? '擊退巨型海怪！異晶 +12、金屬 +15、口糧 +5。' : '擊退敵對生物。' };
+  }
+  return { ok: true, message: `夥伴造成 ${damage} 傷害；敵人體力 ${Math.ceil(target.hp)}。` };
+}
+export function awaken(s, id) {
+  normalizeExpansion(s);
+  const p = s.tamed.find(p => p.id === id),
+    e = s.expedition;
+  if (!p || p.bond < 85) return fail('需要羈絆 85。');
+  if (p.awakened) return fail('此夥伴已喚醒契印。');
+  if (!e.boss.defeated || !['archive', 'cave-heart', 'deep-memory'].every(id => e.collected.includes(id)))
+    return fail('先完成御獸石碑、晶窟封印、深海記憶與守望者挑戰。');
+  if (!pay(s, { crystal: 12 })) return fail('契印覺醒需要 12 異晶。');
+  p.awakened = true;
+  return { ok: true, message: '契印覺醒：戰鬥傷害 +12，夥伴獲得環形靈光。幻獸之路的第一步。' };
+}
+export function tickExpansion(s, dt, safe = false) {
+  normalizeExpansion(s);
+  const e = s.expedition,
+    p = activePet(s),
+    events = [];
+  for (const pet of s.tamed) {
+    if (pet !== p) {
+      const k = { island: 1.6, lounge: 1.3, pen: 1 }[restPlace(s, pet)];
+      pet.stamina = Math.min(100, pet.stamina + dt * 0.7 * k);
+      pet.health = Math.min(100, pet.health + dt * 0.45 * k);
+    }
+  }
+  if (e.diving) {
+    e.oxygen = Math.max(0, e.oxygen - dt);
+    if (e.oxygen === 0) {
+      e.diving = false;
+      events.push('氧氣不足，夥伴已帶你浮上海面。');
+    }
+  } else e.oxygen = Math.min(90, e.oxygen + dt * 7);
+  if (p) {
+    p.stamina = clamp(p.stamina + dt * (e.diving ? -0.36 : e.mounted ? -0.12 : 0.12), 0, 100);
+    if (!safe && s.elapsed - e.lastBond >= 60) {
+      e.lastBond = s.elapsed;
+      p.bond = Math.min(100, p.bond + 0.75);
+    }
+    if (p.stamina <= 1 && e.mounted) {
+      e.diving = false;
+      e.mounted = false;
+      Object.assign(s.player, { x: s.boat.x, z: s.boat.z });
+      s.vitals.health = Math.max(1, s.vitals.health - 8);
+      events.push('夥伴力竭，緊急返回小艇；體力 -8。');
+    }
+    if (!safe && e.order === 'gather' && p.stamina >= 12 && s.elapsed - e.lastGather >= 45) {
+      e.lastGather = s.elapsed;
+      let got = false;
+      if (s.player.mode === 'foot' && !s.inCave) {
+        const node = NODES.find(
+          n => Math.hypot(n.x - s.player.x, n.z - s.player.z) <= 4 && (s.harvested?.[n.id] || 0) <= s.elapsed
+        );
+        if (node) got = harvest(s, node.id).ok;
+      } else if (!e.diving) {
+        const l = s.loot.find(l => Math.hypot(l.x - s.player.x, l.z - s.player.z) < 12);
+        if (l) {
+          reward(s, l.kind === 3 ? { crystal: 1, metal: 2 } : { wood: 3, fiber: 1 });
+          s.loot = s.loot.filter(v => v !== l);
+          s.salvaged++;
+          got = true;
+        }
+      }
+      if (got) {
+        p.stamina -= 8;
+        p.bond = Math.min(100, p.bond + 1);
+        events.push('夥伴協助採集，物資已放入背包，羈絆 +1。');
+      }
+    }
+    if (!safe && e.order === 'guard' && s.elapsed - p.lastAttack >= 4) {
+      const r = attack(s);
+      if (r.ok) events.push(r.message);
+    }
+  }
+  if (!safe && !s.inCave && !e.diving && stormAt(s) && s.player.mode !== 'foot' && s.elapsed - e.lastStorm > 10) {
+    e.lastStorm = s.elapsed;
+    s.vitals.health = Math.max(0, s.vitals.health - Math.max(0.5, 5 - (s.ship ? 6 : e.boatLevel) * 1.5));
+    events.push(s.ship ? '暴風浪拍打戰艦船身，艦體穩住了。' : '暴風浪拍擊！返回避難所或升級船體可降低風險。');
+  }
+  const b = e.boss,
+    d = Math.hypot(s.player.x - b.x, s.player.z - b.z);
+  if (!safe && !s.inCave && !b.defeated && s.player.mode !== 'foot' && d < 30) {
+    if (d > 6) {
+      b.x += ((s.player.x - b.x) / d) * dt * 1.5;
+      b.z += ((s.player.z - b.z) / d) * dt * 1.5;
+    }
+    if (d < 9 && s.elapsed - b.lastAttack >= 4) {
+      b.lastAttack = s.elapsed;
+      const damage = 10 - (s.ship ? 6 : e.boatLevel) * 1.5;
+      s.vitals.health = Math.max(0, s.vitals.health - damage);
+      if (p) p.health = Math.max(0, p.health - 4);
+      events.push('深海守望者撞擊！命令夥伴攻擊，或立刻撤離。');
+    }
+  } else if (d > 45 && !b.defeated) {
+    b.x += (100 - b.x) * Math.min(1, dt * 0.25);
+    b.z += (40 - b.z) * Math.min(1, dt * 0.25);
+  }
+  return events;
+}

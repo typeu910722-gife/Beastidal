@@ -1,0 +1,7 @@
+dist/vendor/
+dist/audio/
+node_modules/
+package-lock.json
+README.md
+docs/
+*.md

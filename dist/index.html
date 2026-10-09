@@ -1,63 +1,236 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#082c37"><meta name="description" content="比斯泰德 Beastidal：社畜轉生御獸師。打撈、建造海上避難所、馴化突變御獸、占領島嶼，最後把家融合成五層遠洋戰艦。">
-  <title>比斯泰德 · Beastidal</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./style.css?v=0.9.0"><link rel="stylesheet" href="./mobile.css?v=0.9.0">
-<link rel="stylesheet" href="./panels.css?v=0.9.0">
-<link rel="stylesheet" href="./expansion.css?v=0.9.0">
-<link rel="stylesheet" href="./beastidal.css?v=0.9.0">
-</head>
-<body>
-  <main id="app">
-    <canvas id="ocean" aria-label="可探索的 3D 海洋世界"></canvas>
-    <div class="vignette" aria-hidden="true"></div>
-    <div id="load-screen"><span class="eyebrow">BEASTIDAL</span><p id="load-text">正在越過世界的邊界…</p><div class="loading-line"></div></div>
-    <section id="title-screen" hidden>
-      <div class="title-top"><span class="logo-mark">≈</span><span>一場新的漂流</span><span class="version">BEASTIDAL / 0.9</span></div>
-      <div class="title-copy"><p class="eyebrow">B E A S T I D A L</p><h1>比斯<span>泰德</span><i>。</i></h1>
-        <div class="title-rule"></div><p class="intro">那天，你沒能抵達公司。<br>醒來後，世界只剩下海。</p>
-        <p class="story-small">剛畢業的你，騎車上班途中被砂石車撞上。<br>第二次人生，從一塊漂流木與未知的呼吸開始。</p>
-        <button id="start-btn" class="primary large" disabled>正在準備海域…</button>
-        <button id="new-btn" class="text-button" hidden>重新開始一段人生</button><button id="settings-btn" class="text-button">⚙ 設定</button>
-        <p class="start-note">手機請橫屏遊玩・建議戴上耳機<br><span>免登入即可遊玩 · 鍵鼠／觸控／手把 · <a href="./privacy.html" style="color:inherit">隱私權政策</a></span></p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#082c37" />
+    <meta
+      name="description"
+      content="比斯泰德 Beastidal：社畜轉生御獸師。打撈、建造海上避難所、馴化突變御獸、占領島嶼，最後把家融合成五層遠洋戰艦。"
+    />
+    <title>比斯泰德 · Beastidal</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./style.css?v=0.9.0" />
+    <link rel="stylesheet" href="./mobile.css?v=0.9.0" />
+    <link rel="stylesheet" href="./panels.css?v=0.9.0" />
+    <link rel="stylesheet" href="./expansion.css?v=0.9.0" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.9.0" />
+  </head>
+  <body>
+    <main id="app">
+      <canvas id="ocean" aria-label="可探索的 3D 海洋世界"></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <div id="load-screen">
+        <span class="eyebrow">BEASTIDAL</span>
+        <p id="load-text">正在越過世界的邊界…</p>
+        <div class="loading-line"></div>
       </div>
-      <div id="account-box" class="account-box"><span class="account-icon" aria-hidden="true">☁</span><p id="account-text"></p><button id="google-btn" class="google-button" hidden><span class="g-mark" aria-hidden="true">G</span><span id="google-btn-text">使用 Google 登入</span></button><button id="signout-btn" class="text-button signout" hidden>登出 Google</button></div>
-      <div class="title-coordinate">海域 00 / 無陸地訊號<br><span>不要只是活下來，試著在這裡生活。</span></div>
-    </section>
-    <div id="hud" hidden>
-      <header class="hud-header"><div class="brand"><span class="logo-mark">≈</span><div><strong>比斯泰德</strong><small>BEASTIDAL</small></div></div>
-        <div id="resources" class="resource-bar" aria-label="背包物資"></div>
-        <div class="header-tools"><button id="fullscreen-btn" class="icon-button" aria-label="全螢幕遊玩" title="全螢幕">⛶</button><button id="view-btn" class="view-button" aria-label="切換第一人稱或第三人稱" title="切換視角 · V / R3">第三人稱</button><button id="sound-btn" class="icon-button" aria-label="開啟海洋環境音" title="環境音">♫</button><button id="menu-btn" class="icon-button" aria-label="暫停及操作說明" title="暫停 · Esc">Ⅱ</button></div>
-      </header>
-      <aside class="left-hud"><div class="time-row"><span class="sun-icon">☼</span><strong id="day-text">第 1 日</strong><span id="time-text">06:30</span><span id="weather-text">晴朗</span></div>
-        <section class="mission"><p class="eyebrow" id="quest-chapter">CHAPTER 01 · 重新呼吸</p><h2 id="quest-title">先在這片海活下來</h2><div id="quest-list"></div><p id="quest-hint" class="quiet"></p></section>
-        <div id="secret-hint" class="secret-hint"><span>◇</span><div><strong>來自海下的訊號</strong><p>東北方那座浮標，好像在呼喚你。</p></div></div>
+      <section id="title-screen" hidden>
+        <div class="title-top">
+          <span class="logo-mark">≈</span><span>一場新的漂流</span><span class="version">BEASTIDAL / 0.9</span>
+        </div>
+        <div class="title-copy">
+          <p class="eyebrow">B E A S T I D A L</p>
+          <h1>比斯<span>泰德</span><i>。</i></h1>
+          <div class="title-rule"></div>
+          <p class="intro">那天，你沒能抵達公司。<br />醒來後，世界只剩下海。</p>
+          <p class="story-small">
+            剛畢業的你，騎車上班途中被砂石車撞上。<br />第二次人生，從一塊漂流木與未知的呼吸開始。
+          </p>
+          <button id="start-btn" class="primary large" disabled>正在準備海域…</button>
+          <button id="new-btn" class="text-button" hidden>重新開始一段人生</button
+          ><button id="settings-btn" class="text-button">⚙ 設定</button>
+          <p class="start-note">
+            手機請橫屏遊玩・建議戴上耳機<br /><span
+              >免登入即可遊玩 · 鍵鼠／觸控／手把 · <a href="./privacy.html" style="color: inherit">隱私權政策</a></span
+            >
+          </p>
+        </div>
+        <div id="account-box" class="account-box">
+          <span class="account-icon" aria-hidden="true">☁</span>
+          <p id="account-text"></p>
+          <button id="google-btn" class="google-button" hidden>
+            <span class="g-mark" aria-hidden="true">G</span><span id="google-btn-text">使用 Google 登入</span></button
+          ><button id="signout-btn" class="text-button signout" hidden>登出 Google</button>
+        </div>
+        <div class="title-coordinate">海域 00 / 無陸地訊號<br /><span>不要只是活下來，試著在這裡生活。</span></div>
+      </section>
+      <div id="hud" hidden>
+        <header class="hud-header">
+          <div class="brand">
+            <span class="logo-mark">≈</span>
+            <div><strong>比斯泰德</strong><small>BEASTIDAL</small></div>
+          </div>
+          <div id="resources" class="resource-bar" aria-label="背包物資"></div>
+          <div class="header-tools">
+            <button id="fullscreen-btn" class="icon-button" aria-label="全螢幕遊玩" title="全螢幕">⛶</button
+            ><button id="view-btn" class="view-button" aria-label="切換第一人稱或第三人稱" title="切換視角 · V / R3">
+              第三人稱</button
+            ><button id="sound-btn" class="icon-button" aria-label="開啟海洋環境音" title="環境音">♫</button
+            ><button id="menu-btn" class="icon-button" aria-label="暫停及操作說明" title="暫停 · Esc">Ⅱ</button>
+          </div>
+        </header>
+        <aside class="left-hud">
+          <div class="time-row">
+            <span class="sun-icon">☼</span><strong id="day-text">第 1 日</strong><span id="time-text">06:30</span
+            ><span id="weather-text">晴朗</span>
+          </div>
+          <section class="mission">
+            <p class="eyebrow" id="quest-chapter">CHAPTER 01 · 重新呼吸</p>
+            <h2 id="quest-title">先在這片海活下來</h2>
+            <div id="quest-list"></div>
+            <p id="quest-hint" class="quiet"></p>
+          </section>
+          <div id="secret-hint" class="secret-hint">
+            <span>◇</span>
+            <div>
+              <strong>來自海下的訊號</strong>
+              <p>東北方那座浮標，好像在呼喚你。</p>
+            </div>
+          </div>
+        </aside>
+        <aside class="right-hud">
+          <div class="map-shell">
+            <canvas id="minimap" width="190" height="190" aria-label="附近物資、生物與避難所雷達"></canvas
+            ><span class="map-north">N</span><span class="map-label">海流觀測</span>
+          </div>
+          <div class="location"><span id="zone-text">初醒淺海</span><small id="coords">00.0 N / 00.0 E</small></div>
+          <button id="home-btn" class="small-button">⌂ 導航回避難所 <kbd>H</kbd></button>
+        </aside>
+        <div id="world-labels" aria-hidden="true"></div>
+        <div id="tutorial" hidden role="status" aria-live="polite">
+          <div class="tut-head">
+            <span class="tut-step"></span><strong class="tut-title"></strong
+            ><button type="button" id="tut-skip">跳過教學</button>
+          </div>
+          <p class="tut-text"></p>
+          <div class="tut-dots"></div>
+        </div>
+        <div id="storm-alert" hidden role="status">
+          <span class="storm-text"></span><button type="button" id="storm-go" hidden></button>
+        </div>
+        <div id="monologue" hidden role="status">
+          <span class="mono-face" aria-hidden="true">💭</span>
+          <div>
+            <small>內心獨白</small>
+            <p></p>
+          </div>
+        </div>
+        <div id="target-card" class="target-card" hidden></div>
+        <button id="dock-btn" class="dock-button" hidden>
+          <span id="dock-label">登上避難所</span><small id="dock-detail">停泊小艇</small><kbd>Q</kbd>
+        </button>
+        <div id="travel-status">
+          <span id="travel-mode">海上航行</span><i></i><span id="travel-tip">靠近木筏可登岸</span>
+        </div>
+        <div id="context-action" class="context-action" hidden>
+          <div>
+            <span class="pulse-dot"></span><strong id="context-title"></strong><small id="context-subtitle"></small>
+          </div>
+          <button id="interact-btn"><kbd>E</kbd><span id="context-verb">打撈</span></button>
+        </div>
+        <div id="salvage-progress" class="salvage-progress" hidden><span>回收纜繩中</span><i></i></div>
+        <div class="bottom-hud">
+          <section class="vitals">
+            <div class="vital">
+              <span>體力</span>
+              <div><i id="health-bar"></i></div>
+              <b id="health-val">100</b>
+            </div>
+            <div class="vital thirst">
+              <span>水分</span>
+              <div><i id="water-bar"></i></div>
+              <b id="water-val">100</b>
+            </div>
+            <div class="vital food">
+              <span>飽食</span>
+              <div><i id="food-bar"></i></div>
+              <b id="food-val">100</b>
+            </div>
+            <small id="save-status">存檔僅保存在此裝置</small>
+          </section>
+          <nav class="action-bar" aria-label="遊戲功能">
+            <button data-panel="build"><span class="tool-icon">⌂</span><span>建造</span><kbd>B</kbd></button
+            ><button data-panel="bag"><span class="tool-icon">▤</span><span>背包</span><kbd>I</kbd></button
+            ><button data-panel="journal"><span class="tool-icon">☷</span><span>航海日誌</span><kbd>J</kbd></button
+            ><button data-panel="creatures" id="creature-tool" class="locked">
+              <span class="tool-icon">◇</span><span id="creature-tool-text">未知訊號</span><kbd>C</kbd></button
+            ><button id="adventure-btn" data-panel="adventure">
+              <kbd>K</kbd><span class="tool-icon">✦</span><span>御獸遠航</span>
+            </button>
+          </nav>
+          <div class="control-hint">
+            <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 駕艇</span
+            ><span><kbd>滑鼠右鍵</kbd> 環視 · <kbd>滾輪</kbd> 縮放</span
+            ><span><kbd>點擊海面</kbd> 航行 · <kbd>空白鍵</kbd> 驅離</span>
+          </div>
+        </div>
+        <div id="beast-bar" hidden>
+          <span id="beast-status"></span>
+          <div>
+            <button id="ride-btn">騎乘 T</button><button id="dive-btn">潛水 G</button
+            ><button id="beast-attack">攻擊 F</button>
+          </div>
+        </div>
+        <div id="boss-bar" hidden></div>
+        <div id="touch-controls">
+          <div id="joystick" aria-label="拖曳駕艇"><div id="joystick-knob"></div></div>
+          <div class="touch-actions">
+            <button id="sprint-btn" data-hold aria-pressed="false" aria-label="加速（點一下開關）">加速</button
+            ><button id="repel-btn" aria-label="驅離生物">驅離</button>
+          </div>
+        </div>
+        <div id="build-banner" hidden>
+          <strong id="build-banner-name"></strong><span>點擊綠色格子放置 · R 旋轉 · Esc 取消</span
+          ><button id="cancel-build">取消</button>
+        </div>
+      </div>
+      <aside id="drawer" hidden aria-label="遊戲管理面板">
+        <header>
+          <div>
+            <p class="eyebrow" id="drawer-eyebrow"></p>
+            <h2 id="drawer-title"></h2>
+          </div>
+          <button id="close-drawer" class="icon-button" aria-label="關閉面板">×</button>
+        </header>
+        <div id="drawer-body"></div>
       </aside>
-      <aside class="right-hud"><div class="map-shell"><canvas id="minimap" width="190" height="190" aria-label="附近物資、生物與避難所雷達"></canvas><span class="map-north">N</span><span class="map-label">海流觀測</span></div><div class="location"><span id="zone-text">初醒淺海</span><small id="coords">00.0 N / 00.0 E</small></div><button id="home-btn" class="small-button">⌂ 導航回避難所 <kbd>H</kbd></button></aside>
-      <div id="world-labels" aria-hidden="true"></div>
-      <div id="tutorial" hidden role="status" aria-live="polite"><div class="tut-head"><span class="tut-step"></span><strong class="tut-title"></strong><button type="button" id="tut-skip">跳過教學</button></div><p class="tut-text"></p><div class="tut-dots"></div></div><div id="storm-alert" hidden role="status"><span class="storm-text"></span><button type="button" id="storm-go" hidden></button></div><div id="monologue" hidden role="status"><span class="mono-face" aria-hidden="true">💭</span><div><small>內心獨白</small><p></p></div></div>
-      <div id="target-card" class="target-card" hidden></div>
-      <button id="dock-btn" class="dock-button" hidden><span id="dock-label">登上避難所</span><small id="dock-detail">停泊小艇</small><kbd>Q</kbd></button>
-      <div id="travel-status"><span id="travel-mode">海上航行</span><i></i><span id="travel-tip">靠近木筏可登岸</span></div>
-      <div id="context-action" class="context-action" hidden><div><span class="pulse-dot"></span><strong id="context-title"></strong><small id="context-subtitle"></small></div><button id="interact-btn"><kbd>E</kbd><span id="context-verb">打撈</span></button></div>
-      <div id="salvage-progress" class="salvage-progress" hidden><span>回收纜繩中</span><i></i></div>
-      <div class="bottom-hud"><section class="vitals"><div class="vital"><span>體力</span><div><i id="health-bar"></i></div><b id="health-val">100</b></div><div class="vital thirst"><span>水分</span><div><i id="water-bar"></i></div><b id="water-val">100</b></div><div class="vital food"><span>飽食</span><div><i id="food-bar"></i></div><b id="food-val">100</b></div><small id="save-status">存檔僅保存在此裝置</small></section>
-        <nav class="action-bar" aria-label="遊戲功能"><button data-panel="build"><span class="tool-icon">⌂</span><span>建造</span><kbd>B</kbd></button><button data-panel="bag"><span class="tool-icon">▤</span><span>背包</span><kbd>I</kbd></button><button data-panel="journal"><span class="tool-icon">☷</span><span>航海日誌</span><kbd>J</kbd></button><button data-panel="creatures" id="creature-tool" class="locked"><span class="tool-icon">◇</span><span id="creature-tool-text">未知訊號</span><kbd>C</kbd></button><button id="adventure-btn" data-panel="adventure"><kbd>K</kbd><span class="tool-icon">✦</span><span>御獸遠航</span></button></nav>
-        <div class="control-hint"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 駕艇</span><span><kbd>滑鼠右鍵</kbd> 環視 · <kbd>滾輪</kbd> 縮放</span><span><kbd>點擊海面</kbd> 航行 · <kbd>空白鍵</kbd> 驅離</span></div>
+      <div id="modal-shade" hidden>
+        <section id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <p class="eyebrow" id="modal-eyebrow"></p>
+          <h2 id="modal-title"></h2>
+          <div id="modal-body"></div>
+          <div id="modal-actions"></div>
+        </section>
       </div>
-      <div id="beast-bar" hidden><span id="beast-status"></span><div><button id="ride-btn">騎乘 T</button><button id="dive-btn">潛水 G</button><button id="beast-attack">攻擊 F</button></div></div><div id="boss-bar" hidden></div><div id="touch-controls"><div id="joystick" aria-label="拖曳駕艇"><div id="joystick-knob"></div></div><div class="touch-actions"><button id="sprint-btn" data-hold aria-pressed="false" aria-label="加速（點一下開關）">加速</button><button id="repel-btn" aria-label="驅離生物">驅離</button></div></div>
-      <div id="build-banner" hidden><strong id="build-banner-name"></strong><span>點擊綠色格子放置 · R 旋轉 · Esc 取消</span><button id="cancel-build">取消</button></div>
-    </div>
-    <aside id="drawer" hidden aria-label="遊戲管理面板"><header><div><p class="eyebrow" id="drawer-eyebrow"></p><h2 id="drawer-title"></h2></div><button id="close-drawer" class="icon-button" aria-label="關閉面板">×</button></header><div id="drawer-body"></div></aside>
-    <div id="modal-shade" hidden><section id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><p class="eyebrow" id="modal-eyebrow"></p><h2 id="modal-title"></h2><div id="modal-body"></div><div id="modal-actions"></div></section></div>
-    <div id="toasts" role="status" aria-live="polite"></div>
-    <div id="discovery" hidden><p class="eyebrow">DISCOVERY</p><h2></h2><p class="discovery-text"></p></div>
-    <div id="damage-flash" aria-hidden="true"></div>
-    <section id="rotate-screen" hidden role="dialog" aria-label="請橫屏遊玩"><div class="rotate-device" aria-hidden="true">▯ <span>↻</span></div><p class="eyebrow">A WIDER HORIZON</p><h2>把手機橫過來，<br>讓海展開。</h2><p>橫屏使用左手移動、右手環視與互動。<br>若畫面沒有旋轉，請先關閉手機的直向鎖定。</p><small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button></section>
-  </main>
-  <script type="module" src="./game.js?v=0.9.0"></script>
-  <script>if('serviceWorker'in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));</script>
-  <script>setTimeout(()=>{if(!window.tidalReady){const e=document.getElementById('load-text');if(e)e.textContent='載入時間較長，請確認網路後重新整理。';}},18000);</script>
-</body></html>
+      <div id="toasts" role="status" aria-live="polite"></div>
+      <div id="discovery" hidden>
+        <p class="eyebrow">DISCOVERY</p>
+        <h2></h2>
+        <p class="discovery-text"></p>
+      </div>
+      <div id="damage-flash" aria-hidden="true"></div>
+      <section id="rotate-screen" hidden role="dialog" aria-label="請橫屏遊玩">
+        <div class="rotate-device" aria-hidden="true">▯ <span>↻</span></div>
+        <p class="eyebrow">A WIDER HORIZON</p>
+        <h2>把手機橫過來，<br />讓海展開。</h2>
+        <p>橫屏使用左手移動、右手環視與互動。<br />若畫面沒有旋轉，請先關閉手機的直向鎖定。</p>
+        <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
+      </section>
+    </main>
+    <script type="module" src="./game.js?v=0.9.0"></script>
+    <script>
+      if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
+        addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    </script>
+    <script>
+      setTimeout(() => {
+        if (!window.tidalReady) {
+          const e = document.getElementById('load-text');
+          if (e) e.textContent = '載入時間較長，請確認網路後重新整理。';
+        }
+      }, 18000);
+    </script>
+  </body>
+</html>

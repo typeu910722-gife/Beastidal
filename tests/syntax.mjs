@@ -1,1 +1,5 @@
-import{readdirSync}from'node:fs';import{execFileSync}from'node:child_process';for(const f of readdirSync('dist').filter(f=>f.endsWith('.js')))execFileSync(process.execPath,['--check','dist/'+f],{stdio:'inherit'});console.log('All game modules parse.');
+import { readdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+for (const f of readdirSync('dist').filter(f => f.endsWith('.js')))
+  execFileSync(process.execPath, ['--check', 'dist/' + f], { stdio: 'inherit' });
+console.log('All game modules parse.');

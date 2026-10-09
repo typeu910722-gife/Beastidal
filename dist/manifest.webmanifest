@@ -10,7 +10,5 @@
   "background_color": "#092f3d",
   "theme_color": "#082c37",
   "categories": ["games"],
-  "icons": [
-    {"src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
-  ]
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
 }

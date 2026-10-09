@@ -1,192 +1,1514 @@
-import{expansionModels}from'./expansion-models.js?v=0.9.0';
-import{normalizeExpansion,activePet,EXPLORE}from'./expansion.js?v=0.9.0';
-import{normalizeHousing,penId}from'./housing.js?v=0.9.0';
-import{makeCreature,animateCreature}from'./creatures.js?v=0.9.0';
-export{makeCreature}from'./creatures.js?v=0.9.0';
-import{makeIslands}from'./island-models.js?v=0.9.0';
-import{facilityId}from'./facilities.js?v=0.9.0';
+import { expansionModels } from './expansion-models.js?v=0.9.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.9.0';
+import { normalizeHousing, penId } from './housing.js?v=0.9.0';
+import { makeCreature, animateCreature } from './creatures.js?v=0.9.0';
+export { makeCreature } from './creatures.js?v=0.9.0';
+import { makeIslands } from './island-models.js?v=0.9.0';
+import { facilityId } from './facilities.js?v=0.9.0';
 import * as T from './vendor/three.module.min.js';
-import{phenotype,seeded}from'./genetics.js?v=0.9.0';
-import{QUALITY,loadSettings,saveSettings,makeSky,makeWater,Atmosphere,SPLASHES}from'./realism.js?v=0.9.0';
-import{waveHeight,floatPose,WakeTrail}from'./physics.js?v=0.9.0';
-import{buildError}from'./rules.js?v=0.9.0';
-import{makeWarship,dockMesh,LOUNGE_SLOTS}from'./ship-models.js?v=0.9.0';
-import{DECKS,toWorld,restPlace,restIsland,dockMoor}from'./ship.js?v=0.9.0';
-const V=T.Vector3;
-const colors={wood:0x976344,plank:0xbe9866,darkWood:0x524434,rope:0xd6c19b,teal:0x398c8b,cloth:0xd9cfaa,metal:0x466673,glow:0x9affdf};
-const boxG=new T.BoxGeometry(1,1,1),sphereG=new T.SphereGeometry(1,16,12),coneG=new T.ConeGeometry(1,1,8),cylG=new T.CylinderGeometry(1,1,1,12);
-const mats=new Map();
-function mat(color,extra={}){const key=JSON.stringify([color,extra]);if(!mats.has(key))mats.set(key,new T.MeshStandardMaterial({color,roughness:.72,...extra}));return mats.get(key);}
-function piece(parent,geometry,color,pos=[0,0,0],scale=[1,1,1],extra){const m=new T.Mesh(geometry,mat(color,extra));m.position.set(...pos);m.scale.set(...scale);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
-function box(p,c,x,y,z,sx,sy,sz,extra){return piece(p,boxG,c,[x,y,z],[sx,sy,sz],extra);}
-function ball(p,c,x,y,z,sx,sy=sx,sz=sx,extra){return piece(p,sphereG,c,[x,y,z],[sx,sy,sz],extra);}
-function pole(p,c,x,y,z,r,h){return piece(p,cylG,c,[x,y,z],[r,h,r]);}
-function rod(p,a,b,r,color){const start=new V(...a),end=new V(...b),m=piece(p,cylG,color,start.clone().add(end).multiplyScalar(.5).toArray(),[r,start.distanceTo(end),r]);m.quaternion.setFromUnitVectors(new V(0,1,0),end.sub(start).normalize());return m;}
-function fin(parent,color,side=1,length=1,type=0){const g=new T.BufferGeometry();const pts=type===1?[0,0,0,side*length,.1,-.1,side*length*.8,.04,-1.6,0,0,-.9]:[0,0,.5,side*length,.08,-.55,side*length*.4,0,-1.2,0,0,-.6];g.setAttribute('position',new T.Float32BufferAttribute(pts,3));g.setIndex([0,1,2,0,2,3]);g.computeVertexNormals();const mesh=new T.Mesh(g,mat(color,{side:T.DoubleSide,roughness:.45}));mesh.castShadow=true;parent.add(mesh);return mesh;}
-
-let woodTex,glowTex;
-function woodTexture(){
- if(woodTex)return woodTex;const size=128,data=new Uint8Array(size*size*4),r=seeded(3982);
- for(let y=0;y<size;y++)for(let x=0;x<size;x++){const grain=Math.sin(x*.42+Math.sin(y*.055)*1.8)+Math.sin(x*1.6+y*.014)*.25;const knot=Math.sin(Math.hypot((x-63)*1.1,(y-51)*.34)*.8)*Math.exp(-Math.hypot(x-63,(y-51)*.5)*.09);const value=218+grain*12+knot*17+r()*10;const i=(y*size+x)*4;data[i]=value;data[i+1]=value-8;data[i+2]=value-20;data[i+3]=255;}
- woodTex=new T.DataTexture(data,size,size,T.RGBAFormat);woodTex.colorSpace=T.SRGBColorSpace;woodTex.wrapS=woodTex.wrapT=T.RepeatWrapping;woodTex.magFilter=T.LinearFilter;woodTex.minFilter=T.LinearMipmapLinearFilter;woodTex.generateMipmaps=true;woodTex.needsUpdate=true;woodTex.anisotropy=4;return woodTex;
+import { phenotype, seeded } from './genetics.js?v=0.9.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.9.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.9.0';
+import { buildError } from './rules.js?v=0.9.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.9.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.9.0';
+const V = T.Vector3;
+const colors = {
+  wood: 0x976344,
+  plank: 0xbe9866,
+  darkWood: 0x524434,
+  rope: 0xd6c19b,
+  teal: 0x398c8b,
+  cloth: 0xd9cfaa,
+  metal: 0x466673,
+  glow: 0x9affdf
+};
+const boxG = new T.BoxGeometry(1, 1, 1),
+  sphereG = new T.SphereGeometry(1, 16, 12),
+  coneG = new T.ConeGeometry(1, 1, 8),
+  cylG = new T.CylinderGeometry(1, 1, 1, 12);
+const mats = new Map();
+function mat(color, extra = {}) {
+  const key = JSON.stringify([color, extra]);
+  if (!mats.has(key)) mats.set(key, new T.MeshStandardMaterial({ color, roughness: 0.72, ...extra }));
+  return mats.get(key);
 }
-function halo(parent,color,x,y,z,size){
- if(!glowTex){const n=64,d=new Uint8Array(n*n*4);for(let yy=0;yy<n;yy++)for(let xx=0;xx<n;xx++){let a=Math.max(0,1-Math.hypot(xx-n/2,yy-n/2)/(n/2));a=Math.pow(a,3);const i=(yy*n+xx)*4;d[i]=d[i+1]=d[i+2]=255;d[i+3]=a*200;}glowTex=new T.DataTexture(d,n,n,T.RGBAFormat);glowTex.magFilter=T.LinearFilter;glowTex.needsUpdate=true;}
- const sp=new T.Sprite(new T.SpriteMaterial({map:glowTex,color,transparent:true,blending:T.AdditiveBlending,depthWrite:false,opacity:.6}));sp.position.set(x,y,z);sp.scale.set(size,size,1);parent.add(sp);return sp;
+function piece(parent, geometry, color, pos = [0, 0, 0], scale = [1, 1, 1], extra) {
+  const m = new T.Mesh(geometry, mat(color, extra));
+  m.position.set(...pos);
+  m.scale.set(...scale);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  parent.add(m);
+  return m;
+}
+function box(p, c, x, y, z, sx, sy, sz, extra) {
+  return piece(p, boxG, c, [x, y, z], [sx, sy, sz], extra);
+}
+function ball(p, c, x, y, z, sx, sy = sx, sz = sx, extra) {
+  return piece(p, sphereG, c, [x, y, z], [sx, sy, sz], extra);
+}
+function pole(p, c, x, y, z, r, h) {
+  return piece(p, cylG, c, [x, y, z], [r, h, r]);
+}
+function rod(p, a, b, r, color) {
+  const start = new V(...a),
+    end = new V(...b),
+    m = piece(p, cylG, color, start.clone().add(end).multiplyScalar(0.5).toArray(), [r, start.distanceTo(end), r]);
+  m.quaternion.setFromUnitVectors(new V(0, 1, 0), end.sub(start).normalize());
+  return m;
+}
+function fin(parent, color, side = 1, length = 1, type = 0) {
+  const g = new T.BufferGeometry();
+  const pts =
+    type === 1
+      ? [0, 0, 0, side * length, 0.1, -0.1, side * length * 0.8, 0.04, -1.6, 0, 0, -0.9]
+      : [0, 0, 0.5, side * length, 0.08, -0.55, side * length * 0.4, 0, -1.2, 0, 0, -0.6];
+  g.setAttribute('position', new T.Float32BufferAttribute(pts, 3));
+  g.setIndex([0, 1, 2, 0, 2, 3]);
+  g.computeVertexNormals();
+  const mesh = new T.Mesh(g, mat(color, { side: T.DoubleSide, roughness: 0.45 }));
+  mesh.castShadow = true;
+  parent.add(mesh);
+  return mesh;
 }
 
-function floorMesh(){const g=new T.Group();for(const x of[-1,1])for(const z of[-1,1]){const f=pole(g,0x6e4a2f,x*.95,-.12,z*.95,.42,.95);f.rotation.x=Math.PI/2;for(const k of[-.3,.3])piece(g,new T.TorusGeometry(.43,.03,5,18),0x2f3a3d,[x*.95,-.12,z*.95+k]);}for(const z of[-1.05,0,1.05])for(const x of[-1.45,1.45])piece(g,new T.TorusGeometry(.12,.03,5,10),colors.rope,[x,.3,z]).rotation.y=Math.PI/2;for(let i=0;i<7;i++)box(g,i%3===0?0xcba574:colors.plank,(i-3)*.49,.29,0,.45,.2,3.45);for(const x of[-1.45,1.45]){box(g,colors.darkWood,x,.06,0,.17,.27,3.4);for(const z of[-1.2,1.2])pole(g,0x283e44,x,-.21,z,.4,.7).rotation.z=Math.PI/2;}for(const x of[-1.46,1.46])for(const z of[-1.44,1.44])ball(g,0x695f4d,x,.405,z,.038,.018,.038);return g;}
-function buildingMesh(b){const g=new T.Group();if(b.type==='floor'||b.type==='upperfloor')g.add(floorMesh());if(b.type==='upperfloor'){for(const x of[-1.55,1.55])for(const z of[-1.55,1.55])pole(g,colors.darkWood,x,-1.4,z,.085,3.3);}
- if(b.type==='stairs'){for(let n=0;n<11;n++)box(g,colors.plank,-.85,.45+n*.3,-1.45+n*.27,1,.13,.34);for(const x of[-1.4,-.3]){rod(g,[x,.7,-1.5],[x,3.7,1.45],.06,colors.darkWood);rod(g,[x,1.45,-1.5],[x,4.4,1.45],.04,colors.rope);}}
- if(b.type==='chair'){for(const x of[-.35,.35])for(const z of[-.35,.35])pole(g,colors.wood,x,.67,z,.05,.55);box(g,colors.plank,0,.98,0,.85,.12,.8);box(g,colors.plank,0,1.35,-.36,.85,.65,.1);}
- if(b.type==='table'){for(const x of[-.7,.7])for(const z of[-.4,.4])pole(g,colors.wood,x,.84,z,.06,.9);box(g,colors.plank,0,1.3,0,1.7,.15,1.05);}
- if(b.type==='lamp'){pole(g,colors.metal,0,1.5,0,.05,2.1);ball(g,colors.glow,0,2.6,0,.17,.3,.17,{emissive:colors.glow,emissiveIntensity:b.off?0:1.5});if(!b.off){const light=new T.PointLight(0xc2f5d9,10,8);light.position.set(0,2.6,0);g.add(light);halo(g,0xbbffcc,0,2.6,0,1.5);}}
- if(b.type==='shelter'){for(const x of[-1.2,1.2])for(const z of[-1.2,1.2])pole(g,colors.darkWood,x,1.3,z,.09,2);for(const z of[-1.3,1.3]){rod(g,[-1.45,2.1,z],[0,3.1,z],.06,colors.rope);rod(g,[0,3.1,z],[1.45,2.1,z],.06,colors.rope);}rod(g,[0,3.1,-1.5],[0,3.1,1.5],.085,colors.wood);for(const side of[-1,1]){const pos=[],ix=[];for(let j=0;j<=12;j++)for(let k=0;k<=12;k++){const u=j/12,v=k/12;pos.push(side*u*1.6,3.1-u*.95-Math.sin(u*Math.PI)*.14-Math.sin(v*Math.PI)*.08,-1.5+v*3);if(j&&k){const q=j*13+k;ix.push(q,q-1,q-14,q,q-14,q-13);}}const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));geo.setIndex(ix);geo.computeVertexNormals();piece(g,geo,side===1?0xccb885:0x42948d,[0,0,0],[1,1,1],{side:T.DoubleSide});} box(g,colors.cloth,0,1.23,-1.19,2.35,1.74,.08);box(g,0x546b58,0,.55,-.25,1.2,.22,1.6);box(g,colors.cloth,0,.71,-.75,1,.18,.35);pole(g,colors.darkWood,1.24,2.15,1.22,.075,1.3);ball(g,0xffc875,1.24,1.8,1.22,.15,.23,.15,{emissive:0xffbd6b,emissiveIntensity:1.2});const l=new T.PointLight(0xffd499,6,8);l.position.set(1.2,1.8,1.2);g.add(l);}
-if(b.type==='dock')g.add(dockMesh(mat));
- if(b.type==='shelter'){for(const s of[-1,1])for(let k=0;k<5;k++)box(g,k%2?0xa98257:0xb8915f,s*1.32,.62+k*.3,-.15,.08,.28,2.3);for(let k=0;k<6;k++)box(g,k%2?0xa98257:0xb8915f,0,.62+k*.3,-1.32,2.6,.28,.08);box(g,0x7a5a3a,0,.48,0,2.8,.14,2.9);for(const s of[-1,1])box(g,0x6b4b2e,s*.9,.5,1.62,.12,.14,.5);box(g,0x2e7c78,0,2.62,1.36,1.1,.32,.05);box(g,0xd6b15c,0,2.62,1.39,.8,.06,.02,{emissive:0xb08a3a,emissiveIntensity:.5});for(let k=0;k<3;k++)pole(g,0x8b5e3c,-1.05+k*.32,.75,-.95,.13,.5);box(g,0xd9cfaa,.7,.8,-.9,.7,.12,1);}
- if(b.type==='collector'){pole(g,0x3c747b,0,.9,0,.76,1.1);for(const x of[-1.1,1.1])for(const z of[-1.1,1.1])pole(g,colors.wood,x,1.48,z,.065,2.2);const tarp=piece(g,new T.ConeGeometry(1.6,.65,4,1,true),0x779f9b,[0,2.15,0],[1,1,1],{side:T.DoubleSide});tarp.rotation.y=Math.PI/4;rod(g,[0,1.85,0],[0,1.1,0],.065,0xc8d0b6);}
- if(b.type==='pen'){for(const x of[-1.6,1.6])for(const z of[-1.6,1.6]){pole(g,colors.wood,x,.5,z,.1,1.5);ball(g,0xd5b887,x,.99,z,.13);}for(const s of[-1,1]){rod(g,[-1.6,.6,s*1.6],[1.6,.6,s*1.6],.035,colors.rope);rod(g,[s*1.6,.6,-1.6],[s*1.6,.6,1.6],.035,colors.rope);for(let j=-3;j<=3;j++){rod(g,[j*.48,.5,s*1.6],[j*.48,-1.5,s*1.6],.013,0x8fc3b2);rod(g,[s*1.6,.5,j*.48],[s*1.6,-1.5,j*.48],.013,0x8fc3b2);}}for(const x of[-1.75,1.75])box(g,colors.plank,x,.25,0,.23,.17,3.6);}
- if(b.type==='hatchery'){for(const x of[-1,1])for(const z of[-.65,.65])pole(g,colors.metal,x,.8,z,.08,1);box(g,0x566d72,0,1.25,0,2.5,.18,1.9);piece(g,cylG,0x4c827f,[0,1.44,0],[.65,.2,.65]);const dome=ball(g,0xa8e8df,0,1.85,0,.62,.7,.62,{transparent:true,opacity:.4,metalness:.3,roughness:.1});ball(g,0xbcffe0,0,1.8,0,.23,.37,.23,{emissive:0x98ffd9,emissiveIntensity:1.1});box(g,0x25464d,1.02,1.43,.43,.36,.3,.5);box(g,0xabdfb3,1.02,1.6,.43,.27,.035,.33,{emissive:0x88ddb6,emissiveIntensity:.6});}
- if(b.type==='beacon'){for(const x of[-.55,.55])for(const z of[-.55,.55]){rod(g,[x,.4,z],[x*.5,4.6,z*.5],.1,colors.metal);}for(let j=1;j<5;j++){rod(g,[-.55,j,-.55],[.55,j,.55],.06,colors.metal);rod(g,[.55,j,-.55],[-.55,j,.55],.06,colors.metal);}pole(g,colors.metal,0,4.8,0,.49,.4);ball(g,0xc0ffe3,0,5.3,0,.35,.45,.35,{emissive:0xb6ffdc,emissiveIntensity:1.8});pole(g,colors.metal,0,5.9,0,.06,.7);const beam=piece(g,new T.CylinderGeometry(.1,1.3,75,12,1,true),0xa2ffcc,[0,43,0],[1,1,1],{transparent:true,opacity:.12,emissive:0x70eeba,emissiveIntensity:.8,depthWrite:false,side:T.DoubleSide});beam.raycast=()=>{};}
- if(b.type==='collector'){for(const y of[.46,.91,1.39])piece(g,new T.TorusGeometry(.77,.035,6,28),0xc1b58f,[0,y,0]).rotation.x=Math.PI/2;rod(g,[.7,.66,0],[1,.66,0],.06,colors.metal);pole(g,colors.metal,1,.57,0,.06,.19);box(g,0xcadace,.3,.93,.72,.16,.67,.045);for(let y=.7;y<1.2;y+=.12)box(g,0x466673,.3,y,.75,.13,.018,.02);}
- if(b.type==='pen'){for(const z of[-1.75,1.75])box(g,colors.plank,0,.25,z,3.5,.17,.23);for(const side of[-1,1])for(const y of[-1,-.5,0]){rod(g,[-1.6,y,side*1.6],[1.6,y,side*1.6],.013,0x8fc3b2);rod(g,[side*1.6,y,-1.6],[side*1.6,y,1.6],.013,0x8fc3b2);}}
- if(b.type==='hatchery'){for(const y of[1.5,2.35])piece(g,new T.TorusGeometry(.63,.05,8,28),colors.metal,[0,y,0]).rotation.x=Math.PI/2;for(const side of[-1,1])rod(g,[side*.6,1.48,0],[side*.6,2.3,0],.035,colors.metal);for(let n=0;n<3;n++)pole(g,0x9cdfd5,-.92,1.51,-.5+n*.3,.055,.4);}
- if(b.type==='beacon'){for(const side of[-1,1])for(let j=0;j<4;j++){const a=.55-j*.06,b=.55-(j+1)*.06;rod(g,[-a,.5+j,side*a],[b,1.5+j,side*b],.033,colors.metal);}for(const x of[-.36,.36])for(const z of[-.36,.36])rod(g,[x,4.94,z],[x,5.7,z],.028,colors.metal);piece(g,new T.ConeGeometry(.63,.3,8),colors.metal,[0,5.84,0]);}
- if(b.type==='shelter'){
-  for(const side of[-1,1]){rod(g,[side*1.25,2.2,1.28],[side*1.5,.47,1.5],.023,colors.rope);const curtain=box(g,0xd4c195,side*1.03,1.42,1.2,.3,1.23,.07);curtain.rotation.z=side*.08;}
-  box(g,0x8c714c,-1.1,.64,-.9,.46,.4,.42);halo(g,0xffce85,1.24,1.8,1.22,1.2);
- }if(b.type==='beacon')halo(g,0xaeffdb,0,5.3,0,2.6);if(b.type==='hatchery')halo(g,0x9cebd6,0,1.85,0,1.8);
- g.userData.facilityId=(b.type==='floor'||b.type==='upperfloor')?null:facilityId(b);g.position.set(b.x*3.6,(b.level||0)*3.3,b.z*3.6);g.rotation.y=b.rot||0;return g;}
-export function character(){
- const g=new T.Group();
- piece(g,new T.CylinderGeometry(.25,.22,.62,8),0xd1dfd4,[0,1.02,0],[1,1,.7]);
- box(g,0x324f5c,0,.69,0,.48,.17,.3);box(g,0x967c53,0,.73,.16,.12,.07,.035);
- const legs=[],arms=[];
- for(const side of[-1,1]){
-  const leg=new T.Group();leg.position.set(side*.14,.65,0);g.add(leg);piece(leg,new T.CylinderGeometry(.105,.083,.48,10),0x365668,[0,-.24,0],[1,1,1]);box(leg,0x283e46,0,-.52,.06,.23,.13,.36);legs.push(leg);
-  const arm=new T.Group();arm.position.set(side*.3,1.24,0);g.add(arm);piece(arm,new T.CylinderGeometry(.1,.084,.3,10),0xbbcfc5,[0,-.16,0],[1,1,1]);piece(arm,new T.CylinderGeometry(.075,.058,.2,10),0xd7b18b,[0,-.36,.035],[1,1,1]);ball(arm,0xe0b892,0,-.46,.045,.09,.09,.085);arms.push(arm);
- }
- pole(g,0xdab98f,0,1.39,0,.105,.18);ball(g,0xdfb793,0,1.63,.012,.23,.27,.215);
- ball(g,0x293e44,0,1.79,-.035,.238,.14,.22);box(g,0x293e44,0,1.77,-.155,.39,.16,.1);
- for(const side of[-1,1]){ball(g,0x293d40,side*.083,1.65,.208,.025,.026,.016);ball(g,0xe2bb99,side*.224,1.63,0,.045,.075,.05);}
- box(g,0xf0ead3,0,1.32,.16,.18,.09,.03);box(g,0x365a69,0,1.14,.177,.045,.28,.024).rotation.z=-.1;
- for(const y of[.92,1.08])ball(g,0xeee8d0,.06,y,.18,.016);
- box(g,0x927953,0,1.04,-.22,.37,.43,.16);box(g,0xb89d71,0,1.23,-.23,.4,.12,.18);
- for(const side of[-1,1])box(g,0x5d6453,side*.2,1.07,-.005,.05,.49,.28);
- for(let i=0;i<7;i++){const h=piece(g,coneG,0x293e44,[Math.sin(i*.9)*.13,1.86,-.05+Math.cos(i*.9)*.1],[.07,.2,.07]);h.rotation.set(-.5+Math.cos(i*.9)*.3,0,Math.sin(i*.9)*.6);}
- piece(g,new T.TorusGeometry(.17,.05,6,16),0x2e7c78,[0,1.36,0]).rotation.x=Math.PI/2;box(g,0x2e7c78,.1,1.18,.18,.08,.3,.03).rotation.z=.2;
- g.userData={legs,arms};return g;
+let woodTex, glowTex;
+function woodTexture() {
+  if (woodTex) return woodTex;
+  const size = 128,
+    data = new Uint8Array(size * size * 4),
+    r = seeded(3982);
+  for (let y = 0; y < size; y++)
+    for (let x = 0; x < size; x++) {
+      const grain = Math.sin(x * 0.42 + Math.sin(y * 0.055) * 1.8) + Math.sin(x * 1.6 + y * 0.014) * 0.25;
+      const knot =
+        Math.sin(Math.hypot((x - 63) * 1.1, (y - 51) * 0.34) * 0.8) *
+        Math.exp(-Math.hypot(x - 63, (y - 51) * 0.5) * 0.09);
+      const value = 218 + grain * 12 + knot * 17 + r() * 10;
+      const i = (y * size + x) * 4;
+      data[i] = value;
+      data[i + 1] = value - 8;
+      data[i + 2] = value - 20;
+      data[i + 3] = 255;
+    }
+  woodTex = new T.DataTexture(data, size, size, T.RGBAFormat);
+  woodTex.colorSpace = T.SRGBColorSpace;
+  woodTex.wrapS = woodTex.wrapT = T.RepeatWrapping;
+  woodTex.magFilter = T.LinearFilter;
+  woodTex.minFilter = T.LinearMipmapLinearFilter;
+  woodTex.generateMipmaps = true;
+  woodTex.needsUpdate = true;
+  woodTex.anisotropy = 4;
+  return woodTex;
 }
-function makeBoat(){const g=new T.Group();const outline=new T.Shape();outline.moveTo(0,1.95);outline.bezierCurveTo(.72,1.55,1,.7,.89,-1.22);outline.quadraticCurveTo(0,-1.65,-.89,-1.22);outline.bezierCurveTo(-1,.7,-.72,1.55,0,1.95);const inner=new T.Path();inner.moveTo(0,1.62);inner.bezierCurveTo(-.57,1.3,-.74,.5,-.69,-1.12);inner.quadraticCurveTo(0,-1.42,.69,-1.12);inner.bezierCurveTo(.74,.5,.57,1.3,0,1.62);outline.holes.push(inner);const hullGeo=new T.ExtrudeGeometry(outline,{depth:.48,bevelEnabled:true,bevelThickness:.07,bevelSize:.06,bevelSegments:2,steps:1,curveSegments:16});hullGeo.rotateX(Math.PI/2);piece(g,hullGeo,0x427c80,[0,.68,0]);for(let j=-2;j<=2;j++)box(g,j%2?0xbe9866:0xd1ad73,j*.25,.29,0,.23,.09,2.3);for(const z of[-.9,.8])box(g,0xb99868,0,.62,z,1.36,.11,.32);const pts=outline.getPoints(70).map(p=>new V(p.x,.72,p.y));piece(g,new T.TubeGeometry(new T.CatmullRomCurve3(pts,true),100,.045,6,true),0xd5b783);for(const side of[-1,1])for(const z of[-.7,0,.65]){const rib=rod(g,[side*.65,.32,z],[side*.79,.65,z],.035,0x72583b);}
- const human=character();human.position.set(0,.53,.05);g.add(human);rod(g,[.6,.85,-.45],[1.7,.15,.7],.045,colors.wood);box(g,colors.wood,1.63,.16,.68,.27,.09,.64).rotation.y=-.65;pole(g,colors.wood,-.65,1.5,-1,.055,2.1);const pennant=box(g,0xd9bd79,-.32,2.26,-1,.62,.36,.045);for(const x of[-.75,.75])box(g,0x427c80,x,.46,0,.1,.1,2.3);
- const coil=piece(g,new T.TorusGeometry(.22,.035,5,18),0xcbb894,[.43,.56,-.77],[1,1,1]);coil.rotation.x=Math.PI/2;
- ball(g,0xffd5a2,-.66,1.08,-1.05,.09,.13,.09,{emissive:0xffbd6b,emissiveIntensity:.8});halo(g,0xffd499,-.66,1.08,-1.05,.6);
- g.userData.human=human;g.userData.flag=pennant;return g;}
-function lootMesh(kind){const g=new T.Group();if(kind===0){for(let i=-1;i<=1;i++){const l=pole(g,0x8f6c4c,i*.32,.1,i*.12,.17,1.6);l.rotation.x=Math.PI/2;}box(g,0xc6b58c,0,.1,0,1.2,.08,.13);}else if(kind===2){pole(g,0x717d64,0,.17,0,.44,.9);for(const y of[-.1,.42])piece(g,new T.TorusGeometry(.45,.025,6,16),0xccb797,[0,y,0],[1,1,1]).rotation.x=Math.PI/2;}else{box(g,kind===3?0x556773:0x987a51,0,.25,0,1,.75,1);for(const z of[-.38,.38])box(g,0xc7ac7e,0,.26,z,1.05,.8,.1);if(kind===3)ball(g,0xb5bfef,0,.7,0,.2,.2,.2,{emissive:0xa69beb,emissiveIntensity:.8});}return g;}
-const waterVertex=`uniform float uTime;varying vec3 vPos;varying float vWave;void main(){vec3 p=position;float w=sin(p.x*.13+uTime*.7)*.12+sin(p.z*.18+uTime*.5)*.12+sin((p.x+p.z)*.33-uTime)*.045;p.y+=w;vWave=w;vPos=p;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`;
-const waterFrag=`
- uniform float uTime;uniform float uNight;uniform float uStorm;uniform vec3 uCamera;uniform vec3 uBoat;uniform float uHeading;uniform float uSpeed;uniform vec4 uHome;
- varying vec3 vPos;varying float vWave;
- float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
- float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+1.),f.x),f.y);}
- void main(){
-  vec2 p=vPos.xz;float n1=noise(p*.4+vec2(uTime*.12,uTime*.07));float n2=noise(p*1.4-vec2(uTime*.17,uTime*.1));
-  vec3 n=normalize(vec3(-cos(p.x*.23+uTime*.9)*.11+(n1-.5)*.14,1.,-cos(p.y*.31+uTime*.7)*.1+(n2-.5)*.14));
-  vec3 view=normalize(uCamera-vPos),light=normalize(vec3(-.5,.65,-.8));float fresnel=pow(1.-max(0.,dot(view,n)),4.);
-  float depth=1.-exp(-length(p)*.025);vec3 col=mix(vec3(.035,.32,.32),vec3(.015,.14,.22),depth);
-  float caustic=pow(max(0.,sin(p.x*.75+sin(p.y*.6+uTime*.3)+uTime*.4)),16.)*pow(max(0.,sin(p.y*.68-p.x*.2-uTime*.45)),6.);
-  col+=caustic*vec3(.025,.09,.075);col+=vWave*.035;col=mix(col,vec3(.35,.56,.6),fresnel*.6);
-  float spec=pow(max(0.,dot(reflect(-light,n),view)),110.);col+=vec3(.93,.83,.56)*spec*.78*(1.-uNight*.75);
-  float spark=pow(max(0.,dot(reflect(-light,n),view)),26.)*smoothstep(.72,.87,n2);col+=spark*vec3(.24,.22,.13);
-  vec2 d=p-uBoat.xz;vec2 forward=vec2(sin(uHeading),cos(uHeading));float aft=-dot(d,forward),side=abs(dot(d,vec2(forward.y,-forward.x)));
-  float wake=(1.-smoothstep(.04,.35,abs(side-(.52+aft*.2))))*smoothstep(0.,1.6,aft)*(1.-smoothstep(3.,13.,aft))*min(1.,uSpeed*.25);
-  col+=wake*vec3(.29,.5,.44)*(.35+n2*.4);
-  vec2 h=abs(p-uHome.xy)-uHome.zw;float rim=length(max(h,0.));float foam=(1.-smoothstep(.08,.55,rim))*step(0.,max(h.x,h.y))*(.35+.3*sin(uTime+p.x*2.+p.y*3.));col+=foam*vec3(.22,.35,.28);
-  col=mix(col,col*vec3(.3,.5,.78),uNight*.66);col=mix(col,col*.77,uStorm*.5);
-  float fog=1.-exp(-length(p-uCamera.xz)*.004);col=mix(col,mix(vec3(.22,.43,.48),vec3(.05,.10,.19),uNight),fog);
-  gl_FragColor=vec4(col,.96);
- }`;
-export class OceanWorld{
- constructor(canvas,state){this.canvas=canvas;this.scene=new T.Scene();this.scene.background=new T.Color(0x6b9ba8);this.scene.fog=new T.FogExp2(0x6b9ba8,.0045);this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});this.mobile=!!(navigator.maxTouchPoints>0||window.matchMedia?.('(pointer:coarse)').matches);this.settings=loadSettings(this.mobile);this.quality=QUALITY[this.settings.quality];this.renderer.setPixelRatio(Math.min(devicePixelRatio,this.quality.pixelRatio));this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=this.quality.soft?T.PCFSoftShadowMap:T.PCFShadowMap;this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.05;this.camera=new T.PerspectiveCamera(44,1,.1,1800);this.yaw=.63;this.pitch=.64;this.distance=42;this.look=new V(2,0,2);this.follow=new V(2,0,2);this.time=0;this.ray=new T.Raycaster();this.pointer=new T.Vector2();this.plane=new T.Plane(new V(0,1,0),0);this.objMeshes=new Map();this.wildMeshes=new Map();this.petMeshes=new Map();this.lastBuildings='';this.placement=null;this.ghostCell={x:0,z:0};this.target=null;this.previewCache=new Map();
- this.ambient=new T.HemisphereLight(0xc5e9e5,0x376778,2.3);this.scene.add(this.ambient);this.sun=new T.DirectionalLight(0xffe1b0,3);this.sun.position.set(-26,48,-22);this.sun.castShadow=true;this.sun.shadow.mapSize.set(this.quality.shadow,this.quality.shadow);Object.assign(this.sun.shadow.camera,{left:-45,right:45,top:45,bottom:-45,near:1,far:200});this.scene.add(this.sun.target);this.sun.shadow.bias=-.0006;this.sun.shadow.normalBias=.03;this.scene.add(this.sun);for(const c of[colors.wood,colors.plank,colors.darkWood,0xcba574,0xa87e50,0xd1ad73]){mat(c).map=woodTexture();mat(c).needsUpdate=true;}
- this.sky=makeSky(this.quality);this.scene.add(this.sky);this.sunDisk=ball(this.scene,0xffeed0,-125,60,-225,15,15,15,{emissive:0xffedbd,emissiveIntensity:1.2,fog:false});this.sunDisk.visible=false;
- this.water=makeWater(this.quality);this.scene.add(this.water);this.atmos=new Atmosphere(this,this.quality);this.trail=new WakeTrail();this.splashIndex=0;this.stormLevel=0;this.hullSpeed=0;this.lastHull=null;this.boatHeave=0;this.makeSpray();
- this.islandModels=makeIslands();this.scene.add(this.islandModels.group);this.home=new T.Group();this.scene.add(this.home);this.boat=makeBoat();this.scene.add(this.boat);this.walker=character();this.walker.visible=false;this.scene.add(this.walker);this.walkPhase=0;this.moveSpeed=0;this.playerAnchor=new V();this.buoy=new T.Group();pole(this.buoy,0x91bbaf,0,.2,0,.85,.35);pole(this.buoy,0x526b69,0,1,0,.12,1.7);ball(this.buoy,0xa6eff2,0,2,0,.25,.35,.25,{emissive:0x7ad7e9,emissiveIntensity:1.6});const beaconRing=piece(this.buoy,new T.TorusGeometry(1.2,.025,6,36),0x8ebce7,[0,.1,0],[1,1,1],{emissive:0x769ade,emissiveIntensity:1});beaconRing.rotation.x=Math.PI/2;halo(this.buoy,0x9dccff,0,2,0,1.8);this.buoy.position.set(17,0,-13);this.scene.add(this.buoy);
- this.targetRing=new T.Mesh(new T.RingGeometry(1.5,1.57,48),new T.MeshBasicMaterial({color:0xc9eecb,transparent:true,opacity:.8,side:T.DoubleSide,depthWrite:false}));this.targetRing.rotation.x=-Math.PI/2;this.targetRing.position.y=.4;this.targetRing.renderOrder=4;this.targetRing.visible=false;this.scene.add(this.targetRing);
- this.navMarker=new T.Mesh(new T.RingGeometry(.4,.55,32),new T.MeshBasicMaterial({color:0xdbeac6,transparent:true,opacity:.6,side:T.DoubleSide,depthWrite:false}));this.navMarker.rotation.x=-Math.PI/2;this.navMarker.position.y=.35;this.navMarker.renderOrder=4;this.navMarker.visible=false;this.scene.add(this.navMarker);
- this.gridGroup=new T.Group();this.scene.add(this.gridGroup);this.ghost=new T.Mesh(new T.BoxGeometry(3.42,.08,3.42),new T.MeshBasicMaterial({color:0xaaf2b2,transparent:true,opacity:.45,depthWrite:false}));this.ghost.position.y=.55;this.ghost.visible=false;this.ghost.renderOrder=6;this.scene.add(this.ghost);
- this.lineGeo=new T.BufferGeometry().setFromPoints([new V(),new V()]);this.rope=new T.Line(this.lineGeo,new T.LineBasicMaterial({color:0xe4d8ab}));this.rope.visible=false;this.scene.add(this.rope);
- const r=seeded(993);this.motes=new T.Group();for(let i=0;i<35;i++){const m=ball(this.motes,0xb6ffe2,(r()-.5)*140,-.05,(r()-.5)*140,.035,.035,.035,{emissive:0x83ffdc,emissiveIntensity:1});m.userData.phase=r()*6;}this.scene.add(this.motes);
- this.extra=expansionModels(this.scene);this.ship=makeWarship(mat,halo);this.ship.visible=false;this.scene.add(this.ship);this.cannonFx=ball(this.scene,0xffc27a,0,0,0,1,1,1,{emissive:0xff9a40,emissiveIntensity:2,transparent:true,opacity:.8});this.cannonFx.visible=false;this.resize();this.sync(state);this.update(0,state,{title:true});
- }
- resize(){const rect=this.canvas.getBoundingClientRect();this.width=rect.width||innerWidth;this.height=rect.height||innerHeight;this.renderer.setSize(this.width,this.height,false);this.camera.aspect=this.width/this.height;this.camera.updateProjectionMatrix();}
- rotate(yawDelta,pitchDelta){const k=this.settings.camSens??1;yawDelta*=k;pitchDelta*=k*(this.settings.invertY?-1:1);this.yaw+=yawDelta;if(this.firstPerson&&!this.placement)this.firstPitch=Math.max(-1.15,Math.min(1.15,(this.firstPitch||0)+pitchDelta));else this.pitch=Math.max(.3,Math.min(1.2,this.pitch+pitchDelta));}
- toggleView(){this.firstPerson=!this.firstPerson;this.firstPitch=0;return this.firstPerson;}
- sync(s){normalizeHousing(s);normalizeExpansion(s);const key=JSON.stringify(s.buildings.map(({type,x,z,rot,level,off})=>({type,x,z,rot,level,off})));if(key!==this.lastBuildings){this.lastBuildings=key;while(this.home.children.length)this.home.remove(this.home.children[0]);for(const b of s.buildings)this.home.add(buildingMesh(b));const floors=s.buildings.filter(b=>b.type==='floor');const minX=Math.min(...floors.map(b=>b.x*3.6))-1.8,maxX=Math.max(...floors.map(b=>b.x*3.6))+1.8,minZ=Math.min(...floors.map(b=>b.z*3.6))-1.8,maxZ=Math.max(...floors.map(b=>b.z*3.6))+1.8;this.water.material.uniforms.uHome.value.set((minX+maxX)/2,(minZ+maxZ)/2,(maxX-minX)/2,(maxZ-minZ)/2);}
-  const syncMap=(items,map,make)=>{const ids=new Set(items.map(x=>x.id));for(const[id,m]of map)if(!ids.has(id)){this.scene.remove(m);map.delete(id);}for(const v of items)if(!map.has(v.id)){const m=make(v);map.set(v.id,m);this.scene.add(m);}};
-  syncMap(s.loot,this.objMeshes,l=>{const m=lootMesh(l.kind);m.position.set(l.x,0,l.z);m.rotation.y=l.spin;return m;});syncMap(s.wild,this.wildMeshes,c=>makeCreature(c.genome));syncMap(s.tamed,this.petMeshes,c=>{const m=makeCreature(c.genome);m.scale.multiplyScalar(.22);return m;});this.buoy.visible=!s.buoyFound;for(const c of s.tamed){const m=this.petMeshes.get(c.id);if(c.awakened&&m&&!m.userData.aura){const ring=piece(m,new T.TorusGeometry(1.4,.025,6,60),0xf4dfa4,[0,.3,0],[1,1,1],{emissive:0xedc67f,emissiveIntensity:1.5});ring.rotation.x=Math.PI/2;m.userData.aura=ring;}}
- }
- pickObject(clientX,clientY){const rect=this.canvas.getBoundingClientRect();this.pointer.set((clientX-rect.left)/rect.width*2-1,-(clientY-rect.top)/rect.height*2+1);this.scene.updateMatrixWorld(true);this.ray.setFromCamera(this.pointer,this.camera);const hits=this.ray.intersectObjects([this.home,this.islandModels.group,this.extra.group],true);for(const hit of hits){let o=hit.object;while(o){if(o.userData.facilityId)return{type:'facility',id:o.userData.facilityId};if(o.userData.siteId)return{type:'site',id:o.userData.siteId};if(o.userData.nodeId)return{type:'node',id:o.userData.nodeId};if(o.userData.claimId)return{type:'claim',id:o.userData.claimId};o=o.parent;}if(hit.distance>0)return null;}return null;}
- screenPoint(x,y,z){const v=new V(x,y,z).project(this.camera);return{x:(v.x*.5+.5)*this.width,y:(-.5*v.y+.5)*this.height,visible:v.z<1&&v.z>0&&Math.abs(v.x)<1.2&&Math.abs(v.y)<1.2};}
- seaPoint(clientX,clientY){const rect=this.canvas.getBoundingClientRect();this.pointer.set((clientX-rect.left)/rect.width*2-1,-(clientY-rect.top)/rect.height*2+1);this.ray.setFromCamera(this.pointer,this.camera);const v=new V();return this.ray.ray.intersectPlane(this.plane,v)?v:null;}
- setPlacement(type,s,level=0){this.buildLevel=type==='upperfloor'?1:level;this.placement=type;this.gridGroup.clear();if(type){for(let x=-7;x<=7;x++)for(let z=-7;z<=7;z++){const bad=buildError(s,type,x,z,this.buildLevel);if(!bad){const cell=new T.Mesh(new T.PlaneGeometry(3.35,3.35),new T.MeshBasicMaterial({color:0x97e4b9,transparent:true,opacity:.18,side:T.DoubleSide,depthWrite:false}));cell.rotation.x=-Math.PI/2;cell.position.set(x*3.6,.45+this.buildLevel*3.3,z*3.6);cell.renderOrder=5;this.gridGroup.add(cell);if(this.gridGroup.children.length===1)this.ghostCell={x,z};}}this.distance=Math.max(this.distance,35);}this.ghost.visible=!!type;}
- updateGhost(s){this.ghost.position.set(this.ghostCell.x*3.6,.52+(this.buildLevel||0)*3.3,this.ghostCell.z*3.6);this.ghost.material.color.set(buildError(s,this.placement,this.ghostCell.x,this.ghostCell.z,this.buildLevel)?0xed8b6c:0xace4bd);}
- update(dt,s,opts={}){this.time+=dt;for(const[id,m]of this.islandModels.nodes){const ready=(s.harvested?.[id]||0)<=s.elapsed;m.scale.setScalar(ready?1:.4);}const t=this.time;const phase=(s.elapsed%480)/480;const night=(Math.cos(phase*Math.PI*2+Math.PI*.65)+1)/2*.85;const stormTarget=phase>.60&&phase<.76?.7:0;this.stormLevel+=(stormTarget-this.stormLevel)*Math.min(1,dt*.12);const storm=this.stormLevel;this.water.material.uniforms.uTime.value=t;this.water.material.uniforms.uNight.value=night;this.water.material.uniforms.uStorm.value=storm;this.sky.material.uniforms.uNight.value=night;this.sky.material.uniforms.uTime.value=t;const atm=this.atmos.update(dt,phase,storm,this.playerAnchor,!s.inCave&&!s.expedition?.diving);this.scene.fog.color.copy(atm.fog);const foot=s.player.mode==='foot',riding=!!s.expedition?.mounted,diving=!!s.expedition?.diving,aboard=s.player.mode==='aboard',helm=s.player.mode==='ship'&&!riding,boat=foot||riding||aboard?s.boat:s.player;this.onRiding=riding;this.baseY=diving?-8:aboard?DECKS[s.player.deck].y:helm?DECKS[4].y:foot?(s.player.level||0)*3.3:riding?.7:0;const helmPos=s.ship?toWorld(s.ship,0,-9.9):null;this.plane.constant=this.placement?-(this.buildLevel||0)*3.3:-this.baseY;this.onFoot=foot||aboard||helm;this.playerAnchor.set(helm?helmPos.x:s.player.x,this.baseY,helm?helmPos.z:s.player.z);this.updateShip(s,t,aboard,helm);const home=this.homeRect(),pose=floatPose(boat.x,boat.z,boat.heading,t,storm,home,3.6,1.6,1);this.boat.rotation.order='YXZ';this.boat.position.set(boat.x,pose.y,boat.z);this.boat.rotation.set(pose.pitch,boat.heading,pose.roll);this.boatHeave=pose.y;
- this.boat.visible=!s.ship;this.boat.userData.human.visible=!foot&&!riding&&!s.ship;this.walker.visible=this.onFoot||riding;this.walker.position.set(helm?helmPos.x:s.player.x,this.baseY+(riding?.65:.42),helm?helmPos.z:s.player.z);this.boat.scale.x=1+(s.expedition?.boatLevel||0)*.07;this.walker.rotation.y=helm?s.ship.heading:s.player.heading;
- this.walkPhase+=dt*this.moveSpeed*3.2;this.walker.userData.legs.forEach((m,i)=>m.rotation.x=Math.sin(this.walkPhase+i*Math.PI)*Math.min(.48,this.moveSpeed*.15));this.walker.userData.arms.forEach((m,i)=>m.rotation.x=-Math.sin(this.walkPhase+i*Math.PI)*Math.min(.35,this.moveSpeed*.12));
- this.boat.userData.flag.rotation.y=Math.sin(t*2.4)*.13;{const u=this.water.material.uniforms,hx=s.ship?s.ship.x:this.boat.position.x,hz=s.ship?s.ship.z:this.boat.position.z,hh=s.ship?s.ship.heading:boat.heading;if(this.lastHull&&dt>0){const v=Math.hypot(hx-this.lastHull.x,hz-this.lastHull.z)/dt;this.hullSpeed+=(Math.min(v,20)-this.hullSpeed)*Math.min(1,dt*6);}this.lastHull={x:hx,z:hz};
-  u.uBoat.value.set(hx,0,hz);u.uHeading.value=hh;u.uSpeed.value=this.hullSpeed;u.uHull.value.set(s.ship?11:1.9,s.ship?2.6:.9);u.uTrail.value=this.trail.record(hx,hz,this.hullSpeed,t);
-  if(this.hullSpeed>3.2&&!s.inCave&&!diving){this.sprayTimer=(this.sprayTimer||0)-dt;if(this.sprayTimer<=0){this.sprayTimer=.05;const f=s.ship?11:1.9;for(const side of[-1,1])this.emitSpray(hx+Math.sin(hh)*f+Math.cos(hh)*side*.5,hz+Math.cos(hh)*f-Math.sin(hh)*side*.5,Math.sin(hh)*this.hullSpeed*.25+Math.cos(hh)*side*1.4,Math.cos(hh)*this.hullSpeed*.25-Math.sin(hh)*side*1.4,1.6+Math.random(),1);}}}this.updateSpray(dt);
- this.buoy.position.y=waveHeight(17,-13,t,storm,home)*.9;this.buoy.rotation.z=Math.sin(t*.8)*.05;
-  for(const l of s.loot){const m=this.objMeshes.get(l.id);if(m){const ly=waveHeight(l.x,l.z,t,storm,home),slope=waveHeight(l.x+.6,l.z,t,storm,home)-ly;m.position.set(l.x,ly+.02,l.z);m.rotation.z=Math.atan2(slope,.6)*.8;m.rotation.x=Math.sin(t*.9+l.spin)*.05;}}
-  for(const c of s.wild){const m=this.wildMeshes.get(c.id);if(m){const ud=m.userData,mv=ud.lx===undefined||!dt?0:Math.hypot(c.x-ud.lx,c.z-ud.lz)/dt;ud.lx=c.x;ud.lz=c.z;ud.swim=(ud.swim||c.phase)+dt*(1+Math.min(mv,8)*.55);ud.dip=(ud.dip||0)+((c.diving||0)-(ud.dip||0))*Math.min(1,dt*3);m.position.set(c.x,.03+waveHeight(c.x,c.z,t,storm,home)-ud.dip*1.1,c.z);m.rotation.y=c.heading||0;m.rotation.x=ud.dip*.35;this.animateCreature(m,ud.swim);}}
-  const pools=new Map(s.buildings.filter(b=>b.type==='pen').map(b=>[penId(b),b])),slots=new Map();let i=0;for(const c of s.tamed){const m=this.petMeshes.get(c.id);if(!m)continue;const pen=pools.get(c.penId);m.visible=!!pen;if(!pen)continue;if(c.id===s.expedition?.activeId){m.scale.setScalar(phenotype(c.genome).size*(riding?1:.75));const target=new V(s.player.x+(riding?0:Math.cos(t*.4)*2.5),this.baseY+(foot?.8:0),s.player.z+(riding?0:Math.sin(t*.4)*2.5));m.position.lerp(target,1-Math.exp(-dt*3));if(m.position.distanceTo(target)>15)m.position.copy(target);m.rotation.y=s.player.heading;this.animateCreature(m,t);if(m.userData.aura)m.userData.aura.rotation.z=t;continue;}const rest=restPlace(s,c);if(rest==='lounge'&&s.ship){const k=s.ship.lounge.indexOf(c.id),[lx,lz]=LOUNGE_SLOTS[k]||[0,0],w=toWorld(s.ship,lx,lz);m.visible=this.ship.userData.bands[2].visible;m.scale.setScalar(phenotype(c.genome).size*.42);m.position.set(w.x,DECKS[2].y+.55+Math.sin(t*1.5+k)*.05,w.z);m.rotation.y=s.ship.heading+Math.sin(t*.3+k)*.4;this.animateCreature(m,t*.4+k);continue;}if(rest==='island'){const isl=restIsland(s),a=i*2.1+t*.05,r=3.6+(i%3)*1.4;m.scale.setScalar(phenotype(c.genome).size*.5);m.position.set(isl.x+Math.sin(a)*r,.75+Math.sin(t*1.2+i)*.08,isl.z+Math.cos(a)*r*.8);m.rotation.y=a+Math.PI/2;this.animateCreature(m,t*.5+i);i++;continue;}m.scale.setScalar(phenotype(c.genome).size*.22);const slot=slots.get(c.penId)||0;slots.set(c.penId,slot+1);const a=t*.45+i*1.7;const positions=[[-.8,.55],[.8,.55],[0,-.65]];const[x,z]=positions[slot]||[0,0];m.position.set(pen.x*3.6+x+Math.cos(a)*.12,.08+Math.sin(a*2)*.04,pen.z*3.6+z+Math.sin(a)*.13);m.rotation.y=Math.sin(a)*.3;this.animateCreature(m,t+i);i++;}
-
-  this.motes.children.forEach((m,i)=>{m.position.y=.1+Math.sin(t+m.userData.phase)*.06;m.scale.setScalar(.6+Math.sin(t*2+i)*.4);});
-  if(opts.title){this.follow.set(3,0,1);this.yaw=.55+Math.sin(t*.07)*.1;this.distance=innerWidth<760?36:43;}else if(this.placement)this.follow.set(1.8,0,1.8);else if(helm)this.follow.set(s.ship.x,7,s.ship.z);else this.follow.set(s.player.x,this.baseY+(foot||aboard?.8:0),s.player.z);this.look.lerp(this.follow,1-Math.exp(-dt*3.5)||1);const dist=s.inCave?12:diving?Math.min(14,this.distance):aboard&&!opts.title?Math.min(20,this.distance*.55):helm&&!opts.title?Math.max(44,this.distance*1.2):this.distance*(foot&&!this.placement&&!opts.title?.7:1);this.camera.position.set(this.look.x+Math.sin(this.yaw)*Math.cos(this.pitch)*dist,this.look.y+Math.sin(this.pitch)*dist,this.look.z+Math.cos(this.yaw)*Math.cos(this.pitch)*dist);this.camera.lookAt(this.look);this.water.material.uniforms.uCamera.value.copy(this.camera.position);if(this.placement)this.updateGhost(s);if(this.target){this.targetRing.visible=true;this.targetRing.position.set(this.target.x,this.baseY+.43,this.target.z);this.targetRing.scale.setScalar(this.target.type==='wild'?1.7:1);this.targetRing.material.opacity=.55+Math.sin(t*3)*.2;}else this.targetRing.visible=false;if(opts.destination){this.navMarker.visible=true;this.navMarker.position.set(opts.destination.x,this.baseY+.38,opts.destination.z);this.navMarker.scale.setScalar(1+Math.sin(t*4)*.15);}else this.navMarker.visible=false;
-  this.extra.cave.visible=!!s.inCave;this.extra.seabed.visible=diving;this.sky.visible=!diving&&!s.inCave;this.water.visible=!diving&&!s.inCave;this.islandModels.group.visible=!s.inCave;for(const site of EXPLORE){const m=this.extra.sites.get(site.id);m.visible=!!site.cave===!!s.inCave&&(!site.deep||diving);m.scale.setScalar(s.expedition.collected.includes(site.id)?.65:1);}const boss=s.expedition.boss;this.extra.boss.visible=!boss.defeated&&!s.inCave;this.extra.boss.position.set(boss.x,diving?-4:0,boss.z);this.extra.boss.rotation.y=Math.atan2(s.player.x-boss.x,s.player.z-boss.z);this.animateCreature(this.extra.boss,t);this.extra.rain.visible=!!storm&&!diving&&!s.inCave;this.extra.rain.position.set(s.player.x,0,s.player.z);const rain=this.extra.rain.geometry.attributes.position;for(let i=0;i<rain.count;i++){rain.setY(i,(rain.getY(i)-dt*20+20)%20);}rain.needsUpdate=true;this.scene.fog.density=diving?.035:s.inCave?.045:.0026+storm*.006;if(diving||s.inCave){this.scene.background.set(diving?0x062738:0x081720);this.scene.fog.color.copy(this.scene.background);this.ambient.color.set(diving?0x2a7a8a:0x5a6a80);this.ambient.intensity=diving?1.2:.7;this.sun.intensity=diving?.5:.1;this.scene.environmentIntensity=.15;}else{this.scene.background.copy(atm.fog);}this.water.material.uniforms.uFogDensity.value=this.scene.fog.density;
-  if(opts.salvaging){const p=opts.salvaging;this.rope.visible=true;this.lineGeo.setFromPoints([new V(s.player.x,.8,s.player.z),new V(p.x,.5,p.z)]);}else this.rope.visible=false;
- }
- updateShip(s,t,aboard,helm){const ship=this.ship,bands=ship.userData.bands;this.hasShip=!!s.ship;const fusing=s.shipFusion;ship.visible=!!s.ship||!!fusing;for(const[id,c]of this.islandModels.claims){const own=(s.occupied||[]).includes(id);c.userData.flag.visible=own;c.userData.stone.visible=!own;c.userData.cloth.rotation.y=Math.sin(t*1.7+c.position.x)*.12;}if(!ship.visible)return;const pose=s.ship||dockMoor(s)||{x:0,z:30,heading:0};ship.position.set(pose.x,Math.sin(t*.8)*.08,pose.z);ship.rotation.set(Math.sin(t*.6)*.008,pose.heading,Math.sin(t*.7)*.012);if(fusing){const p=Math.min(1,1-(fusing.readyAt-s.elapsed)/fusing.duration);ship.userData.keel.visible=true;bands.forEach((b,i)=>b.visible=p>(i+1)/6);return;}const cut=aboard&&!this.firstPerson;bands.forEach((b,i)=>b.visible=!cut||i<=s.player.deck);ship.userData.keel.visible=true;ship.userData.wheel.rotation.z=helm?Math.sin(t*.5)*.6:0;const fx=s.ship.cannonFx;if(fx&&s.elapsed-fx.at<.7){this.cannonFx.visible=true;const k=(s.elapsed-fx.at)/.7;this.cannonFx.position.set(fx.x,1+k*2,fx.z);this.cannonFx.scale.setScalar(1+k*4);this.cannonFx.material.opacity=.85*(1-k);}else this.cannonFx.visible=false;}
- animateCreature(m,t){animateCreature(m,t);}
-
- render(){
- if(this.firstPerson&&!this.placement&&!this.titleMode){
-  const x=this.playerAnchor.x,z=this.playerAnchor.z,p=this.firstPitch||0,y=this.baseY+(this.onFoot?1.96+Math.sin(this.walkPhase*2)*Math.min(.018,this.moveSpeed*.008):2.13+this.boatHeave);
-  this.camera.position.set(x,y,z);this.camera.lookAt(x-Math.sin(this.yaw)*Math.cos(p)*10,y-Math.sin(p)*10,z-Math.cos(this.yaw)*Math.cos(p)*10);this.camera.fov=70;this.boat.userData.human.visible=false;this.walker.visible=false;this.water.material.uniforms.uCamera.value.copy(this.camera.position);
- }else{this.camera.fov=44;this.boat.userData.human.visible=!this.onFoot&&!this.onRiding&&!this.hasShip;this.walker.visible=this.onFoot||this.onRiding;}
- this.camera.updateProjectionMatrix();this.sky.position.copy(this.camera.position);this.water.position.set(Math.round(this.camera.position.x/4)*4,0,Math.round(this.camera.position.z/4)*4);this.renderer.render(this.scene,this.camera);
- }
- homeRect(){const h=this.water.material.uniforms.uHome.value;return{x:h.x,z:h.y,hx:h.z,hz:h.w};}
- // A splash: expanding rings in the water shader plus a burst of droplets.
- splash(x,z,strength=1){const u=this.water.material.uniforms.uSplash.value,i=(this.splashIndex++)%SPLASHES;u.set([x,z,this.time,strength],i*4);for(let k=0;k<Math.round(26*strength);k++){const a=Math.random()*Math.PI*2,r=Math.random()*.6,out=1+Math.random()*2.6;this.emitSpray(x+Math.cos(a)*r,z+Math.sin(a)*r,Math.cos(a)*out,Math.sin(a)*out,3+Math.random()*3.5*strength,1.2);}}
- makeSpray(){const n=220,g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(new Float32Array(n*3).fill(-999),3));this.spray={points:new T.Points(g,new T.PointsMaterial({color:0xf2fbfa,size:.3,transparent:true,opacity:.9,depthWrite:false})),vel:new Float32Array(n*3),life:new Float32Array(n),next:0,n};this.spray.points.frustumCulled=false;this.scene.add(this.spray.points);}
- emitSpray(x,z,vx,vz,vy,life){const sp=this.spray,i=sp.next++%sp.n,pos=sp.points.geometry.attributes.position;pos.setXYZ(i,x,waveHeight(x,z,this.time,this.stormLevel,this.homeRect())+.1,z);sp.vel.set([vx,vy,vz],i*3);sp.life[i]=life;}
- updateSpray(dt){const sp=this.spray,pos=sp.points.geometry.attributes.position;let any=false;for(let i=0;i<sp.n;i++){if(sp.life[i]<=0)continue;any=true;sp.life[i]-=dt;sp.vel[i*3+1]-=9.8*dt;const x=pos.getX(i)+sp.vel[i*3]*dt,y=pos.getY(i)+sp.vel[i*3+1]*dt,z=pos.getZ(i)+sp.vel[i*3+2]*dt;if(sp.life[i]<=0||y<-.3){sp.life[i]=0;pos.setXYZ(i,0,-999,0);}else pos.setXYZ(i,x,y,z);}if(any||sp.dirty){pos.needsUpdate=true;sp.dirty=any;}}
- saveSettings(){saveSettings(this.settings);}
- setQuality(name){if(!QUALITY[name]||name===this.settings.quality)return false;this.settings.quality=name;saveSettings(this.settings);return true;}
- thumbnail(genome,key){if(this.previewCache.has(key))return this.previewCache.get(key);const scene=new T.Scene();scene.add(new T.HemisphereLight(0xffffff,0x407886,2.8));const sun=new T.DirectionalLight(0xffe5ba,3);sun.position.set(-3,5,4);scene.add(sun);const m=makeCreature(genome);m.rotation.y=-.65;scene.add(m);const cam=new T.PerspectiveCamera(40,2.2,.1,30);cam.position.set(5,3,7);cam.lookAt(0,0,0);const w=440,h=200,rt=new T.WebGLRenderTarget(w,h),old=this.renderer.getRenderTarget(),oldColor=this.renderer.getClearColor(new T.Color()).clone(),oldAlpha=this.renderer.getClearAlpha();this.renderer.setRenderTarget(rt);this.renderer.setClearColor(0x0c2935,0);this.renderer.clear();this.renderer.render(scene,cam);const pixels=new Uint8Array(w*h*4);this.renderer.readRenderTargetPixels(rt,0,0,w,h,pixels);this.renderer.setRenderTarget(old);this.renderer.setClearColor(oldColor,oldAlpha);rt.dispose();const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d'),im=ctx.createImageData(w,h);for(let y=0;y<h;y++)im.data.set(pixels.subarray((h-y-1)*w*4,(h-y)*w*4),y*w*4);ctx.putImageData(im,0,0);const url=c.toDataURL();this.previewCache.set(key,url);return url;}
+function halo(parent, color, x, y, z, size) {
+  if (!glowTex) {
+    const n = 64,
+      d = new Uint8Array(n * n * 4);
+    for (let yy = 0; yy < n; yy++)
+      for (let xx = 0; xx < n; xx++) {
+        let a = Math.max(0, 1 - Math.hypot(xx - n / 2, yy - n / 2) / (n / 2));
+        a = Math.pow(a, 3);
+        const i = (yy * n + xx) * 4;
+        d[i] = d[i + 1] = d[i + 2] = 255;
+        d[i + 3] = a * 200;
+      }
+    glowTex = new T.DataTexture(d, n, n, T.RGBAFormat);
+    glowTex.magFilter = T.LinearFilter;
+    glowTex.needsUpdate = true;
+  }
+  const sp = new T.Sprite(
+    new T.SpriteMaterial({
+      map: glowTex,
+      color,
+      transparent: true,
+      blending: T.AdditiveBlending,
+      depthWrite: false,
+      opacity: 0.6
+    })
+  );
+  sp.position.set(x, y, z);
+  sp.scale.set(size, size, 1);
+  parent.add(sp);
+  return sp;
 }
-export class IntroFilm{
- constructor(renderer,onFinish){this.renderer=renderer;this.onFinish=onFinish;this.t=0;this.done=false;this.scene=new T.Scene();this.scene.background=new T.Color(0x9cacac);this.scene.fog=new T.Fog(0x9cacac,25,95);this.camera=new T.PerspectiveCamera(47,innerWidth/innerHeight,.1,220);this.scene.add(new T.HemisphereLight(0xd5e3ef,0x485250,2.6));const light=new T.DirectionalLight(0xffdabc,3);light.position.set(-12,25,8);this.scene.add(light);box(this.scene,0x40525b,0,-.19,0,12,.3,180);for(let z=-70;z<70;z+=6)box(this.scene,0xe2ce9e,0,-.02,z,.16,.015,3);for(const x of[-6.5,6.5])box(this.scene,0xa7a899,x,0,0,1,.3,180);const r=seeded(91);for(let z=-65;z<65;z+=9)for(const sign of[-1,1]){const h=4+r()*13,x=sign*(11+r()*2);box(this.scene,[0x879899,0x728b91,0xb7b5a5][Math.floor(r()*3)],x,h/2,z,6,h,6);for(let yy=2;yy<h-1;yy+=2.6)for(let xx=-1;xx<=1;xx++){box(this.scene,0x607d86,x+xx*1.4,yy,z+3.02,.8,1.2,.04);}}for(let z=-45;z<50;z+=15){pole(this.scene,0x4b6269,5.8,3.5,z,.09,7);rod(this.scene,[5.8,7,z],[3.5,7,z],.07,0x4b6269);box(this.scene,0xffe6b0,3.5,6.9,z,.65,.14,.35,{emissive:0xffce82,emissiveIntensity:.6});}
- this.bike=new T.Group();for(const z of[-.65,.65]){const wheel=piece(this.bike,new T.TorusGeometry(.33,.095,8,18),0x1e3036,[0,.32,z],[1,1,1]);wheel.rotation.y=Math.PI/2;pole(this.bike,0x7d979c,0,.32,z,.13,.13).rotation.z=Math.PI/2;}box(this.bike,0x3a6f7a,0,.76,-.1,.44,.7,.8);box(this.bike,0x2a3b44,0,1,-.28,.47,.17,.7);box(this.bike,0x527f84,0,.83,.66,.48,.85,.3);rod(this.bike,[-.35,1.25,.55],[.35,1.25,.55],.035,0x223941);const person=character();person.position.set(0,.55,-.22);this.bike.add(person);ball(person,0xe2d2b1,0,1.7,-.01,.3,.31,.3);box(person,0x44616c,0,1.7,.26,.39,.21,.05);this.rider=person;this.bike.position.set(-2,0,-15);this.scene.add(this.bike);
- this.truck=new T.Group();box(this.truck,0xb4b09b,0,1.5,1.8,2.8,2.8,2.4);box(this.truck,0x536d78,0,2.1,3.025,2.38,1.1,.06);box(this.truck,0x91856a,0,1.8,-1.25,2.95,2.7,4);box(this.truck,0x373c3b,0,.7,0,2.6,.4,6.5);for(const x of[-1.4,1.4])for(const z of[-2.5,-1.15,2]){const w=piece(this.truck,cylG,0x243439,[x,.56,z],[.55,.35,.55]);w.rotation.z=Math.PI/2;}for(let i=0;i<22;i++)ball(this.truck,0x9a968b,(r()-.5)*2.6,3.15+r()*.25,-1.4+(r()-.5)*3.6,.3+r()*.3,.3,.4);this.truck.position.set(-25,0,7.4);this.truck.rotation.y=Math.PI/2;this.scene.add(this.truck);
- this.portal=new T.Scene();this.portal.background=new T.Color(0x051722);this.portal.add(new T.HemisphereLight(0x9cedda,0x133757,3));this.soul=character();this.portal.add(this.soul);this.rings=[];for(let i=0;i<18;i++){const m=new T.Mesh(new T.TorusGeometry(3+i*.2,.017,5,80),new T.MeshBasicMaterial({color:new T.Color().setHSL(.46+i*.005,.65,.5),transparent:true,opacity:.5}));m.position.z=-i*3;this.portal.add(m);this.rings.push(m);}this.portalCamera=new T.PerspectiveCamera(50,innerWidth/innerHeight,.1,180);this.portalCamera.position.set(0,2.2,7);this.portalCamera.lookAt(0,1,0);
- }
- resize(){for(const c of[this.camera,this.portalCamera]){c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();}}
- update(dt){const slow=this.t>6.8&&this.t<7.75?.3:1;this.t+=dt*slow;const t=this.t,step=dt*slow;let caption='',chapter='',fade=0,blur=0,flash=0,dim=0,fadeColor='';
-  if(t<6.8){this.bike.position.z=-15+t*3.3;this.bike.rotation.z=Math.sin(t*5)*.012;this.camera.position.set(4.6,3.6,this.bike.position.z+7);this.camera.lookAt(-1,1,this.bike.position.z+.5);chapter='前世 · 08:47';caption=t<3.4?'大學畢業後第 37 天。又是一個快遲到的早晨。':t<4.9?'只要趕上前面的綠燈，今天就能準時打卡。':'……喇叭聲？';this.truck.position.x=-25+Math.max(0,t-3.6)*7.6;if(t>4.9){this.camera.position.x+=(Math.random()-.5)*.03*(t-4.9);this.camera.lookAt(-3,1,this.bike.position.z+.5);}this.renderer.render(this.scene,this.camera);}
-  else if(t<11){if(!this.crash)this.startCrash();this.stepCrash(step,t);chapter='前世 · 08:48';const k=t-6.8;flash=Math.max(0,1-k*3.2);const r=this.rider.position;
-   if(t<8.6){caption='砰——身體被拋上了半空。';const shake=Math.max(0,.5-k*.35);this.camTarget??=new V(r.x+2,4,r.z+10);this.camTarget.lerp(new V(r.x+1.2,Math.max(3.4,r.y+3),r.z+8.5),1-Math.exp(-step*6));this.camera.position.copy(this.camTarget).add(new V((Math.random()-.5)*shake,(Math.random()-.5)*shake,(Math.random()-.5)*shake));this.camera.lookAt(r.x,r.y+.5,r.z);}
-   else{caption=t<9.7?'一聲喇叭，世界失去了聲音。':'……好冷。視線，越來越模糊。';const head=this.rider.localToWorld(new V(0,1.6,.1)),sway=Math.sin(t*1.7)*.25;this.camera.position.set(head.x,head.y+.28,head.z);const tr=this.truck.position,drift=Math.min(1,(t-8.6)/2.2);this.camera.lookAt(head.x+(tr.x+1-head.x)*(1-drift*.5)+sway,2.8+drift*5,head.z+(tr.z-head.z)*(1-drift*.5)+Math.cos(t*1.3)*.3);blur=Math.min(16,(t-8.6)*6.5);dim=Math.min(1,Math.max(0,(t-9.4)/1.4));fade=Math.max(0,(t-10.3)/.7);fadeColor='#000';}
-   this.renderer.render(this.scene,this.camera);}
-  else if(t<17){chapter='世界的另一側';caption=t<13.8?'原來人生，真的可以沒有明天。':'可是……為什麼，我還聽得見海？';this.soul.position.y=.2+Math.sin(t)*.3;this.soul.rotation.z=Math.sin(t*.5)*.3;this.soul.rotation.y=t*.3;for(let i=0;i<this.rings.length;i++){const m=this.rings[i];m.position.z=((t*5+i*3)%60)-50;m.rotation.z=t*.2+i*.1;}fade=t<11.6?1-(t-11)/.6:Math.max(0,(t-16.2)/.8);fadeColor=t<11.6?'#000':'';this.renderer.render(this.portal,this.portalCamera);}
-  else{this.done=true;this.onFinish();return{caption:'',chapter:'',fade:0,blur:0,flash:0,dim:0};}
-  return{caption,chapter,fade,blur,flash,dim,fadeColor};}
- // Impact: the rider is detached from the bike and follows a ballistic tumble with bounces.
- startCrash(){this.crash=true;this.scene.attach(this.rider);this.vel=new V(6.8,6.6,7.2);this.spin=new V(6.2,1.8,7.5);this.rest=false;this.bikeVel=new V(5.5,0,1.6);this.truckV=7.6;this.debris=[];const r=seeded(7);for(let i=0;i<14;i++){const d=box(this.scene,[0x3a6f7a,0x2a3b44,0xd8e6ea,0x7d979c][i%4],this.bike.position.x,.9,this.bike.position.z,.12+r()*.18,.05+r()*.1,.1+r()*.2);d.userData.v=new V(2+r()*7,2+r()*6,(r()-.3)*6);d.userData.s=new V(r()*12,r()*12,r()*12);this.debris.push(d);}const glass=new T.MeshBasicMaterial({color:0xe8f6ff,transparent:true,opacity:.85});for(let i=0;i<24;i++){const g=new T.Mesh(new T.TetrahedronGeometry(.05+r()*.06),glass);g.position.set(this.truck.position.x+1.4,1.9,this.truck.position.z+1);g.userData.v=new V(3+r()*5,1+r()*5,(r()-.5)*7);g.userData.s=new V(r()*15,r()*15,r()*15);this.scene.add(g);this.debris.push(g);}}
- stepCrash(dt,t){const p=this.rider,u=p.userData;if(!this.rest){this.vel.y-=13*dt;p.position.addScaledVector(this.vel,dt);p.rotation.x+=this.spin.x*dt;p.rotation.y+=this.spin.y*dt;p.rotation.z+=this.spin.z*dt;u.arms.forEach((m,i)=>{m.rotation.x=Math.sin(t*22+i*2)*1.6;m.rotation.z=(i?1:-1)*(.8+Math.sin(t*17)*.5);});u.legs.forEach((m,i)=>m.rotation.x=Math.sin(t*19+i*2.5)*1.1);if(p.position.y<.2&&this.vel.y<0){if(Math.abs(this.vel.y)>3.2){this.vel.y*=-.32;this.vel.x*=.45;this.vel.z*=.45;this.spin.multiplyScalar(.35);}else{this.rest=true;p.position.y=.13;p.rotation.set(-Math.PI/2,.5,.25);u.arms.forEach((m,i)=>{m.rotation.set(-.3,0,(i?1:-1)*1.25);});u.legs.forEach((m,i)=>m.rotation.set(i?.15:-.1,0,(i?1:-1)*.2));}}}
-  this.bike.position.addScaledVector(this.bikeVel,dt);this.bikeVel.multiplyScalar(Math.exp(-dt*1.6));this.bike.rotation.z+=(-Math.PI*.47-this.bike.rotation.z)*Math.min(1,dt*7);this.bike.rotation.y+=this.bikeVel.length()*dt*.5;
-  this.truckV=Math.max(0,this.truckV-dt*6.5);this.truck.position.x+=this.truckV*dt;this.truck.rotation.z=Math.sin(t*30)*.004*this.truckV;
-  for(const d of this.debris){const v=d.userData.v;if(d.position.y<=.03&&v.y<=0){d.position.y=.03;v.multiplyScalar(Math.exp(-dt*6));continue;}v.y-=13*dt;d.position.addScaledVector(v,dt);d.rotation.x+=d.userData.s.x*dt;d.rotation.y+=d.userData.s.y*dt;}}
+
+function floorMesh() {
+  const g = new T.Group();
+  for (const x of [-1, 1])
+    for (const z of [-1, 1]) {
+      const f = pole(g, 0x6e4a2f, x * 0.95, -0.12, z * 0.95, 0.42, 0.95);
+      f.rotation.x = Math.PI / 2;
+      for (const k of [-0.3, 0.3])
+        piece(g, new T.TorusGeometry(0.43, 0.03, 5, 18), 0x2f3a3d, [x * 0.95, -0.12, z * 0.95 + k]);
+    }
+  for (const z of [-1.05, 0, 1.05])
+    for (const x of [-1.45, 1.45])
+      piece(g, new T.TorusGeometry(0.12, 0.03, 5, 10), colors.rope, [x, 0.3, z]).rotation.y = Math.PI / 2;
+  for (let i = 0; i < 7; i++) box(g, i % 3 === 0 ? 0xcba574 : colors.plank, (i - 3) * 0.49, 0.29, 0, 0.45, 0.2, 3.45);
+  for (const x of [-1.45, 1.45]) {
+    box(g, colors.darkWood, x, 0.06, 0, 0.17, 0.27, 3.4);
+    for (const z of [-1.2, 1.2]) pole(g, 0x283e44, x, -0.21, z, 0.4, 0.7).rotation.z = Math.PI / 2;
+  }
+  for (const x of [-1.46, 1.46]) for (const z of [-1.44, 1.44]) ball(g, 0x695f4d, x, 0.405, z, 0.038, 0.018, 0.038);
+  return g;
+}
+function buildingMesh(b) {
+  const g = new T.Group();
+  if (b.type === 'floor' || b.type === 'upperfloor') g.add(floorMesh());
+  if (b.type === 'upperfloor') {
+    for (const x of [-1.55, 1.55]) for (const z of [-1.55, 1.55]) pole(g, colors.darkWood, x, -1.4, z, 0.085, 3.3);
+  }
+  if (b.type === 'stairs') {
+    for (let n = 0; n < 11; n++) box(g, colors.plank, -0.85, 0.45 + n * 0.3, -1.45 + n * 0.27, 1, 0.13, 0.34);
+    for (const x of [-1.4, -0.3]) {
+      rod(g, [x, 0.7, -1.5], [x, 3.7, 1.45], 0.06, colors.darkWood);
+      rod(g, [x, 1.45, -1.5], [x, 4.4, 1.45], 0.04, colors.rope);
+    }
+  }
+  if (b.type === 'chair') {
+    for (const x of [-0.35, 0.35]) for (const z of [-0.35, 0.35]) pole(g, colors.wood, x, 0.67, z, 0.05, 0.55);
+    box(g, colors.plank, 0, 0.98, 0, 0.85, 0.12, 0.8);
+    box(g, colors.plank, 0, 1.35, -0.36, 0.85, 0.65, 0.1);
+  }
+  if (b.type === 'table') {
+    for (const x of [-0.7, 0.7]) for (const z of [-0.4, 0.4]) pole(g, colors.wood, x, 0.84, z, 0.06, 0.9);
+    box(g, colors.plank, 0, 1.3, 0, 1.7, 0.15, 1.05);
+  }
+  if (b.type === 'lamp') {
+    pole(g, colors.metal, 0, 1.5, 0, 0.05, 2.1);
+    ball(g, colors.glow, 0, 2.6, 0, 0.17, 0.3, 0.17, { emissive: colors.glow, emissiveIntensity: b.off ? 0 : 1.5 });
+    if (!b.off) {
+      const light = new T.PointLight(0xc2f5d9, 10, 8);
+      light.position.set(0, 2.6, 0);
+      g.add(light);
+      halo(g, 0xbbffcc, 0, 2.6, 0, 1.5);
+    }
+  }
+  if (b.type === 'shelter') {
+    for (const x of [-1.2, 1.2]) for (const z of [-1.2, 1.2]) pole(g, colors.darkWood, x, 1.3, z, 0.09, 2);
+    for (const z of [-1.3, 1.3]) {
+      rod(g, [-1.45, 2.1, z], [0, 3.1, z], 0.06, colors.rope);
+      rod(g, [0, 3.1, z], [1.45, 2.1, z], 0.06, colors.rope);
+    }
+    rod(g, [0, 3.1, -1.5], [0, 3.1, 1.5], 0.085, colors.wood);
+    for (const side of [-1, 1]) {
+      const pos = [],
+        ix = [];
+      for (let j = 0; j <= 12; j++)
+        for (let k = 0; k <= 12; k++) {
+          const u = j / 12,
+            v = k / 12;
+          pos.push(
+            side * u * 1.6,
+            3.1 - u * 0.95 - Math.sin(u * Math.PI) * 0.14 - Math.sin(v * Math.PI) * 0.08,
+            -1.5 + v * 3
+          );
+          if (j && k) {
+            const q = j * 13 + k;
+            ix.push(q, q - 1, q - 14, q, q - 14, q - 13);
+          }
+        }
+      const geo = new T.BufferGeometry();
+      geo.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+      geo.setIndex(ix);
+      geo.computeVertexNormals();
+      piece(g, geo, side === 1 ? 0xccb885 : 0x42948d, [0, 0, 0], [1, 1, 1], { side: T.DoubleSide });
+    }
+    box(g, colors.cloth, 0, 1.23, -1.19, 2.35, 1.74, 0.08);
+    box(g, 0x546b58, 0, 0.55, -0.25, 1.2, 0.22, 1.6);
+    box(g, colors.cloth, 0, 0.71, -0.75, 1, 0.18, 0.35);
+    pole(g, colors.darkWood, 1.24, 2.15, 1.22, 0.075, 1.3);
+    ball(g, 0xffc875, 1.24, 1.8, 1.22, 0.15, 0.23, 0.15, { emissive: 0xffbd6b, emissiveIntensity: 1.2 });
+    const l = new T.PointLight(0xffd499, 6, 8);
+    l.position.set(1.2, 1.8, 1.2);
+    g.add(l);
+  }
+  if (b.type === 'dock') g.add(dockMesh(mat));
+  if (b.type === 'shelter') {
+    for (const s of [-1, 1])
+      for (let k = 0; k < 5; k++) box(g, k % 2 ? 0xa98257 : 0xb8915f, s * 1.32, 0.62 + k * 0.3, -0.15, 0.08, 0.28, 2.3);
+    for (let k = 0; k < 6; k++) box(g, k % 2 ? 0xa98257 : 0xb8915f, 0, 0.62 + k * 0.3, -1.32, 2.6, 0.28, 0.08);
+    box(g, 0x7a5a3a, 0, 0.48, 0, 2.8, 0.14, 2.9);
+    for (const s of [-1, 1]) box(g, 0x6b4b2e, s * 0.9, 0.5, 1.62, 0.12, 0.14, 0.5);
+    box(g, 0x2e7c78, 0, 2.62, 1.36, 1.1, 0.32, 0.05);
+    box(g, 0xd6b15c, 0, 2.62, 1.39, 0.8, 0.06, 0.02, { emissive: 0xb08a3a, emissiveIntensity: 0.5 });
+    for (let k = 0; k < 3; k++) pole(g, 0x8b5e3c, -1.05 + k * 0.32, 0.75, -0.95, 0.13, 0.5);
+    box(g, 0xd9cfaa, 0.7, 0.8, -0.9, 0.7, 0.12, 1);
+  }
+  if (b.type === 'collector') {
+    pole(g, 0x3c747b, 0, 0.9, 0, 0.76, 1.1);
+    for (const x of [-1.1, 1.1]) for (const z of [-1.1, 1.1]) pole(g, colors.wood, x, 1.48, z, 0.065, 2.2);
+    const tarp = piece(g, new T.ConeGeometry(1.6, 0.65, 4, 1, true), 0x779f9b, [0, 2.15, 0], [1, 1, 1], {
+      side: T.DoubleSide
+    });
+    tarp.rotation.y = Math.PI / 4;
+    rod(g, [0, 1.85, 0], [0, 1.1, 0], 0.065, 0xc8d0b6);
+  }
+  if (b.type === 'pen') {
+    for (const x of [-1.6, 1.6])
+      for (const z of [-1.6, 1.6]) {
+        pole(g, colors.wood, x, 0.5, z, 0.1, 1.5);
+        ball(g, 0xd5b887, x, 0.99, z, 0.13);
+      }
+    for (const s of [-1, 1]) {
+      rod(g, [-1.6, 0.6, s * 1.6], [1.6, 0.6, s * 1.6], 0.035, colors.rope);
+      rod(g, [s * 1.6, 0.6, -1.6], [s * 1.6, 0.6, 1.6], 0.035, colors.rope);
+      for (let j = -3; j <= 3; j++) {
+        rod(g, [j * 0.48, 0.5, s * 1.6], [j * 0.48, -1.5, s * 1.6], 0.013, 0x8fc3b2);
+        rod(g, [s * 1.6, 0.5, j * 0.48], [s * 1.6, -1.5, j * 0.48], 0.013, 0x8fc3b2);
+      }
+    }
+    for (const x of [-1.75, 1.75]) box(g, colors.plank, x, 0.25, 0, 0.23, 0.17, 3.6);
+  }
+  if (b.type === 'hatchery') {
+    for (const x of [-1, 1]) for (const z of [-0.65, 0.65]) pole(g, colors.metal, x, 0.8, z, 0.08, 1);
+    box(g, 0x566d72, 0, 1.25, 0, 2.5, 0.18, 1.9);
+    piece(g, cylG, 0x4c827f, [0, 1.44, 0], [0.65, 0.2, 0.65]);
+    const dome = ball(g, 0xa8e8df, 0, 1.85, 0, 0.62, 0.7, 0.62, {
+      transparent: true,
+      opacity: 0.4,
+      metalness: 0.3,
+      roughness: 0.1
+    });
+    ball(g, 0xbcffe0, 0, 1.8, 0, 0.23, 0.37, 0.23, { emissive: 0x98ffd9, emissiveIntensity: 1.1 });
+    box(g, 0x25464d, 1.02, 1.43, 0.43, 0.36, 0.3, 0.5);
+    box(g, 0xabdfb3, 1.02, 1.6, 0.43, 0.27, 0.035, 0.33, { emissive: 0x88ddb6, emissiveIntensity: 0.6 });
+  }
+  if (b.type === 'beacon') {
+    for (const x of [-0.55, 0.55])
+      for (const z of [-0.55, 0.55]) {
+        rod(g, [x, 0.4, z], [x * 0.5, 4.6, z * 0.5], 0.1, colors.metal);
+      }
+    for (let j = 1; j < 5; j++) {
+      rod(g, [-0.55, j, -0.55], [0.55, j, 0.55], 0.06, colors.metal);
+      rod(g, [0.55, j, -0.55], [-0.55, j, 0.55], 0.06, colors.metal);
+    }
+    pole(g, colors.metal, 0, 4.8, 0, 0.49, 0.4);
+    ball(g, 0xc0ffe3, 0, 5.3, 0, 0.35, 0.45, 0.35, { emissive: 0xb6ffdc, emissiveIntensity: 1.8 });
+    pole(g, colors.metal, 0, 5.9, 0, 0.06, 0.7);
+    const beam = piece(g, new T.CylinderGeometry(0.1, 1.3, 75, 12, 1, true), 0xa2ffcc, [0, 43, 0], [1, 1, 1], {
+      transparent: true,
+      opacity: 0.12,
+      emissive: 0x70eeba,
+      emissiveIntensity: 0.8,
+      depthWrite: false,
+      side: T.DoubleSide
+    });
+    beam.raycast = () => {};
+  }
+  if (b.type === 'collector') {
+    for (const y of [0.46, 0.91, 1.39])
+      piece(g, new T.TorusGeometry(0.77, 0.035, 6, 28), 0xc1b58f, [0, y, 0]).rotation.x = Math.PI / 2;
+    rod(g, [0.7, 0.66, 0], [1, 0.66, 0], 0.06, colors.metal);
+    pole(g, colors.metal, 1, 0.57, 0, 0.06, 0.19);
+    box(g, 0xcadace, 0.3, 0.93, 0.72, 0.16, 0.67, 0.045);
+    for (let y = 0.7; y < 1.2; y += 0.12) box(g, 0x466673, 0.3, y, 0.75, 0.13, 0.018, 0.02);
+  }
+  if (b.type === 'pen') {
+    for (const z of [-1.75, 1.75]) box(g, colors.plank, 0, 0.25, z, 3.5, 0.17, 0.23);
+    for (const side of [-1, 1])
+      for (const y of [-1, -0.5, 0]) {
+        rod(g, [-1.6, y, side * 1.6], [1.6, y, side * 1.6], 0.013, 0x8fc3b2);
+        rod(g, [side * 1.6, y, -1.6], [side * 1.6, y, 1.6], 0.013, 0x8fc3b2);
+      }
+  }
+  if (b.type === 'hatchery') {
+    for (const y of [1.5, 2.35])
+      piece(g, new T.TorusGeometry(0.63, 0.05, 8, 28), colors.metal, [0, y, 0]).rotation.x = Math.PI / 2;
+    for (const side of [-1, 1]) rod(g, [side * 0.6, 1.48, 0], [side * 0.6, 2.3, 0], 0.035, colors.metal);
+    for (let n = 0; n < 3; n++) pole(g, 0x9cdfd5, -0.92, 1.51, -0.5 + n * 0.3, 0.055, 0.4);
+  }
+  if (b.type === 'beacon') {
+    for (const side of [-1, 1])
+      for (let j = 0; j < 4; j++) {
+        const a = 0.55 - j * 0.06,
+          b = 0.55 - (j + 1) * 0.06;
+        rod(g, [-a, 0.5 + j, side * a], [b, 1.5 + j, side * b], 0.033, colors.metal);
+      }
+    for (const x of [-0.36, 0.36])
+      for (const z of [-0.36, 0.36]) rod(g, [x, 4.94, z], [x, 5.7, z], 0.028, colors.metal);
+    piece(g, new T.ConeGeometry(0.63, 0.3, 8), colors.metal, [0, 5.84, 0]);
+  }
+  if (b.type === 'shelter') {
+    for (const side of [-1, 1]) {
+      rod(g, [side * 1.25, 2.2, 1.28], [side * 1.5, 0.47, 1.5], 0.023, colors.rope);
+      const curtain = box(g, 0xd4c195, side * 1.03, 1.42, 1.2, 0.3, 1.23, 0.07);
+      curtain.rotation.z = side * 0.08;
+    }
+    box(g, 0x8c714c, -1.1, 0.64, -0.9, 0.46, 0.4, 0.42);
+    halo(g, 0xffce85, 1.24, 1.8, 1.22, 1.2);
+  }
+  if (b.type === 'beacon') halo(g, 0xaeffdb, 0, 5.3, 0, 2.6);
+  if (b.type === 'hatchery') halo(g, 0x9cebd6, 0, 1.85, 0, 1.8);
+  g.userData.facilityId = b.type === 'floor' || b.type === 'upperfloor' ? null : facilityId(b);
+  g.position.set(b.x * 3.6, (b.level || 0) * 3.3, b.z * 3.6);
+  g.rotation.y = b.rot || 0;
+  return g;
+}
+export function character() {
+  const g = new T.Group();
+  piece(g, new T.CylinderGeometry(0.25, 0.22, 0.62, 8), 0xd1dfd4, [0, 1.02, 0], [1, 1, 0.7]);
+  box(g, 0x324f5c, 0, 0.69, 0, 0.48, 0.17, 0.3);
+  box(g, 0x967c53, 0, 0.73, 0.16, 0.12, 0.07, 0.035);
+  const legs = [],
+    arms = [];
+  for (const side of [-1, 1]) {
+    const leg = new T.Group();
+    leg.position.set(side * 0.14, 0.65, 0);
+    g.add(leg);
+    piece(leg, new T.CylinderGeometry(0.105, 0.083, 0.48, 10), 0x365668, [0, -0.24, 0], [1, 1, 1]);
+    box(leg, 0x283e46, 0, -0.52, 0.06, 0.23, 0.13, 0.36);
+    legs.push(leg);
+    const arm = new T.Group();
+    arm.position.set(side * 0.3, 1.24, 0);
+    g.add(arm);
+    piece(arm, new T.CylinderGeometry(0.1, 0.084, 0.3, 10), 0xbbcfc5, [0, -0.16, 0], [1, 1, 1]);
+    piece(arm, new T.CylinderGeometry(0.075, 0.058, 0.2, 10), 0xd7b18b, [0, -0.36, 0.035], [1, 1, 1]);
+    ball(arm, 0xe0b892, 0, -0.46, 0.045, 0.09, 0.09, 0.085);
+    arms.push(arm);
+  }
+  pole(g, 0xdab98f, 0, 1.39, 0, 0.105, 0.18);
+  ball(g, 0xdfb793, 0, 1.63, 0.012, 0.23, 0.27, 0.215);
+  ball(g, 0x293e44, 0, 1.79, -0.035, 0.238, 0.14, 0.22);
+  box(g, 0x293e44, 0, 1.77, -0.155, 0.39, 0.16, 0.1);
+  for (const side of [-1, 1]) {
+    ball(g, 0x293d40, side * 0.083, 1.65, 0.208, 0.025, 0.026, 0.016);
+    ball(g, 0xe2bb99, side * 0.224, 1.63, 0, 0.045, 0.075, 0.05);
+  }
+  box(g, 0xf0ead3, 0, 1.32, 0.16, 0.18, 0.09, 0.03);
+  box(g, 0x365a69, 0, 1.14, 0.177, 0.045, 0.28, 0.024).rotation.z = -0.1;
+  for (const y of [0.92, 1.08]) ball(g, 0xeee8d0, 0.06, y, 0.18, 0.016);
+  box(g, 0x927953, 0, 1.04, -0.22, 0.37, 0.43, 0.16);
+  box(g, 0xb89d71, 0, 1.23, -0.23, 0.4, 0.12, 0.18);
+  for (const side of [-1, 1]) box(g, 0x5d6453, side * 0.2, 1.07, -0.005, 0.05, 0.49, 0.28);
+  for (let i = 0; i < 7; i++) {
+    const h = piece(
+      g,
+      coneG,
+      0x293e44,
+      [Math.sin(i * 0.9) * 0.13, 1.86, -0.05 + Math.cos(i * 0.9) * 0.1],
+      [0.07, 0.2, 0.07]
+    );
+    h.rotation.set(-0.5 + Math.cos(i * 0.9) * 0.3, 0, Math.sin(i * 0.9) * 0.6);
+  }
+  piece(g, new T.TorusGeometry(0.17, 0.05, 6, 16), 0x2e7c78, [0, 1.36, 0]).rotation.x = Math.PI / 2;
+  box(g, 0x2e7c78, 0.1, 1.18, 0.18, 0.08, 0.3, 0.03).rotation.z = 0.2;
+  g.userData = { legs, arms };
+  return g;
+}
+function makeBoat() {
+  const g = new T.Group();
+  const outline = new T.Shape();
+  outline.moveTo(0, 1.95);
+  outline.bezierCurveTo(0.72, 1.55, 1, 0.7, 0.89, -1.22);
+  outline.quadraticCurveTo(0, -1.65, -0.89, -1.22);
+  outline.bezierCurveTo(-1, 0.7, -0.72, 1.55, 0, 1.95);
+  const inner = new T.Path();
+  inner.moveTo(0, 1.62);
+  inner.bezierCurveTo(-0.57, 1.3, -0.74, 0.5, -0.69, -1.12);
+  inner.quadraticCurveTo(0, -1.42, 0.69, -1.12);
+  inner.bezierCurveTo(0.74, 0.5, 0.57, 1.3, 0, 1.62);
+  outline.holes.push(inner);
+  const hullGeo = new T.ExtrudeGeometry(outline, {
+    depth: 0.48,
+    bevelEnabled: true,
+    bevelThickness: 0.07,
+    bevelSize: 0.06,
+    bevelSegments: 2,
+    steps: 1,
+    curveSegments: 16
+  });
+  hullGeo.rotateX(Math.PI / 2);
+  piece(g, hullGeo, 0x427c80, [0, 0.68, 0]);
+  for (let j = -2; j <= 2; j++) box(g, j % 2 ? 0xbe9866 : 0xd1ad73, j * 0.25, 0.29, 0, 0.23, 0.09, 2.3);
+  for (const z of [-0.9, 0.8]) box(g, 0xb99868, 0, 0.62, z, 1.36, 0.11, 0.32);
+  const pts = outline.getPoints(70).map(p => new V(p.x, 0.72, p.y));
+  piece(g, new T.TubeGeometry(new T.CatmullRomCurve3(pts, true), 100, 0.045, 6, true), 0xd5b783);
+  for (const side of [-1, 1])
+    for (const z of [-0.7, 0, 0.65]) {
+      const rib = rod(g, [side * 0.65, 0.32, z], [side * 0.79, 0.65, z], 0.035, 0x72583b);
+    }
+  const human = character();
+  human.position.set(0, 0.53, 0.05);
+  g.add(human);
+  rod(g, [0.6, 0.85, -0.45], [1.7, 0.15, 0.7], 0.045, colors.wood);
+  box(g, colors.wood, 1.63, 0.16, 0.68, 0.27, 0.09, 0.64).rotation.y = -0.65;
+  pole(g, colors.wood, -0.65, 1.5, -1, 0.055, 2.1);
+  const pennant = box(g, 0xd9bd79, -0.32, 2.26, -1, 0.62, 0.36, 0.045);
+  for (const x of [-0.75, 0.75]) box(g, 0x427c80, x, 0.46, 0, 0.1, 0.1, 2.3);
+  const coil = piece(g, new T.TorusGeometry(0.22, 0.035, 5, 18), 0xcbb894, [0.43, 0.56, -0.77], [1, 1, 1]);
+  coil.rotation.x = Math.PI / 2;
+  ball(g, 0xffd5a2, -0.66, 1.08, -1.05, 0.09, 0.13, 0.09, { emissive: 0xffbd6b, emissiveIntensity: 0.8 });
+  halo(g, 0xffd499, -0.66, 1.08, -1.05, 0.6);
+  g.userData.human = human;
+  g.userData.flag = pennant;
+  return g;
+}
+function lootMesh(kind) {
+  const g = new T.Group();
+  if (kind === 0) {
+    for (let i = -1; i <= 1; i++) {
+      const l = pole(g, 0x8f6c4c, i * 0.32, 0.1, i * 0.12, 0.17, 1.6);
+      l.rotation.x = Math.PI / 2;
+    }
+    box(g, 0xc6b58c, 0, 0.1, 0, 1.2, 0.08, 0.13);
+  } else if (kind === 2) {
+    pole(g, 0x717d64, 0, 0.17, 0, 0.44, 0.9);
+    for (const y of [-0.1, 0.42])
+      piece(g, new T.TorusGeometry(0.45, 0.025, 6, 16), 0xccb797, [0, y, 0], [1, 1, 1]).rotation.x = Math.PI / 2;
+  } else {
+    box(g, kind === 3 ? 0x556773 : 0x987a51, 0, 0.25, 0, 1, 0.75, 1);
+    for (const z of [-0.38, 0.38]) box(g, 0xc7ac7e, 0, 0.26, z, 1.05, 0.8, 0.1);
+    if (kind === 3) ball(g, 0xb5bfef, 0, 0.7, 0, 0.2, 0.2, 0.2, { emissive: 0xa69beb, emissiveIntensity: 0.8 });
+  }
+  return g;
+}
+export class OceanWorld {
+  constructor(canvas, state) {
+    this.canvas = canvas;
+    this.scene = new T.Scene();
+    this.scene.background = new T.Color(0x6b9ba8);
+    this.scene.fog = new T.FogExp2(0x6b9ba8, 0.0045);
+    this.renderer = new T.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+    this.mobile = !!(navigator.maxTouchPoints > 0 || window.matchMedia?.('(pointer:coarse)').matches);
+    this.settings = loadSettings(this.mobile);
+    this.quality = QUALITY[this.settings.quality];
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio, this.quality.pixelRatio));
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = this.quality.soft ? T.PCFSoftShadowMap : T.PCFShadowMap;
+    this.renderer.toneMapping = T.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.05;
+    this.camera = new T.PerspectiveCamera(44, 1, 0.1, 1800);
+    this.yaw = 0.63;
+    this.pitch = 0.64;
+    this.distance = 42;
+    this.look = new V(2, 0, 2);
+    this.follow = new V(2, 0, 2);
+    this.time = 0;
+    this.ray = new T.Raycaster();
+    this.pointer = new T.Vector2();
+    this.plane = new T.Plane(new V(0, 1, 0), 0);
+    this.objMeshes = new Map();
+    this.wildMeshes = new Map();
+    this.petMeshes = new Map();
+    this.lastBuildings = '';
+    this.placement = null;
+    this.ghostCell = { x: 0, z: 0 };
+    this.target = null;
+    this.previewCache = new Map();
+    this.ambient = new T.HemisphereLight(0xc5e9e5, 0x376778, 2.3);
+    this.scene.add(this.ambient);
+    this.sun = new T.DirectionalLight(0xffe1b0, 3);
+    this.sun.position.set(-26, 48, -22);
+    this.sun.castShadow = true;
+    this.sun.shadow.mapSize.set(this.quality.shadow, this.quality.shadow);
+    Object.assign(this.sun.shadow.camera, { left: -45, right: 45, top: 45, bottom: -45, near: 1, far: 200 });
+    this.scene.add(this.sun.target);
+    this.sun.shadow.bias = -0.0006;
+    this.sun.shadow.normalBias = 0.03;
+    this.scene.add(this.sun);
+    for (const c of [colors.wood, colors.plank, colors.darkWood, 0xcba574, 0xa87e50, 0xd1ad73]) {
+      mat(c).map = woodTexture();
+      mat(c).needsUpdate = true;
+    }
+    this.sky = makeSky(this.quality);
+    this.scene.add(this.sky);
+    this.sunDisk = ball(this.scene, 0xffeed0, -125, 60, -225, 15, 15, 15, {
+      emissive: 0xffedbd,
+      emissiveIntensity: 1.2,
+      fog: false
+    });
+    this.sunDisk.visible = false;
+    this.water = makeWater(this.quality);
+    this.scene.add(this.water);
+    this.atmos = new Atmosphere(this, this.quality);
+    this.trail = new WakeTrail();
+    this.splashIndex = 0;
+    this.stormLevel = 0;
+    this.hullSpeed = 0;
+    this.lastHull = null;
+    this.boatHeave = 0;
+    this.makeSpray();
+    this.islandModels = makeIslands();
+    this.scene.add(this.islandModels.group);
+    this.home = new T.Group();
+    this.scene.add(this.home);
+    this.boat = makeBoat();
+    this.scene.add(this.boat);
+    this.walker = character();
+    this.walker.visible = false;
+    this.scene.add(this.walker);
+    this.walkPhase = 0;
+    this.moveSpeed = 0;
+    this.playerAnchor = new V();
+    this.buoy = new T.Group();
+    pole(this.buoy, 0x91bbaf, 0, 0.2, 0, 0.85, 0.35);
+    pole(this.buoy, 0x526b69, 0, 1, 0, 0.12, 1.7);
+    ball(this.buoy, 0xa6eff2, 0, 2, 0, 0.25, 0.35, 0.25, { emissive: 0x7ad7e9, emissiveIntensity: 1.6 });
+    const beaconRing = piece(this.buoy, new T.TorusGeometry(1.2, 0.025, 6, 36), 0x8ebce7, [0, 0.1, 0], [1, 1, 1], {
+      emissive: 0x769ade,
+      emissiveIntensity: 1
+    });
+    beaconRing.rotation.x = Math.PI / 2;
+    halo(this.buoy, 0x9dccff, 0, 2, 0, 1.8);
+    this.buoy.position.set(17, 0, -13);
+    this.scene.add(this.buoy);
+    this.targetRing = new T.Mesh(
+      new T.RingGeometry(1.5, 1.57, 48),
+      new T.MeshBasicMaterial({
+        color: 0xc9eecb,
+        transparent: true,
+        opacity: 0.8,
+        side: T.DoubleSide,
+        depthWrite: false
+      })
+    );
+    this.targetRing.rotation.x = -Math.PI / 2;
+    this.targetRing.position.y = 0.4;
+    this.targetRing.renderOrder = 4;
+    this.targetRing.visible = false;
+    this.scene.add(this.targetRing);
+    this.navMarker = new T.Mesh(
+      new T.RingGeometry(0.4, 0.55, 32),
+      new T.MeshBasicMaterial({
+        color: 0xdbeac6,
+        transparent: true,
+        opacity: 0.6,
+        side: T.DoubleSide,
+        depthWrite: false
+      })
+    );
+    this.navMarker.rotation.x = -Math.PI / 2;
+    this.navMarker.position.y = 0.35;
+    this.navMarker.renderOrder = 4;
+    this.navMarker.visible = false;
+    this.scene.add(this.navMarker);
+    this.gridGroup = new T.Group();
+    this.scene.add(this.gridGroup);
+    this.ghost = new T.Mesh(
+      new T.BoxGeometry(3.42, 0.08, 3.42),
+      new T.MeshBasicMaterial({ color: 0xaaf2b2, transparent: true, opacity: 0.45, depthWrite: false })
+    );
+    this.ghost.position.y = 0.55;
+    this.ghost.visible = false;
+    this.ghost.renderOrder = 6;
+    this.scene.add(this.ghost);
+    this.lineGeo = new T.BufferGeometry().setFromPoints([new V(), new V()]);
+    this.rope = new T.Line(this.lineGeo, new T.LineBasicMaterial({ color: 0xe4d8ab }));
+    this.rope.visible = false;
+    this.scene.add(this.rope);
+    const r = seeded(993);
+    this.motes = new T.Group();
+    for (let i = 0; i < 35; i++) {
+      const m = ball(this.motes, 0xb6ffe2, (r() - 0.5) * 140, -0.05, (r() - 0.5) * 140, 0.035, 0.035, 0.035, {
+        emissive: 0x83ffdc,
+        emissiveIntensity: 1
+      });
+      m.userData.phase = r() * 6;
+    }
+    this.scene.add(this.motes);
+    this.extra = expansionModels(this.scene);
+    this.ship = makeWarship(mat, halo);
+    this.ship.visible = false;
+    this.scene.add(this.ship);
+    this.cannonFx = ball(this.scene, 0xffc27a, 0, 0, 0, 1, 1, 1, {
+      emissive: 0xff9a40,
+      emissiveIntensity: 2,
+      transparent: true,
+      opacity: 0.8
+    });
+    this.cannonFx.visible = false;
+    this.resize();
+    this.sync(state);
+    this.update(0, state, { title: true });
+  }
+  resize() {
+    const rect = this.canvas.getBoundingClientRect();
+    this.width = rect.width || innerWidth;
+    this.height = rect.height || innerHeight;
+    this.renderer.setSize(this.width, this.height, false);
+    this.camera.aspect = this.width / this.height;
+    this.camera.updateProjectionMatrix();
+  }
+  rotate(yawDelta, pitchDelta) {
+    const k = this.settings.camSens ?? 1;
+    yawDelta *= k;
+    pitchDelta *= k * (this.settings.invertY ? -1 : 1);
+    this.yaw += yawDelta;
+    if (this.firstPerson && !this.placement)
+      this.firstPitch = Math.max(-1.15, Math.min(1.15, (this.firstPitch || 0) + pitchDelta));
+    else this.pitch = Math.max(0.3, Math.min(1.2, this.pitch + pitchDelta));
+  }
+  toggleView() {
+    this.firstPerson = !this.firstPerson;
+    this.firstPitch = 0;
+    return this.firstPerson;
+  }
+  sync(s) {
+    normalizeHousing(s);
+    normalizeExpansion(s);
+    const key = JSON.stringify(s.buildings.map(({ type, x, z, rot, level, off }) => ({ type, x, z, rot, level, off })));
+    if (key !== this.lastBuildings) {
+      this.lastBuildings = key;
+      while (this.home.children.length) this.home.remove(this.home.children[0]);
+      for (const b of s.buildings) this.home.add(buildingMesh(b));
+      const floors = s.buildings.filter(b => b.type === 'floor');
+      const minX = Math.min(...floors.map(b => b.x * 3.6)) - 1.8,
+        maxX = Math.max(...floors.map(b => b.x * 3.6)) + 1.8,
+        minZ = Math.min(...floors.map(b => b.z * 3.6)) - 1.8,
+        maxZ = Math.max(...floors.map(b => b.z * 3.6)) + 1.8;
+      this.water.material.uniforms.uHome.value.set(
+        (minX + maxX) / 2,
+        (minZ + maxZ) / 2,
+        (maxX - minX) / 2,
+        (maxZ - minZ) / 2
+      );
+    }
+    const syncMap = (items, map, make) => {
+      const ids = new Set(items.map(x => x.id));
+      for (const [id, m] of map)
+        if (!ids.has(id)) {
+          this.scene.remove(m);
+          map.delete(id);
+        }
+      for (const v of items)
+        if (!map.has(v.id)) {
+          const m = make(v);
+          map.set(v.id, m);
+          this.scene.add(m);
+        }
+    };
+    syncMap(s.loot, this.objMeshes, l => {
+      const m = lootMesh(l.kind);
+      m.position.set(l.x, 0, l.z);
+      m.rotation.y = l.spin;
+      return m;
+    });
+    syncMap(s.wild, this.wildMeshes, c => makeCreature(c.genome));
+    syncMap(s.tamed, this.petMeshes, c => {
+      const m = makeCreature(c.genome);
+      m.scale.multiplyScalar(0.22);
+      return m;
+    });
+    this.buoy.visible = !s.buoyFound;
+    for (const c of s.tamed) {
+      const m = this.petMeshes.get(c.id);
+      if (c.awakened && m && !m.userData.aura) {
+        const ring = piece(m, new T.TorusGeometry(1.4, 0.025, 6, 60), 0xf4dfa4, [0, 0.3, 0], [1, 1, 1], {
+          emissive: 0xedc67f,
+          emissiveIntensity: 1.5
+        });
+        ring.rotation.x = Math.PI / 2;
+        m.userData.aura = ring;
+      }
+    }
+  }
+  pickObject(clientX, clientY) {
+    const rect = this.canvas.getBoundingClientRect();
+    this.pointer.set(((clientX - rect.left) / rect.width) * 2 - 1, (-(clientY - rect.top) / rect.height) * 2 + 1);
+    this.scene.updateMatrixWorld(true);
+    this.ray.setFromCamera(this.pointer, this.camera);
+    const hits = this.ray.intersectObjects([this.home, this.islandModels.group, this.extra.group], true);
+    for (const hit of hits) {
+      let o = hit.object;
+      while (o) {
+        if (o.userData.facilityId) return { type: 'facility', id: o.userData.facilityId };
+        if (o.userData.siteId) return { type: 'site', id: o.userData.siteId };
+        if (o.userData.nodeId) return { type: 'node', id: o.userData.nodeId };
+        if (o.userData.claimId) return { type: 'claim', id: o.userData.claimId };
+        o = o.parent;
+      }
+      if (hit.distance > 0) return null;
+    }
+    return null;
+  }
+  screenPoint(x, y, z) {
+    const v = new V(x, y, z).project(this.camera);
+    return {
+      x: (v.x * 0.5 + 0.5) * this.width,
+      y: (-0.5 * v.y + 0.5) * this.height,
+      visible: v.z < 1 && v.z > 0 && Math.abs(v.x) < 1.2 && Math.abs(v.y) < 1.2
+    };
+  }
+  seaPoint(clientX, clientY) {
+    const rect = this.canvas.getBoundingClientRect();
+    this.pointer.set(((clientX - rect.left) / rect.width) * 2 - 1, (-(clientY - rect.top) / rect.height) * 2 + 1);
+    this.ray.setFromCamera(this.pointer, this.camera);
+    const v = new V();
+    return this.ray.ray.intersectPlane(this.plane, v) ? v : null;
+  }
+  setPlacement(type, s, level = 0) {
+    this.buildLevel = type === 'upperfloor' ? 1 : level;
+    this.placement = type;
+    this.gridGroup.clear();
+    if (type) {
+      for (let x = -7; x <= 7; x++)
+        for (let z = -7; z <= 7; z++) {
+          const bad = buildError(s, type, x, z, this.buildLevel);
+          if (!bad) {
+            const cell = new T.Mesh(
+              new T.PlaneGeometry(3.35, 3.35),
+              new T.MeshBasicMaterial({
+                color: 0x97e4b9,
+                transparent: true,
+                opacity: 0.18,
+                side: T.DoubleSide,
+                depthWrite: false
+              })
+            );
+            cell.rotation.x = -Math.PI / 2;
+            cell.position.set(x * 3.6, 0.45 + this.buildLevel * 3.3, z * 3.6);
+            cell.renderOrder = 5;
+            this.gridGroup.add(cell);
+            if (this.gridGroup.children.length === 1) this.ghostCell = { x, z };
+          }
+        }
+      this.distance = Math.max(this.distance, 35);
+    }
+    this.ghost.visible = !!type;
+  }
+  updateGhost(s) {
+    this.ghost.position.set(this.ghostCell.x * 3.6, 0.52 + (this.buildLevel || 0) * 3.3, this.ghostCell.z * 3.6);
+    this.ghost.material.color.set(
+      buildError(s, this.placement, this.ghostCell.x, this.ghostCell.z, this.buildLevel) ? 0xed8b6c : 0xace4bd
+    );
+  }
+  update(dt, s, opts = {}) {
+    this.time += dt;
+    for (const [id, m] of this.islandModels.nodes) {
+      const ready = (s.harvested?.[id] || 0) <= s.elapsed;
+      m.scale.setScalar(ready ? 1 : 0.4);
+    }
+    const t = this.time;
+    const phase = (s.elapsed % 480) / 480;
+    const night = ((Math.cos(phase * Math.PI * 2 + Math.PI * 0.65) + 1) / 2) * 0.85;
+    const stormTarget = phase > 0.6 && phase < 0.76 ? 0.7 : 0;
+    this.stormLevel += (stormTarget - this.stormLevel) * Math.min(1, dt * 0.12);
+    const storm = this.stormLevel;
+    this.water.material.uniforms.uTime.value = t;
+    this.water.material.uniforms.uNight.value = night;
+    this.water.material.uniforms.uStorm.value = storm;
+    this.sky.material.uniforms.uNight.value = night;
+    this.sky.material.uniforms.uTime.value = t;
+    const atm = this.atmos.update(dt, phase, storm, this.playerAnchor, !s.inCave && !s.expedition?.diving);
+    this.scene.fog.color.copy(atm.fog);
+    const foot = s.player.mode === 'foot',
+      riding = !!s.expedition?.mounted,
+      diving = !!s.expedition?.diving,
+      aboard = s.player.mode === 'aboard',
+      helm = s.player.mode === 'ship' && !riding,
+      boat = foot || riding || aboard ? s.boat : s.player;
+    this.onRiding = riding;
+    this.baseY = diving
+      ? -8
+      : aboard
+        ? DECKS[s.player.deck].y
+        : helm
+          ? DECKS[4].y
+          : foot
+            ? (s.player.level || 0) * 3.3
+            : riding
+              ? 0.7
+              : 0;
+    const helmPos = s.ship ? toWorld(s.ship, 0, -9.9) : null;
+    this.plane.constant = this.placement ? -(this.buildLevel || 0) * 3.3 : -this.baseY;
+    this.onFoot = foot || aboard || helm;
+    this.playerAnchor.set(helm ? helmPos.x : s.player.x, this.baseY, helm ? helmPos.z : s.player.z);
+    this.updateShip(s, t, aboard, helm);
+    const home = this.homeRect(),
+      pose = floatPose(boat.x, boat.z, boat.heading, t, storm, home, 3.6, 1.6, 1);
+    this.boat.rotation.order = 'YXZ';
+    this.boat.position.set(boat.x, pose.y, boat.z);
+    this.boat.rotation.set(pose.pitch, boat.heading, pose.roll);
+    this.boatHeave = pose.y;
+    this.boat.visible = !s.ship;
+    this.boat.userData.human.visible = !foot && !riding && !s.ship;
+    this.walker.visible = this.onFoot || riding;
+    this.walker.position.set(
+      helm ? helmPos.x : s.player.x,
+      this.baseY + (riding ? 0.65 : 0.42),
+      helm ? helmPos.z : s.player.z
+    );
+    this.boat.scale.x = 1 + (s.expedition?.boatLevel || 0) * 0.07;
+    this.walker.rotation.y = helm ? s.ship.heading : s.player.heading;
+    this.walkPhase += dt * this.moveSpeed * 3.2;
+    this.walker.userData.legs.forEach(
+      (m, i) => (m.rotation.x = Math.sin(this.walkPhase + i * Math.PI) * Math.min(0.48, this.moveSpeed * 0.15))
+    );
+    this.walker.userData.arms.forEach(
+      (m, i) => (m.rotation.x = -Math.sin(this.walkPhase + i * Math.PI) * Math.min(0.35, this.moveSpeed * 0.12))
+    );
+    this.boat.userData.flag.rotation.y = Math.sin(t * 2.4) * 0.13;
+    {
+      const u = this.water.material.uniforms,
+        hx = s.ship ? s.ship.x : this.boat.position.x,
+        hz = s.ship ? s.ship.z : this.boat.position.z,
+        hh = s.ship ? s.ship.heading : boat.heading;
+      if (this.lastHull && dt > 0) {
+        const v = Math.hypot(hx - this.lastHull.x, hz - this.lastHull.z) / dt;
+        this.hullSpeed += (Math.min(v, 20) - this.hullSpeed) * Math.min(1, dt * 6);
+      }
+      this.lastHull = { x: hx, z: hz };
+      u.uBoat.value.set(hx, 0, hz);
+      u.uHeading.value = hh;
+      u.uSpeed.value = this.hullSpeed;
+      u.uHull.value.set(s.ship ? 11 : 1.9, s.ship ? 2.6 : 0.9);
+      u.uTrail.value = this.trail.record(hx, hz, this.hullSpeed, t);
+      if (this.hullSpeed > 3.2 && !s.inCave && !diving) {
+        this.sprayTimer = (this.sprayTimer || 0) - dt;
+        if (this.sprayTimer <= 0) {
+          this.sprayTimer = 0.05;
+          const f = s.ship ? 11 : 1.9;
+          for (const side of [-1, 1])
+            this.emitSpray(
+              hx + Math.sin(hh) * f + Math.cos(hh) * side * 0.5,
+              hz + Math.cos(hh) * f - Math.sin(hh) * side * 0.5,
+              Math.sin(hh) * this.hullSpeed * 0.25 + Math.cos(hh) * side * 1.4,
+              Math.cos(hh) * this.hullSpeed * 0.25 - Math.sin(hh) * side * 1.4,
+              1.6 + Math.random(),
+              1
+            );
+        }
+      }
+    }
+    this.updateSpray(dt);
+    this.buoy.position.y = waveHeight(17, -13, t, storm, home) * 0.9;
+    this.buoy.rotation.z = Math.sin(t * 0.8) * 0.05;
+    for (const l of s.loot) {
+      const m = this.objMeshes.get(l.id);
+      if (m) {
+        const ly = waveHeight(l.x, l.z, t, storm, home),
+          slope = waveHeight(l.x + 0.6, l.z, t, storm, home) - ly;
+        m.position.set(l.x, ly + 0.02, l.z);
+        m.rotation.z = Math.atan2(slope, 0.6) * 0.8;
+        m.rotation.x = Math.sin(t * 0.9 + l.spin) * 0.05;
+      }
+    }
+    for (const c of s.wild) {
+      const m = this.wildMeshes.get(c.id);
+      if (m) {
+        const ud = m.userData,
+          mv = ud.lx === undefined || !dt ? 0 : Math.hypot(c.x - ud.lx, c.z - ud.lz) / dt;
+        ud.lx = c.x;
+        ud.lz = c.z;
+        ud.swim = (ud.swim || c.phase) + dt * (1 + Math.min(mv, 8) * 0.55);
+        ud.dip = (ud.dip || 0) + ((c.diving || 0) - (ud.dip || 0)) * Math.min(1, dt * 3);
+        m.position.set(c.x, 0.03 + waveHeight(c.x, c.z, t, storm, home) - ud.dip * 1.1, c.z);
+        m.rotation.y = c.heading || 0;
+        m.rotation.x = ud.dip * 0.35;
+        this.animateCreature(m, ud.swim);
+      }
+    }
+    const pools = new Map(s.buildings.filter(b => b.type === 'pen').map(b => [penId(b), b])),
+      slots = new Map();
+    let i = 0;
+    for (const c of s.tamed) {
+      const m = this.petMeshes.get(c.id);
+      if (!m) continue;
+      const pen = pools.get(c.penId);
+      m.visible = !!pen;
+      if (!pen) continue;
+      if (c.id === s.expedition?.activeId) {
+        m.scale.setScalar(phenotype(c.genome).size * (riding ? 1 : 0.75));
+        const target = new V(
+          s.player.x + (riding ? 0 : Math.cos(t * 0.4) * 2.5),
+          this.baseY + (foot ? 0.8 : 0),
+          s.player.z + (riding ? 0 : Math.sin(t * 0.4) * 2.5)
+        );
+        m.position.lerp(target, 1 - Math.exp(-dt * 3));
+        if (m.position.distanceTo(target) > 15) m.position.copy(target);
+        m.rotation.y = s.player.heading;
+        this.animateCreature(m, t);
+        if (m.userData.aura) m.userData.aura.rotation.z = t;
+        continue;
+      }
+      const rest = restPlace(s, c);
+      if (rest === 'lounge' && s.ship) {
+        const k = s.ship.lounge.indexOf(c.id),
+          [lx, lz] = LOUNGE_SLOTS[k] || [0, 0],
+          w = toWorld(s.ship, lx, lz);
+        m.visible = this.ship.userData.bands[2].visible;
+        m.scale.setScalar(phenotype(c.genome).size * 0.42);
+        m.position.set(w.x, DECKS[2].y + 0.55 + Math.sin(t * 1.5 + k) * 0.05, w.z);
+        m.rotation.y = s.ship.heading + Math.sin(t * 0.3 + k) * 0.4;
+        this.animateCreature(m, t * 0.4 + k);
+        continue;
+      }
+      if (rest === 'island') {
+        const isl = restIsland(s),
+          a = i * 2.1 + t * 0.05,
+          r = 3.6 + (i % 3) * 1.4;
+        m.scale.setScalar(phenotype(c.genome).size * 0.5);
+        m.position.set(isl.x + Math.sin(a) * r, 0.75 + Math.sin(t * 1.2 + i) * 0.08, isl.z + Math.cos(a) * r * 0.8);
+        m.rotation.y = a + Math.PI / 2;
+        this.animateCreature(m, t * 0.5 + i);
+        i++;
+        continue;
+      }
+      m.scale.setScalar(phenotype(c.genome).size * 0.22);
+      const slot = slots.get(c.penId) || 0;
+      slots.set(c.penId, slot + 1);
+      const a = t * 0.45 + i * 1.7;
+      const positions = [
+        [-0.8, 0.55],
+        [0.8, 0.55],
+        [0, -0.65]
+      ];
+      const [x, z] = positions[slot] || [0, 0];
+      m.position.set(
+        pen.x * 3.6 + x + Math.cos(a) * 0.12,
+        0.08 + Math.sin(a * 2) * 0.04,
+        pen.z * 3.6 + z + Math.sin(a) * 0.13
+      );
+      m.rotation.y = Math.sin(a) * 0.3;
+      this.animateCreature(m, t + i);
+      i++;
+    }
+
+    this.motes.children.forEach((m, i) => {
+      m.position.y = 0.1 + Math.sin(t + m.userData.phase) * 0.06;
+      m.scale.setScalar(0.6 + Math.sin(t * 2 + i) * 0.4);
+    });
+    if (opts.title) {
+      this.follow.set(3, 0, 1);
+      this.yaw = 0.55 + Math.sin(t * 0.07) * 0.1;
+      this.distance = innerWidth < 760 ? 36 : 43;
+    } else if (this.placement) this.follow.set(1.8, 0, 1.8);
+    else if (helm) this.follow.set(s.ship.x, 7, s.ship.z);
+    else this.follow.set(s.player.x, this.baseY + (foot || aboard ? 0.8 : 0), s.player.z);
+    this.look.lerp(this.follow, 1 - Math.exp(-dt * 3.5) || 1);
+    const dist = s.inCave
+      ? 12
+      : diving
+        ? Math.min(14, this.distance)
+        : aboard && !opts.title
+          ? Math.min(20, this.distance * 0.55)
+          : helm && !opts.title
+            ? Math.max(44, this.distance * 1.2)
+            : this.distance * (foot && !this.placement && !opts.title ? 0.7 : 1);
+    this.camera.position.set(
+      this.look.x + Math.sin(this.yaw) * Math.cos(this.pitch) * dist,
+      this.look.y + Math.sin(this.pitch) * dist,
+      this.look.z + Math.cos(this.yaw) * Math.cos(this.pitch) * dist
+    );
+    this.camera.lookAt(this.look);
+    this.water.material.uniforms.uCamera.value.copy(this.camera.position);
+    if (this.placement) this.updateGhost(s);
+    if (this.target) {
+      this.targetRing.visible = true;
+      this.targetRing.position.set(this.target.x, this.baseY + 0.43, this.target.z);
+      this.targetRing.scale.setScalar(this.target.type === 'wild' ? 1.7 : 1);
+      this.targetRing.material.opacity = 0.55 + Math.sin(t * 3) * 0.2;
+    } else this.targetRing.visible = false;
+    if (opts.destination) {
+      this.navMarker.visible = true;
+      this.navMarker.position.set(opts.destination.x, this.baseY + 0.38, opts.destination.z);
+      this.navMarker.scale.setScalar(1 + Math.sin(t * 4) * 0.15);
+    } else this.navMarker.visible = false;
+    this.extra.cave.visible = !!s.inCave;
+    this.extra.seabed.visible = diving;
+    this.sky.visible = !diving && !s.inCave;
+    this.water.visible = !diving && !s.inCave;
+    this.islandModels.group.visible = !s.inCave;
+    for (const site of EXPLORE) {
+      const m = this.extra.sites.get(site.id);
+      m.visible = !!site.cave === !!s.inCave && (!site.deep || diving);
+      m.scale.setScalar(s.expedition.collected.includes(site.id) ? 0.65 : 1);
+    }
+    const boss = s.expedition.boss;
+    this.extra.boss.visible = !boss.defeated && !s.inCave;
+    this.extra.boss.position.set(boss.x, diving ? -4 : 0, boss.z);
+    this.extra.boss.rotation.y = Math.atan2(s.player.x - boss.x, s.player.z - boss.z);
+    this.animateCreature(this.extra.boss, t);
+    this.extra.rain.visible = !!storm && !diving && !s.inCave;
+    this.extra.rain.position.set(s.player.x, 0, s.player.z);
+    const rain = this.extra.rain.geometry.attributes.position;
+    for (let i = 0; i < rain.count; i++) {
+      rain.setY(i, (rain.getY(i) - dt * 20 + 20) % 20);
+    }
+    rain.needsUpdate = true;
+    this.scene.fog.density = diving ? 0.035 : s.inCave ? 0.045 : 0.0026 + storm * 0.006;
+    if (diving || s.inCave) {
+      this.scene.background.set(diving ? 0x062738 : 0x081720);
+      this.scene.fog.color.copy(this.scene.background);
+      this.ambient.color.set(diving ? 0x2a7a8a : 0x5a6a80);
+      this.ambient.intensity = diving ? 1.2 : 0.7;
+      this.sun.intensity = diving ? 0.5 : 0.1;
+      this.scene.environmentIntensity = 0.15;
+    } else {
+      this.scene.background.copy(atm.fog);
+    }
+    this.water.material.uniforms.uFogDensity.value = this.scene.fog.density;
+    if (opts.salvaging) {
+      const p = opts.salvaging;
+      this.rope.visible = true;
+      this.lineGeo.setFromPoints([new V(s.player.x, 0.8, s.player.z), new V(p.x, 0.5, p.z)]);
+    } else this.rope.visible = false;
+  }
+  updateShip(s, t, aboard, helm) {
+    const ship = this.ship,
+      bands = ship.userData.bands;
+    this.hasShip = !!s.ship;
+    const fusing = s.shipFusion;
+    ship.visible = !!s.ship || !!fusing;
+    for (const [id, c] of this.islandModels.claims) {
+      const own = (s.occupied || []).includes(id);
+      c.userData.flag.visible = own;
+      c.userData.stone.visible = !own;
+      c.userData.cloth.rotation.y = Math.sin(t * 1.7 + c.position.x) * 0.12;
+    }
+    if (!ship.visible) return;
+    const pose = s.ship || dockMoor(s) || { x: 0, z: 30, heading: 0 };
+    ship.position.set(pose.x, Math.sin(t * 0.8) * 0.08, pose.z);
+    ship.rotation.set(Math.sin(t * 0.6) * 0.008, pose.heading, Math.sin(t * 0.7) * 0.012);
+    if (fusing) {
+      const p = Math.min(1, 1 - (fusing.readyAt - s.elapsed) / fusing.duration);
+      ship.userData.keel.visible = true;
+      bands.forEach((b, i) => (b.visible = p > (i + 1) / 6));
+      return;
+    }
+    const cut = aboard && !this.firstPerson;
+    bands.forEach((b, i) => (b.visible = !cut || i <= s.player.deck));
+    ship.userData.keel.visible = true;
+    ship.userData.wheel.rotation.z = helm ? Math.sin(t * 0.5) * 0.6 : 0;
+    const fx = s.ship.cannonFx;
+    if (fx && s.elapsed - fx.at < 0.7) {
+      this.cannonFx.visible = true;
+      const k = (s.elapsed - fx.at) / 0.7;
+      this.cannonFx.position.set(fx.x, 1 + k * 2, fx.z);
+      this.cannonFx.scale.setScalar(1 + k * 4);
+      this.cannonFx.material.opacity = 0.85 * (1 - k);
+    } else this.cannonFx.visible = false;
+  }
+  animateCreature(m, t) {
+    animateCreature(m, t);
+  }
+
+  render() {
+    if (this.firstPerson && !this.placement && !this.titleMode) {
+      const x = this.playerAnchor.x,
+        z = this.playerAnchor.z,
+        p = this.firstPitch || 0,
+        y =
+          this.baseY +
+          (this.onFoot
+            ? 1.96 + Math.sin(this.walkPhase * 2) * Math.min(0.018, this.moveSpeed * 0.008)
+            : 2.13 + this.boatHeave);
+      this.camera.position.set(x, y, z);
+      this.camera.lookAt(
+        x - Math.sin(this.yaw) * Math.cos(p) * 10,
+        y - Math.sin(p) * 10,
+        z - Math.cos(this.yaw) * Math.cos(p) * 10
+      );
+      this.camera.fov = 70;
+      this.boat.userData.human.visible = false;
+      this.walker.visible = false;
+      this.water.material.uniforms.uCamera.value.copy(this.camera.position);
+    } else {
+      this.camera.fov = 44;
+      this.boat.userData.human.visible = !this.onFoot && !this.onRiding && !this.hasShip;
+      this.walker.visible = this.onFoot || this.onRiding;
+    }
+    this.camera.updateProjectionMatrix();
+    this.sky.position.copy(this.camera.position);
+    this.water.position.set(Math.round(this.camera.position.x / 4) * 4, 0, Math.round(this.camera.position.z / 4) * 4);
+    this.renderer.render(this.scene, this.camera);
+  }
+  homeRect() {
+    const h = this.water.material.uniforms.uHome.value;
+    return { x: h.x, z: h.y, hx: h.z, hz: h.w };
+  }
+  // A splash: expanding rings in the water shader plus a burst of droplets.
+  splash(x, z, strength = 1) {
+    const u = this.water.material.uniforms.uSplash.value,
+      i = this.splashIndex++ % SPLASHES;
+    u.set([x, z, this.time, strength], i * 4);
+    for (let k = 0; k < Math.round(26 * strength); k++) {
+      const a = Math.random() * Math.PI * 2,
+        r = Math.random() * 0.6,
+        out = 1 + Math.random() * 2.6;
+      this.emitSpray(
+        x + Math.cos(a) * r,
+        z + Math.sin(a) * r,
+        Math.cos(a) * out,
+        Math.sin(a) * out,
+        3 + Math.random() * 3.5 * strength,
+        1.2
+      );
+    }
+  }
+  makeSpray() {
+    const n = 220,
+      g = new T.BufferGeometry();
+    g.setAttribute('position', new T.Float32BufferAttribute(new Float32Array(n * 3).fill(-999), 3));
+    this.spray = {
+      points: new T.Points(
+        g,
+        new T.PointsMaterial({ color: 0xf2fbfa, size: 0.3, transparent: true, opacity: 0.9, depthWrite: false })
+      ),
+      vel: new Float32Array(n * 3),
+      life: new Float32Array(n),
+      next: 0,
+      n
+    };
+    this.spray.points.frustumCulled = false;
+    this.scene.add(this.spray.points);
+  }
+  emitSpray(x, z, vx, vz, vy, life) {
+    const sp = this.spray,
+      i = sp.next++ % sp.n,
+      pos = sp.points.geometry.attributes.position;
+    pos.setXYZ(i, x, waveHeight(x, z, this.time, this.stormLevel, this.homeRect()) + 0.1, z);
+    sp.vel.set([vx, vy, vz], i * 3);
+    sp.life[i] = life;
+  }
+  updateSpray(dt) {
+    const sp = this.spray,
+      pos = sp.points.geometry.attributes.position;
+    let any = false;
+    for (let i = 0; i < sp.n; i++) {
+      if (sp.life[i] <= 0) continue;
+      any = true;
+      sp.life[i] -= dt;
+      sp.vel[i * 3 + 1] -= 9.8 * dt;
+      const x = pos.getX(i) + sp.vel[i * 3] * dt,
+        y = pos.getY(i) + sp.vel[i * 3 + 1] * dt,
+        z = pos.getZ(i) + sp.vel[i * 3 + 2] * dt;
+      if (sp.life[i] <= 0 || y < -0.3) {
+        sp.life[i] = 0;
+        pos.setXYZ(i, 0, -999, 0);
+      } else pos.setXYZ(i, x, y, z);
+    }
+    if (any || sp.dirty) {
+      pos.needsUpdate = true;
+      sp.dirty = any;
+    }
+  }
+  saveSettings() {
+    saveSettings(this.settings);
+  }
+  setQuality(name) {
+    if (!QUALITY[name] || name === this.settings.quality) return false;
+    this.settings.quality = name;
+    saveSettings(this.settings);
+    return true;
+  }
+  thumbnail(genome, key) {
+    if (this.previewCache.has(key)) return this.previewCache.get(key);
+    const scene = new T.Scene();
+    scene.add(new T.HemisphereLight(0xffffff, 0x407886, 2.8));
+    const sun = new T.DirectionalLight(0xffe5ba, 3);
+    sun.position.set(-3, 5, 4);
+    scene.add(sun);
+    const m = makeCreature(genome);
+    m.rotation.y = -0.65;
+    scene.add(m);
+    const cam = new T.PerspectiveCamera(40, 2.2, 0.1, 30);
+    cam.position.set(5, 3, 7);
+    cam.lookAt(0, 0, 0);
+    const w = 440,
+      h = 200,
+      rt = new T.WebGLRenderTarget(w, h),
+      old = this.renderer.getRenderTarget(),
+      oldColor = this.renderer.getClearColor(new T.Color()).clone(),
+      oldAlpha = this.renderer.getClearAlpha();
+    this.renderer.setRenderTarget(rt);
+    this.renderer.setClearColor(0x0c2935, 0);
+    this.renderer.clear();
+    this.renderer.render(scene, cam);
+    const pixels = new Uint8Array(w * h * 4);
+    this.renderer.readRenderTargetPixels(rt, 0, 0, w, h, pixels);
+    this.renderer.setRenderTarget(old);
+    this.renderer.setClearColor(oldColor, oldAlpha);
+    rt.dispose();
+    const c = document.createElement('canvas');
+    c.width = w;
+    c.height = h;
+    const ctx = c.getContext('2d'),
+      im = ctx.createImageData(w, h);
+    for (let y = 0; y < h; y++) im.data.set(pixels.subarray((h - y - 1) * w * 4, (h - y) * w * 4), y * w * 4);
+    ctx.putImageData(im, 0, 0);
+    const url = c.toDataURL();
+    this.previewCache.set(key, url);
+    return url;
+  }
+}
+export class IntroFilm {
+  constructor(renderer, onFinish) {
+    this.renderer = renderer;
+    this.onFinish = onFinish;
+    this.t = 0;
+    this.done = false;
+    this.scene = new T.Scene();
+    this.scene.background = new T.Color(0x9cacac);
+    this.scene.fog = new T.Fog(0x9cacac, 25, 95);
+    this.camera = new T.PerspectiveCamera(47, innerWidth / innerHeight, 0.1, 220);
+    this.scene.add(new T.HemisphereLight(0xd5e3ef, 0x485250, 2.6));
+    const light = new T.DirectionalLight(0xffdabc, 3);
+    light.position.set(-12, 25, 8);
+    this.scene.add(light);
+    box(this.scene, 0x40525b, 0, -0.19, 0, 12, 0.3, 180);
+    for (let z = -70; z < 70; z += 6) box(this.scene, 0xe2ce9e, 0, -0.02, z, 0.16, 0.015, 3);
+    for (const x of [-6.5, 6.5]) box(this.scene, 0xa7a899, x, 0, 0, 1, 0.3, 180);
+    const r = seeded(91);
+    for (let z = -65; z < 65; z += 9)
+      for (const sign of [-1, 1]) {
+        const h = 4 + r() * 13,
+          x = sign * (11 + r() * 2);
+        box(this.scene, [0x879899, 0x728b91, 0xb7b5a5][Math.floor(r() * 3)], x, h / 2, z, 6, h, 6);
+        for (let yy = 2; yy < h - 1; yy += 2.6)
+          for (let xx = -1; xx <= 1; xx++) {
+            box(this.scene, 0x607d86, x + xx * 1.4, yy, z + 3.02, 0.8, 1.2, 0.04);
+          }
+      }
+    for (let z = -45; z < 50; z += 15) {
+      pole(this.scene, 0x4b6269, 5.8, 3.5, z, 0.09, 7);
+      rod(this.scene, [5.8, 7, z], [3.5, 7, z], 0.07, 0x4b6269);
+      box(this.scene, 0xffe6b0, 3.5, 6.9, z, 0.65, 0.14, 0.35, { emissive: 0xffce82, emissiveIntensity: 0.6 });
+    }
+    this.bike = new T.Group();
+    for (const z of [-0.65, 0.65]) {
+      const wheel = piece(this.bike, new T.TorusGeometry(0.33, 0.095, 8, 18), 0x1e3036, [0, 0.32, z], [1, 1, 1]);
+      wheel.rotation.y = Math.PI / 2;
+      pole(this.bike, 0x7d979c, 0, 0.32, z, 0.13, 0.13).rotation.z = Math.PI / 2;
+    }
+    box(this.bike, 0x3a6f7a, 0, 0.76, -0.1, 0.44, 0.7, 0.8);
+    box(this.bike, 0x2a3b44, 0, 1, -0.28, 0.47, 0.17, 0.7);
+    box(this.bike, 0x527f84, 0, 0.83, 0.66, 0.48, 0.85, 0.3);
+    rod(this.bike, [-0.35, 1.25, 0.55], [0.35, 1.25, 0.55], 0.035, 0x223941);
+    const person = character();
+    person.position.set(0, 0.55, -0.22);
+    this.bike.add(person);
+    ball(person, 0xe2d2b1, 0, 1.7, -0.01, 0.3, 0.31, 0.3);
+    box(person, 0x44616c, 0, 1.7, 0.26, 0.39, 0.21, 0.05);
+    this.rider = person;
+    this.bike.position.set(-2, 0, -15);
+    this.scene.add(this.bike);
+    this.truck = new T.Group();
+    box(this.truck, 0xb4b09b, 0, 1.5, 1.8, 2.8, 2.8, 2.4);
+    box(this.truck, 0x536d78, 0, 2.1, 3.025, 2.38, 1.1, 0.06);
+    box(this.truck, 0x91856a, 0, 1.8, -1.25, 2.95, 2.7, 4);
+    box(this.truck, 0x373c3b, 0, 0.7, 0, 2.6, 0.4, 6.5);
+    for (const x of [-1.4, 1.4])
+      for (const z of [-2.5, -1.15, 2]) {
+        const w = piece(this.truck, cylG, 0x243439, [x, 0.56, z], [0.55, 0.35, 0.55]);
+        w.rotation.z = Math.PI / 2;
+      }
+    for (let i = 0; i < 22; i++)
+      ball(
+        this.truck,
+        0x9a968b,
+        (r() - 0.5) * 2.6,
+        3.15 + r() * 0.25,
+        -1.4 + (r() - 0.5) * 3.6,
+        0.3 + r() * 0.3,
+        0.3,
+        0.4
+      );
+    this.truck.position.set(-25, 0, 7.4);
+    this.truck.rotation.y = Math.PI / 2;
+    this.scene.add(this.truck);
+    this.portal = new T.Scene();
+    this.portal.background = new T.Color(0x051722);
+    this.portal.add(new T.HemisphereLight(0x9cedda, 0x133757, 3));
+    this.soul = character();
+    this.portal.add(this.soul);
+    this.rings = [];
+    for (let i = 0; i < 18; i++) {
+      const m = new T.Mesh(
+        new T.TorusGeometry(3 + i * 0.2, 0.017, 5, 80),
+        new T.MeshBasicMaterial({
+          color: new T.Color().setHSL(0.46 + i * 0.005, 0.65, 0.5),
+          transparent: true,
+          opacity: 0.5
+        })
+      );
+      m.position.z = -i * 3;
+      this.portal.add(m);
+      this.rings.push(m);
+    }
+    this.portalCamera = new T.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 180);
+    this.portalCamera.position.set(0, 2.2, 7);
+    this.portalCamera.lookAt(0, 1, 0);
+  }
+  resize() {
+    for (const c of [this.camera, this.portalCamera]) {
+      c.aspect = innerWidth / innerHeight;
+      c.updateProjectionMatrix();
+    }
+  }
+  update(dt) {
+    const slow = this.t > 6.8 && this.t < 7.75 ? 0.3 : 1;
+    this.t += dt * slow;
+    const t = this.t,
+      step = dt * slow;
+    let caption = '',
+      chapter = '',
+      fade = 0,
+      blur = 0,
+      flash = 0,
+      dim = 0,
+      fadeColor = '';
+    if (t < 6.8) {
+      this.bike.position.z = -15 + t * 3.3;
+      this.bike.rotation.z = Math.sin(t * 5) * 0.012;
+      this.camera.position.set(4.6, 3.6, this.bike.position.z + 7);
+      this.camera.lookAt(-1, 1, this.bike.position.z + 0.5);
+      chapter = '前世 · 08:47';
+      caption =
+        t < 3.4
+          ? '大學畢業後第 37 天。又是一個快遲到的早晨。'
+          : t < 4.9
+            ? '只要趕上前面的綠燈，今天就能準時打卡。'
+            : '……喇叭聲？';
+      this.truck.position.x = -25 + Math.max(0, t - 3.6) * 7.6;
+      if (t > 4.9) {
+        this.camera.position.x += (Math.random() - 0.5) * 0.03 * (t - 4.9);
+        this.camera.lookAt(-3, 1, this.bike.position.z + 0.5);
+      }
+      this.renderer.render(this.scene, this.camera);
+    } else if (t < 11) {
+      if (!this.crash) this.startCrash();
+      this.stepCrash(step, t);
+      chapter = '前世 · 08:48';
+      const k = t - 6.8;
+      flash = Math.max(0, 1 - k * 3.2);
+      const r = this.rider.position;
+      if (t < 8.6) {
+        caption = '砰——身體被拋上了半空。';
+        const shake = Math.max(0, 0.5 - k * 0.35);
+        this.camTarget ??= new V(r.x + 2, 4, r.z + 10);
+        this.camTarget.lerp(new V(r.x + 1.2, Math.max(3.4, r.y + 3), r.z + 8.5), 1 - Math.exp(-step * 6));
+        this.camera.position
+          .copy(this.camTarget)
+          .add(new V((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake));
+        this.camera.lookAt(r.x, r.y + 0.5, r.z);
+      } else {
+        caption = t < 9.7 ? '一聲喇叭，世界失去了聲音。' : '……好冷。視線，越來越模糊。';
+        const head = this.rider.localToWorld(new V(0, 1.6, 0.1)),
+          sway = Math.sin(t * 1.7) * 0.25;
+        this.camera.position.set(head.x, head.y + 0.28, head.z);
+        const tr = this.truck.position,
+          drift = Math.min(1, (t - 8.6) / 2.2);
+        this.camera.lookAt(
+          head.x + (tr.x + 1 - head.x) * (1 - drift * 0.5) + sway,
+          2.8 + drift * 5,
+          head.z + (tr.z - head.z) * (1 - drift * 0.5) + Math.cos(t * 1.3) * 0.3
+        );
+        blur = Math.min(16, (t - 8.6) * 6.5);
+        dim = Math.min(1, Math.max(0, (t - 9.4) / 1.4));
+        fade = Math.max(0, (t - 10.3) / 0.7);
+        fadeColor = '#000';
+      }
+      this.renderer.render(this.scene, this.camera);
+    } else if (t < 17) {
+      chapter = '世界的另一側';
+      caption = t < 13.8 ? '原來人生，真的可以沒有明天。' : '可是……為什麼，我還聽得見海？';
+      this.soul.position.y = 0.2 + Math.sin(t) * 0.3;
+      this.soul.rotation.z = Math.sin(t * 0.5) * 0.3;
+      this.soul.rotation.y = t * 0.3;
+      for (let i = 0; i < this.rings.length; i++) {
+        const m = this.rings[i];
+        m.position.z = ((t * 5 + i * 3) % 60) - 50;
+        m.rotation.z = t * 0.2 + i * 0.1;
+      }
+      fade = t < 11.6 ? 1 - (t - 11) / 0.6 : Math.max(0, (t - 16.2) / 0.8);
+      fadeColor = t < 11.6 ? '#000' : '';
+      this.renderer.render(this.portal, this.portalCamera);
+    } else {
+      this.done = true;
+      this.onFinish();
+      return { caption: '', chapter: '', fade: 0, blur: 0, flash: 0, dim: 0 };
+    }
+    return { caption, chapter, fade, blur, flash, dim, fadeColor };
+  }
+  // Impact: the rider is detached from the bike and follows a ballistic tumble with bounces.
+  startCrash() {
+    this.crash = true;
+    this.scene.attach(this.rider);
+    this.vel = new V(6.8, 6.6, 7.2);
+    this.spin = new V(6.2, 1.8, 7.5);
+    this.rest = false;
+    this.bikeVel = new V(5.5, 0, 1.6);
+    this.truckV = 7.6;
+    this.debris = [];
+    const r = seeded(7);
+    for (let i = 0; i < 14; i++) {
+      const d = box(
+        this.scene,
+        [0x3a6f7a, 0x2a3b44, 0xd8e6ea, 0x7d979c][i % 4],
+        this.bike.position.x,
+        0.9,
+        this.bike.position.z,
+        0.12 + r() * 0.18,
+        0.05 + r() * 0.1,
+        0.1 + r() * 0.2
+      );
+      d.userData.v = new V(2 + r() * 7, 2 + r() * 6, (r() - 0.3) * 6);
+      d.userData.s = new V(r() * 12, r() * 12, r() * 12);
+      this.debris.push(d);
+    }
+    const glass = new T.MeshBasicMaterial({ color: 0xe8f6ff, transparent: true, opacity: 0.85 });
+    for (let i = 0; i < 24; i++) {
+      const g = new T.Mesh(new T.TetrahedronGeometry(0.05 + r() * 0.06), glass);
+      g.position.set(this.truck.position.x + 1.4, 1.9, this.truck.position.z + 1);
+      g.userData.v = new V(3 + r() * 5, 1 + r() * 5, (r() - 0.5) * 7);
+      g.userData.s = new V(r() * 15, r() * 15, r() * 15);
+      this.scene.add(g);
+      this.debris.push(g);
+    }
+  }
+  stepCrash(dt, t) {
+    const p = this.rider,
+      u = p.userData;
+    if (!this.rest) {
+      this.vel.y -= 13 * dt;
+      p.position.addScaledVector(this.vel, dt);
+      p.rotation.x += this.spin.x * dt;
+      p.rotation.y += this.spin.y * dt;
+      p.rotation.z += this.spin.z * dt;
+      u.arms.forEach((m, i) => {
+        m.rotation.x = Math.sin(t * 22 + i * 2) * 1.6;
+        m.rotation.z = (i ? 1 : -1) * (0.8 + Math.sin(t * 17) * 0.5);
+      });
+      u.legs.forEach((m, i) => (m.rotation.x = Math.sin(t * 19 + i * 2.5) * 1.1));
+      if (p.position.y < 0.2 && this.vel.y < 0) {
+        if (Math.abs(this.vel.y) > 3.2) {
+          this.vel.y *= -0.32;
+          this.vel.x *= 0.45;
+          this.vel.z *= 0.45;
+          this.spin.multiplyScalar(0.35);
+        } else {
+          this.rest = true;
+          p.position.y = 0.13;
+          p.rotation.set(-Math.PI / 2, 0.5, 0.25);
+          u.arms.forEach((m, i) => {
+            m.rotation.set(-0.3, 0, (i ? 1 : -1) * 1.25);
+          });
+          u.legs.forEach((m, i) => m.rotation.set(i ? 0.15 : -0.1, 0, (i ? 1 : -1) * 0.2));
+        }
+      }
+    }
+    this.bike.position.addScaledVector(this.bikeVel, dt);
+    this.bikeVel.multiplyScalar(Math.exp(-dt * 1.6));
+    this.bike.rotation.z += (-Math.PI * 0.47 - this.bike.rotation.z) * Math.min(1, dt * 7);
+    this.bike.rotation.y += this.bikeVel.length() * dt * 0.5;
+    this.truckV = Math.max(0, this.truckV - dt * 6.5);
+    this.truck.position.x += this.truckV * dt;
+    this.truck.rotation.z = Math.sin(t * 30) * 0.004 * this.truckV;
+    for (const d of this.debris) {
+      const v = d.userData.v;
+      if (d.position.y <= 0.03 && v.y <= 0) {
+        d.position.y = 0.03;
+        v.multiplyScalar(Math.exp(-dt * 6));
+        continue;
+      }
+      v.y -= 13 * dt;
+      d.position.addScaledVector(v, dt);
+      d.rotation.x += d.userData.s.x * dt;
+      d.rotation.y += d.userData.s.y * dt;
+    }
+  }
 }

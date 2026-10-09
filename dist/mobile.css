@@ -1,155 +1,735 @@
 /* Shared improvements and an intentionally compact landscape game HUD. */
-html,body{overscroll-behavior:none}
-#app{height:var(--game-height,100dvh)}
-button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.hud-header,.bottom-hud,.left-hud,.right-hud{transition:opacity .2s}
-.dock-button{position:absolute;right:max(30px,env(safe-area-inset-right));bottom:154px;min-width:158px;padding:12px 18px;text-align:left;border-radius:8px;border:1px solid #cae4b775;background:linear-gradient(130deg,#32655ce8,#173e42ed);box-shadow:0 5px 24px #031d3455;pointer-events:auto}
-.dock-button>span{display:block;font-size:14px;color:#edecd0;letter-spacing:.04em}
-.dock-button small{display:block;font-size:11px;color:#b5d1c1;margin-top:5px}
-.dock-button kbd{position:absolute;right:10px;top:12px;font-size:10px;border:0}
-#travel-status{position:absolute;bottom:132px;left:30px;display:flex;gap:8px;align-items:center;font-size:11px;color:#c3d9ce;text-shadow:0 1px 8px #072938}
-#travel-status i{width:3px;height:3px;border-radius:50%;background:#badbc5}
-#travel-tip{color:#94b4b0}
-#rotate-screen{position:fixed;inset:0;z-index:100;background:radial-gradient(ellipse at 50% 20%,#245c65,#071f2e 80%);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px;text-align:center}
-#rotate-screen h2{font-family:serif;font-size:31px;line-height:1.7;font-weight:400;letter-spacing:.08em;color:#e6e6d1;margin:18px 0}
-#rotate-screen>p:not(.eyebrow){font-size:14px;line-height:1.9;color:#b2cdc7;max-width:330px}
-#rotate-screen small{font-size:12px;color:#88aca8;margin:20px 0 25px}
-.rotate-device{font-size:80px;line-height:1;color:#9edbcb;margin-bottom:30px;position:relative;transform:rotate(-20deg)}
-.rotate-device span{position:absolute;right:-42px;top:15px;font-size:42px;color:#ddc59c}
-.touch-device #touch-controls{display:flex}
-.touch-device .control-hint{display:none}
-.touch-device #joystick{box-shadow:inset 0 0 0 12px #072b3928,0 4px 18px #061e2520;background:radial-gradient(circle,#83ae9b18,#062c3540);border:1px solid #e4ead14a}
-.touch-device #joystick-knob{background:radial-gradient(circle at 35% 25%,#d6e5cc99,#74a59b77);box-shadow:0 4px 16px #04243155;border:1px solid #e0efdc80}
-.touch-device #drawer{backdrop-filter:blur(16px)}
+html,
+body {
+  overscroll-behavior: none;
+}
+#app {
+  height: var(--game-height, 100dvh);
+}
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.hud-header,
+.bottom-hud,
+.left-hud,
+.right-hud {
+  transition: opacity 0.2s;
+}
+.dock-button {
+  position: absolute;
+  right: max(30px, env(safe-area-inset-right));
+  bottom: 154px;
+  min-width: 158px;
+  padding: 12px 18px;
+  text-align: left;
+  border-radius: 8px;
+  border: 1px solid #cae4b775;
+  background: linear-gradient(130deg, #32655ce8, #173e42ed);
+  box-shadow: 0 5px 24px #031d3455;
+  pointer-events: auto;
+}
+.dock-button > span {
+  display: block;
+  font-size: 14px;
+  color: #edecd0;
+  letter-spacing: 0.04em;
+}
+.dock-button small {
+  display: block;
+  font-size: 11px;
+  color: #b5d1c1;
+  margin-top: 5px;
+}
+.dock-button kbd {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  font-size: 10px;
+  border: 0;
+}
+#travel-status {
+  position: absolute;
+  bottom: 132px;
+  left: 30px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  color: #c3d9ce;
+  text-shadow: 0 1px 8px #072938;
+}
+#travel-status i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #badbc5;
+}
+#travel-tip {
+  color: #94b4b0;
+}
+#rotate-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: radial-gradient(ellipse at 50% 20%, #245c65, #071f2e 80%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+  text-align: center;
+}
+#rotate-screen h2 {
+  font-family: serif;
+  font-size: 31px;
+  line-height: 1.7;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: #e6e6d1;
+  margin: 18px 0;
+}
+#rotate-screen > p:not(.eyebrow) {
+  font-size: 14px;
+  line-height: 1.9;
+  color: #b2cdc7;
+  max-width: 330px;
+}
+#rotate-screen small {
+  font-size: 12px;
+  color: #88aca8;
+  margin: 20px 0 25px;
+}
+.rotate-device {
+  font-size: 80px;
+  line-height: 1;
+  color: #9edbcb;
+  margin-bottom: 30px;
+  position: relative;
+  transform: rotate(-20deg);
+}
+.rotate-device span {
+  position: absolute;
+  right: -42px;
+  top: 15px;
+  font-size: 42px;
+  color: #ddc59c;
+}
+.touch-device #touch-controls {
+  display: flex;
+}
+.touch-device .control-hint {
+  display: none;
+}
+.touch-device #joystick {
+  box-shadow:
+    inset 0 0 0 12px #072b3928,
+    0 4px 18px #061e2520;
+  background: radial-gradient(circle, #83ae9b18, #062c3540);
+  border: 1px solid #e4ead14a;
+}
+.touch-device #joystick-knob {
+  background: radial-gradient(circle at 35% 25%, #d6e5cc99, #74a59b77);
+  box-shadow: 0 4px 16px #04243155;
+  border: 1px solid #e0efdc80;
+}
+.touch-device #drawer {
+  backdrop-filter: blur(16px);
+}
 
 /* Applies to phones regardless of CSS width: iPhones are wider than 760px in landscape. */
-body.landscape-play{--edge-left:max(20px,env(safe-area-inset-left));--edge-right:max(20px,env(safe-area-inset-right));--edge-bottom:max(12px,env(safe-area-inset-bottom))}
-.landscape-play .hud-header{inset:max(8px,env(safe-area-inset-top)) var(--edge-right) auto var(--edge-left);height:40px;gap:12px;flex-wrap:nowrap}
-.landscape-play .brand{min-width:105px;gap:9px}
-.landscape-play .brand .logo-mark{font-size:30px}
-.landscape-play .brand strong{font-size:16px;letter-spacing:.1em}
-.landscape-play .brand small{font-size:7px;letter-spacing:.12em;margin-top:3px}
-.landscape-play .resource-bar{position:static;flex:0 1 auto;justify-content:center;border-radius:5px;backdrop-filter:blur(8px);max-width:330px}
-.landscape-play .resource{padding:6px 11px;gap:6px;flex:0 0 auto}
-.landscape-play .resource .r-icon{font-size:15px}
-.landscape-play .resource b{font-size:14px}
-.landscape-play .resource small{display:none}
-.landscape-play .header-tools{gap:6px;margin-left:0}
-.landscape-play .icon-button{width:36px;height:36px;min-height:36px;font-size:19px;border-radius:6px}
-.landscape-play .view-button{font-size:11px;min-height:36px;padding:6px 10px}
-.landscape-play .left-hud{left:var(--edge-left);top:61px;width:206px}
-.landscape-play .time-row{display:flex;margin:0 0 7px;gap:9px;height:19px;font-size:10px}
-.landscape-play .sun-icon{font-size:20px}
-.landscape-play .mission{padding-left:10px;border-left:1px solid #aed8bb77}
-.landscape-play .mission .eyebrow,.landscape-play .mission .quiet,.landscape-play .secret-hint{display:none}
-.landscape-play .mission h2{font-size:13px;margin:0 0 8px;letter-spacing:.02em}
-.landscape-play .quest-item{font-size:11px;margin:7px 0;gap:8px;line-height:1.2}
-.landscape-play .quest-item b{font-size:10px}
-.landscape-play .quest-item:before{width:5px;height:5px}
-.landscape-play .right-hud{right:var(--edge-right);top:58px;width:102px}
-.landscape-play .map-shell{width:76px;height:76px;margin-left:auto;margin-right:9px}
-.landscape-play .map-north{font-size:8px;top:4px}
-.landscape-play .map-label,.landscape-play .location{display:none}
-.landscape-play .small-button{margin-top:8px;min-height:32px;font-size:10px;padding:5px 8px;background:#123b43b0}
-.landscape-play .small-button kbd{display:none}
-.landscape-play .bottom-hud{left:var(--edge-left);right:var(--edge-right);bottom:var(--edge-bottom);height:56px;display:block}
-.landscape-play .action-bar{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:auto;justify-content:center;gap:5px;padding:5px;border-radius:8px;background:#0b303977}
-.landscape-play .action-bar button{flex:0 0 52px;width:52px;height:49px;min-height:49px;font-size:10px;border-radius:4px;background:#1a414999;gap:3px}
-.landscape-play .action-bar .tool-icon{font-size:22px}
-.landscape-play .action-bar kbd{display:none}
-.landscape-play .vitals{position:absolute;left:0;bottom:155px;width:148px}
-.landscape-play .vital{gap:7px;font-size:10px;margin:5px 0}
-.landscape-play .vital>div{height:3px}
-.landscape-play .vital b{width:20px}
-.landscape-play .vitals small{display:none}
-.landscape-play #touch-controls{position:absolute;display:flex;left:calc(var(--edge-left) + 16px);right:var(--edge-right);bottom:calc(var(--edge-bottom) + 9px);height:112px;align-items:flex-end;justify-content:space-between;pointer-events:none}
-.landscape-play #joystick{width:112px;height:112px;pointer-events:auto}
-.landscape-play #joystick-knob{left:34px;top:34px;width:44px;height:44px}
-.landscape-play #repel-btn{width:58px;height:58px;min-height:58px;font-size:12px;background:#173d43bd;border:1px solid #c1cbb854;box-shadow:0 4px 20px #051d2b40}
-.landscape-play #context-action{left:auto;right:calc(var(--edge-right) + 88px);bottom:calc(var(--edge-bottom) + 5px);transform:none;min-width:72px;width:72px;height:72px;border:0;border-radius:50%;background:transparent;overflow:visible;box-shadow:none}
-.landscape-play #context-action>button{width:72px;height:72px;min-height:72px;border-radius:50%;padding:0;display:flex;justify-content:center;align-items:center;background:linear-gradient(145deg,#a4d8b8ed,#4e9289ed);box-shadow:0 0 0 5px #c0e7c214,0 5px 20px #05233380;border:1px solid #d4edc588;color:#123b3c;font-size:14px;font-weight:700}
-.landscape-play #context-action kbd{display:none}
-.landscape-play #context-action>div{position:absolute;right:92px;bottom:81px;min-width:185px;text-align:right;padding:8px 12px;background:#0b2f39c9;border:1px solid #bcd8c129;border-radius:5px;pointer-events:none}
-.landscape-play #context-title{font-size:12px}
-.landscape-play #context-subtitle{font-size:10px;margin-top:3px}
-.landscape-play .pulse-dot{left:auto;right:13px;top:-4px;width:5px;height:5px}
-.landscape-play .dock-button{right:var(--edge-right);bottom:calc(var(--edge-bottom) + 95px);min-width:116px;min-height:48px;padding:9px 12px;border-radius:8px;background:linear-gradient(125deg,#476d59e8,#214a49ed)}
-.landscape-play .dock-button>span{font-size:12px;letter-spacing:0}
-.landscape-play .dock-button small{font-size:9px;margin-top:4px}
-.landscape-play .dock-button kbd{display:none}
-.landscape-play #travel-status{left:calc(var(--edge-left) + 17px);bottom:calc(var(--edge-bottom) + 132px);font-size:10px}
-.landscape-play #travel-tip,.landscape-play #travel-status i{display:none}
-.landscape-play #drawer{left:auto;right:var(--edge-right);top:55px;bottom:calc(var(--edge-bottom) + 66px);width:min(380px,55vw);border-radius:8px;background:#092c38f5}
-.landscape-play #drawer>header{padding:12px 17px}
-.landscape-play #drawer h2{font-size:18px;margin-top:3px}
-.landscape-play #drawer .eyebrow{font-size:9px}
-.landscape-play #drawer-body{padding:12px 17px}
-.landscape-play #drawer-body>p{font-size:12px;margin-bottom:12px}
-.landscape-play .build-card{padding:12px 0}
-.landscape-play .build-card button{min-height:40px;min-width:48px}
-.landscape-play .full-button{min-height:44px}
-.landscape-play .gene-select{font-size:14px;min-height:44px}
-.landscape-play #build-banner{left:50%;right:auto;transform:translateX(-50%);top:59px;width:auto;min-width:0;max-width:calc(100vw - 60px);padding:8px 10px;gap:10px;white-space:nowrap}
-.landscape-play #build-banner strong{font-size:12px}
-.landscape-play #build-banner span{display:none}
-.landscape-play #build-banner button{min-height:40px;padding:8px 12px}
-.landscape-play #toasts{top:60px;max-width:60vw}
-.landscape-play .toast{font-size:11px;padding:8px 13px}
-.landscape-play #target-card{top:65px;bottom:auto;padding:8px 15px;font-size:12px;max-width:35vw}
-.landscape-play #target-card small{font-size:10px}
-.landscape-play #salvage-progress{top:51%;width:160px}
-.landscape-play #discovery{top:24%;padding:19px 40px;max-width:65%}
-.landscape-play #discovery h2{font-size:24px;margin:8px 0}
-.landscape-play .discovery-text{font-size:12px}
-.landscape-play #modal-shade{padding:12px}
-.landscape-play #modal{padding:20px 26px;max-height:calc(var(--game-height) - 24px);width:500px}
-.landscape-play #modal-title{font-size:22px;margin:8px 0 12px}
-.landscape-play #modal-body{font-size:12px}
-.landscape-play #modal-actions{margin-top:15px}
-.landscape-play .help-keys{grid-template-columns:72px 1fr;font-size:12px;gap:6px}
-.landscape-play .title-copy{top:18%;left:max(6%,env(safe-area-inset-left));right:auto;max-width:460px}
-.landscape-play .title-copy>.eyebrow{display:none}
-.landscape-play .title-copy h1{font-size:47px;margin:10px 0;line-height:1.2}
-.landscape-play .title-rule{margin:14px 0}
-.landscape-play .intro{font-size:14px;line-height:1.7}
-.landscape-play .story-small{font-size:11px;line-height:1.7;margin:10px 0 16px}
-.landscape-play .title-copy .large{padding:11px 24px;font-size:14px;min-width:225px}
-.landscape-play .title-copy .text-button{margin:9px 0;font-size:11px;min-height:24px}
-.landscape-play .start-note,.landscape-play .title-coordinate{display:none}
-.landscape-play .title-top{top:19px;left:var(--edge-left);right:var(--edge-right);font-size:11px}
-.landscape-play .version{font-size:9px}
-.landscape-play .film-subtitles{bottom:15vh}
-.landscape-play .film-subtitles p{font-size:15px}
-.landscape-play .film-subtitles small{margin-top:9px;font-size:9px}
-.landscape-play #skip-intro{right:var(--edge-right);top:12vh;padding:7px 12px;font-size:11px;min-height:36px}
-.landscape-play #film-chapter{left:var(--edge-left);top:15vh;font-size:11px}
-.landscape-play.gamepad #touch-controls{display:none}
-
-@media(max-height:365px){
- .landscape-play .time-row{display:none}
- .landscape-play .mission h2{font-size:12px}
- .landscape-play .quest-item{font-size:10px;margin:6px 0}
- .landscape-play .vitals{bottom:136px;width:130px}
- .landscape-play #joystick{width:94px;height:94px}
- .landscape-play #joystick-knob{left:25px;top:25px}
- .landscape-play #travel-status{bottom:calc(var(--edge-bottom) + 112px)}
- .landscape-play .map-shell{width:64px;height:64px}
- .landscape-play .dock-button{bottom:calc(var(--edge-bottom) + 87px)}
- .landscape-play .title-copy{top:17%}
- .landscape-play .title-copy h1{font-size:38px;margin:8px 0}
- .landscape-play .title-rule{margin:10px 0}
- .landscape-play .story-small{margin:8px 0 10px;font-size:10px}
- .landscape-play .intro{font-size:12px}
- .landscape-play #context-action>div{bottom:83px;right:78px}
+body.landscape-play {
+  --edge-left: max(20px, env(safe-area-inset-left));
+  --edge-right: max(20px, env(safe-area-inset-right));
+  --edge-bottom: max(12px, env(safe-area-inset-bottom));
 }
-@media(max-width:700px) and (orientation:landscape){
- .landscape-play .brand small,.landscape-play #sound-btn{display:none}
- .landscape-play .brand{min-width:80px}
- .landscape-play .brand strong{font-size:14px}
- .landscape-play .brand .logo-mark{font-size:25px}
- .landscape-play .resource{padding:6px 7px}
- .landscape-play .header-tools{gap:4px}
- .landscape-play .view-button{font-size:10px;padding:6px}
- .landscape-play .action-bar button{width:43px;flex-basis:43px;font-size:9px}
- .landscape-play .action-bar{gap:4px;padding:4px}
+.landscape-play .hud-header {
+  inset: max(8px, env(safe-area-inset-top)) var(--edge-right) auto var(--edge-left);
+  height: 40px;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+.landscape-play .brand {
+  min-width: 105px;
+  gap: 9px;
+}
+.landscape-play .brand .logo-mark {
+  font-size: 30px;
+}
+.landscape-play .brand strong {
+  font-size: 16px;
+  letter-spacing: 0.1em;
+}
+.landscape-play .brand small {
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  margin-top: 3px;
+}
+.landscape-play .resource-bar {
+  position: static;
+  flex: 0 1 auto;
+  justify-content: center;
+  border-radius: 5px;
+  backdrop-filter: blur(8px);
+  max-width: 330px;
+}
+.landscape-play .resource {
+  padding: 6px 11px;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+.landscape-play .resource .r-icon {
+  font-size: 15px;
+}
+.landscape-play .resource b {
+  font-size: 14px;
+}
+.landscape-play .resource small {
+  display: none;
+}
+.landscape-play .header-tools {
+  gap: 6px;
+  margin-left: 0;
+}
+.landscape-play .icon-button {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  font-size: 19px;
+  border-radius: 6px;
+}
+.landscape-play .view-button {
+  font-size: 11px;
+  min-height: 36px;
+  padding: 6px 10px;
+}
+.landscape-play .left-hud {
+  left: var(--edge-left);
+  top: 61px;
+  width: 206px;
+}
+.landscape-play .time-row {
+  display: flex;
+  margin: 0 0 7px;
+  gap: 9px;
+  height: 19px;
+  font-size: 10px;
+}
+.landscape-play .sun-icon {
+  font-size: 20px;
+}
+.landscape-play .mission {
+  padding-left: 10px;
+  border-left: 1px solid #aed8bb77;
+}
+.landscape-play .mission .eyebrow,
+.landscape-play .mission .quiet,
+.landscape-play .secret-hint {
+  display: none;
+}
+.landscape-play .mission h2 {
+  font-size: 13px;
+  margin: 0 0 8px;
+  letter-spacing: 0.02em;
+}
+.landscape-play .quest-item {
+  font-size: 11px;
+  margin: 7px 0;
+  gap: 8px;
+  line-height: 1.2;
+}
+.landscape-play .quest-item b {
+  font-size: 10px;
+}
+.landscape-play .quest-item:before {
+  width: 5px;
+  height: 5px;
+}
+.landscape-play .right-hud {
+  right: var(--edge-right);
+  top: 58px;
+  width: 102px;
+}
+.landscape-play .map-shell {
+  width: 76px;
+  height: 76px;
+  margin-left: auto;
+  margin-right: 9px;
+}
+.landscape-play .map-north {
+  font-size: 8px;
+  top: 4px;
+}
+.landscape-play .map-label,
+.landscape-play .location {
+  display: none;
+}
+.landscape-play .small-button {
+  margin-top: 8px;
+  min-height: 32px;
+  font-size: 10px;
+  padding: 5px 8px;
+  background: #123b43b0;
+}
+.landscape-play .small-button kbd {
+  display: none;
+}
+.landscape-play .bottom-hud {
+  left: var(--edge-left);
+  right: var(--edge-right);
+  bottom: var(--edge-bottom);
+  height: 56px;
+  display: block;
+}
+.landscape-play .action-bar {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: auto;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px;
+  border-radius: 8px;
+  background: #0b303977;
+}
+.landscape-play .action-bar button {
+  flex: 0 0 52px;
+  width: 52px;
+  height: 49px;
+  min-height: 49px;
+  font-size: 10px;
+  border-radius: 4px;
+  background: #1a414999;
+  gap: 3px;
+}
+.landscape-play .action-bar .tool-icon {
+  font-size: 22px;
+}
+.landscape-play .action-bar kbd {
+  display: none;
+}
+.landscape-play .vitals {
+  position: absolute;
+  left: 0;
+  bottom: 155px;
+  width: 148px;
+}
+.landscape-play .vital {
+  gap: 7px;
+  font-size: 10px;
+  margin: 5px 0;
+}
+.landscape-play .vital > div {
+  height: 3px;
+}
+.landscape-play .vital b {
+  width: 20px;
+}
+.landscape-play .vitals small {
+  display: none;
+}
+.landscape-play #touch-controls {
+  position: absolute;
+  display: flex;
+  left: calc(var(--edge-left) + 16px);
+  right: var(--edge-right);
+  bottom: calc(var(--edge-bottom) + 9px);
+  height: 112px;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.landscape-play #joystick {
+  width: 112px;
+  height: 112px;
+  pointer-events: auto;
+}
+.landscape-play #joystick-knob {
+  left: 34px;
+  top: 34px;
+  width: 44px;
+  height: 44px;
+}
+.landscape-play #repel-btn {
+  width: 58px;
+  height: 58px;
+  min-height: 58px;
+  font-size: 12px;
+  background: #173d43bd;
+  border: 1px solid #c1cbb854;
+  box-shadow: 0 4px 20px #051d2b40;
+}
+.landscape-play #context-action {
+  left: auto;
+  right: calc(var(--edge-right) + 88px);
+  bottom: calc(var(--edge-bottom) + 5px);
+  transform: none;
+  min-width: 72px;
+  width: 72px;
+  height: 72px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  overflow: visible;
+  box-shadow: none;
+}
+.landscape-play #context-action > button {
+  width: 72px;
+  height: 72px;
+  min-height: 72px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(145deg, #a4d8b8ed, #4e9289ed);
+  box-shadow:
+    0 0 0 5px #c0e7c214,
+    0 5px 20px #05233380;
+  border: 1px solid #d4edc588;
+  color: #123b3c;
+  font-size: 14px;
+  font-weight: 700;
+}
+.landscape-play #context-action kbd {
+  display: none;
+}
+.landscape-play #context-action > div {
+  position: absolute;
+  right: 92px;
+  bottom: 81px;
+  min-width: 185px;
+  text-align: right;
+  padding: 8px 12px;
+  background: #0b2f39c9;
+  border: 1px solid #bcd8c129;
+  border-radius: 5px;
+  pointer-events: none;
+}
+.landscape-play #context-title {
+  font-size: 12px;
+}
+.landscape-play #context-subtitle {
+  font-size: 10px;
+  margin-top: 3px;
+}
+.landscape-play .pulse-dot {
+  left: auto;
+  right: 13px;
+  top: -4px;
+  width: 5px;
+  height: 5px;
+}
+.landscape-play .dock-button {
+  right: var(--edge-right);
+  bottom: calc(var(--edge-bottom) + 95px);
+  min-width: 116px;
+  min-height: 48px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: linear-gradient(125deg, #476d59e8, #214a49ed);
+}
+.landscape-play .dock-button > span {
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.landscape-play .dock-button small {
+  font-size: 9px;
+  margin-top: 4px;
+}
+.landscape-play .dock-button kbd {
+  display: none;
+}
+.landscape-play #travel-status {
+  left: calc(var(--edge-left) + 17px);
+  bottom: calc(var(--edge-bottom) + 132px);
+  font-size: 10px;
+}
+.landscape-play #travel-tip,
+.landscape-play #travel-status i {
+  display: none;
+}
+.landscape-play #drawer {
+  left: auto;
+  right: var(--edge-right);
+  top: 55px;
+  bottom: calc(var(--edge-bottom) + 66px);
+  width: min(380px, 55vw);
+  border-radius: 8px;
+  background: #092c38f5;
+}
+.landscape-play #drawer > header {
+  padding: 12px 17px;
+}
+.landscape-play #drawer h2 {
+  font-size: 18px;
+  margin-top: 3px;
+}
+.landscape-play #drawer .eyebrow {
+  font-size: 9px;
+}
+.landscape-play #drawer-body {
+  padding: 12px 17px;
+}
+.landscape-play #drawer-body > p {
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.landscape-play .build-card {
+  padding: 12px 0;
+}
+.landscape-play .build-card button {
+  min-height: 40px;
+  min-width: 48px;
+}
+.landscape-play .full-button {
+  min-height: 44px;
+}
+.landscape-play .gene-select {
+  font-size: 14px;
+  min-height: 44px;
+}
+.landscape-play #build-banner {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  top: 59px;
+  width: auto;
+  min-width: 0;
+  max-width: calc(100vw - 60px);
+  padding: 8px 10px;
+  gap: 10px;
+  white-space: nowrap;
+}
+.landscape-play #build-banner strong {
+  font-size: 12px;
+}
+.landscape-play #build-banner span {
+  display: none;
+}
+.landscape-play #build-banner button {
+  min-height: 40px;
+  padding: 8px 12px;
+}
+.landscape-play #toasts {
+  top: 60px;
+  max-width: 60vw;
+}
+.landscape-play .toast {
+  font-size: 11px;
+  padding: 8px 13px;
+}
+.landscape-play #target-card {
+  top: 65px;
+  bottom: auto;
+  padding: 8px 15px;
+  font-size: 12px;
+  max-width: 35vw;
+}
+.landscape-play #target-card small {
+  font-size: 10px;
+}
+.landscape-play #salvage-progress {
+  top: 51%;
+  width: 160px;
+}
+.landscape-play #discovery {
+  top: 24%;
+  padding: 19px 40px;
+  max-width: 65%;
+}
+.landscape-play #discovery h2 {
+  font-size: 24px;
+  margin: 8px 0;
+}
+.landscape-play .discovery-text {
+  font-size: 12px;
+}
+.landscape-play #modal-shade {
+  padding: 12px;
+}
+.landscape-play #modal {
+  padding: 20px 26px;
+  max-height: calc(var(--game-height) - 24px);
+  width: 500px;
+}
+.landscape-play #modal-title {
+  font-size: 22px;
+  margin: 8px 0 12px;
+}
+.landscape-play #modal-body {
+  font-size: 12px;
+}
+.landscape-play #modal-actions {
+  margin-top: 15px;
+}
+.landscape-play .help-keys {
+  grid-template-columns: 72px 1fr;
+  font-size: 12px;
+  gap: 6px;
+}
+.landscape-play .title-copy {
+  top: 18%;
+  left: max(6%, env(safe-area-inset-left));
+  right: auto;
+  max-width: 460px;
+}
+.landscape-play .title-copy > .eyebrow {
+  display: none;
+}
+.landscape-play .title-copy h1 {
+  font-size: 47px;
+  margin: 10px 0;
+  line-height: 1.2;
+}
+.landscape-play .title-rule {
+  margin: 14px 0;
+}
+.landscape-play .intro {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.landscape-play .story-small {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 10px 0 16px;
+}
+.landscape-play .title-copy .large {
+  padding: 11px 24px;
+  font-size: 14px;
+  min-width: 225px;
+}
+.landscape-play .title-copy .text-button {
+  margin: 9px 0;
+  font-size: 11px;
+  min-height: 24px;
+}
+.landscape-play .start-note,
+.landscape-play .title-coordinate {
+  display: none;
+}
+.landscape-play .title-top {
+  top: 19px;
+  left: var(--edge-left);
+  right: var(--edge-right);
+  font-size: 11px;
+}
+.landscape-play .version {
+  font-size: 9px;
+}
+.landscape-play .film-subtitles {
+  bottom: 15vh;
+}
+.landscape-play .film-subtitles p {
+  font-size: 15px;
+}
+.landscape-play .film-subtitles small {
+  margin-top: 9px;
+  font-size: 9px;
+}
+.landscape-play #skip-intro {
+  right: var(--edge-right);
+  top: 12vh;
+  padding: 7px 12px;
+  font-size: 11px;
+  min-height: 36px;
+}
+.landscape-play #film-chapter {
+  left: var(--edge-left);
+  top: 15vh;
+  font-size: 11px;
+}
+.landscape-play.gamepad #touch-controls {
+  display: none;
+}
+
+@media (max-height: 365px) {
+  .landscape-play .time-row {
+    display: none;
+  }
+  .landscape-play .mission h2 {
+    font-size: 12px;
+  }
+  .landscape-play .quest-item {
+    font-size: 10px;
+    margin: 6px 0;
+  }
+  .landscape-play .vitals {
+    bottom: 136px;
+    width: 130px;
+  }
+  .landscape-play #joystick {
+    width: 94px;
+    height: 94px;
+  }
+  .landscape-play #joystick-knob {
+    left: 25px;
+    top: 25px;
+  }
+  .landscape-play #travel-status {
+    bottom: calc(var(--edge-bottom) + 112px);
+  }
+  .landscape-play .map-shell {
+    width: 64px;
+    height: 64px;
+  }
+  .landscape-play .dock-button {
+    bottom: calc(var(--edge-bottom) + 87px);
+  }
+  .landscape-play .title-copy {
+    top: 17%;
+  }
+  .landscape-play .title-copy h1 {
+    font-size: 38px;
+    margin: 8px 0;
+  }
+  .landscape-play .title-rule {
+    margin: 10px 0;
+  }
+  .landscape-play .story-small {
+    margin: 8px 0 10px;
+    font-size: 10px;
+  }
+  .landscape-play .intro {
+    font-size: 12px;
+  }
+  .landscape-play #context-action > div {
+    bottom: 83px;
+    right: 78px;
+  }
+}
+@media (max-width: 700px) and (orientation: landscape) {
+  .landscape-play .brand small,
+  .landscape-play #sound-btn {
+    display: none;
+  }
+  .landscape-play .brand {
+    min-width: 80px;
+  }
+  .landscape-play .brand strong {
+    font-size: 14px;
+  }
+  .landscape-play .brand .logo-mark {
+    font-size: 25px;
+  }
+  .landscape-play .resource {
+    padding: 6px 7px;
+  }
+  .landscape-play .header-tools {
+    gap: 4px;
+  }
+  .landscape-play .view-button {
+    font-size: 10px;
+    padding: 6px;
+  }
+  .landscape-play .action-bar button {
+    width: 43px;
+    flex-basis: 43px;
+    font-size: 9px;
+  }
+  .landscape-play .action-bar {
+    gap: 4px;
+    padding: 4px;
+  }
 }

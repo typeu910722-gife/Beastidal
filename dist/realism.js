@@ -1,27 +1,94 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import{ISLANDS}from'./islands.js?v=0.9.0';
-import{WAVE_SET,WAVE_TIME}from'./physics.js?v=0.9.0';
-export const TRAIL=40,SPLASHES=4;
+import { ISLANDS } from './islands.js?v=0.9.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.9.0';
+export const TRAIL = 40,
+  SPLASHES = 4;
 
-export const QUALITY={
- high:{label:'寫實',octaves:5,pixelRatio:2,shadow:2048,soft:true,rings:150,segments:192,envSize:256,envEvery:1.5},
- balanced:{label:'平衡',octaves:4,pixelRatio:1.5,shadow:2048,soft:true,rings:110,segments:144,envSize:128,envEvery:3},
- low:{label:'效能',octaves:3,pixelRatio:1,shadow:1024,soft:false,rings:70,segments:96,envSize:64,envEvery:6}
+export const QUALITY = {
+  high: {
+    label: '寫實',
+    octaves: 5,
+    pixelRatio: 2,
+    shadow: 2048,
+    soft: true,
+    rings: 150,
+    segments: 192,
+    envSize: 256,
+    envEvery: 1.5
+  },
+  balanced: {
+    label: '平衡',
+    octaves: 4,
+    pixelRatio: 1.5,
+    shadow: 2048,
+    soft: true,
+    rings: 110,
+    segments: 144,
+    envSize: 128,
+    envEvery: 3
+  },
+  low: {
+    label: '效能',
+    octaves: 3,
+    pixelRatio: 1,
+    shadow: 1024,
+    soft: false,
+    rings: 70,
+    segments: 96,
+    envSize: 64,
+    envEvery: 6
+  }
 };
-const SETTINGS_KEY='beastidal-settings-v1';
-export function loadSettings(mobile){let s={};try{s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')||{};}catch{}if(!QUALITY[s.quality])s.quality=mobile?'balanced':'high';return s;}
-export function saveSettings(s){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));}catch{}}
+const SETTINGS_KEY = 'beastidal-settings-v1';
+export function loadSettings(mobile) {
+  let s = {};
+  try {
+    s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') || {};
+  } catch {}
+  if (!QUALITY[s.quality]) s.quality = mobile ? 'balanced' : 'high';
+  return s;
+}
+export function saveSettings(s) {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  } catch {}
+}
 
 // Day/night phase (0..1 over the 480 s loop) -> sun direction, aligned with the HUD clock
 // (phase 0 = 06:30, sunrise 06:00, noon 12:00, sunset 18:00). The sun rises in the east (+x).
-export function sunAt(phase){const hours=6.5+phase*24,a=(hours-6)/24*Math.PI*2;return new T.Vector3(Math.cos(a),Math.sin(a)*.95,-.42).normalize();}
-const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
-export function dayAmount(sun){return smooth(-.18,.12,sun.y);}
+export function sunAt(phase) {
+  const hours = 6.5 + phase * 24,
+    a = ((hours - 6) / 24) * Math.PI * 2;
+  return new T.Vector3(Math.cos(a), Math.sin(a) * 0.95, -0.42).normalize();
+}
+const smooth = (a, b, x) => {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+export function dayAmount(sun) {
+  return smooth(-0.18, 0.12, sun.y);
+}
 // JS mirror of the shader's horizon radiance; used for fog so meshes melt into the sky.
-export function horizonColor(sun,storm,out=new T.Color()){const day=dayAmount(sun),golden=Math.exp(-Math.abs(sun.y-.02)*9)*.45;const r=.015+(.55-.015)*day,g=.025+(.72-.025)*day,b=.05+(.92-.05)*day;out.setRGB(r+(1.1*Math.max(day,.25)-r)*golden,g+(.48*Math.max(day,.25)-g)*golden,b+(.18*Math.max(day,.25)-b)*golden);const grey=(.15+.85*day)*storm*.75;out.r=out.r*(1-storm*.75)+.32*grey;out.g=out.g*(1-storm*.75)+.36*grey;out.b=out.b*(1-storm*.75)+.40*grey;return out;}
+export function horizonColor(sun, storm, out = new T.Color()) {
+  const day = dayAmount(sun),
+    golden = Math.exp(-Math.abs(sun.y - 0.02) * 9) * 0.45;
+  const r = 0.015 + (0.55 - 0.015) * day,
+    g = 0.025 + (0.72 - 0.025) * day,
+    b = 0.05 + (0.92 - 0.05) * day;
+  out.setRGB(
+    r + (1.1 * Math.max(day, 0.25) - r) * golden,
+    g + (0.48 * Math.max(day, 0.25) - g) * golden,
+    b + (0.18 * Math.max(day, 0.25) - b) * golden
+  );
+  const grey = (0.15 + 0.85 * day) * storm * 0.75;
+  out.r = out.r * (1 - storm * 0.75) + 0.32 * grey;
+  out.g = out.g * (1 - storm * 0.75) + 0.36 * grey;
+  out.b = out.b * (1 - storm * 0.75) + 0.4 * grey;
+  return out;
+}
 
-const SKY_GLSL=`
+const SKY_GLSL = `
 uniform vec3 uSunDir;uniform float uStorm;
 vec3 skyRadiance(vec3 dir){
  vec3 s=uSunDir;float day=smoothstep(-.18,.12,s.y);float y=max(dir.y,0.);
@@ -32,7 +99,7 @@ vec3 skyRadiance(vec3 dir){
  col+=vec3(1.,.78,.5)*(pow(mu,6.)*.35+pow(mu,64.)*1.4)*day*(1.-uStorm*.85);
  return mix(col,vec3(.32,.36,.40)*(.15+.85*day),uStorm*.75);
 }`;
-const NOISE_GLSL=`
+const NOISE_GLSL = `
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+1.),f.x),f.y);}
 #ifndef OCTAVES
@@ -40,11 +107,24 @@ float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(ha
 #endif
 float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<OCTAVES;i++){v+=noise(p)*a;p=p*2.03+vec2(17.3,9.1);a*=.5;}return v;}`;
 
-export function makeSky(quality=QUALITY.high){
- return new T.Mesh(new T.SphereGeometry(900,48,24),new T.ShaderMaterial({side:T.BackSide,depthWrite:false,fog:false,defines:{OCTAVES:quality.octaves},
-  uniforms:{uSunDir:{value:new T.Vector3(0,1,0)},uStorm:{value:0},uTime:{value:0},uNight:{value:0},uFog:{value:new T.Color()}},
-  vertexShader:'varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-  fragmentShader:`uniform float uTime;uniform float uNight;uniform vec3 uFog;varying vec3 vP;${SKY_GLSL}${NOISE_GLSL}
+export function makeSky(quality = QUALITY.high) {
+  return new T.Mesh(
+    new T.SphereGeometry(900, 48, 24),
+    new T.ShaderMaterial({
+      side: T.BackSide,
+      depthWrite: false,
+      fog: false,
+      defines: { OCTAVES: quality.octaves },
+      uniforms: {
+        uSunDir: { value: new T.Vector3(0, 1, 0) },
+        uStorm: { value: 0 },
+        uTime: { value: 0 },
+        uNight: { value: 0 },
+        uFog: { value: new T.Color() }
+      },
+      vertexShader:
+        'varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+      fragmentShader: `uniform float uTime;uniform float uNight;uniform vec3 uFog;varying vec3 vP;${SKY_GLSL}${NOISE_GLSL}
  void main(){vec3 dir=normalize(vP);vec3 col=skyRadiance(dir);float day=smoothstep(-.18,.12,uSunDir.y);float mu=dot(dir,uSunDir);
   col+=vec3(28.,24.,18.)*smoothstep(.99955,.99975,mu)*day*(1.-uStorm*.9);
   vec3 moon=-uSunDir;col+=vec3(.9,.95,1.)*smoothstep(.9996,.9998,dot(dir,moon))*(1.-day)*(1.-uStorm);
@@ -57,22 +137,46 @@ export function makeSky(quality=QUALITY.high){
   gl_FragColor=vec4(col,1.);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
- }`}));
+ }`
+    })
+  );
 }
 
 // Concentric ring grid: dense near the camera, sparse at the horizon. Re-centred every frame.
-function oceanGeometry(rings,segments){const pos=[0,0,0],idx=[];for(let i=1;i<=rings;i++){const r=1600*Math.pow(i/rings,2.3)+i*.05;for(let j=0;j<segments;j++){const a=(j+(i%2)*.5)/segments*Math.PI*2;pos.push(Math.cos(a)*r,0,Math.sin(a)*r);}}
- for(let j=0;j<segments;j++)idx.push(0,1+(j+1)%segments,1+j);
- for(let i=0;i<rings-1;i++)for(let j=0;j<segments;j++){const a=1+i*segments+j,b=1+i*segments+(j+1)%segments,c=a+segments,d=b+segments;idx.push(a,b,c,b,d,c);}
- const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeBoundingSphere();g.boundingSphere.radius=1e5;return g;}
+function oceanGeometry(rings, segments) {
+  const pos = [0, 0, 0],
+    idx = [];
+  for (let i = 1; i <= rings; i++) {
+    const r = 1600 * Math.pow(i / rings, 2.3) + i * 0.05;
+    for (let j = 0; j < segments; j++) {
+      const a = ((j + (i % 2) * 0.5) / segments) * Math.PI * 2;
+      pos.push(Math.cos(a) * r, 0, Math.sin(a) * r);
+    }
+  }
+  for (let j = 0; j < segments; j++) idx.push(0, 1 + ((j + 1) % segments), 1 + j);
+  for (let i = 0; i < rings - 1; i++)
+    for (let j = 0; j < segments; j++) {
+      const a = 1 + i * segments + j,
+        b = 1 + i * segments + ((j + 1) % segments),
+        c = a + segments,
+        d = b + segments;
+      idx.push(a, b, c, b, d, c);
+    }
+  const g = new T.BufferGeometry();
+  g.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeBoundingSphere();
+  g.boundingSphere.radius = 1e5;
+  return g;
+}
 
 // Generated from physics.js so boats and debris float on exactly this swell.
-const WAVES=`
+const WAVES = `
 const int NW=${WAVE_SET.length};
 vec4 W[NW];
-void setupWaves(){${WAVE_SET.map((w,i)=>`W[${i}]=vec4(${w.map(v=>v.toFixed(4)).join(',')});`).join('')}}
+void setupWaves(){${WAVE_SET.map((w, i) => `W[${i}]=vec4(${w.map(v => v.toFixed(4)).join(',')});`).join('')}}
 `;
-const waterVertex=`uniform float uTime;uniform float uStorm;uniform vec4 uHome;varying vec3 vWorld;varying vec3 vNormalW;varying float vCrest;
+const waterVertex = `uniform float uTime;uniform float uStorm;uniform vec4 uHome;varying vec3 vWorld;varying vec3 vNormalW;varying float vCrest;
 ${WAVES}
 void main(){setupWaves();vec3 p=(modelMatrix*vec4(position,1.)).xyz;vec2 g=p.xz;
  vec2 hd=abs(g-uHome.xy)-uHome.zw;float calm=mix(.45,1.,smoothstep(0.,14.,length(max(hd,0.))));
@@ -81,7 +185,7 @@ void main(){setupWaves();vec3 p=(modelMatrix*vec4(position,1.)).xyz;vec2 g=p.xz;
   off+=vec3(d.x*a*cf,a*sf,d.y*a*cf);t+=vec3(-d.x*d.x*st*sf,d.x*st*cf,-d.x*d.y*st*sf);b+=vec3(-d.x*d.y*st*sf,d.y*st*cf,-d.y*d.y*st*sf);crest+=sf*st;}
  float fade=1.-smoothstep(160.,520.,length(p.xz-cameraPosition.xz));p+=off*fade;vWorld=p;vNormalW=normalize(cross(b,t));vCrest=crest/(amp*.215)*fade;
  gl_Position=projectionMatrix*viewMatrix*vec4(p,1.);}`;
-const waterFrag=`uniform float uTime;uniform float uNight;uniform vec3 uBoat;uniform float uHeading;uniform float uSpeed;uniform vec4 uHome;uniform vec3 uFog;uniform float uFogDensity;uniform vec4 uIslands[${ISLANDS.length}];uniform float uSunPower;uniform vec4 uTrail[${TRAIL}];uniform vec4 uSplash[${SPLASHES}];uniform vec2 uHull;
+const waterFrag = `uniform float uTime;uniform float uNight;uniform vec3 uBoat;uniform float uHeading;uniform float uSpeed;uniform vec4 uHome;uniform vec3 uFog;uniform float uFogDensity;uniform vec4 uIslands[${ISLANDS.length}];uniform float uSunPower;uniform vec4 uTrail[${TRAIL}];uniform vec4 uSplash[${SPLASHES}];uniform vec2 uHull;
 varying vec3 vWorld;varying vec3 vNormalW;varying float vCrest;
 ${SKY_GLSL}${NOISE_GLSL}
 float rh(vec2 p,float t){return fbm(p*.55+vec2(t*.21,t*.13))*.6+noise(p*1.9-vec2(t*.33,-t*.27))*.4;}
@@ -130,31 +234,128 @@ void main(){
  #include <tonemapping_fragment>
  #include <colorspace_fragment>
 }`;
-export function makeWater(quality){
- const m=new T.Mesh(oceanGeometry(quality.rings,quality.segments),new T.ShaderMaterial({transparent:true,depthWrite:false,defines:{OCTAVES:quality.octaves},
-  uniforms:{uTime:{value:0},uNight:{value:0},uStorm:{value:0},uCamera:{value:new T.Vector3()},uBoat:{value:new T.Vector3()},uHeading:{value:0},uSpeed:{value:0},uHome:{value:new T.Vector4(1.8,1.8,3.6,3.6)},uSunDir:{value:new T.Vector3(0,1,0)},uFog:{value:new T.Color()},uFogDensity:{value:.0045},uSunPower:{value:1},uIslands:{value:ISLANDS.map(i=>new T.Vector4(i.x,i.z,i.rx,i.rz))},uTrail:{value:new Float32Array(TRAIL*4)},uSplash:{value:new Float32Array(SPLASHES*4)},uHull:{value:new T.Vector2(1.9,.9)}},
-  vertexShader:waterVertex,fragmentShader:waterFrag}));
- m.frustumCulled=false;m.renderOrder=1;return m;
+export function makeWater(quality) {
+  const m = new T.Mesh(
+    oceanGeometry(quality.rings, quality.segments),
+    new T.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      defines: { OCTAVES: quality.octaves },
+      uniforms: {
+        uTime: { value: 0 },
+        uNight: { value: 0 },
+        uStorm: { value: 0 },
+        uCamera: { value: new T.Vector3() },
+        uBoat: { value: new T.Vector3() },
+        uHeading: { value: 0 },
+        uSpeed: { value: 0 },
+        uHome: { value: new T.Vector4(1.8, 1.8, 3.6, 3.6) },
+        uSunDir: { value: new T.Vector3(0, 1, 0) },
+        uFog: { value: new T.Color() },
+        uFogDensity: { value: 0.0045 },
+        uSunPower: { value: 1 },
+        uIslands: { value: ISLANDS.map(i => new T.Vector4(i.x, i.z, i.rx, i.rz)) },
+        uTrail: { value: new Float32Array(TRAIL * 4) },
+        uSplash: { value: new Float32Array(SPLASHES * 4) },
+        uHull: { value: new T.Vector2(1.9, 0.9) }
+      },
+      vertexShader: waterVertex,
+      fragmentShader: waterFrag
+    })
+  );
+  m.frustumCulled = false;
+  m.renderOrder = 1;
+  return m;
 }
 
 // Tileable value-noise grain used as bump/roughness detail on sand, rock and wood.
 let grain;
-export function grainTexture(){if(grain)return grain;const n=128,d=new Uint8Array(n*n*4);let seed=91;const r=()=>(seed=(seed*16807)%2147483647)/2147483647;const base=Array.from({length:32*32},r);const at=(x,y)=>base[((y+32)%32)*32+(x+32)%32];
- for(let y=0;y<n;y++)for(let x=0;x<n;x++){const fx=x/4,fy=y/4,ix=Math.floor(fx),iy=Math.floor(fy),tx=fx-ix,ty=fy-iy;const v=(at(ix,iy)*(1-tx)+at(ix+1,iy)*tx)*(1-ty)+(at(ix,iy+1)*(1-tx)+at(ix+1,iy+1)*tx)*ty;const g=Math.round((v*.6+r()*.4)*255);const i=(y*n+x)*4;d[i]=d[i+1]=d[i+2]=g;d[i+3]=255;}
- grain=new T.DataTexture(d,n,n,T.RGBAFormat);grain.wrapS=grain.wrapT=T.RepeatWrapping;grain.magFilter=T.LinearFilter;grain.minFilter=T.LinearMipmapLinearFilter;grain.generateMipmaps=true;grain.needsUpdate=true;return grain;}
+export function grainTexture() {
+  if (grain) return grain;
+  const n = 128,
+    d = new Uint8Array(n * n * 4);
+  let seed = 91;
+  const r = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const base = Array.from({ length: 32 * 32 }, r);
+  const at = (x, y) => base[((y + 32) % 32) * 32 + ((x + 32) % 32)];
+  for (let y = 0; y < n; y++)
+    for (let x = 0; x < n; x++) {
+      const fx = x / 4,
+        fy = y / 4,
+        ix = Math.floor(fx),
+        iy = Math.floor(fy),
+        tx = fx - ix,
+        ty = fy - iy;
+      const v =
+        (at(ix, iy) * (1 - tx) + at(ix + 1, iy) * tx) * (1 - ty) +
+        (at(ix, iy + 1) * (1 - tx) + at(ix + 1, iy + 1) * tx) * ty;
+      const g = Math.round((v * 0.6 + r() * 0.4) * 255);
+      const i = (y * n + x) * 4;
+      d[i] = d[i + 1] = d[i + 2] = g;
+      d[i + 3] = 255;
+    }
+  grain = new T.DataTexture(d, n, n, T.RGBAFormat);
+  grain.wrapS = grain.wrapT = T.RepeatWrapping;
+  grain.magFilter = T.LinearFilter;
+  grain.minFilter = T.LinearMipmapLinearFilter;
+  grain.generateMipmaps = true;
+  grain.needsUpdate = true;
+  return grain;
+}
 
 // Drives sun light, fog, sky and image-based lighting from the game clock.
-export class Atmosphere{
- constructor(world,quality){this.world=world;this.quality=quality;this.sunDir=new T.Vector3(0,1,0);this.lastEnvSun=new T.Vector3(9,9,9);this.envTimer=0;this.fog=new T.Color();this.pmrem=new T.PMREMGenerator(world.renderer);this.envScene=new T.Scene();this.envSky=makeSky(quality);this.envSky.scale.setScalar(.1);this.envScene.add(this.envSky);this.envTarget=null;this.lastStorm=0;}
- update(dt,phase,storm,anchor,env){const w=this.world,sun=this.sunDir.copy(sunAt(phase)),day=dayAmount(sun);
-  horizonColor(sun,storm,this.fog);
-  for(const m of[w.sky.material,w.water.material,this.envSky.material]){m.uniforms.uSunDir.value.copy(sun);m.uniforms.uStorm.value=storm;if(m.uniforms.uFog)m.uniforms.uFog.value.copy(this.fog);}
-  w.water.material.uniforms.uSunPower.value=day>0?Math.min(1,sun.y*6+.2):.15;
-  const light=sun.y>-.05?sun:sun.clone().negate();w.sun.position.copy(anchor).addScaledVector(light,90);w.sun.target.position.copy(anchor);w.sun.target.updateMatrixWorld();
-  const warm=smooth(0,.4,sun.y);w.sun.color.setRGB(1,.62+.33*warm,.38+.5*warm);if(day<.05)w.sun.color.setRGB(.55,.65,.9);
-  w.sun.intensity=(day*3.4+(1-day)*.7)*(1-storm*.55);w.ambient.intensity=(.5+day*.35)*(1-storm*.25);w.ambient.color.copy(this.fog).lerp(new T.Color(1,1,1),.35);w.ambient.groundColor.setRGB(.05,.09,.11);
-  w.scene.environmentIntensity=(.3+day*.7)*(1-storm*.35);
-  if(env){this.envTimer-=dt;if(this.envTimer<=0&&(this.lastEnvSun.distanceTo(sun)>.04||Math.abs(this.lastStorm-storm)>.05)){this.envTimer=this.quality.envEvery;this.lastEnvSun.copy(sun);this.lastStorm=storm;this.envSky.material.uniforms.uTime.value=w.sky.material.uniforms.uTime.value;const rt=this.pmrem.fromScene(this.envScene,0,.1,100,{size:this.quality.envSize});if(this.envTarget)this.envTarget.dispose();this.envTarget=rt;w.scene.environment=rt.texture;}}
-  return{sun,day,fog:this.fog};
- }
+export class Atmosphere {
+  constructor(world, quality) {
+    this.world = world;
+    this.quality = quality;
+    this.sunDir = new T.Vector3(0, 1, 0);
+    this.lastEnvSun = new T.Vector3(9, 9, 9);
+    this.envTimer = 0;
+    this.fog = new T.Color();
+    this.pmrem = new T.PMREMGenerator(world.renderer);
+    this.envScene = new T.Scene();
+    this.envSky = makeSky(quality);
+    this.envSky.scale.setScalar(0.1);
+    this.envScene.add(this.envSky);
+    this.envTarget = null;
+    this.lastStorm = 0;
+  }
+  update(dt, phase, storm, anchor, env) {
+    const w = this.world,
+      sun = this.sunDir.copy(sunAt(phase)),
+      day = dayAmount(sun);
+    horizonColor(sun, storm, this.fog);
+    for (const m of [w.sky.material, w.water.material, this.envSky.material]) {
+      m.uniforms.uSunDir.value.copy(sun);
+      m.uniforms.uStorm.value = storm;
+      if (m.uniforms.uFog) m.uniforms.uFog.value.copy(this.fog);
+    }
+    w.water.material.uniforms.uSunPower.value = day > 0 ? Math.min(1, sun.y * 6 + 0.2) : 0.15;
+    const light = sun.y > -0.05 ? sun : sun.clone().negate();
+    w.sun.position.copy(anchor).addScaledVector(light, 90);
+    w.sun.target.position.copy(anchor);
+    w.sun.target.updateMatrixWorld();
+    const warm = smooth(0, 0.4, sun.y);
+    w.sun.color.setRGB(1, 0.62 + 0.33 * warm, 0.38 + 0.5 * warm);
+    if (day < 0.05) w.sun.color.setRGB(0.55, 0.65, 0.9);
+    w.sun.intensity = (day * 3.4 + (1 - day) * 0.7) * (1 - storm * 0.55);
+    w.ambient.intensity = (0.5 + day * 0.35) * (1 - storm * 0.25);
+    w.ambient.color.copy(this.fog).lerp(new T.Color(1, 1, 1), 0.35);
+    w.ambient.groundColor.setRGB(0.05, 0.09, 0.11);
+    w.scene.environmentIntensity = (0.3 + day * 0.7) * (1 - storm * 0.35);
+    if (env) {
+      this.envTimer -= dt;
+      if (this.envTimer <= 0 && (this.lastEnvSun.distanceTo(sun) > 0.04 || Math.abs(this.lastStorm - storm) > 0.05)) {
+        this.envTimer = this.quality.envEvery;
+        this.lastEnvSun.copy(sun);
+        this.lastStorm = storm;
+        this.envSky.material.uniforms.uTime.value = w.sky.material.uniforms.uTime.value;
+        const rt = this.pmrem.fromScene(this.envScene, 0, 0.1, 100, { size: this.quality.envSize });
+        if (this.envTarget) this.envTarget.dispose();
+        this.envTarget = rt;
+        w.scene.environment = rt.texture;
+      }
+    }
+    return { sun, day, fog: this.fog };
+  }
 }
