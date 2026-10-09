@@ -371,6 +371,18 @@ function buildingMesh(b) {
     });
     tarp.rotation.y = Math.PI / 4;
     rod(g, [0, 1.85, 0], [0, 1.1, 0], 0.065, 0xc8d0b6);
+    // sight glass on the tank: the blue column is the water you can draw
+    pole(g, 0xcfe3e0, 0.78, 0.9, 0, 0.07, 1.0).material = new T.MeshStandardMaterial({
+      color: 0xcfe3e0,
+      transparent: true,
+      opacity: 0.35,
+      roughness: 0.1
+    });
+    const water = pole(g, 0x3f8fc0, 0.78, 0.4, 0, 0.055, 1);
+    water.material = new T.MeshStandardMaterial({ color: 0x3f8fc0, emissive: 0x174a66, emissiveIntensity: 0.4 });
+    g.userData.gauge = water;
+    g.userData.gaugeBase = 0.42;
+    g.userData.gaugeH = 0.94;
   }
   if (b.type === 'pen') {
     for (const x of [-1.6, 1.6])
@@ -398,7 +410,11 @@ function buildingMesh(b) {
       metalness: 0.3,
       roughness: 0.1
     });
-    ball(g, 0xbcffe0, 0, 1.8, 0, 0.23, 0.37, 0.23, { emissive: 0x98ffd9, emissiveIntensity: 1.1 });
+    // the egg only sits in the dome while something is incubating; it glows brighter as it nears hatching
+    const egg = ball(g, 0xbcffe0, 0, 1.8, 0, 0.23, 0.37, 0.23, { emissive: 0x98ffd9, emissiveIntensity: 1.1 });
+    egg.material = egg.material.clone();
+    egg.visible = false;
+    g.userData.egg = egg;
     box(g, 0x25464d, 1.02, 1.43, 0.43, 0.36, 0.3, 0.5);
     box(g, 0xabdfb3, 1.02, 1.6, 0.43, 0.27, 0.035, 0.33, { emissive: 0x88ddb6, emissiveIntensity: 0.6 });
   }
@@ -933,9 +949,43 @@ export class OceanWorld {
   }
   update(dt, s, opts = {}) {
     this.time += dt;
+    // Harvested spots regrow piece by piece over 120 s (logs wash back ashore, crystals and fruit grow back);
+    // the last piece popping into place is the cue that the spot can be harvested again.
     for (const [id, m] of this.islandModels.nodes) {
-      const ready = (s.harvested?.[id] || 0) <= s.elapsed;
-      m.scale.setScalar(ready ? 1 : 0.4);
+      const left = (s.harvested?.[id] || 0) - s.elapsed,
+        f = left > 0 ? Math.max(0, 1 - left / 120) : 1,
+        parts = m.children;
+      if (m.userData.grow === undefined) parts.forEach(c => (c.userData.base = c.scale.clone()));
+      if (f >= 1 && m.userData.grow < 1) m.userData.pop = 1;
+      m.userData.grow = f;
+      m.userData.pop = Math.max(0, (m.userData.pop || 0) - dt * 2.5);
+      parts.forEach((c, i) => {
+        const start = (i / parts.length) * 0.85,
+          k = Math.min(1, Math.max(0, (f - start) / (1 - start) / 0.35)),
+          e = k * k * (3 - 2 * k);
+        c.scale
+          .copy(c.userData.base)
+          .multiplyScalar(Math.max(0.001, e) * (1 + Math.sin(m.userData.pop * Math.PI) * 0.18));
+        c.visible = e > 0.01;
+      });
+    }
+    // facilities that show their state in the world: the collector's gauge, eggs glowing in the hatchery dome
+    for (const g of this.home.children) {
+      const id = g.userData.facilityId;
+      if (!id) continue;
+      if (g.userData.gauge) {
+        const b = s.buildings.find(b => facilityId(b) === id),
+          v = Math.min(1, (b?.waterStored || 0) / 20);
+        g.userData.gauge.scale.y = Math.max(0.001, v);
+        g.userData.gauge.position.y = g.userData.gaugeBase + (v * g.userData.gaugeH) / 2;
+      }
+      if (g.userData.egg) {
+        const egg = s.eggs.find(e => e.readyAt > s.elapsed),
+          k = egg ? Math.min(1, 1 - (egg.readyAt - s.elapsed) / (egg.duration || 30)) : 0;
+        g.userData.egg.visible = !!egg;
+        g.userData.egg.material.emissiveIntensity = 0.2 + k * 1.4 + Math.sin(this.time * (2 + k * 6)) * 0.15 * k;
+        g.userData.egg.scale.setScalar(0.7 + k * 0.3);
+      }
     }
     const t = this.time;
     const phase = (s.elapsed % 480) / 480;

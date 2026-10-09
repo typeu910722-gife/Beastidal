@@ -705,12 +705,24 @@ function save(silent = false) {
     hasSave = true;
     scheduleCloud();
     $('save-status').textContent = saveLabel();
-    if (!silent) toast('已保存這段漂流。');
+    if (!silent) {
+      toast('已保存這段漂流。');
+      flashSaveStatus();
+    }
   } catch (e) {
     storageOk = false;
     $('save-status').textContent = '存檔不可用 · 請允許瀏覽器儲存';
+    $('save-status').classList.add('show');
     if (!silent) toast('無法存檔，請確認瀏覽器允許儲存資料。', true);
   }
+}
+// The save line stays out of the way; it shows briefly after manual saves, cloud changes and errors.
+let saveFlash = 0;
+function flashSaveStatus(ms = 3500) {
+  const el = $('save-status');
+  el.classList.add('show');
+  clearTimeout(saveFlash);
+  saveFlash = setTimeout(() => storageOk && el.classList.remove('show'), ms);
 }
 function saveLabel() {
   if (!storageOk) return '存檔不可用 · 請允許瀏覽器儲存';
@@ -726,8 +738,10 @@ function saveLabel() {
   return '已自動存檔 · 此裝置' + c;
 }
 function setCloud(status) {
+  const changed = status !== cloudStatus;
   cloudStatus = status;
   $('save-status').textContent = saveLabel();
+  if (changed && running) flashSaveStatus();
   updateAccountUI();
 }
 function updateAccountUI() {
@@ -1136,6 +1150,7 @@ function openSettings(back = closeModal) {
     'SETTINGS · 設定',
     '讓這片海更順手',
     `<div class="settings">
+  <div class="about-row"><img src="./brand/emblem.svg" alt=""><div><strong>比斯泰德 Beastidal</strong><small>版本 ${GAME_VERSION}${running ? ' · ' + saveLabel() : ''}</small></div></div>
   <div class="row"><span>語言 · Language</span><span class="seg" data-key="lang">${Object.entries(LANGS)
     .map(
       ([v, l]) =>
@@ -1386,7 +1401,8 @@ function getAllTargets() {
         z: b.z * 3.6,
         name: b.type === 'pen' ? penLabel(state, penId(b)) : RECIPES[b.type].name
       });
-  for (const n of NODES) arr.push(n);
+  // a spot that is still regrowing is just scenery until it is ready again
+  for (const n of NODES) if ((state.harvested?.[n.id] || 0) <= state.elapsed) arr.push(n);
   for (const i of ISLANDS)
     arr.push({
       id: 'claim-' + i.id,
@@ -2218,6 +2234,7 @@ function activateObject(hit) {
   else if (hit.type === 'site') handleExploration(hit.id);
   else if (hit.type === 'facility') enterFocus(hit.id);
   else if (hit.type === 'node') {
+    if ((state.harvested?.[hit.id] || 0) > state.elapsed) return;
     selectedTarget = hit.id;
     gather(hit.id);
   }

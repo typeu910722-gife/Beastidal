@@ -1,6 +1,8 @@
 // English dictionary: Chinese source text → English. Keys use {0}, {1}… for values filled in at runtime.
 // Regenerate the key list with `npm run i18n:check`, which reports strings that still need a translation.
 export default {
+  '比斯泰德 Beastidal': 'Beastidal',
+  '版本 {0}{1}': 'Version {0}{1}',
   '靠近一點才能開關燈。': 'Get closer to switch the lamp.',
   '燈熄了。': 'The lamp goes dark.',
   '燈亮了。': 'The lamp flickers on.',
