@@ -1,5 +1,6 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.11.0';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.12.1';
+import { dayOf } from './clock.js?v=0.12.1';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
@@ -449,7 +450,7 @@ export function fireCannon(s) {
       b.defeated = true;
       for (const [k, v] of Object.entries({ crystal: 12, metal: 15, food: 5 })) s.resources[k] += v;
       s.log.unshift({
-        day: 1 + Math.floor(s.elapsed / 480),
+        day: dayOf(s),
         title: '深海守望者沉入海溝',
         text: '比斯泰德號的砲火與夥伴的勇氣，一同擊退了守望者。'
       });

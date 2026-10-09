@@ -12,6 +12,7 @@ import { demolish } from '../dist/construction.js';
 import { renamePet } from '../dist/housing.js';
 import { makeHuman, animateHuman } from '../dist/human.js';
 import { facilityId } from '../dist/facilities.js';
+import { DAY, dayOf, hourOf, isNight, nextMorning } from '../dist/clock.js';
 import { normalizeStats, tickStats, milestoneRows, statsReport } from '../dist/stats.js';
 import {
   slotKey,
@@ -234,5 +235,18 @@ test('offline cache lists every module with the current asset version', () => {
   assert.ok(sw.includes(`'./i18n/en.js?v=${v}'`));
   const versions = new Set([...(sw + html).matchAll(/\?v=([\d.]+)/g)].map(m => m[1]));
   assert.deepEqual([...versions], [v], 'stale ?v= query');
+});
+test('A day lasts 20 real minutes; night runs from about 18:36 to 05:36', () => {
+  assert.equal(DAY, 20 * 60);
+  const at = elapsed => ({ elapsed });
+  assert.equal(hourOf(at(0)), 6.5);
+  assert.equal(dayOf(at(DAY - 1)), 1);
+  assert.equal(dayOf(at(DAY)), 2);
+  assert.equal(isNight(at(0.3 * DAY)), false); // 13:42
+  assert.equal(isNight(at(0.6 * DAY)), true); // 20:54
+  assert.equal(isNight(at(0.95 * DAY)), true); // 05:18
+  assert.equal(isNight(at(DAY)), false); // 06:30 next day
+  assert.equal(nextMorning(at(0.6 * DAY)), DAY);
+  assert.equal(nextMorning(at(0.95 * DAY + DAY)), 2 * DAY);
 });
 console.log(`${passed} progress tests passed.`);

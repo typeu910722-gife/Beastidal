@@ -1,8 +1,9 @@
-import { limitError } from './ship.js?v=0.11.0';
-import { normalizeExpansion } from './expansion.js?v=0.11.0';
-import { normalizeHousing, freePen } from './housing.js?v=0.11.0';
-import { dockingSpots } from './navigation.js?v=0.11.0';
-import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.11.0';
+import { limitError } from './ship.js?v=0.12.1';
+import { dayOf } from './clock.js?v=0.12.1';
+import { normalizeExpansion } from './expansion.js?v=0.12.1';
+import { normalizeHousing, freePen } from './housing.js?v=0.12.1';
+import { dockingSpots } from './navigation.js?v=0.12.1';
+import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.12.1';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
 export const RESOURCE_NAMES = {
   wood: '漂流木',
@@ -196,9 +197,7 @@ function initialWild(seed) {
     return { id: 'wild-' + i, x, z, homeX: x, homeZ: z, genome, trust: 0, phase: i * 1.3, hostile: i === 6 };
   });
 }
-export function dayOf(s) {
-  return 1 + Math.floor(s.elapsed / 480);
-}
+export { dayOf };
 export function count(s, t) {
   return s.buildings.filter(b => b.type === t).length;
 }
@@ -297,7 +296,7 @@ export function craftBait(s) {
   return { ok: true };
 }
 // Feeding and contracts live in taming.js (0.12).
-export { feed } from './taming.js?v=0.11.0';
+export { feed } from './taming.js?v=0.12.1';
 export function breed(s, aId, bId, rng = Math.random) {
   normalizeHousing(s);
   normalizeExpansion(s);

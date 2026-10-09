@@ -1,5 +1,6 @@
 // Local save slots + metadata used to reconcile with optional cloud copies.
 // Slot 1 keeps the original keys so pre-0.7 progress keeps loading; slots 2..N get suffixed keys.
+import { dayOf } from './clock.js?v=0.12.1';
 export const META_KEY = 'beastidal-save-meta-v1';
 export const LEGACY_SAVE_KEY = 'tidal-rebirth-save-v1';
 export const SLOT_COUNT = 3;
@@ -102,7 +103,7 @@ export function reconcile(local, cloud, lastSynced = 0) {
 // Short human summary for the "which save do you keep" dialog.
 export function describeSave(s) {
   if (!s) return '無存檔';
-  const day = 1 + Math.floor((s.elapsed || 0) / 480),
+  const day = dayOf(s),
     pets = (s.tamed || []).length,
     // the drift desk was there from the start: count only what the player built
     builds = (s.buildings || []).filter(b => b.type !== 'desk').length;

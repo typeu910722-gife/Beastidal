@@ -1,6 +1,7 @@
-import { phenotype, clamp } from './genetics.js?v=0.11.0';
-import { NODES, harvest } from './islands.js?v=0.11.0';
-import { restPlace, canDeploy } from './ship.js?v=0.11.0';
+import { phenotype, clamp } from './genetics.js?v=0.12.1';
+import { NODES, harvest } from './islands.js?v=0.12.1';
+import { restPlace, canDeploy } from './ship.js?v=0.12.1';
+import { dayOf, dayPhase } from './clock.js?v=0.12.1';
 export const EXPLORE = [
   { id: 'palm-cache', name: '漂流者寶箱', x: 57, z: 33, kind: 'chest', rewards: { wood: 8, food: 5, metal: 3 } },
   { id: 'archive', name: '御獸文明石碑', x: 34, z: -81, kind: 'ruin', rewards: { crystal: 3 } },
@@ -64,7 +65,7 @@ export function normalizeExpansion(s) {
   return s;
 }
 export const activePet = s => s.tamed.find(p => p.id === s.expedition?.activeId);
-export const stormAt = s => (s.elapsed % 480) / 480 > 0.6 && (s.elapsed % 480) / 480 < 0.76;
+export const stormAt = s => dayPhase(s) > 0.6 && dayPhase(s) < 0.76;
 const fail = error => ({ ok: false, error });
 const pay = (s, cost) => {
   if (Object.entries(cost).some(([k, v]) => s.resources[k] < v)) return false;
@@ -79,13 +80,12 @@ export function trainPet(s, id) {
   const p = s.tamed.find(p => p.id === id);
   if (!p) return fail('找不到這隻夥伴。');
   if (p.bond >= 100) return fail('羈絆已滿。');
-  if (s.elapsed - p.lastTrain < 90) return fail(`訓練後需要休息 ${Math.ceil(90 - s.elapsed + p.lastTrain)} 秒。`);
   if (!pay(s, { food: 2, crystal: 1 })) return fail('訓練需要 2 口糧與 1 異晶。');
   p.lastTrain = s.elapsed;
   p.bond = Math.min(100, p.bond + 4);
   p.stamina = Math.min(100, p.stamina + 15);
   p.health = Math.min(100, p.health + 15);
-  return { ok: true, message: '默契訓練完成：羈絆 +4。再次訓練需等待 90 秒。' };
+  return { ok: true, message: '默契訓練完成：羈絆 +4。' };
 }
 export function commandPet(s, id, order = 'follow') {
   normalizeExpansion(s);
@@ -194,7 +194,7 @@ export function explore(s, id) {
     'deep-memory': '深海記憶：擊退深海守望者後，羈絆 85 的夥伴可喚醒契印。',
     'palm-cache': '補給箱中找到漂流者留下的食物與材料。'
   };
-  s.log.unshift({ day: 1 + Math.floor(s.elapsed / 480), title: site.name, text: texts[id] });
+  s.log.unshift({ day: dayOf(s), title: site.name, text: texts[id] });
   return { ok: true, message: texts[id] };
 }
 export function attack(s) {
@@ -226,7 +226,7 @@ export function attack(s) {
       reward(s, { crystal: 12, metal: 15, food: 5 });
       p.bond = Math.min(100, p.bond + 6);
       s.log.unshift({
-        day: 1 + Math.floor(s.elapsed / 480),
+        day: dayOf(s),
         title: '深海守望者沉入海溝',
         text: '我們並肩度過了風浪。守望者留下的契印回應了夥伴的光。'
       });

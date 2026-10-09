@@ -1,6 +1,7 @@
 // Local play statistics. Nothing leaves the device: the player can copy the JSON and send it in by hand.
 // Used to tune pacing (how long each milestone takes) without any analytics service.
-import { GUIDE_IDS, guideDone } from './guide.js?v=0.11.0';
+import { GUIDE_IDS, guideDone } from './guide.js?v=0.12.1';
+import { dayOf } from './clock.js?v=0.12.1';
 
 export const MILESTONE_NAMES = {
   salvage: '打撈 3 件物資',
@@ -53,7 +54,7 @@ export function tickStats(s, dt, moved, mode) {
   const fresh = [];
   for (const id of guideDone(s))
     if (!st.milestones[id]) {
-      st.milestones[id] = { play: Math.round(st.playSeconds), day: 1 + Math.floor(s.elapsed / 480), at: Date.now() };
+      st.milestones[id] = { play: Math.round(st.playSeconds), day: dayOf(s), at: Date.now() };
       fresh.push(id);
     }
   return fresh;
@@ -81,7 +82,7 @@ export function statsReport(s, version) {
       version,
       playSeconds: Math.round(st.playSeconds || 0),
       sessions: st.sessions,
-      day: 1 + Math.floor((s.elapsed || 0) / 480),
+      day: dayOf(s),
       sailed: Math.round(st.sailed || 0),
       walked: Math.round(st.walked || 0),
       collapses: st.collapses,

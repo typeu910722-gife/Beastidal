@@ -118,7 +118,7 @@ test('Rarity sets how many feedings full trust takes: 6 for common, up to 10 for
   );
   assert.ok(Math.min(...all) === 6 && Math.max(...all) <= 10 && Math.max(...all) >= 9);
 });
-test('Bond progression is gated, persisted, and cannot spam training', () => {
+test('Bond progression is gated and persisted; training has no cooldown', () => {
   const s = ready(),
     p = s.tamed[0];
   assert.equal(p.bond, 10);
@@ -126,10 +126,9 @@ test('Bond progression is gated, persisted, and cannot spam training', () => {
   assert.ok(trainPet(s, p.id).ok);
   assert.equal(p.bond, 14);
   const food = s.resources.food;
-  assert.equal(trainPet(s, p.id).ok, false);
-  assert.equal(s.resources.food, food);
-  s.elapsed = 90;
   assert.ok(trainPet(s, p.id).ok);
+  assert.equal(p.bond, 18);
+  assert.equal(s.resources.food, food - 2);
   assert.ok(commandPet(s, p.id, 'gather').ok);
   s.loot = [{ id: 'a', kind: 0, x: s.player.x, z: s.player.z }];
   s.elapsed += 45;
@@ -192,7 +191,7 @@ test('Boat upgrades reduce storm damage; boss rewards and awakening are one-time
     p = s.tamed[0];
   assert.ok(upgradeBoat(s).ok);
   assert.equal(s.expedition.boatLevel, 1);
-  s.elapsed = 310;
+  s.elapsed = 0.65 * 1200; // inside the storm window
   s.player.x = 70;
   s.player.z = 0;
   const health = s.vitals.health;

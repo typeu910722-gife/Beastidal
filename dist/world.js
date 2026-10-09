@@ -1,20 +1,21 @@
-import { expansionModels } from './expansion-models.js?v=0.11.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.11.0';
-import { normalizeHousing, penId } from './housing.js?v=0.11.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.11.0';
-export { makeCreature } from './creatures.js?v=0.11.0';
-import { makeIslands } from './island-models.js?v=0.11.0';
-import { facilityId } from './facilities.js?v=0.11.0';
+import { expansionModels } from './expansion-models.js?v=0.12.1';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.12.1';
+import { normalizeHousing, penId } from './housing.js?v=0.12.1';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.12.1';
+export { makeCreature } from './creatures.js?v=0.12.1';
+import { makeIslands } from './island-models.js?v=0.12.1';
+import { facilityId } from './facilities.js?v=0.12.1';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.11.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.11.0';
-import { PostFX } from './postfx.js?v=0.11.0';
-import { makeHuman, animateHuman } from './human.js?v=0.11.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.11.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.11.0';
-import { buildError } from './rules.js?v=0.11.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.11.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.11.0';
+import { phenotype, seeded } from './genetics.js?v=0.12.1';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.12.1';
+import { PostFX } from './postfx.js?v=0.12.1';
+import { makeHuman, animateHuman } from './human.js?v=0.12.1';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.12.1';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.12.1';
+import { buildError } from './rules.js?v=0.12.1';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.12.1';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.12.1';
+import { dayPhase } from './clock.js?v=0.12.1';
 const V = T.Vector3;
 const ISLAND_GROUND = 0.42; // top of the island terrain where land beasts stand
 const colors = {
@@ -315,12 +316,14 @@ function buildingMesh(b) {
     }
   }
   if (b.type === 'shelter') {
+    // the roof (canvas, ridge, the lantern hung from it) lifts off while you are inside in third person
+    const roof = (g.userData.roof = []);
     for (const x of [-1.2, 1.2]) for (const z of [-1.2, 1.2]) pole(g, colors.darkWood, x, 1.3, z, 0.09, 2);
     for (const z of [-1.3, 1.3]) {
-      rod(g, [-1.45, 2.1, z], [0, 3.1, z], 0.06, colors.rope);
-      rod(g, [0, 3.1, z], [1.45, 2.1, z], 0.06, colors.rope);
+      roof.push(rod(g, [-1.45, 2.1, z], [0, 3.1, z], 0.06, colors.rope));
+      roof.push(rod(g, [0, 3.1, z], [1.45, 2.1, z], 0.06, colors.rope));
     }
-    rod(g, [0, 3.1, -1.5], [0, 3.1, 1.5], 0.085, colors.wood);
+    roof.push(rod(g, [0, 3.1, -1.5], [0, 3.1, 1.5], 0.085, colors.wood));
     for (const side of [-1, 1]) {
       const pos = [],
         ix = [];
@@ -342,7 +345,7 @@ function buildingMesh(b) {
       geo.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
       geo.setIndex(ix);
       geo.computeVertexNormals();
-      piece(g, geo, side === 1 ? 0xccb885 : 0x42948d, [0, 0, 0], [1, 1, 1], { side: T.DoubleSide });
+      roof.push(piece(g, geo, side === 1 ? 0xccb885 : 0x42948d, [0, 0, 0], [1, 1, 1], { side: T.DoubleSide }));
     }
     box(g, colors.cloth, 0, 1.23, -1.19, 2.35, 1.74, 0.08);
     box(g, 0x546b58, 0, 0.55, -0.25, 1.2, 0.22, 1.6);
@@ -484,8 +487,10 @@ function buildingMesh(b) {
     box(g, 0x8c714c, -1.1, 0.64, -0.9, 0.46, 0.4, 0.42);
     halo(g, 0xffce85, 1.24, 1.8, 1.22, 1.2);
     // inside: a lantern hanging from the ridge, a rumpled blanket, a water jug and a few salvaged things
-    rod(g, [0, 3.05, -0.2], [0, 2.45, -0.2], 0.01, colors.rope);
-    ball(g, 0xffc27a, 0, 2.32, -0.2, 0.11, 0.15, 0.11, { emissive: 0xffa94d, emissiveIntensity: 1.6 });
+    g.userData.roof.push(
+      rod(g, [0, 3.05, -0.2], [0, 2.45, -0.2], 0.01, colors.rope),
+      ball(g, 0xffc27a, 0, 2.32, -0.2, 0.11, 0.15, 0.11, { emissive: 0xffa94d, emissiveIntensity: 1.6 })
+    );
     const glow = new T.PointLight(0xffb36b, 5, 4.5, 1.6);
     glow.position.set(0, 2.25, -0.2);
     g.add(glow);
@@ -599,11 +604,8 @@ export class OceanWorld {
     this.yaw = 0.63;
     this.pitch = 0.64;
     this.distance = 42;
-    // Close-up "focus" on a facility or beast (see focusOn): the camera eases in and back out again.
-    this.focus = null;
-    this.focusLast = null;
-    this.focusBlend = 0;
-    this.focusTarget = new V();
+    // The facility the player is using (game.js enterFocus); in third person the shelter's roof lifts off.
+    this.inside = null;
     this.look = new V(2, 0, 2);
     this.follow = new V(2, 0, 2);
     this.time = 0;
@@ -955,7 +957,7 @@ export class OceanWorld {
       }
     }
     const t = this.time;
-    const phase = (s.elapsed % 480) / 480;
+    const phase = dayPhase(s);
     const night = ((Math.cos(phase * Math.PI * 2 + Math.PI * 0.65) + 1) / 2) * 0.85;
     const stormTarget = phase > 0.6 && phase < 0.76 ? 0.7 : 0;
     this.stormLevel += (stormTarget - this.stormLevel) * Math.min(1, dt * 0.12);
@@ -1214,22 +1216,10 @@ export class OceanWorld {
           : helm && !opts.title
             ? Math.max(44, this.distance * 1.2)
             : this.distance * (foot && !this.placement && !opts.title ? 0.7 : 1);
-    // blend toward the focus close-up (and back out once it is released)
-    this.focusBlend += ((this.focus ? 1 : 0) - this.focusBlend) * (1 - Math.exp(-dt * 3.2));
-    if (this.focusBlend < 0.002 && !this.focus) this.focusLast = null;
-    let yaw = this.yaw,
+    const yaw = this.yaw,
       pitch = this.pitch,
       camDist = dist,
       look = this.look;
-    const f = this.focus || this.focusLast;
-    if (f && this.focusPose(f)) {
-      const e = this.focusBlend * this.focusBlend * (3 - 2 * this.focusBlend),
-        dy = Math.atan2(Math.sin(this.focusYaw - yaw), Math.cos(this.focusYaw - yaw));
-      yaw += dy * e;
-      pitch += (f.pitch - pitch) * e;
-      camDist += (f.dist - camDist) * e;
-      look = this.look.clone().lerp(this.focusTarget, e);
-    }
     this.camera.position.set(
       look.x + Math.sin(yaw) * Math.cos(pitch) * camDist,
       look.y + Math.sin(pitch) * camDist,
@@ -1328,33 +1318,31 @@ export class OceanWorld {
     animateCreature(m, t);
   }
 
-  // Focus: { id: facilityId, local: [x, y, z], dist, pitch, yaw (relative to the building), fov, hidePlayer }
-  // or { petId, dist, pitch, yaw } to follow one beast. The camera eases in; clearFocus() eases back out.
-  focusOn(spec) {
-    this.focus = { pitch: 0.5, dist: 6, yaw: 0.4, ...spec };
-    this.focusLast = this.focus;
+  // Where a point given in a facility's own coordinates is in the world right now.
+  facilityPoint(b, local) {
+    const g = this.home.children.find(g => g.userData.facilityId === facilityId(b));
+    if (!g) return null;
+    g.updateWorldMatrix(true, false);
+    return g.localToWorld(new V(...local));
   }
-  clearFocus() {
-    this.focus = null;
+  // Just above a resting beast (for the marker and card that go with it).
+  petPoint(id) {
+    const m = this.petMeshes.get(id);
+    if (!m?.visible) return null;
+    m.updateWorldMatrix(true, false);
+    const v = m.getWorldPosition(new V());
+    v.y += 0.6 * (m.userData.phenotype?.size || 1);
+    return v;
   }
-  focusPose(f) {
-    let obj = null;
-    if (f.petId) obj = this.petMeshes.get(f.petId);
-    else this.home.children.forEach(g => g.userData.facilityId === f.id && (obj = g));
-    if (!obj) return false;
-    obj.updateWorldMatrix(true, false);
-    if (f.petId) {
-      obj.getWorldPosition(this.focusTarget);
-      this.focusTarget.y += 0.25 * (obj.userData.phenotype?.size || 1);
-      this.focusYaw = f.yaw;
-    } else {
-      this.focusTarget.set(...(f.local || [0, 1, 0]));
-      obj.localToWorld(this.focusTarget);
-      this.focusYaw = f.yaw + obj.rotation.y;
-    }
-    // aim a little below the subject so it sits above the action card at the bottom of the screen
-    this.focusTarget.y -= f.dist * (f.lift ?? 0.16);
-    return true;
+  // The point of one facility under the pointer, if any.
+  pickFacilityPoint(b, clientX, clientY) {
+    const g = this.home.children.find(g => g.userData.facilityId === facilityId(b));
+    if (!g) return null;
+    const rect = this.canvas.getBoundingClientRect();
+    this.pointer.set(((clientX - rect.left) / rect.width) * 2 - 1, (-(clientY - rect.top) / rect.height) * 2 + 1);
+    this.ray.setFromCamera(this.pointer, this.camera);
+    const hit = this.ray.intersectObject(g, true).find(h => h.object.visible);
+    return hit ? hit.point : null;
   }
   // A beast under the pointer (only the ones resting in pens are pickable).
   pickPet(clientX, clientY) {
@@ -1368,8 +1356,13 @@ export class OceanWorld {
     return o?.userData.petId || null;
   }
   render() {
-    const close = this.focusBlend > 0.02 && (this.focus || this.focusLast);
-    if (this.firstPerson && !this.placement && !this.titleMode && !close) {
+    // inside the shelter in third person, lift its roof so the camera can see in
+    for (const g of this.home.children)
+      if (g.userData.roof) {
+        const open = g.userData.facilityId === this.inside && !this.firstPerson;
+        for (const m of g.userData.roof) m.visible = !open;
+      }
+    if (this.firstPerson && !this.placement && !this.titleMode) {
       const x = this.playerAnchor.x,
         z = this.playerAnchor.z,
         p = this.firstPitch || 0,
@@ -1389,11 +1382,9 @@ export class OceanWorld {
       this.walker.visible = false;
       this.water.material.uniforms.uCamera.value.copy(this.camera.position);
     } else {
-      const f = this.focus || this.focusLast,
-        e = close ? this.focusBlend : 0;
-      this.camera.fov = 44 + ((f?.fov || 44) - 44) * e;
+      this.camera.fov = 44;
       this.boat.userData.human.visible = !this.onFoot && !this.onRiding && !this.hasShip;
-      this.walker.visible = (this.onFoot || this.onRiding) && !(f?.hidePlayer && e > 0.4);
+      this.walker.visible = this.onFoot || this.onRiding;
     }
     this.camera.updateProjectionMatrix();
     this.sky.position.copy(this.camera.position);

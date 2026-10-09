@@ -4,8 +4,8 @@
 // you. Contract scrolls, made at the raft's work table and carried in the bag, bind a beast anywhere (success
 // chance = trust %). Forcing a contract below 60 % trust can send the beast into a frenzy: 1.2× speed and attack,
 // chasing you for 6–17 seconds.
-import { phenotype, geneName } from './genetics.js?v=0.11.0';
-import { freePen, normalizeHousing } from './housing.js?v=0.11.0';
+import { phenotype, geneName } from './genetics.js?v=0.12.1';
+import { freePen, normalizeHousing } from './housing.js?v=0.12.1';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 6, max: 17, below: 60 };

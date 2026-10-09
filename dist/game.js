@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.11.0';
-import { renderAdventure } from './expansion-ui.js?v=0.11.0';
+} from './expansion.js?v=0.12.1';
+import { renderAdventure } from './expansion-ui.js?v=0.12.1';
 import {
   normalizeShip,
   tickShip,
@@ -38,9 +38,9 @@ import {
   nearBeastHome,
   restIsland,
   dockMoor
-} from './ship.js?v=0.11.0';
-import { monologue, markGuide } from './guide.js?v=0.11.0';
-import { climb, demolish, relocate } from './construction.js?v=0.11.0';
+} from './ship.js?v=0.12.1';
+import { monologue, markGuide } from './guide.js?v=0.12.1';
+import { climb, demolish, relocate } from './construction.js?v=0.12.1';
 import {
   normalizeHousing,
   penId,
@@ -52,20 +52,20 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.11.0';
-import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.11.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.11.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.11.0';
-import { QUALITY } from './realism.js?v=0.11.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.11.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.11.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.11.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.11.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.11.0';
-import { CONFIG } from './config.js?v=0.11.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.11.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.11.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.11.0';
+} from './housing.js?v=0.12.1';
+import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.12.1';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.12.1';
+import { OceanWorld, IntroFilm } from './world.js?v=0.12.1';
+import { QUALITY } from './realism.js?v=0.12.1';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.12.1';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.12.1';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.12.1';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.12.1';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.12.1';
+import { CONFIG } from './config.js?v=0.12.1';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.12.1';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.12.1';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.12.1';
 import {
   RARITY,
   FRENZY,
@@ -76,11 +76,11 @@ import {
   rollTame,
   craftContract,
   contract
-} from './taming.js?v=0.11.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.11.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.11.0';
-export const GAME_VERSION = '0.11.0';
-import { CloudSave } from './cloud-save.js?v=0.11.0';
+} from './taming.js?v=0.12.1';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.12.1';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.12.1';
+export const GAME_VERSION = '0.12.1';
+import { CloudSave } from './cloud-save.js?v=0.12.1';
 import {
   readLocal,
   writeLocal,
@@ -97,9 +97,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.11.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.11.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.11.0';
+} from './save-store.js?v=0.12.1';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.12.1';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.12.1';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -118,7 +118,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.11.0';
+} from './rules.js?v=0.12.1';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.12.1';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -703,11 +704,17 @@ function flyResources(rewards, wx, wy, wz) {
     );
   });
 }
+// At most three toasts on screen: a new one pushes out the oldest, and a repeat of one still showing is dropped.
+const MAX_TOASTS = 3;
 function toast(text, error = false) {
+  const box = $('toasts'),
+    shown = [...box.children].filter(el => !el.classList.contains('fading'));
+  if (shown.some(el => el.textContent === P(text))) return;
+  for (const old of shown.slice(0, Math.max(0, shown.length - MAX_TOASTS + 1))) old.remove();
   const el = document.createElement('div');
   el.className = 'toast' + (error ? ' error' : '');
   el.textContent = P(text);
-  $('toasts').append(el);
+  box.append(el);
   setTimeout(() => {
     el.classList.add('fading');
     setTimeout(() => el.remove(), 400);
@@ -1813,7 +1820,7 @@ function openDevice(app = null) {
   openPanel(name, true);
 }
 function deviceClock() {
-  const m = Math.floor(((6.5 * 60 + (state.elapsed % 480) * 3) % 1440) + 0.5);
+  const m = Math.floor(hourOf(state) * 60 + 0.5);
   return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 }
 function deviceHome(body) {
@@ -1828,7 +1835,7 @@ function deviceHome(body) {
       : state.player.mode === 'aboard'
         ? '比斯泰德號'
         : '海上';
-  body.innerHTML = `<section class="dv-widget"><div class="dv-widget-head"><strong>${deviceClock()}</strong><span>第 ${1 + Math.floor(state.elapsed / 480)} 日 · ${where}</span></div>${bar('體力', v.health, 'hp')}${bar('水分', v.water, 'wt')}${bar('飽食', v.food, 'fd')}<small>座標 ${state.player.x.toFixed(0)}, ${state.player.z.toFixed(0)} · 異晶訊號 ${state.secret ? '已解讀' : '未知'}</small></section>
+  body.innerHTML = `<section class="dv-widget"><div class="dv-widget-head"><strong>${deviceClock()}</strong><span>第 ${dayOf(state)} 日 · ${where}</span></div>${bar('體力', v.health, 'hp')}${bar('水分', v.water, 'wt')}${bar('飽食', v.food, 'fd')}<small>座標 ${state.player.x.toFixed(0)}, ${state.player.z.toFixed(0)} · 異晶訊號 ${state.secret ? '已解讀' : '未知'}</small></section>
   <div class="dv-apps">${DEVICE_APPS.map(a => `<button type="button" data-app="${a.id}"><span>${a.icon}</span><small>${a.name}</small></button>`).join('')}</div>
   <p class="dv-note">${state.device.laptop ? '書桌上的筆電還在等待修復。' : '書桌上那台筆電好像還能開機……'}</p>`;
   body.querySelectorAll('[data-app]').forEach(b => (b.onclick = () => openDevice(b.dataset.app)));
@@ -2308,28 +2315,45 @@ function activateObject(hit) {
     gather(hit.id);
   }
 }
-/* ---------------------------------------------------------------- close-up interactions
-   Pressing 操作 on a facility moves the camera in on it and shows only a few action buttons (#focus-ui). Simple
-   things act at once (lamps, chairs, stairs, the work table). The text panel is still one tap away ("管理"). */
-let focus = null;
-const FOCUS_VIEW = {
-  shelter: { local: [0, 0.85, -0.55], dist: 1.9, pitch: 0.3, yaw: 0, fov: 62, hidePlayer: true, lift: 0.05 },
-  collector: { local: [0, 1.4, 0], dist: 4.6, pitch: 0.42, yaw: 0.55 },
-  pen: { local: [0, 0, 0], dist: 5.2, pitch: 0.95, yaw: 0.35 },
-  hatchery: { local: [0, 1.6, 0], dist: 3.4, pitch: 0.45, yaw: 0.5 },
-  beacon: { local: [0, 3.2, 0], dist: 9, pitch: 0.32, yaw: 0.6 },
-  desk: { local: [0.05, 1.32, 0], dist: 2.3, pitch: 0.62, yaw: 0.25, hidePlayer: true },
-  laptop: { local: [-0.25, 1.55, -0.12], dist: 1.1, pitch: 0.2, yaw: 0.22, fov: 50, hidePlayer: true, lift: 0.22 },
-  dock: { local: [0, 0.3, 0], dist: 10, pitch: 0.6, yaw: 0.5 },
-  table: { local: [0, 1.3, 0], dist: 3.2, pitch: 0.62, yaw: 0.4, hidePlayer: true }
+/* ---------------------------------------------------------------- using a facility
+   Pressing 操作 on a facility "enters" it without touching the camera: first person stays first person, third
+   person stays third person, and you can keep looking around. The bottom bar only offers 管理 (the text panel)
+   and 離開. Everything else is done by tapping the things in the building (or the marker floating over each),
+   which opens a small card beside it. Entering the shelter steps you inside; in third person its roof lifts away
+   so you can see in. Lamps, chairs and stairs act at once. */
+let focus = null; // { id, type, item: key of the open card or null }
+// What can be used in each facility, and where it sits (building-local coordinates).
+const FOCUS_ITEMS = {
+  shelter: [{ key: 'bed', label: '床鋪', at: [0, 0.85, -0.3] }],
+  collector: [{ key: 'tap', label: '儲水桶', at: [0.85, 1.05, 0] }],
+  beacon: [{ key: 'beacon', label: '訊號塔', at: [0, 1.6, 0] }],
+  hatchery: [{ key: 'dome', label: '孵化槽', at: [0, 1.9, 0] }],
+  table: [{ key: 'bench', label: '工作檯', at: [0, 1.45, 0] }],
+  desk: [
+    { key: 'laptop', label: '破舊筆電', at: [-0.25, 1.55, -0.1] },
+    { key: 'device', label: '隨身裝置', at: [0.45, 1.45, 0.12] }
+  ],
+  pen: [], // the beasts themselves, see focusItems()
+  dock: []
 };
 const nearBuilding = b =>
   (state.player.mode === 'foot' || state.player.mode === 'aboard') &&
   Math.hypot(state.player.x - b.x * 3.6, state.player.z - b.z * 3.6) <= 5.5;
+// The usable things in the focused building, each with its position in the world right now.
+function focusItems(b) {
+  if (b.type === 'pen')
+    return occupants(state, penId(b))
+      .map(p => ({ key: 'pet:' + p.id, label: p.name, petId: p.id, pos: world.petPoint(p.id) }))
+      .filter(i => i.pos);
+  normalizeDevice(state);
+  return (FOCUS_ITEMS[b.type] || [])
+    .filter(i => i.key !== 'device' || !state.device.owned)
+    .map(i => ({ ...i, pos: world.facilityPoint(b, i.at) }));
+}
 function enterFocus(id) {
   const b = findFacility(state, id);
   if (!b || !running || paused) return;
-  // one-press furniture: no close-up needed
+  // one-press furniture
   if (b.type === 'lamp') {
     if (!nearBuilding(b)) return toast('靠近一點才能開關燈。', true);
     b.off = !b.off;
@@ -2355,42 +2379,52 @@ function enterFocus(id) {
     updateUI();
     return;
   }
-  if (!FOCUS_VIEW[b.type]) {
+  if (!FOCUS_ITEMS[b.type]) {
     openFacility(id);
     return;
   }
   closePanel();
-  releaseMouse();
+  releaseMouse(); // the cursor is needed to click things; drag to look around
   keys.clear();
   destination = null;
-  focus = { id, type: b.type, petId: null, sub: null };
-  world.focusOn({ id, ...FOCUS_VIEW[b.type] });
+  focus = { id, type: b.type, item: null };
+  // step in through the tent flap, facing the bed
+  if (b.type === 'shelter' && nearBuilding(b) && state.player.mode === 'foot') {
+    const spot = world.facilityPoint(b, [0, 0, 0.85]),
+      bed = world.facilityPoint(b, [0, 0, -0.3]);
+    if (spot && bed) {
+      state.player.x = spot.x;
+      state.player.z = spot.z;
+      state.player.heading = Math.atan2(bed.x - spot.x, bed.z - spot.z);
+      if (world.firstPerson) world.yaw = Math.atan2(spot.x - bed.x, spot.z - bed.z);
+    }
+  }
+  world.inside = id;
   document.body.classList.add('focus-on');
   renderFocus();
 }
 function exitFocus() {
   if (!focus) return;
   focus = null;
-  world.clearFocus();
+  world.inside = null;
   document.body.classList.remove('focus-on');
   $('focus-ui').hidden = true;
 }
-// Esc / B: step back out one level (beast → pen, laptop → desk, then leave)
+// Esc / B: close the open card first, then leave
 function focusBack() {
-  if (focus?.petId || focus?.sub) {
-    focus.petId = null;
-    focus.sub = null;
-    world.focusOn({ id: focus.id, ...FOCUS_VIEW[focus.type] });
+  if (focus?.item) {
+    focus.item = null;
     renderFocus();
   } else exitFocus();
 }
-function selectFocusPet(id) {
-  const p = state.tamed.find(p => p.id === id);
-  if (!p) return;
-  focus.petId = id;
-  const size = phenotype(p.genome).size;
-  world.focusOn({ petId: id, dist: 1.6 + size * 0.9, pitch: 0.78, yaw: world.yaw, lift: 0.1 });
+function openFocusItem(key) {
+  if (!focus) return;
+  focus.item = focus.item === key ? null : key;
+  audio.note(560, 0.05);
   renderFocus();
+}
+function selectFocusPet(id) {
+  openFocusItem('pet:' + id);
 }
 function focusDone(r) {
   toast(r.ok ? r.message : r.error, !r.ok);
@@ -2401,40 +2435,35 @@ function focusDone(r) {
   }
   renderFocus();
 }
-function renderFocus() {
-  if (!focus) return;
-  const b = findFacility(state, focus.id);
-  if (!b) return exitFocus();
-  const ui = $('focus-ui'),
-    near = nearBuilding(b),
-    recipe = RECIPES[b.type],
-    acts = [],
-    act = (label, fn, opts = {}) => acts.push({ label, fn, ...opts });
-  let eyebrow = recipe.name,
-    title = b.type === 'pen' ? penLabel(state, penId(b)) : recipe.name,
-    info = near ? '' : '走近一點才能操作。',
-    extra = '';
-  if (focus.petId) {
-    const p = state.tamed.find(p => p.id === focus.petId);
-    if (!p) {
-      focus.petId = null;
-      return renderFocus();
-    }
+// The card for one item: what it says and what you can do with it.
+function focusCard(b, item, near) {
+  const acts = [],
+    act = (label, fn, opts = {}) => acts.push({ label, fn, ...opts }),
+    card = {
+      eyebrow: RECIPES[b.type].name,
+      title: item.label,
+      info: near ? '' : '走近一點才能操作。',
+      extra: '',
+      acts
+    };
+  if (item.petId) {
+    const p = state.tamed.find(p => p.id === item.petId);
+    if (!p) return null;
     const ph = phenotype(p.genome),
       active = state.expedition?.activeId === p.id;
-    eyebrow = `${penLabel(state, p.penId)} · 第 ${p.generation} 代`;
-    title = p.name;
-    info = `羈絆 ${Math.round(p.bond || 0)} · 體力 ${Math.round(p.health ?? 100)} · 精力 ${Math.round(p.stamina ?? 100)}`;
-    extra = `<div class="gene-chips">${describeGenes(p.genome)
+    card.eyebrow = `${penLabel(state, p.penId)} · 第 ${p.generation} 代`;
+    card.title = p.name;
+    card.info = `羈絆 ${Math.round(p.bond || 0)} · 體力 ${Math.round(p.health ?? 100)} · 精力 ${Math.round(p.stamina ?? 100)}`;
+    card.extra = `<div class="gene-chips">${describeGenes(p.genome)
       .map(t => `<span>${esc(t)}</span>`)
       .join(
         ''
-      )}</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small>`;
+      )}</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small><form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
     act('默契訓練 · 口糧 2 / 異晶 1', () => focusDone(trainPet(state, p.id)), { primary: true });
     if (active) act('讓牠回池休息', () => focusDone(commandPet(state, p.id, 'home')));
     else act('帶牠出發（跟隨）', () => focusDone(commandPet(state, p.id, 'follow')));
     act('改名', () => {
-      const form = ui.querySelector('.focus-rename');
+      const form = $('focus-ui').querySelector('.focus-rename');
       form.hidden = false;
       form.querySelector('input').focus();
     });
@@ -2443,35 +2472,31 @@ function renderFocus() {
       geneTab = 'collection';
       openPanel('creatures');
     });
-    extra += `<form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
-  } else if (focus.sub === 'laptop') {
-    eyebrow = '破舊筆電';
-    title = '系統修復模式';
-    const r = readLaptop(state);
-    if (r.ok && r.first) log(state, '破舊筆電', '開機畫面停在修復模式。最後一筆同步，是我出車禍的那個早上。');
-    extra = `<pre class="laptop-screen">${(r.lines || []).map(esc).join('\n')}</pre>`;
-    info = '（電源鍵按不太下去。也許哪天找到零件，可以把它修好。）';
-  } else if (b.type === 'shelter') {
-    eyebrow = '帳篷內';
-    title = '帆布避難所';
-    info = near ? '雨打在帆布上。至少這裡是乾的。' : info;
-    act('躺下休息 · 口糧 1 / 淡水 1 → 體力 +45', () => restInShelter(), { primary: true, disabled: !near });
-  } else if (b.type === 'collector') {
-    info = `儲水 ${b.waterStored || 0} / 20 · 每 35 秒 +2` + (near ? '' : ' · ' + info);
+  } else if (item.key === 'bed') {
+    const night = isNight(state);
+    card.info = near
+      ? night
+        ? '外面已經黑了。睡一覺，天亮前不會有事。'
+        : '天黑後（18:36 起）才能睡覺；白天可以躺一下恢復體力。'
+      : card.info;
+    if (night) act('睡覺 · 度過黑夜', () => startSleep(), { primary: true, disabled: !near });
+    act('躺下休息 · 口糧 1 / 淡水 1 → 體力 +45', () => restInShelter(), { primary: !night, disabled: !near });
+  } else if (item.key === 'tap') {
+    card.info = `儲水 ${b.waterStored || 0} / 20 · 每 35 秒 +2` + (near ? '' : ' · ' + card.info);
     act('取出淡水', () => focusDone(useFacility(state, focus.id, 'collect')), {
       primary: true,
       disabled: !near || !b.waterStored
     });
-  } else if (b.type === 'beacon') {
+  } else if (item.key === 'beacon') {
     act('掃描島嶼訊號', () => focusDone(useFacility(state, focus.id, 'signal')), { primary: true, disabled: !near });
     act('島嶼航線', () => {
       exitFocus();
       journalTab = 'log';
       openPanel('journal');
     });
-  } else if (b.type === 'hatchery') {
+  } else if (item.key === 'dome') {
     const eggs = state.eggs.filter(e => e.readyAt > state.elapsed);
-    info = eggs.length ? `${eggs.length} 顆卵正在孵育` : '孵化槽是空的。';
+    card.info = eggs.length ? `${eggs.length} 顆卵正在孵育` : '孵化槽是空的。';
     act(
       '基因配對與孵育',
       () => {
@@ -2481,14 +2506,10 @@ function renderFocus() {
       },
       { primary: true }
     );
-  } else if (b.type === 'pen') {
-    const pets = occupants(state, penId(b));
-    info = pets.length ? `${pets.length} / 3 隻 · 點選牠們查看與互動` : '池裡還沒有住民。';
-    extra = `<div class="focus-pets">${pets.map(p => `<button type="button" data-focus-pet="${esc(p.id)}">${esc(p.name)}</button>`).join('')}</div>`;
-  } else if (b.type === 'table') {
-    eyebrow = '工作桌 · 契約書';
-    info = `背包裡有 ${state.contracts || 0} 份契約書。帶在身上，靠近信任你的野生御獸按「契約」就能締結；信任度就是成功率。`;
-    if (!near) info += ' 走到桌旁才能製作。';
+  } else if (item.key === 'bench') {
+    card.eyebrow = '工作桌 · 契約書';
+    card.info = `背包裡有 ${state.contracts || 0} 份契約書。帶在身上，靠近信任你的野生御獸按「契約」就能締結；信任度就是成功率。`;
+    if (!near) card.info += ' 走到桌旁才能製作。';
     act('製作契約書 · 纖維 2 + 異晶 1', () => focusDone(craftContract(state, b)), {
       primary: true,
       disabled: !near || !state.secret
@@ -2501,69 +2522,153 @@ function renderFocus() {
       },
       { disabled: !state.secret }
     );
-  } else if (b.type === 'desk') {
-    normalizeDevice(state);
-    if (!state.device.owned)
-      act(
-        '拿起隨身裝置',
-        () => {
-          const r = takeDevice(state);
-          if (r.ok) {
-            haptic('discover');
-            log(
-              state,
-              '隨身裝置',
-              '螢幕裂了一角，電量只剩一點，但還能開機。沒有訊號——這裡沒有任何基地台。至少它能幫我記住每一件事。'
-            );
-          }
-          focusDone(r);
-          if (r.ok) {
-            exitFocus();
-            openDevice();
-          }
-        },
-        { primary: true, disabled: !near }
-      );
-    act(
-      '看看筆電',
-      () => {
-        if (!near) return toast('請走到書桌旁。', true);
-        focus.sub = 'laptop';
-        world.focusOn({ id: focus.id, ...FOCUS_VIEW.laptop });
-        renderFocus();
+  } else if (item.key === 'laptop') {
+    card.eyebrow = '破舊筆電';
+    card.title = '系統修復模式';
+    if (near) {
+      const r = readLaptop(state);
+      if (r.ok && r.first) {
+        log(state, '破舊筆電', '開機畫面停在修復模式。最後一筆同步，是我出車禍的那個早上。');
         save(true);
+      }
+      card.extra = `<pre class="laptop-screen">${(r.lines || []).map(esc).join('\n')}</pre>`;
+      card.info = '（電源鍵按不太下去。也許哪天找到零件，可以把它修好。）';
+    }
+  } else if (item.key === 'device') {
+    act(
+      '拿起隨身裝置',
+      () => {
+        const r = takeDevice(state);
+        if (r.ok) {
+          haptic('discover');
+          log(
+            state,
+            '隨身裝置',
+            '螢幕裂了一角，電量只剩一點，但還能開機。沒有訊號——這裡沒有任何基地台。至少它能幫我記住每一件事。'
+          );
+        }
+        focusDone(r);
+        if (r.ok) {
+          exitFocus();
+          openDevice();
+        }
       },
-      { disabled: !near }
+      { primary: true, disabled: !near }
     );
   }
-  ui.innerHTML = `<header><small>${esc(eyebrow)}</small><h3>${esc(title)}</h3>${info ? `<p>${esc(info)}</p>` : ''}</header>${extra}<div class="focus-actions">${acts
+  return card;
+}
+function renderFocus() {
+  if (!focus) return;
+  const b = findFacility(state, focus.id);
+  if (!b) return exitFocus();
+  const ui = $('focus-ui'),
+    near = nearBuilding(b),
+    items = focusItems(b),
+    item = items.find(i => i.key === focus.item),
+    card = item && focusCard(b, item, near);
+  if (focus.item && !card) focus.item = null;
+  const title = b.type === 'pen' ? penLabel(state, penId(b)) : RECIPES[b.type].name,
+    hint = !near
+      ? '走近一點才能操作。'
+      : items.length
+        ? b.type === 'pen'
+          ? `${items.length} / 3 隻 · 點選牠們查看與互動`
+          : '點擊建築裡的物品操作'
+        : b.type === 'pen'
+          ? '池裡還沒有住民。'
+          : '';
+  ui.innerHTML = `<div class="focus-spots">${items
     .map(
-      (a, i) =>
-        `<button type="button" data-focus-act="${i}" class="${a.primary ? 'primary' : ''}" ${a.disabled ? 'disabled' : ''}>${esc(a.label)}</button>`
+      i =>
+        `<button type="button" class="focus-spot${i.key === focus.item ? ' open' : ''}" data-spot="${esc(i.key)}"><span>${esc(i.label)}</span></button>`
     )
-    .join(
-      ''
-    )}${focus.petId || focus.sub ? '' : '<button type="button" data-focus-manage>管理</button>'}<button type="button" data-focus-back>${focus.petId || focus.sub ? '返回' : '離開'}</button></div>`;
+    .join('')}</div>${
+    card
+      ? `<div class="focus-card" data-card="${esc(item.key)}"><button type="button" class="focus-card-close" data-focus-close aria-label="關閉">×</button><header><small>${esc(card.eyebrow)}</small><h3>${esc(card.title)}</h3>${card.info ? `<p>${esc(card.info)}</p>` : ''}</header>${card.extra}${
+          card.acts.length
+            ? `<div class="focus-actions">${card.acts
+                .map(
+                  (a, i) =>
+                    `<button type="button" data-focus-act="${i}" class="${a.primary ? 'primary' : ''}" ${a.disabled ? 'disabled' : ''}>${esc(a.label)}</button>`
+                )
+                .join('')}</div>`
+            : ''
+        }</div>`
+      : ''
+  }<div class="focus-bar"><div class="focus-bar-text"><strong>${esc(title)}</strong>${hint ? `<small>${esc(hint)}</small>` : ''}</div><button type="button" data-focus-manage>管理</button><button type="button" data-focus-back class="primary">離開</button></div>`;
   ui.hidden = false;
   if (gamepadActive) setTimeout(() => focusMenu(0, true), 0);
-  ui.querySelectorAll('[data-focus-act]').forEach(btn => (btn.onclick = () => acts[btn.dataset.focusAct].fn()));
-  ui.querySelector('[data-focus-back]').onclick = focusBack;
-  const manage = ui.querySelector('[data-focus-manage]');
-  if (manage)
-    manage.onclick = () => {
-      const id = focus.id;
-      exitFocus();
-      openFacility(id);
-    };
-  ui.querySelectorAll('[data-focus-pet]').forEach(btn => (btn.onclick = () => selectFocusPet(btn.dataset.focusPet)));
+  ui.querySelectorAll('[data-spot]').forEach(btn => (btn.onclick = () => openFocusItem(btn.dataset.spot)));
+  ui.querySelectorAll('[data-focus-act]').forEach(btn => (btn.onclick = () => card.acts[btn.dataset.focusAct].fn()));
+  ui.querySelector('[data-focus-close]')?.addEventListener('click', () => openFocusItem(focus.item));
+  ui.querySelector('[data-focus-back]').onclick = exitFocus;
+  ui.querySelector('[data-focus-manage]').onclick = () => {
+    const id = focus.id;
+    exitFocus();
+    openFacility(id);
+  };
   const rename = ui.querySelector('.focus-rename');
   if (rename)
     rename.onsubmit = e => {
       e.preventDefault();
-      const r = renamePet(state, focus.petId, rename.querySelector('input').value);
+      const r = renamePet(state, item.petId, rename.querySelector('input').value);
       focusDone(r.ok ? { ok: true, message: `改名為「${r.name}」。` } : r);
     };
   promptPanel(ui);
+  placeFocusSpots();
+}
+// Every frame: keep the markers on their objects, and the open card beside its object.
+function placeFocusSpots() {
+  if (!focus) return;
+  const b = findFacility(state, focus.id);
+  if (!b) return;
+  const ui = $('focus-ui'),
+    items = new Map(focusItems(b).map(i => [i.key, i]));
+  for (const el of ui.querySelectorAll('[data-spot]')) {
+    const i = items.get(el.dataset.spot),
+      p = i && world.screenPoint(i.pos.x, i.pos.y, i.pos.z);
+    el.hidden = !p?.visible;
+    if (p?.visible) el.style.transform = `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px)`;
+  }
+  const card = ui.querySelector('.focus-card'),
+    i = card && items.get(card.dataset.card);
+  if (i) {
+    const p = world.screenPoint(i.pos.x, i.pos.y, i.pos.z),
+      w = card.offsetWidth,
+      h = card.offsetHeight,
+      bar = ui.querySelector('.focus-bar').getBoundingClientRect().top;
+    // beside the object: to its right if there is room, else to its left; kept on screen and above the bar
+    let x = p.x + 28,
+      y = p.y - h / 2;
+    if (x + w > innerWidth - 12) x = p.x - 28 - w;
+    x = Math.max(12, Math.min(innerWidth - w - 12, x));
+    y = Math.max(12, Math.min(bar - h - 10, y));
+    card.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+  }
+}
+// A tap in the scene while inside a facility: the nearest usable thing under the pointer (or a beast in the pen).
+function tapInFocus(e) {
+  const b = findFacility(state, focus.id);
+  if (!b) return exitFocus();
+  const items = focusItems(b);
+  const pet = world.pickPet(e.clientX, e.clientY);
+  if (pet && items.some(i => i.petId === pet)) return openFocusItem('pet:' + pet);
+  const hit = world.pickFacilityPoint(b, e.clientX, e.clientY);
+  if (hit) {
+    const best = items
+      .filter(i => !i.petId)
+      .map(i => ({ i, d: hit.distanceTo(i.pos) }))
+      .sort((a, b) => a.d - b.d)[0];
+    if (best && best.d < 1.4) return openFocusItem(best.i.key);
+  }
+  if (focus.item) return openFocusItem(focus.item);
+  // tapping another facility moves over to it
+  const other = world.pickObject(e.clientX, e.clientY);
+  if (other?.type === 'facility' && other.id !== focus.id) {
+    exitFocus();
+    enterFocus(other.id);
+  }
 }
 // The contract button / X key: the wild beast currently in reach.
 function contractTarget() {
@@ -2629,6 +2734,55 @@ function restInShelter() {
     setTimeout(() => (fade.hidden = true), 700);
     focusDone(r);
   }, 1100);
+}
+// Sleeping through the night: the screen dims, the clock races on to 06:30 in about seven seconds, and you wake
+// fully rested. Nothing drains while you sleep.
+const SLEEP_SECONDS = 7;
+let sleeping = null;
+function startSleep() {
+  if (sleeping || !focus) return;
+  const b = findFacility(state, focus.id);
+  if (!b || !nearBuilding(b)) return toast('走到床邊才能睡覺。', true);
+  if (!isNight(state)) return toast('天還亮著，睡不著。', true);
+  sleeping = {
+    start: performance.now(),
+    from: state.elapsed,
+    to: nextMorning(state),
+    health: state.vitals.health,
+    hatched: []
+  };
+  exitFocus();
+  keys.clear();
+  destination = null;
+  releaseMouse();
+  const el = $('sleep-overlay');
+  el.hidden = false;
+  requestAnimationFrame(() => el.classList.add('on'));
+  audio.note(330, 0.6);
+}
+function tickSleep() {
+  // timed on the wall clock (not the capped frame time), so it takes seven seconds even on a slow device; eased,
+  // so falling asleep and waking up pass slowly and the middle of the night rushes by
+  const t = Math.min(SLEEP_SECONDS, (performance.now() - sleeping.start) / 1000),
+    k = t / SLEEP_SECONDS,
+    target = sleeping.from + (sleeping.to - sleeping.from) * k * k * (3 - 2 * k);
+  while (state.elapsed < target - 1e-6)
+    for (const e of tickSystems(state, Math.min(5, target - state.elapsed), true))
+      if (e.type === 'hatch') sleeping.hatched.push(e.pet);
+  state.vitals.health = Math.max(state.vitals.health, sleeping.health + (100 - sleeping.health) * k);
+  $('sleep-clock').textContent = deviceClock();
+  if (t < SLEEP_SECONDS) return;
+  const hatched = sleeping.hatched;
+  sleeping = null;
+  state.vitals.health = 100;
+  const el = $('sleep-overlay');
+  el.classList.remove('on');
+  setTimeout(() => (el.hidden = true), 900);
+  world.sync(state);
+  toast('一覺到天亮。體力全滿。');
+  if (hatched.length) discover('新的生命誕生', `${hatched.map(p => p.name).join('、')} 在夜裡破殼而出。`);
+  save(true);
+  updateUI();
 }
 function openFacility(id) {
   activeFacility = id;
@@ -3182,7 +3336,7 @@ function updateUI() {
     $(key + '-val').textContent = Math.ceil(state.vitals[key]);
   }
   $('day-text').textContent = `第 ${dayOf(state)} 日`;
-  const mins = (390 + state.elapsed * 3) % 1440;
+  const mins = hourOf(state) * 60;
   $('time-text').textContent =
     Math.floor(mins / 60)
       .toString()
@@ -3191,7 +3345,7 @@ function updateUI() {
     Math.floor(mins % 60)
       .toString()
       .padStart(2, '0');
-  const phase = (state.elapsed % 480) / 480;
+  const phase = dayPhase(state);
   $('weather-text').textContent =
     phase > 0.6 && phase < 0.76 ? '風浪漸強' : phase > 0.45 && phase < 0.87 ? '星夜' : '晴朗';
   $('coords').textContent =
@@ -3269,19 +3423,19 @@ function updateUI() {
     : '<span>◇</span><div><strong>來自海下的訊號</strong><p>東北方那座浮標，好像在呼喚你。</p></div>';
   if (!storageOk) $('save-status').textContent = '存檔不可用 · 請允許瀏覽器儲存';
 }
-// Storm forecast: the storm runs 288–365 s of each 480 s day; warn 30 s ahead and point to the nearest shelter.
+// Storm forecast: the storm runs from 60 % to 76 % of each day (see clock.js); warn 30 s ahead and point to the nearest shelter.
 // Being on foot (raft, island, warship deck), in a cave or diving keeps the player out of the storm damage.
-const STORM_START = 288,
-  STORM_END = 364.8,
+const STORM_START = 0.6 * DAY,
+  STORM_END = 0.76 * DAY,
   STORM_WARN = 30;
 let stormSeaTime = 0,
   stormWarned = false,
   stormShelter = null,
   stormLabel = '';
 function stormClock(elapsed) {
-  const t = elapsed % 480;
+  const t = elapsed % DAY;
   if (t >= STORM_START && t < STORM_END) return { phase: 'storm', left: STORM_END - t };
-  const until = (STORM_START - t + 480) % 480;
+  const until = (STORM_START - t + DAY) % DAY;
   return until <= STORM_WARN ? { phase: 'warn', left: until } : null;
 }
 function nearestShelter() {
@@ -3416,7 +3570,7 @@ function updateCodex(dt) {
   checkAchievements();
 }
 function updateStats(dt) {
-  const hour = (6.5 + (state.elapsed % 480) / 20) % 24;
+  const hour = hourOf(state);
   tickDevice(state, dt, hour > 6 && hour < 18);
   if (!state.stats) return;
   const here = { x: state.player.x, z: state.player.z };
@@ -4223,6 +4377,7 @@ function setupEvents() {
     const k = e.key.toLowerCase();
     if ([' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) e.preventDefault();
     if (e.repeat) return;
+    if (sleeping) return;
     keys.add(k);
     lastInput = 'keyboard';
     sawKey = true;
@@ -4247,10 +4402,15 @@ function setupEvents() {
       if (k === 'arrowdown') world.ghostCell.z++;
       return;
     }
-    // in a close-up, E presses the main action; other hotkeys step out first
+    // inside a facility, E opens the first thing in it (or presses the open card's main action); other hotkeys
+    // step out first
     if (focus) {
-      if (k === 'e') $('focus-ui').querySelector('.focus-actions button.primary:not(:disabled)')?.click();
-      else if (!['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) {
+      if (k === 'e') {
+        const ui = $('focus-ui');
+        (
+          ui.querySelector('.focus-card .primary:not(:disabled)') || ui.querySelector('[data-spot]:not([hidden])')
+        )?.click();
+      } else if (!['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) {
         exitFocus();
       } else return;
       if (k === 'e') return;
@@ -4282,11 +4442,8 @@ function setupEvents() {
   let pinch = null;
   const canvasTouches = () => [...pointers.values()].filter(p => p.touch);
   const tapAt = e => {
-    if (focus) {
-      const pet = world.pickPet(e.clientX, e.clientY);
-      if (pet && (focus.type === 'pen' || focus.petId)) selectFocusPet(pet);
-      return;
-    }
+    if (sleeping) return;
+    if (focus) return tapInFocus(e);
     const hit = !buildType ? world.pickObject(e.clientX, e.clientY) : null;
     if (hit) {
       activateObject(hit);
@@ -4393,7 +4550,8 @@ function setupEvents() {
       pinch = { d, a };
       return;
     }
-    if (p.right || (p.touch && p.moved)) world.rotate(-dx * 0.006, dy * 0.004);
+    // inside a facility a plain drag looks around too (a click there picks things)
+    if (p.right || ((p.touch || focus) && p.moved)) world.rotate(-dx * 0.006, dy * 0.004);
   });
   const release = e => {
     const p = pointers.get(e.pointerId);
@@ -4564,7 +4722,7 @@ function musicMood() {
   )
     return 'deep';
   if (state.player.mode === 'foot' || state.player.mode === 'aboard') return 'island';
-  const hours = (6.5 + (state.elapsed % 480) / 20) % 24;
+  const hours = hourOf(state);
   return stormAt(state) || hours < 5.6 || hours > 18.6 ? 'night' : 'day';
 }
 // Mixer: music / effects / ambience (sea, wind, hull rush), each 0..1 from settings.
@@ -4627,7 +4785,8 @@ function frame(now) {
     }
     return;
   }
-  if (running && !paused) {
+  if (running && sleeping) tickSleep();
+  else if (running && !paused) {
     repelCooldown = Math.max(0, repelCooldown - dt);
     attackCooldown = Math.max(0, attackCooldown - dt);
     movePlayer(dt, analog);
@@ -4720,5 +4879,6 @@ function frame(now) {
   world.titleMode = !running;
   world.update(dt, state, { title: !running, destination, salvaging });
   world.render();
+  placeFocusSpots();
 }
 initialize();

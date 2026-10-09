@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { ISLANDS } from './islands.js?v=0.11.0';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.11.0';
+import { ISLANDS } from './islands.js?v=0.12.1';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.12.1';
 export const TRAIL = 40,
   SPLASHES = 4;
 
@@ -55,7 +55,7 @@ export function saveSettings(s) {
   } catch {}
 }
 
-// Day/night phase (0..1 over the 480 s loop) -> sun direction, aligned with the HUD clock
+// Day/night phase (0..1 over the day, see clock.js) -> sun direction, aligned with the HUD clock
 // (phase 0 = 06:30, sunrise 06:00, noon 12:00, sunset 18:00). The sun rises in the east (+x).
 export function sunAt(phase) {
   const hours = 6.5 + phase * 24,

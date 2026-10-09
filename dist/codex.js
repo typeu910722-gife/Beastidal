@@ -1,5 +1,6 @@
 // Creature codex: every species the player has seen up close, tamed or bred, with a sample genome for the portrait.
-import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.11.0';
+import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.12.1';
+import { dayOf } from './clock.js?v=0.12.1';
 
 export const LORE = {
   'sea-0': '骨質鰭條像刀刃一樣立在背上。成群出現時，會用鰭刃切開浪頭，替後面的同伴減少阻力。',
@@ -30,7 +31,7 @@ export function normalizeCodex(s) {
 export function recordCreature(s, genome, kind = 'seen') {
   const c = normalizeCodex(s),
     p = phenotype(genome),
-    d = 1 + Math.floor((s.elapsed || 0) / 480);
+    d = dayOf(s);
   let fresh = false;
   if (!c.seen[p.species]) {
     c.seen[p.species] = { day: d, count: 0, genome: JSON.parse(JSON.stringify(genome)) };

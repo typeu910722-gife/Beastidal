@@ -1254,8 +1254,8 @@ export default {
   '讓海展開。': 'Let the sea unfold.',
   '讓漂流，有一個終點': 'Give the drift an ending',
   讓這片海更順手: 'Make this sea easier to play',
-  '训练 +4／90 秒；同行每分鐘 +0.75、成功協採 +1。配對需要雙親各 35。':
-    'Training +4 / 90 s; companion +0.75 per minute, successful gathering +1. Pairing needs 35 on both parents.',
+  '訓練每次 +4（沒有冷卻）；同行每分鐘 +0.75、成功協採 +1。配對需要雙親各 35。':
+    'Training +4 each time (no cooldown); companion +0.75 per minute, successful gathering +1. Pairing needs 35 on both parents.',
   '貨艙已滿（上限': 'The hold is full (limit',
   '貨艙沒有這項物資。': "There's none of that in the hold.",
   '貨艙總量 {0} / {1} · 本層存放：{2}': 'Hold total {0} / {1} · stored on this deck: {2}',
@@ -1442,7 +1442,7 @@ export default {
   '體力 {0} / 480 · 建議升級船體並培養羈絆 30 以上夥伴。':
     'Health {0} / 480 · upgrade the hull and raise partners above bond 30 first.',
   高生物光: 'Strong bioluminescence',
-  '默契訓練完成：羈絆 +4。再次訓練需等待 90 秒。': 'Training complete: bond +4. Train again in 90 s.',
+  '默契訓練完成：羈絆 +4。': 'Training complete: bond +4.',
   '點「共生研究」': 'Tap "Symbiosis lab"',
   '點「導航回避難所」': 'Tap "Navigate to the shelter"',
   '點「建造」': 'Tap "Build"',
@@ -1542,5 +1542,20 @@ export default {
   '女 · 套裝上班族': 'Female · office worker in a suit',
   '那天加班到深夜的是誰？': 'Who was working late that night?',
   '選擇主角的外觀。之後也可以在「設定」裡更換。':
-    'Choose how the protagonist looks. You can change it later in Settings.'
+    'Choose how the protagonist looks. You can change it later in Settings.',
+  床鋪: 'Bed',
+  儲水桶: 'Water tank',
+  訊號塔: 'Signal tower',
+  孵化槽: 'Incubator',
+  工作檯: 'Workbench',
+  '外面已經黑了。睡一覺，天亮前不會有事。': "It's dark out. Sleep; nothing will happen before dawn.",
+  '天黑後（18:36 起）才能睡覺；白天可以躺一下恢復體力。':
+    'You can sleep after dark (from 18:36); by day you can lie down to recover health.',
+  '睡覺 · 度過黑夜': 'Sleep · pass the night',
+  點擊建築裡的物品操作: 'Tap things in the building to use them',
+  '走到床邊才能睡覺。': 'Walk to the bed to sleep.',
+  '天還亮著，睡不著。': "It's still light out. You can't sleep.",
+  '一覺到天亮。體力全滿。': 'You slept until morning. Health full.',
+  '{0} 在夜裡破殼而出。': '{0} hatched during the night.',
+  'Zzz… 一夜好眠': "Zzz… a good night's sleep"
 };

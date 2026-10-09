@@ -7,10 +7,10 @@ import {
   commandPet,
   upgradeBoat,
   awaken
-} from './expansion.js?v=0.11.0';
-import { penLabel } from './housing.js?v=0.11.0';
-import { restPlace, restIsland } from './ship.js?v=0.11.0';
-import { phenotype, FORMS } from './genetics.js?v=0.11.0';
+} from './expansion.js?v=0.12.1';
+import { penLabel } from './housing.js?v=0.12.1';
+import { restPlace, restIsland } from './ship.js?v=0.12.1';
+import { phenotype, FORMS } from './genetics.js?v=0.12.1';
 let tab = 'beasts';
 const esc = s =>
   String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -27,7 +27,7 @@ export function renderAdventure(body, s, ctx) {
     else ctx.refresh();
   };
   if (tab === 'beasts') {
-    body.innerHTML += `<div class="info-strip">羈絆 ${STAGES.map(([n, label]) => n + ' ' + label).join(' → ')}<br>训练 +4／90 秒；同行每分鐘 +0.75、成功協採 +1。配對需要雙親各 35。<br>出戰只帶 1 隻，保留原池名額；回池會恢復耐力與體力。</div>`;
+    body.innerHTML += `<div class="info-strip">羈絆 ${STAGES.map(([n, label]) => n + ' ' + label).join(' → ')}<br>訓練每次 +4（沒有冷卻）；同行每分鐘 +0.75、成功協採 +1。配對需要雙親各 35。<br>出戰只帶 1 隻，保留原池名額；回池會恢復耐力與體力。</div>`;
     if (!s.tamed.length)
       body.innerHTML +=
         '<p>先調查研究浮標，建造展示池，再反覆接觸野生生命。投餌間隔 18 秒，約需 10–20 次；途中記得準備物資。</p>';

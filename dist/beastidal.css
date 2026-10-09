@@ -1367,21 +1367,31 @@ body.focus-on #beast-bar {
   transition: opacity 0.3s;
 }
 .focus-ui {
+  /* a layer over the scene: the markers, the card and the bar take pointer events, the rest passes through */
   position: absolute;
-  left: 50%;
-  bottom: max(22px, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  width: min(560px, calc(100vw - 32px));
-  max-height: 60vh;
-  overflow-y: auto;
+  inset: 0;
   z-index: 30;
-  padding: 16px 18px 14px;
+  pointer-events: none;
+}
+.focus-bar,
+.focus-card {
+  pointer-events: auto;
   border-radius: 14px;
   background: linear-gradient(180deg, #071a1fd9, #050f12f0);
   border: 1px solid #ffffff1a;
   box-shadow: 0 18px 50px #000a;
   backdrop-filter: blur(10px);
-  pointer-events: auto;
+}
+.focus-bar {
+  position: absolute;
+  left: 50%;
+  bottom: max(22px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(520px, calc(100vw - 32px));
+  padding: 8px 8px 8px 16px;
   animation: focus-in 0.35s ease-out;
 }
 @keyframes focus-in {
@@ -1389,6 +1399,98 @@ body.focus-on #beast-bar {
     opacity: 0;
     transform: translate(-50%, 16px);
   }
+}
+.focus-bar-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.focus-bar-text strong {
+  font-size: 15px;
+  font-weight: 500;
+}
+.focus-bar-text small {
+  font-size: 12px;
+  color: #a9c2bd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.focus-bar button {
+  min-height: 42px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.focus-spots {
+  position: absolute;
+  inset: 0;
+}
+/* a glowing marker on each usable thing; its label shows beside it */
+.focus-spot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: -14px 0 0 -14px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid #c9fff0;
+  background: #6fe3c844;
+  box-shadow: 0 0 14px #7fffe0aa;
+  pointer-events: auto;
+  animation: spot-pulse 1.8s ease-in-out infinite;
+}
+.focus-spot span {
+  position: absolute;
+  left: 34px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #050f12cc;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #dff6ef;
+}
+.focus-spot.open {
+  background: #c9fff0;
+  animation: none;
+}
+@keyframes spot-pulse {
+  50% {
+    box-shadow: 0 0 22px #7fffe0;
+    background: #6fe3c877;
+  }
+}
+.focus-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: min(340px, calc(100vw - 24px));
+  max-height: 58vh;
+  overflow-y: auto;
+  padding: 14px 16px 12px;
+  animation: card-in 0.2s ease-out;
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+  }
+}
+.focus-card-close {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
 }
 .focus-ui header small {
   font-size: 11px;
@@ -1423,22 +1525,6 @@ body.focus-on #beast-bar {
   border-radius: 10px;
   font-size: 14px;
 }
-.focus-actions [data-focus-back],
-.focus-actions [data-focus-manage] {
-  flex: 0 0 auto;
-  background: transparent;
-}
-.focus-pets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-.focus-pets button {
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 13px;
-}
 .focus-rename {
   display: flex;
   gap: 8px;
@@ -1468,10 +1554,43 @@ body.focus-on #beast-bar {
 #focus-fade.on {
   opacity: 0.94;
 }
-.landscape-play .focus-ui {
+/* sleeping through the night */
+#sleep-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 56;
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  text-align: center;
+  background: #02070a;
+  color: #cfe6e0;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+#sleep-overlay.on {
+  opacity: 0.96;
+}
+#sleep-overlay[hidden] {
+  display: none;
+}
+#sleep-clock {
+  font-size: 44px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+#sleep-overlay small {
+  font-size: 14px;
+  color: #8fb8b0;
+  letter-spacing: 0.2em;
+}
+.landscape-play .focus-bar {
   bottom: max(8px, env(safe-area-inset-bottom));
+}
+.landscape-play .focus-card {
+  max-height: 70vh;
   padding: 10px 14px;
-  max-height: 64vh;
 }
 .landscape-play .focus-ui header h3 {
   font-size: 16px;
