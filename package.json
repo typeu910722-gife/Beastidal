@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "check": "node tests/syntax.mjs",
-    "test": "node tests/rules.test.mjs && node tests/expansion.test.mjs && node tests/ship.test.mjs && node tests/cloud.test.mjs && node tests/physics.test.mjs && node tests/ux.test.mjs",
+    "test": "node tests/rules.test.mjs && node tests/expansion.test.mjs && node tests/ship.test.mjs && node tests/cloud.test.mjs && node tests/physics.test.mjs && node tests/ux.test.mjs && node tests/progress.test.mjs",
     "start": "node server.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",

@@ -59,6 +59,8 @@ import { promptText, promptDom, PAD } from './prompts.js?v=0.9.0';
 import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.9.0';
 import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.9.0';
 import { CONFIG } from './config.js?v=0.9.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.9.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.9.0';
 import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.9.0';
 import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.9.0';
 export const GAME_VERSION = '0.10.0';
@@ -2275,8 +2277,13 @@ function renderPanel() {
         save(true);
       };
   }
-  if (panel === 'journal') {
+  if (panel === 'journal' && journalTab !== 'log') {
+    body.innerHTML = journalTabs() + (journalTab === 'codex' ? codexHTML() : achievementsHTML());
+    bindJournalTabs(body);
+  } else if (panel === 'journal') {
     body.innerHTML =
+      journalTabs() +
+      islandMenu() +
       '<div class="info-strip">' +
       (state.completed
         ? '主線第一章已完成，仍可自由擴建與培育。'
@@ -2288,8 +2295,8 @@ function renderPanel() {
             `<article class="journal-entry"><small>DAY ${l.day.toString().padStart(2, '0')}</small><h3>${esc(l.title)}</h3><p>${esc(l.text)}</p></article>`
         )
         .join('');
-    body.insertAdjacentHTML('afterbegin', islandMenu());
     bindIslandMenu(body);
+    bindJournalTabs(body);
   }
   if (panel === 'creatures') {
     if (!state.secret) {
@@ -2682,6 +2689,111 @@ function goShelter() {
 }
 // Pacing statistics (local only).
 let statsPrev = null;
+// Achievements and codex.
+let journalTab = 'log',
+  progressTimer = 0,
+  achievementQueue = [],
+  achievementShowing = false;
+function journalTabs() {
+  const c = codexProgress(state);
+  return `<div class="tabs journal-tabs">${[
+    ['log', '航海日誌'],
+    ['codex', `圖鑑 ${c.seen}/${c.total}`],
+    ['achievements', `成就 ${achievementCount(state)}/${ACHIEVEMENTS.length}`]
+  ]
+    .map(
+      ([k, l]) =>
+        `<button type="button" data-journal-tab="${k}" class="${journalTab === k ? 'active' : ''}">${l}</button>`
+    )
+    .join('')}</div>`;
+}
+function bindJournalTabs(body) {
+  body.querySelectorAll('[data-journal-tab]').forEach(
+    b =>
+      (b.onclick = () => {
+        journalTab = b.dataset.journalTab;
+        renderPanel();
+      })
+  );
+}
+function codexHTML() {
+  const c = codexProgress(state);
+  return `<div class="info-strip">靠近生物就會記錄到圖鑑；親手馴化或孵化的物種會加上徽章。已記錄 ${c.seen} / ${c.total} 種，馴化 ${c.tamed} 種。</div><div class="codex-grid">${codexEntries(
+    state
+  )
+    .map(e =>
+      e.seen
+        ? `<article class="codex-card ${e.tamed ? 'tamed' : ''}"><img alt="${esc(e.name)}" src="${world.thumbnail(e.seen.genome, 'codex-' + e.id)}"><div><small>${esc(e.familyName)}${e.tamed ? ' · 🎖 已馴化' : ''}</small><h3>${esc(e.name)}</h3><p>${esc(e.lore)}</p><small>第 ${e.seen.day} 日首次記錄 · 遇見 ${e.seen.count} 次</small></div></article>`
+        : `<article class="codex-card unknown"><div class="codex-unknown">？</div><div><small>${esc(e.familyName)}</small><h3>未發現的物種</h3><p>${e.family === 'land' ? '也許在某座島上……' : e.family === 'deep' ? '據說離家越遠，海越深。' : e.family === 'flora' ? '異晶讓某些生物開始長出植物。' : '就在附近的海裡。'}</p></div></article>`
+    )
+    .join('')}</div>`;
+}
+function achievementsHTML() {
+  const got = state.achievements || {};
+  return `<div class="info-strip">已解鎖 ${achievementCount(state)} / ${ACHIEVEMENTS.length} 個成就。成就跟著存檔走。</div><div class="achievement-list">${ACHIEVEMENTS.map(
+    a => {
+      const u = got[a.id];
+      return `<div class="achievement ${u ? 'done' : 'locked'}"><span class="ach-icon">${u || !a.hidden ? a.icon : '❔'}</span><div><strong>${u || !a.hidden ? esc(a.name) : '隱藏成就'}</strong><small>${u || !a.hidden ? esc(a.desc) : '繼續冒險，也許就會發現。'}</small></div><em>${u ? '第 ' + u.day + ' 日' : ''}</em></div>`;
+    }
+  ).join('')}</div>`;
+}
+function showNextAchievement() {
+  if (achievementShowing || !achievementQueue.length) return;
+  const a = achievementQueue.shift(),
+    el = $('achievement-pop');
+  achievementShowing = true;
+  el.querySelector('.ach-pop-icon').textContent = a.icon;
+  el.querySelector('strong').textContent = a.name;
+  el.querySelector('small').textContent = a.desc;
+  el.hidden = false;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  audio.note(988, 0.12);
+  setTimeout(() => audio.note(1319, 0.2), 120);
+  haptic('discover');
+  setTimeout(() => {
+    el.hidden = true;
+    achievementShowing = false;
+    showNextAchievement();
+  }, 3600);
+}
+// Runs on progress events and every couple of seconds. First run on an old save unlocks quietly.
+function checkAchievements() {
+  if (!running) return;
+  normalizeStats(state);
+  normalizeCodex(state);
+  const flags = (state.stats.flags ??= {});
+  if (state.expedition?.mounted) flags.rode = true;
+  if (state.expedition?.diving) flags.dove = true;
+  for (const sp of syncOwned(state)) toast(`📖 圖鑑新增（馴化）：${codexEntries(state).find(e => e.id === sp)?.name}`);
+  const first = !state.achievements;
+  const fresh = checkUnlocks(state);
+  if (!fresh.length) return;
+  for (const a of fresh)
+    try {
+      globalThis.BeastidalNative?.steam?.unlock?.(a.steam);
+    } catch {}
+  if (first && fresh.length > 1) toast(`依目前進度解鎖了 ${fresh.length} 個成就，可在航海日誌查看。`);
+  else {
+    achievementQueue.push(...fresh);
+    showNextAchievement();
+  }
+  save(true);
+}
+// Creatures within 18 m enter the codex.
+function updateCodex(dt) {
+  progressTimer -= dt;
+  if (progressTimer > 0) return;
+  progressTimer = 1;
+  for (const w of state.wild)
+    if (Math.hypot(w.x - state.player.x, w.z - state.player.z) < 18 && recordCreature(state, w.genome)) {
+      const e = codexEntries(state).find(e => e.id === phenotype(w.genome).species);
+      toast(`📖 圖鑑新增：${e?.name}`);
+      onProgress('codex');
+    }
+  checkAchievements();
+}
 function updateStats(dt) {
   if (!state.stats) return;
   const here = { x: state.player.x, z: state.player.z };
@@ -3818,6 +3930,7 @@ function frame(now) {
     movePlayer(dt, analog);
     moveWild(dt);
     updateStats(dt);
+    updateCodex(dt);
     const events = tickSystems(state, dt, !!panel || !!buildType);
     for (const message of tickExpansion(state, dt, !!panel || !!buildType)) toast(message);
     for (const ev of tickShip(state))

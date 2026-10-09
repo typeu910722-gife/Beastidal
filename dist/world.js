@@ -945,7 +945,11 @@ export class OceanWorld {
             bx = helm ? helmPos.x : this.boat.position.x,
             bz = helm ? helmPos.z : this.boat.position.z;
           m.scale.setScalar(phenotype(c.genome).size * 0.32);
-          m.position.set(bx + Math.sin(h) * 1.15, (helm ? DECKS[4].y : this.boat.position.y) + 0.38, bz + Math.cos(h) * 1.15);
+          m.position.set(
+            bx + Math.sin(h) * 1.15,
+            (helm ? DECKS[4].y : this.boat.position.y) + 0.38,
+            bz + Math.cos(h) * 1.15
+          );
           m.rotation.y = h;
           this.animateCreature(m, t);
           continue;
@@ -1247,15 +1251,21 @@ export class OceanWorld {
     const sun = new T.DirectionalLight(0xffe5ba, 3);
     sun.position.set(-3, 5, 4);
     scene.add(sun);
+    scene.environment = this.scene.environment;
+    scene.environmentIntensity = 0.7;
     const m = makeCreature(genome);
     m.rotation.y = -0.65;
     scene.add(m);
-    const cam = new T.PerspectiveCamera(40, 2.2, 0.1, 30);
-    cam.position.set(5, 3, 7);
-    cam.lookAt(0, 0, 0);
+    // frame the creature: species range from a 1.5 m nautilus to a 6 m sea serpent
+    const box = new T.Box3().setFromObject(m),
+      centre = box.getCenter(new V()),
+      size = box.getSize(new V()).length();
+    const cam = new T.PerspectiveCamera(32, 2.2, 0.05, size * 6);
+    cam.position.set(centre.x + size * 0.5, centre.y + size * 0.32, centre.z + size * 0.85);
+    cam.lookAt(centre);
     const w = 440,
       h = 200,
-      rt = new T.WebGLRenderTarget(w, h),
+      rt = new T.WebGLRenderTarget(w, h, { colorSpace: T.SRGBColorSpace }),
       old = this.renderer.getRenderTarget(),
       oldColor = this.renderer.getClearColor(new T.Color()).clone(),
       oldAlpha = this.renderer.getClearAlpha();
