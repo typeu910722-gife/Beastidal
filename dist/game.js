@@ -8,8 +8,8 @@ import {
   attack,
   explore,
   tickExpansion
-} from './expansion.js?v=0.9.0';
-import { renderAdventure } from './expansion-ui.js?v=0.9.0';
+} from './expansion.js?v=0.10.0';
+import { renderAdventure } from './expansion-ui.js?v=0.10.0';
 import {
   normalizeShip,
   tickShip,
@@ -36,9 +36,9 @@ import {
   nearBeastHome,
   restIsland,
   dockMoor
-} from './ship.js?v=0.9.0';
-import { monologue, markGuide } from './guide.js?v=0.9.0';
-import { climb, demolish, relocate } from './construction.js?v=0.9.0';
+} from './ship.js?v=0.10.0';
+import { monologue, markGuide } from './guide.js?v=0.10.0';
+import { climb, demolish, relocate } from './construction.js?v=0.10.0';
 import {
   normalizeHousing,
   penId,
@@ -49,22 +49,23 @@ import {
   movePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.9.0';
-import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.9.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.9.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.9.0';
-import { QUALITY } from './realism.js?v=0.9.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.9.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.9.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.9.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.9.0';
-import { CONFIG } from './config.js?v=0.9.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.9.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.9.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.9.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.9.0';
+} from './housing.js?v=0.10.0';
+import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.10.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.10.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.10.0';
+import { QUALITY } from './realism.js?v=0.10.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.10.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.10.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.10.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.10.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.10.0';
+import { CONFIG } from './config.js?v=0.10.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.10.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.10.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.10.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.10.0';
 export const GAME_VERSION = '0.10.0';
-import { CloudSave } from './cloud-save.js?v=0.9.0';
+import { CloudSave } from './cloud-save.js?v=0.10.0';
 import {
   readLocal,
   writeLocal,
@@ -81,9 +82,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.9.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.9.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.9.0';
+} from './save-store.js?v=0.10.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.10.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.10.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -102,7 +103,7 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.9.0';
+} from './rules.js?v=0.10.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -565,7 +566,14 @@ function inputMode() {
   if (!sawKey && lastInput !== 'mouse' && touchDevice()) return 'touch';
   return 'keyboard';
 }
-const P = t => promptText(t, inputMode());
+const P = t => promptText(tr(t), inputMode(), LANG);
+// Panels are built from Chinese, keyboard-worded HTML: translate synchronously, then re-word key hints.
+function promptPanel(root, mode = inputMode()) {
+  localize(root);
+  promptDom(root, mode, LANG);
+}
+setPostProcess(t => promptText(t, inputMode(), LANG));
+watch();
 // Re-labels key badges and hints whenever the input device changes.
 function refreshPrompts(force = false) {
   const m = inputMode();
@@ -589,7 +597,7 @@ function refreshPrompts(force = false) {
   if (mono?.dataset.raw) mono.querySelector('p').textContent = P(mono.dataset.raw);
   const qh = $('quest-hint');
   if (qh?.dataset.raw) qh.textContent = P(qh.dataset.raw);
-  if (panel) promptDom($('drawer-body'), m);
+  if (panel) promptPanel($('drawer-body'), m);
   if (typeof updateTutorial === 'function') updateTutorial(true);
 }
 // Vibration on phones (Android; iOS browsers ignore it) and rumble on gamepads that support it.
@@ -1125,6 +1133,12 @@ function openSettings(back = closeModal) {
     'SETTINGS · 設定',
     '讓這片海更順手',
     `<div class="settings">
+  <div class="row"><span>語言 · Language</span><span class="seg" data-key="lang">${Object.entries(LANGS)
+    .map(
+      ([v, l]) =>
+        `<button type="button" data-val="${v}" class="${LANG === v ? 'active' : ''}" data-no-i18n>${l}</button>`
+    )
+    .join('')}</span></div>
   <h3>畫面</h3><div class="row"><span>畫質</span>${seg(
     'quality',
     Object.entries(QUALITY).map(([k, q]) => [k, q.label])
@@ -1171,6 +1185,14 @@ function openSettings(back = closeModal) {
           const key = g.dataset.key,
             v = b.dataset.val;
           g.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+          if (key === 'lang') {
+            if (v !== LANG) {
+              setLang(v);
+              if (running) save(true);
+              setTimeout(() => location.reload(), 200);
+            }
+            return;
+          }
           if (key === 'quality') {
             if (world.setQuality(v)) {
               if (running) save(true);
@@ -2419,7 +2441,7 @@ function renderPanel() {
     body.insertAdjacentHTML('afterbegin', housingMarkup(state.tamed));
     bindHousing(body);
   }
-  promptDom(body, inputMode());
+  promptPanel(body);
 }
 function renderEggs() {
   if (!$('eggs-list')) return;
@@ -3052,7 +3074,7 @@ function drawMap() {
     ctx.fillStyle = '#f0c674';
     ctx.font = 'bold 11px system-ui';
     ctx.textAlign = 'center';
-    ctx.fillText('避', p.x, p.y + 4);
+    ctx.fillText(tr('避'), p.x, p.y + 4);
     ctx.lineWidth = 1;
   }
   ctx.save();

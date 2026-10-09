@@ -1,5 +1,5 @@
 // Browser smoke test: boots the real game in headless Chromium, plays a few seconds through the debug stepper
-// and fails on any page error. Run with `npm run smoke` (CI installs Chromium first).
+// and fails on any page error. Desktop runs in Chinese, mobile in English. Run with `npm run smoke` (CI installs Chromium first).
 import { spawn } from 'node:child_process';
 import { chromium } from 'playwright';
 
@@ -18,8 +18,14 @@ try {
   for (const mobile of [false, true]) {
     const ctx = await browser.newContext(
       mobile
-        ? { viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true, serviceWorkers: 'block' }
-        : { viewport: { width: 1280, height: 720 }, serviceWorkers: 'block' }
+        ? {
+            viewport: { width: 844, height: 390 },
+            hasTouch: true,
+            isMobile: true,
+            serviceWorkers: 'block',
+            locale: 'en-US'
+          }
+        : { viewport: { width: 1280, height: 720 }, serviceWorkers: 'block', locale: 'zh-TW' }
     );
     await ctx.addInitScript(() => localStorage.setItem('beastidal-settings-v1', JSON.stringify({ quality: 'low' })));
     const page = await ctx.newPage();

@@ -12,11 +12,11 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./brand/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./style.css?v=0.9.0" />
-    <link rel="stylesheet" href="./mobile.css?v=0.9.0" />
-    <link rel="stylesheet" href="./panels.css?v=0.9.0" />
-    <link rel="stylesheet" href="./expansion.css?v=0.9.0" />
-    <link rel="stylesheet" href="./beastidal.css?v=0.9.0" />
+    <link rel="stylesheet" href="./style.css?v=0.10.0" />
+    <link rel="stylesheet" href="./mobile.css?v=0.10.0" />
+    <link rel="stylesheet" href="./panels.css?v=0.10.0" />
+    <link rel="stylesheet" href="./expansion.css?v=0.10.0" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.10.0" />
   </head>
   <body>
     <main id="app">
@@ -30,7 +30,7 @@
       <section id="title-screen" hidden>
         <div class="title-top">
           <img class="logo-mark logo-emblem" src="./brand/emblem.svg" alt="" /><span>一場新的漂流</span
-          ><span class="version">BEASTIDAL / 0.9</span>
+          ><span class="version">BEASTIDAL / 0.10</span>
         </div>
         <div class="title-copy">
           <img class="title-emblem" src="./brand/emblem.svg" alt="比斯泰德 Beastidal 徽章" />
@@ -227,7 +227,7 @@
         <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
       </section>
     </main>
-    <script type="module" src="./game.js?v=0.9.0"></script>
+    <script type="module" src="./game.js?v=0.10.0"></script>
     <script>
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));

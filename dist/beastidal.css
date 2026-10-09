@@ -1080,3 +1080,7 @@
     margin: 16px 0;
   }
 }
+/* English: the brand name is already Latin, so drop the duplicate romanised line */
+html[lang='en'] .brand small {
+  display: none;
+}

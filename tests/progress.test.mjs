@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync, readdirSync } from 'node:fs';
 import { createState, validateSave } from '../dist/rules.js';
 import { makeGenome, phenotype, genomeValid, dnaCode, crossGenome, seeded, SPECIES } from '../dist/genetics.js';
 import { ACHIEVEMENTS, checkUnlocks, achievementCount } from '../dist/achievements.js';
@@ -140,5 +141,16 @@ test('save slots: slot 1 keeps legacy keys, others are separate; export round-tr
   assert.equal(activeSlot(st), 1);
   setActiveSlot(st, 3);
   assert.equal(activeSlot(st), 3);
+});
+test('offline cache lists every module with the current asset version', () => {
+  const sw = readFileSync('dist/sw.js', 'utf8'),
+    html = readFileSync('dist/index.html', 'utf8'),
+    v = html.match(/game\.js\?v=([\d.]+)/)[1];
+  assert.ok(sw.includes(`'beastidal-${v}'`), 'sw VERSION matches index.html');
+  for (const f of readdirSync('dist').filter(f => f.endsWith('.js') && f !== 'sw.js'))
+    assert.ok(sw.includes(`'./${f}?v=${v}'`), `${f} missing from sw.js`);
+  assert.ok(sw.includes(`'./i18n/en.js?v=${v}'`));
+  const versions = new Set([...(sw + html).matchAll(/\?v=([\d.]+)/g)].map(m => m[1]));
+  assert.deepEqual([...versions], [v], 'stale ?v= query');
 });
 console.log(`${passed} progress tests passed.`);

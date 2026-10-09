@@ -21,7 +21,7 @@ button {
   right: max(30px, env(safe-area-inset-right));
   bottom: 154px;
   min-width: 158px;
-  padding: 12px 18px;
+  padding: 12px 34px 12px 18px;
   text-align: left;
   border-radius: 8px;
   border: 1px solid #cae4b775;

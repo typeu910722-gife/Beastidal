@@ -1,6 +1,6 @@
-import { phenotype, clamp } from './genetics.js?v=0.9.0';
-import { NODES, harvest } from './islands.js?v=0.9.0';
-import { restPlace, canDeploy } from './ship.js?v=0.9.0';
+import { phenotype, clamp } from './genetics.js?v=0.10.0';
+import { NODES, harvest } from './islands.js?v=0.10.0';
+import { restPlace, canDeploy } from './ship.js?v=0.10.0';
 export const EXPLORE = [
   { id: 'palm-cache', name: '漂流者寶箱', x: 57, z: 33, kind: 'chest', rewards: { wood: 8, food: 5, metal: 3 } },
   { id: 'archive', name: '御獸文明石碑', x: 34, z: -81, kind: 'ruin', rewards: { crystal: 3 } },

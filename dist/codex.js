@@ -1,5 +1,5 @@
 // Creature codex: every species the player has seen up close, tamed or bred, with a sample genome for the portrait.
-import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.9.0';
+import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.10.0';
 
 export const LORE = {
   'sea-0': '骨質鰭條像刀刃一樣立在背上。成群出現時，會用鰭刃切開浪頭，替後面的同伴減少阻力。',

@@ -1,7 +1,7 @@
 import * as T from './vendor/three.module.min.js';
-import { EXPLORE, CAVE } from './expansion.js?v=0.9.0';
-import { makeCreature } from './creatures.js?v=0.9.0';
-import { makeGenome } from './genetics.js?v=0.9.0';
+import { EXPLORE, CAVE } from './expansion.js?v=0.10.0';
+import { makeCreature } from './creatures.js?v=0.10.0';
+import { makeGenome } from './genetics.js?v=0.10.0';
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.65, ...extra });
 function m(g, geo, c, x, y, z, s = [1, 1, 1], extra = {}) {
   const mesh = new T.Mesh(geo, mat(c, extra));

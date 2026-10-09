@@ -1,8 +1,8 @@
-import { limitError } from './ship.js?v=0.9.0';
-import { normalizeExpansion } from './expansion.js?v=0.9.0';
-import { normalizeHousing, freePen } from './housing.js?v=0.9.0';
-import { dockingSpots } from './navigation.js?v=0.9.0';
-import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.9.0';
+import { limitError } from './ship.js?v=0.10.0';
+import { normalizeExpansion } from './expansion.js?v=0.10.0';
+import { normalizeHousing, freePen } from './housing.js?v=0.10.0';
+import { dockingSpots } from './navigation.js?v=0.10.0';
+import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.10.0';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
 export const RESOURCE_NAMES = {
   wood: '漂流木',
