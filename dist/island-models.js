@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.min.js';
-import { ISLANDS, NODES } from './islands.js?v=0.10.0';
+import { ISLANDS, NODES } from './islands.js?v=0.11.0';
 const material = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.85, ...extra });
 const sand = material(0xd5c49c),
   rock = material(0x566c6a),

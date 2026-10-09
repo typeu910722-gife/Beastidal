@@ -8,8 +8,8 @@ import {
   attack,
   explore,
   tickExpansion
-} from './expansion.js?v=0.10.0';
-import { renderAdventure } from './expansion-ui.js?v=0.10.0';
+} from './expansion.js?v=0.11.0';
+import { renderAdventure } from './expansion-ui.js?v=0.11.0';
 import {
   normalizeShip,
   tickShip,
@@ -36,9 +36,9 @@ import {
   nearBeastHome,
   restIsland,
   dockMoor
-} from './ship.js?v=0.10.0';
-import { monologue, markGuide } from './guide.js?v=0.10.0';
-import { climb, demolish, relocate } from './construction.js?v=0.10.0';
+} from './ship.js?v=0.11.0';
+import { monologue, markGuide } from './guide.js?v=0.11.0';
+import { climb, demolish, relocate } from './construction.js?v=0.11.0';
 import {
   normalizeHousing,
   penId,
@@ -49,23 +49,24 @@ import {
   movePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.10.0';
-import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.10.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.10.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.10.0';
-import { QUALITY } from './realism.js?v=0.10.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.10.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.10.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.10.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.10.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.10.0';
-import { CONFIG } from './config.js?v=0.10.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.10.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.10.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.10.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.10.0';
-export const GAME_VERSION = '0.10.0';
-import { CloudSave } from './cloud-save.js?v=0.10.0';
+} from './housing.js?v=0.11.0';
+import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.11.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.11.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.11.0';
+import { QUALITY } from './realism.js?v=0.11.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.11.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.11.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.11.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.11.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.11.0';
+import { CONFIG } from './config.js?v=0.11.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.11.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.11.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.11.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.11.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.11.0';
+export const GAME_VERSION = '0.11.0';
+import { CloudSave } from './cloud-save.js?v=0.11.0';
 import {
   readLocal,
   writeLocal,
@@ -82,9 +83,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.10.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.10.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.10.0';
+} from './save-store.js?v=0.11.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.11.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.11.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -103,7 +104,7 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.10.0';
+} from './rules.js?v=0.11.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -655,7 +656,7 @@ function flyResources(rewards, wx, wy, wz) {
     setTimeout(
       () => {
         const idx = RESOURCE_BAR.indexOf(k),
-          target = idx >= 0 ? $('resources').children[idx] : document.querySelector('[data-panel="bag"]'),
+          target = idx >= 0 ? $('resources').children[idx] : document.querySelector('[data-panel="device"]'),
           tr = target?.getBoundingClientRect(),
           y0 = sy - 34 - i * 26;
         if (tr && tr.width) {
@@ -1107,8 +1108,7 @@ const UI_DEFAULTS = {
   prompts: 'auto',
   fontSize: 'normal',
   buttonSize: 'normal',
-  lefty: false,
-  camFollow: true
+  lefty: false
 };
 const setting = k => world.settings[k] ?? UI_DEFAULTS[k] ?? VOLUME_DEFAULTS[k];
 function applyUiSettings() {
@@ -1149,7 +1149,7 @@ function openSettings(back = closeModal) {
     ['xlarge', '特大']
   ])}</div>
   <h3>聲音</h3><div class="row"><span>音樂</span>${range('musicVol', 0, 100, pct)}</div><div class="row"><span>音效</span>${range('sfxVol', 0, 100, pct)}</div><div class="row"><span>環境聲</span>${range('ambVol', 0, 100, pct)}</div>
-  <h3>操作</h3><div class="row"><span>鏡頭靈敏度</span>${range('camSens', 40, 250, pct)}</div>${check('invertY', '鏡頭上下反轉')}${check('camFollow', '鏡頭自動轉到船後方（駕駛時）')}${check('autoPickup', '自動拾取（駛過漂流物、走過採集點自動收集）')}${check('haptics', '震動回饋（手機、手把）')}
+  <h3>操作</h3><div class="row"><span>鏡頭靈敏度</span>${range('camSens', 40, 250, pct)}</div>${check('invertY', '鏡頭上下反轉')}${check('autoPickup', '自動拾取（駛過漂流物、走過採集點自動收集）')}${check('haptics', '震動回饋（手機、手把）')}
   <div class="row"><span>按鍵提示</span>${seg('prompts', [
     ['auto', '自動'],
     ['keyboard', '鍵盤'],
@@ -1244,6 +1244,7 @@ function toggleView() {
 }
 function beginGame(fresh = false) {
   normalizeWildlife(state);
+  normalizeDevice(state);
   ensureLandBeasts(state);
   normalizeStats(state).sessions++;
   statsPrev = null;
@@ -1336,6 +1337,7 @@ function initialize() {
         return state;
       },
       keys,
+      openDevice,
       step(dt, n = 1) {
         for (let i = 0; i < n; i++) {
           movePlayer(dt, null);
@@ -1664,28 +1666,122 @@ function repel() {
 }
 function closePanel() {
   panel = null;
+  deviceMode = false;
   $('drawer').hidden = true;
+  $('drawer').classList.remove('device');
   document.querySelectorAll('.action-bar button').forEach(b => b.classList.remove('active'));
   if (world) updateDock();
 }
-function openPanel(name) {
+function openPanel(name, inDevice = false) {
   if (!running || paused || film) return;
   releaseMouse();
   cancelBuild();
-  if (panel === name) {
+  if (panel === name && deviceMode === inDevice) {
     closePanel();
     return;
   }
+  deviceMode = inDevice;
   destination = null;
   salvaging = null;
   $('salvage-progress').hidden = true;
   panel = name;
   keys.clear();
   $('drawer').hidden = false;
-  document.querySelectorAll('.action-bar button').forEach(b => b.classList.toggle('active', b.dataset.panel === name));
+  document
+    .querySelectorAll('.action-bar button')
+    .forEach(b => b.classList.toggle('active', b.dataset.panel === (inDevice ? 'device' : name)));
   renderPanel();
   updateDock();
   if (gamepadActive) setTimeout(() => focusMenu(0, true), 0);
+}
+// The handheld from the raft desk: phone-style hub. Apps reuse the regular panels, rendered inside the device frame.
+let deviceMode = false;
+const DEVICE_PANEL = { bag: 'bag', beasts: 'creatures', journal: 'journal', codex: 'journal', achievements: 'journal' };
+function openDevice(app = null) {
+  if (!running || paused || film) return;
+  normalizeDevice(state);
+  if (!state.device.owned) {
+    toast('（那台隨身裝置還放在木筏的書桌上。）', true);
+    return;
+  }
+  if (deviceMode && !app) {
+    closePanel();
+    return;
+  }
+  if (app === 'stats' || app === 'settings') {
+    closePanel();
+    const back = () => openDevice();
+    if (app === 'stats') openStats(back);
+    else openSettings(back);
+    return;
+  }
+  if (app === 'beasts') geneTab = 'collection';
+  if (app === 'journal' || app === 'codex' || app === 'achievements') journalTab = app === 'journal' ? 'log' : app;
+  const name = app ? DEVICE_PANEL[app] || app : 'device';
+  panel = null;
+  openPanel(name, true);
+}
+function deviceClock() {
+  const m = Math.floor(((6.5 * 60 + (state.elapsed % 480) * 3) % 1440) + 0.5);
+  return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+}
+function deviceHome(body) {
+  const v = state.vitals,
+    bar = (label, val, cls) =>
+      `<div class="dv-vital ${cls}"><span>${label}</span><i><b style="width:${Math.round(val)}%"></b></i><em>${Math.round(val)}</em></div>`;
+  const where =
+    state.player.mode === 'foot'
+      ? state.inCave
+        ? '晶窟'
+        : '木筏／陸地'
+      : state.player.mode === 'aboard'
+        ? '比斯泰德號'
+        : '海上';
+  body.innerHTML = `<section class="dv-widget"><div class="dv-widget-head"><strong>${deviceClock()}</strong><span>第 ${1 + Math.floor(state.elapsed / 480)} 日 · ${where}</span></div>${bar('體力', v.health, 'hp')}${bar('水分', v.water, 'wt')}${bar('飽食', v.food, 'fd')}<small>座標 ${state.player.x.toFixed(0)}, ${state.player.z.toFixed(0)} · 異晶訊號 ${state.secret ? '已解讀' : '未知'}</small></section>
+  <div class="dv-apps">${DEVICE_APPS.map(a => `<button type="button" data-app="${a.id}"><span>${a.icon}</span><small>${a.name}</small></button>`).join('')}</div>
+  <p class="dv-note">${state.device.laptop ? '書桌上的筆電還在等待修復。' : '書桌上那台筆電好像還能開機……'}</p>`;
+  body.querySelectorAll('[data-app]').forEach(b => (b.onclick = () => openDevice(b.dataset.app)));
+}
+function deviceStatus(body) {
+  const v = state.vitals,
+    c = codexProgress(state),
+    boat = state.expedition?.boatLevel || 0,
+    sc = stormClock(state.elapsed);
+  const rows = [
+    ['體力', Math.round(v.health) + ' / 100'],
+    ['水分', Math.round(v.water) + ' / 100'],
+    ['飽食', Math.round(v.food) + ' / 100'],
+    ['天氣', sc?.phase === 'storm' ? '暴風中' : sc ? '暴風將至' : '平靜'],
+    ['所在', `${state.player.x.toFixed(1)}, ${state.player.z.toFixed(1)}`],
+    ['小艇等級', 'LV ' + boat],
+    ['木筏', `${count(state, 'floor')} 格地基 · ${state.buildings.length} 件設施`],
+    ['御獸', `${state.tamed.length} 隻 · 孵育 ${state.eggs.length}`],
+    ['圖鑑', `${c.seen} / ${c.total}`],
+    ['成就', `${achievementCount(state)} / ${ACHIEVEMENTS.length}`],
+    ['遊玩時間', formatDuration(state.stats?.playSeconds || 0)]
+  ];
+  body.innerHTML = `<div class="dv-status-list">${rows.map(([k, val]) => `<span>${k}</span><b>${val}</b>`).join('')}</div><p class="dv-note">感測器：${state.vitals.water < 30 ? '脫水警告。' : state.vitals.food < 30 ? '能量不足。' : '生命徵象穩定。'}</p>`;
+}
+function decorateDevice(body) {
+  const d = $('drawer');
+  d.classList.toggle('device', deviceMode);
+  if (!deviceMode) return;
+  const app = DEVICE_APPS.find(a => a.id === (panel === 'device' ? null : deviceAppFor()));
+  $('drawer-eyebrow').innerHTML =
+    `<span>無訊號</span><span>${deviceClock()}</span><span>▮ ${Math.round(state.device.battery ?? 64)}%</span>`;
+  $('drawer-title').textContent = panel === 'device' ? '隨身裝置' : app ? app.name : $('drawer-title').textContent;
+  if (panel !== 'device') {
+    body.insertAdjacentHTML('afterbegin', '<button type="button" class="dv-back">‹ 主畫面</button>');
+    body.querySelector('.dv-back').onclick = () => {
+      panel = null;
+      openPanel('device', true);
+    };
+  }
+}
+function deviceAppFor() {
+  if (panel === 'creatures') return 'beasts';
+  if (panel === 'journal') return journalTab === 'log' ? 'journal' : journalTab;
+  return panel;
 }
 function handleExploration(id) {
   const r = explore(state, id);
@@ -1768,7 +1864,48 @@ function updateBeastHUD() {
   $('boss-bar').hidden = b.defeated || state.inCave || Math.hypot(b.x - state.player.x, b.z - state.player.z) > 35;
   $('boss-bar').textContent = `深海守望者  ${Math.max(0, Math.ceil(b.hp))} / 480`;
 }
+function appendDesk(body, b) {
+  normalizeDevice(state);
+  const near = state.player.mode === 'foot' && Math.hypot(state.player.x - b.x * 3.6, state.player.z - b.z * 3.6) < 5.5;
+  body.insertAdjacentHTML(
+    'beforeend',
+    `${state.device.owned ? '' : `<button id="take-device" class="primary full-button" ${near ? '' : 'disabled'}>拿起隨身裝置</button>`}<button id="read-laptop" class="full-button" ${near ? '' : 'disabled'}>查看破舊筆電</button>${near ? '' : '<p class="note">登上木筏，走到書桌旁才能操作。</p>'}`
+  );
+  if ($('take-device'))
+    $('take-device').onclick = () => {
+      const r = takeDevice(state);
+      toast(r.ok ? r.message : r.error, !r.ok);
+      if (!r.ok) return;
+      haptic('discover');
+      log(
+        state,
+        '隨身裝置',
+        '螢幕裂了一角，電量只剩一點，但還能開機。沒有訊號——這裡沒有任何基地台。至少它能幫我記住每一件事。'
+      );
+      world.sync(state);
+      save(true);
+      updateUI();
+      openDevice();
+    };
+  $('read-laptop').onclick = () => {
+    const r = readLaptop(state);
+    if (!r.ok) {
+      toast(r.error, true);
+      return;
+    }
+    if (r.first) log(state, '破舊筆電', '開機畫面停在修復模式。最後一筆同步，是我出車禍的那個早上。');
+    closePanel();
+    modal(
+      'LAPTOP · 系統修復模式',
+      '一台不屬於這個世界的筆電',
+      `<pre class="laptop-screen">${r.lines.map(esc).join('\n')}</pre><p class="note">（電源鍵按不太下去。也許哪天找到零件，可以把它修好。）</p>`,
+      [{ label: '闔上', primary: true, action: closeModal }]
+    );
+    save(true);
+  };
+}
 function appendConstruction(body, b) {
+  if (b.type === 'desk') appendDesk(body, b);
   const near = Math.hypot(state.player.x - b.x * 3.6, state.player.z - b.z * 3.6) < 5.5;
   if (['stairs', 'chair', 'table', 'lamp'].includes(b.type)) {
     body.insertAdjacentHTML(
@@ -2221,11 +2358,19 @@ function renderPanel() {
     facility: ['FACILITY', '設施操作'],
     adventure: ['BEASTKEEPER', '御獸與遠航'],
     cargo: ['CARGO HOLD', '物資艙'],
-    lounge: ['BEAST LOUNGE', '御獸休息室']
+    lounge: ['BEAST LOUNGE', '御獸休息室'],
+    device: ['HANDHELD', '隨身裝置'],
+    status: ['STATUS', '狀態']
   };
   $('drawer-eyebrow').textContent = settings[panel][0];
   $('drawer-title').textContent = settings[panel][1];
   const body = $('drawer-body');
+  if (panel === 'device' || panel === 'status') {
+    (panel === 'device' ? deviceHome : deviceStatus)(body);
+    decorateDevice(body);
+    promptPanel(body);
+    return;
+  }
   if (panel === 'adventure') {
     renderAdventure(body, state, {
       toast,
@@ -2253,7 +2398,7 @@ function renderPanel() {
     body.innerHTML =
       `<p>回到木筏附近，選擇設施後放在綠色格子。擴建地基與展示池需連接木筏邊缘。</p><div class="info-strip">已建 ${count(state, 'floor')} 格地基 · ${count(state, 'shelter') ? '已有遮蔽' : '尚無遮蔽'} · ${count(state, 'collector') ? '有淡水產出' : '缺少淡水來源'}</div>` +
       Object.entries(RECIPES)
-        .filter(([k, r]) => !r.hidden || state.secret)
+        .filter(([k, r]) => !r.fixed && (!r.hidden || state.secret))
         .map(
           ([k, r]) =>
             `<article class="build-card"><span>${r.icon}</span><div><h3>${r.name}</h3><p>${r.desc}</p><div class="cost">${costLabel(r.cost)}</div>${LIMITS[k] ? `<div class="limit">避難所上限 ${count(state, k)} / ${LIMITS[k]}</div>` : ''}</div><button data-build="${k}" ${!canPay(state, r.cost) || (LIMITS[k] && count(state, k) >= LIMITS[k]) ? 'disabled' : ''}>${LIMITS[k] && count(state, k) >= LIMITS[k] ? '已達上限' : '建造'}</button></article>`
@@ -2441,6 +2586,7 @@ function renderPanel() {
     body.insertAdjacentHTML('afterbegin', housingMarkup(state.tamed));
     bindHousing(body);
   }
+  decorateDevice(body);
   promptPanel(body);
 }
 function renderEggs() {
@@ -2817,6 +2963,8 @@ function updateCodex(dt) {
   checkAchievements();
 }
 function updateStats(dt) {
+  const hour = (6.5 + (state.elapsed % 480) / 20) % 24;
+  tickDevice(state, dt, hour > 6 && hour < 18);
   if (!state.stats) return;
   const here = { x: state.player.x, z: state.player.z };
   const moved = statsPrev ? Math.min(30 * dt, Math.hypot(here.x - statsPrev.x, here.z - statsPrev.z)) : 0;
@@ -3271,6 +3419,7 @@ function moveWild(dt) {
         state.vitals.health = Math.max(0, state.vitals.health - damage);
         attackCooldown = 3;
         $('damage-flash').style.opacity = '.5';
+        if (world.post) world.post.hurt = 1;
         haptic('hit');
         setTimeout(() => ($('damage-flash').style.opacity = 0), 180);
         toast('危險生物靠近！按空白鍵驅離。', true);
@@ -3453,7 +3602,7 @@ function gamepad(dt) {
     if (edge(2)) openPanel('build');
     if (edge(3)) openPanel('creatures');
     if (edge(1)) back();
-    if (edge(4)) openPanel('bag');
+    if (edge(4)) openDevice();
     if (edge(5)) openPanel('journal');
     if (edge(6)) dock();
     if (edge(7)) {
@@ -3543,7 +3692,9 @@ function setupEvents() {
   $('repel-btn').onclick = repel;
   $('cancel-build').onclick = cancelBuild;
   $('close-drawer').onclick = closePanel;
-  document.querySelectorAll('[data-panel]').forEach(b => (b.onclick = () => openPanel(b.dataset.panel)));
+  document
+    .querySelectorAll('[data-panel]')
+    .forEach(b => (b.onclick = () => (b.dataset.panel === 'device' ? openDevice() : openPanel(b.dataset.panel))));
   const rotate = document.createElement('button');
   rotate.textContent = '旋轉';
   rotate.onclick = () => {
@@ -3587,7 +3738,7 @@ function setupEvents() {
     if (k === 'e') interact();
     if (k === ' ') repel();
     if (k === 'b') openPanel('build');
-    if (k === 'i') openPanel('bag');
+    if (k === 'i') openDevice();
     if (k === 'j') openPanel('journal');
     if (k === 'c') openPanel('creatures');
     if (k === 'h') returnHome();

@@ -1,8 +1,8 @@
-import { limitError } from './ship.js?v=0.10.0';
-import { normalizeExpansion } from './expansion.js?v=0.10.0';
-import { normalizeHousing, freePen } from './housing.js?v=0.10.0';
-import { dockingSpots } from './navigation.js?v=0.10.0';
-import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.10.0';
+import { limitError } from './ship.js?v=0.11.0';
+import { normalizeExpansion } from './expansion.js?v=0.11.0';
+import { normalizeHousing, freePen } from './housing.js?v=0.11.0';
+import { dockingSpots } from './navigation.js?v=0.11.0';
+import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.11.0';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
 export const RESOURCE_NAMES = {
   wood: '漂流木',
@@ -90,6 +90,15 @@ Object.assign(RECIPES, {
     desc: '照亮家中的角落，可切換明暗。',
     kind: 'furniture'
   },
+  // Fixed: was already on the raft when the protagonist woke up. Can be moved, never built or scrapped.
+  desk: {
+    name: '漂流書桌',
+    icon: '▭',
+    cost: {},
+    desc: '醒來時就在木筏上的書桌。一台壞掉的筆電，和一台還在閃著微光的隨身裝置。',
+    kind: 'furniture',
+    fixed: true
+  },
   dock: {
     name: '船隻停靠站',
     icon: '⚓',
@@ -114,8 +123,10 @@ export function createState(seed = Date.now() >>> 0) {
       { type: 'floor', x: 0, z: 0, rot: 0 },
       { type: 'floor', x: 1, z: 0, rot: 0 },
       { type: 'floor', x: 0, z: 1, rot: 0 },
-      { type: 'floor', x: 1, z: 1, rot: 0 }
+      { type: 'floor', x: 1, z: 1, rot: 0 },
+      { type: 'desk', x: 1, z: 1, rot: 0 }
     ],
+    device: { owned: false, laptop: false },
     salvaged: 0,
     expanded: 0,
     secret: false,
@@ -260,6 +271,7 @@ export function buildError(s, type, x, z, level = 0) {
   return null;
 }
 export function placeBuilding(s, type, x, z, rot = 0, level = 0) {
+  if (RECIPES[type]?.fixed) return { ok: false, error: '這件物品無法建造。' };
   if (type === 'upperfloor') level = 1;
   const error = buildError(s, type, x, z, level);
   if (error) return { ok: false, error };

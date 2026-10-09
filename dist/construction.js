@@ -1,6 +1,6 @@
-import { RECIPES, buildError } from './rules.js?v=0.10.0';
-import { findFacility } from './facilities.js?v=0.10.0';
-import { penId, used } from './housing.js?v=0.10.0';
+import { RECIPES, buildError } from './rules.js?v=0.11.0';
+import { findFacility } from './facilities.js?v=0.11.0';
+import { penId, used } from './housing.js?v=0.11.0';
 const fail = error => ({ ok: false, error });
 export function climb(s, b) {
   if (
@@ -19,6 +19,7 @@ export function climb(s, b) {
   return { ok: true, message: level ? '已到二樓。' : '已回到一樓。' };
 }
 function removable(s, b) {
+  if (RECIPES[b.type]?.fixed) return '這張書桌是醒來時就在的東西，留著吧。';
   if (b.type === 'pen' && used(s, penId(b))) return '先把本池住民與預留幼體安置到別處。';
   if (b.type === 'floor') {
     if (s.buildings.some(v => v !== b && v.x === b.x && v.z === b.z)) return '先移走此地基上的設施與二樓。';

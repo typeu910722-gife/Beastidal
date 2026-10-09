@@ -12,11 +12,11 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./brand/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./style.css?v=0.10.0" />
-    <link rel="stylesheet" href="./mobile.css?v=0.10.0" />
-    <link rel="stylesheet" href="./panels.css?v=0.10.0" />
-    <link rel="stylesheet" href="./expansion.css?v=0.10.0" />
-    <link rel="stylesheet" href="./beastidal.css?v=0.10.0" />
+    <link rel="stylesheet" href="./style.css?v=0.11.0" />
+    <link rel="stylesheet" href="./mobile.css?v=0.11.0" />
+    <link rel="stylesheet" href="./panels.css?v=0.11.0" />
+    <link rel="stylesheet" href="./expansion.css?v=0.11.0" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.11.0" />
   </head>
   <body>
     <main id="app">
@@ -30,7 +30,7 @@
       <section id="title-screen" hidden>
         <div class="title-top">
           <img class="logo-mark logo-emblem" src="./brand/emblem.svg" alt="" /><span>一場新的漂流</span
-          ><span class="version">BEASTIDAL / 0.10</span>
+          ><span class="version">BEASTIDAL / 0.11</span>
         </div>
         <div class="title-copy">
           <img class="title-emblem" src="./brand/emblem.svg" alt="比斯泰德 Beastidal 徽章" />
@@ -160,7 +160,8 @@
           </section>
           <nav class="action-bar" aria-label="遊戲功能">
             <button data-panel="build"><span class="tool-icon">⌂</span><span>建造</span><kbd>B</kbd></button
-            ><button data-panel="bag"><span class="tool-icon">▤</span><span>背包</span><kbd>I</kbd></button
+            ><button data-panel="device" id="device-tool">
+              <span class="tool-icon">▯</span><span>裝置</span><kbd>I</kbd></button
             ><button data-panel="journal"><span class="tool-icon">☷</span><span>航海日誌</span><kbd>J</kbd></button
             ><button data-panel="creatures" id="creature-tool" class="locked">
               <span class="tool-icon">◇</span><span id="creature-tool-text">未知訊號</span><kbd>C</kbd></button
@@ -227,7 +228,7 @@
         <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
       </section>
     </main>
-    <script type="module" src="./game.js?v=0.10.0"></script>
+    <script type="module" src="./game.js?v=0.11.0"></script>
     <script>
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));

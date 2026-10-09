@@ -101,7 +101,7 @@ test('Fusion is gated by every requirement, costs materials, takes time, and yie
   claimPalm(s);
   Object.assign(s.player, { mode: 'foot', x: 3.6, z: 3.6, level: 0 });
   placeBuilding(s, 'dock', 4, 2);
-  placeBuilding(s, 'shelter', 1, 1);
+  assert.ok(placeBuilding(s, 'shelter', 1, 2).ok); // (1, 1) holds the drift desk
   assert.equal(startFusion(s).ok, false);
   assert.ok(fusionChecks(s).some(([n, ok]) => !ok && n.includes('LV')));
   s.expedition.boatLevel = 3;
@@ -124,7 +124,7 @@ function shipState() {
   claimPalm(s);
   Object.assign(s.player, { mode: 'foot', x: 3.6, z: 3.6, level: 0 });
   placeBuilding(s, 'dock', 4, 2);
-  placeBuilding(s, 'shelter', 1, 1);
+  assert.ok(placeBuilding(s, 'shelter', 1, 2).ok); // (1, 1) holds the drift desk
   s.expedition.boatLevel = 3;
   startFusion(s);
   s.elapsed += 200;
@@ -207,6 +207,8 @@ test('Monologue guide always names a next step and advances with progress', () =
   const s = normalizeTravel(createState(3));
   assert.equal(monologue(s).id, 'salvage');
   s.salvaged = 3;
+  assert.equal(monologue(s).id, 'device');
+  s.device.owned = true;
   assert.equal(monologue(s).id, 'floor');
   const t = shipState();
   assert.equal(monologue(t).id, 'helm');

@@ -92,6 +92,20 @@ export function phenotype(g) {
     armor: Math.round(20 + v('armor') * 80),
     affinity: Math.round(20 + v('affinity') * 80),
     temper: v('temper'),
+    // 0 docile … 1 savage: hot temper, deep-sea blood and heavy horns all show in the face (brows, fangs, scars)
+    fierce:
+      Math.round(
+        Math.max(
+          0,
+          Math.min(
+            1,
+            (v('temper') - 0.4) * 2.5 +
+              (family === 'deep' ? 0.65 : 0) +
+              (familyOf(lin[1]) === 'deep' && family !== 'deep' ? 0.2 : 0) +
+              (v('horn') >= 0.75 ? 0.2 : 0)
+          )
+        ) * 100
+      ) / 100,
     fertility: v('fertility'),
     lure: v('lure'),
     ability: Math.min(3, Math.floor(v('ability') * 4))
@@ -140,7 +154,8 @@ export function describeGenes(g) {
     ['短鰭', '羽鰭', '翼鰭', '絲鰭'][p.fin],
     ['扇尾', '雙尾', '長尾', '棘尾'][p.tail],
     p.horn ? `${p.horn + 1} 組骨棘` : '晶觸角',
-    p.glow > 0.6 ? '高生物光' : '微光'
+    p.glow > 0.6 ? '高生物光' : '微光',
+    p.fierce >= 0.55 ? '性情兇猛' : p.fierce >= 0.35 ? '性情警戒' : '性情溫順'
   ];
 }
 export function genomeValid(g) {

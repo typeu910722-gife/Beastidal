@@ -7,10 +7,10 @@ import {
   commandPet,
   upgradeBoat,
   awaken
-} from './expansion.js?v=0.10.0';
-import { penLabel } from './housing.js?v=0.10.0';
-import { restPlace, restIsland } from './ship.js?v=0.10.0';
-import { phenotype, FORMS } from './genetics.js?v=0.10.0';
+} from './expansion.js?v=0.11.0';
+import { penLabel } from './housing.js?v=0.11.0';
+import { restPlace, restIsland } from './ship.js?v=0.11.0';
+import { phenotype, FORMS } from './genetics.js?v=0.11.0';
 let tab = 'beasts';
 const esc = s =>
   String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);

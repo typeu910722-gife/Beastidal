@@ -104,7 +104,8 @@ export function describeSave(s) {
   if (!s) return '無存檔';
   const day = 1 + Math.floor((s.elapsed || 0) / 480),
     pets = (s.tamed || []).length,
-    builds = (s.buildings || []).length;
+    // the drift desk was there from the start: count only what the player built
+    builds = (s.buildings || []).filter(b => b.type !== 'desk').length;
   return `第 ${day} 日 · ${builds} 座建築${pets ? ` · ${pets} 隻御獸` : ''}`;
 }
 export function formatTime(ms) {

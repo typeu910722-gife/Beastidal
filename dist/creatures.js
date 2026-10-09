@@ -6,7 +6,7 @@
 // materials, iris-textured eyes and ray-veined fin membranes. Swimming is done on the GPU: the body and its baked-on
 // parts share one wave deformation, so tails, crests and ribbons ripple together.
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded, dnaCode } from './genetics.js?v=0.10.0';
+import { phenotype, seeded, dnaCode } from './genetics.js?v=0.11.0';
 
 const V = T.Vector3;
 let detail = 'high';
@@ -32,13 +32,16 @@ function palette(p) {
   // Natural countershading: dark back, mid flank, pale belly.
   return {
     hue,
-    back: hsl(hue, deep ? 0.62 : 0.6, deep ? 0.12 : 0.17),
-    side: hsl(hue + 0.02, deep ? 0.58 : 0.55, deep ? 0.27 : 0.34),
+    back: hsl(hue, deep ? 0.55 : 0.5, (deep ? 0.12 : 0.17) * (1 - p.fierce * 0.35)),
+    side: hsl(hue + 0.02, deep ? 0.5 : 0.44, deep ? 0.27 : 0.33),
     belly: hsl(hue + 0.06, 0.22, deep ? 0.55 : 0.68),
-    mark: hsl(hue + 0.5 + p.temper * 0.1, 0.62, deep ? 0.55 : 0.4),
+    mark:
+      p.fierce >= 0.55
+        ? hsl(mix(hue + 0.5, 0.03, 0.6), 0.72, deep ? 0.5 : 0.42)
+        : hsl(hue + 0.5 + p.temper * 0.1, 0.62, deep ? 0.55 : 0.4),
     accent: hsl(hue + 0.12, 0.6, 0.62),
     glow: hsl(hue + 0.45, 0.9, 0.62),
-    fin: hsl(hue + 0.05, 0.55, 0.55)
+    fin: hsl(hue + 0.05, 0.45, 0.5)
   };
 }
 
@@ -157,6 +160,26 @@ function skinTextures(p, pal, kind, seed) {
         }
       }
     }
+    // old scars: pale, slightly raised claw rakes across the back and flanks
+    if (p.fierce >= 0.7) {
+      ctx.lineCap = 'round';
+      for (let k = 0; k < 3 + Math.floor(p.fierce * 4); k++) {
+        const x = rnd() * w,
+          y = (0.04 + rnd() * 0.4) * h,
+          a = (rnd() - 0.5) * 1.2,
+          l = (10 + rnd() * 18) * (w / 256);
+        for (let j = 0; j < 3; j++) {
+          const ox = Math.cos(a + Math.PI / 2) * j * 3 * (w / 256),
+            oy = Math.sin(a + Math.PI / 2) * j * 3 * (w / 256);
+          ctx.strokeStyle = 'rgba(214,196,180,.75)';
+          ctx.lineWidth = 1.4 * (w / 256);
+          ctx.beginPath();
+          ctx.moveTo(x + ox, y + oy);
+          ctx.lineTo(x + ox + Math.cos(a) * l, y + oy + Math.sin(a) * l);
+          ctx.stroke();
+        }
+      }
+    }
     // lateral line of light organs along both flanks
     if (p.glow > 0.45) {
       for (const yy of [0, 0.5]) {
@@ -218,8 +241,8 @@ function finTexture(pal, rays = 9, leaf = false) {
   );
 }
 // Equirectangular eye map: u spans 360°, v 180°, so a 35° iris is a ~12 px disc on a 128×64 canvas.
-function eyeTexture(hue, slit) {
-  const key = `eye|${Math.round(hue * 40)}|${slit}`;
+function eyeTexture(hue, slit, fierce = false) {
+  const key = `eye|${Math.round(hue * 40)}|${slit}|${fierce}`;
   return canvasTex(
     128,
     64,
@@ -227,7 +250,7 @@ function eyeTexture(hue, slit) {
       const cx = w / 2,
         cy = h / 2,
         R = 19,
-        iris = hsl(hue + 0.5, 0.75, 0.48);
+        iris = fierce ? hsl(0.07 + (hue - 0.5) * 0.06, 0.95, 0.5) : hsl(hue + 0.5, 0.75, 0.48);
       // animals show little white: a dark sclera that fades into the iris
       ctx.fillStyle = css(iris.clone().offsetHSL(0, -0.35, -0.38));
       ctx.fillRect(0, 0, w, h);
@@ -242,7 +265,7 @@ function eyeTexture(hue, slit) {
       ctx.fill();
       ctx.fillStyle = '#020304';
       ctx.beginPath();
-      if (slit) ctx.ellipse(cx, cy, 2.5, 13, 0, 0, Math.PI * 2);
+      if (slit) ctx.ellipse(cx, cy, fierce ? 1.8 : 2.5, fierce ? 15 : 13, 0, 0, Math.PI * 2);
       else ctx.arc(cx, cy, 7.5, 0, Math.PI * 2);
       ctx.fill();
     },
@@ -460,19 +483,37 @@ function kit(genome) {
   };
   const glowMat = (mode = 0) =>
     plain(pal.glow, { emissive: pal.glow, emissiveIntensity: 0.6 + p.glow * 1.6, roughness: 0.25 }, mode);
+  const wary = p.fierce >= 0.35,
+    savage = p.fierce >= 0.55;
   const eye = (parent, pos, r, slit = false) => {
+    const map = eyeTexture(pal.hue, slit || wary, savage);
     const mat = physical({
-      map: eyeTexture(pal.hue, slit),
+      map,
       roughness: 0.08,
       clearcoat: 1,
       clearcoatRoughness: 0.02,
-      emissive: pal.glow,
-      emissiveIntensity: p.glow > 0.7 ? 0.25 : 0
+      // savage eyes shine back out of the dark
+      emissive: savage ? new T.Color(0xffffff) : pal.glow,
+      emissiveMap: savage ? map : null,
+      emissiveIntensity: savage ? 0.55 : p.glow > 0.7 ? 0.25 : 0
     });
     const e = addMesh(parent, new T.SphereGeometry(r, segs(18, 10), segs(14, 8)), mat, pos);
     // SphereGeometry puts the texture centre (the iris) on +x: turn it outward, or up-and-forward for brow eyes.
     if (Math.abs(pos[0]) < 0.02) e.rotation.set(Math.PI / 4, 0, Math.PI / 2);
     else if (pos[0] < 0) e.rotation.y = Math.PI;
+    // a bony brow ridge slanting down toward the snout gives the scowl
+    if (wary && Math.abs(pos[0]) >= 0.02) {
+      const side = Math.sign(pos[0]);
+      mats.brow ??= physical({ color: pal.back.clone().offsetHSL(0, -0.1, -0.03), roughness: 0.7 });
+      addMesh(
+        parent,
+        new T.SphereGeometry(1, segs(10, 6), segs(6, 4)),
+        mats.brow,
+        [pos[0] - side * r * 0.12, pos[1] + r * 0.62, pos[2] + r * 0.12],
+        [0.25, side * 0.35, -side * (0.35 + p.fierce * 0.35)],
+        [r * 1.35, r * 0.38, r * 1.05]
+      );
+    }
     return e;
   };
   return { p, pal, u, rnd, skinMat, finMat, plain, glowMat, eye, limbs: [], parts: {} };
@@ -542,6 +583,28 @@ function horns(K, parent, at, count, len, swept = 0.6, mode = 0) {
           7
         );
       const m = addMesh(parent, g, bone);
+      if (mode) bake(m);
+    }
+}
+function fangs(K, parent, mouth) {
+  const { at, w, depth = 0.12, mode = 1 } = mouth,
+    n = 4 + Math.round(K.p.fierce * 4),
+    len = (0.07 + K.p.fierce * 0.08) * (mouth.scale || 1),
+    ivory = K.plain(hsl(0.11, 0.25, 0.8), { roughness: 0.35, clearcoat: 0.6 }, mode);
+  for (const row of [1, -1])
+    for (let i = 0; i < n; i++) {
+      const t = (i + 0.5) / n - 0.5,
+        x = t * w,
+        // the two outer pairs are long canines
+        l = len * (Math.abs(t) > 0.3 ? 1.5 : 0.7) * (row > 0 ? 1 : 0.75);
+      const m = addMesh(
+        parent,
+        new T.ConeGeometry(l * 0.22, l, 5),
+        ivory,
+        [at[0] + x, at[1] + row * 0.012, at[2] - t * t * depth * 4],
+        [row > 0 ? Math.PI : 0, 0, t * 0.4]
+      );
+      m.position.y -= (row * l) / 2;
       if (mode) bake(m);
     }
 }
@@ -726,7 +789,14 @@ function fish(K, body) {
           K.glowMat(1)
         )
       );
-  return { head: [0, 0.35, 0.95], back: [0, 0.5, -0.1], len: 2.8, top: 0.55, flora: [-0.8, 0.7, 0.5] };
+  return {
+    head: [0, 0.35, 0.95],
+    back: [0, 0.5, -0.1],
+    len: 2.8,
+    top: 0.55,
+    flora: [-0.8, 0.7, 0.5],
+    mouth: { at: [0, -0.06, 1.3], w: 0.26 }
+  };
 }
 function ray(K, body) {
   const { p } = K;
@@ -1117,7 +1187,14 @@ function serpent(K, body) {
           K.glowMat(1)
         )
       );
-  return { head: [0, 0.45, 1.65], back: [0, 0.4, 0], len, top: 0.55, flora: [-1.8, 1.2, 0.35] };
+  return {
+    head: [0, 0.45, 1.65],
+    back: [0, 0.4, 0],
+    len,
+    top: 0.55,
+    flora: [-1.8, 1.2, 0.35],
+    mouth: { at: [0, -0.1, 2.05], w: 0.26, depth: 0.5, scale: 1.3 }
+  };
 }
 function cephalopod(K, body) {
   const { p, pal } = K;
@@ -1502,7 +1579,15 @@ function lizard(K, body) {
       bake(addMesh(body, fr, K.finMat(1), [side * 0.18, 0.62, 0.85], [0, side * 0.6, 0], [side, 1, 1]));
   }
   if (p.horn) crest(K, body, -1.2, 0.8, 0.78, 0.1 + p.horn * 0.06, 6 + p.horn * 3);
-  return { head: [0, 0.85, 1.1], back: [0, 0.85, -0.1], len: 3.4, top: 0.9, flora: [-1, 0.7, 0.82], walker: true };
+  return {
+    head: [0, 0.85, 1.1],
+    back: [0, 0.85, -0.1],
+    len: 3.4,
+    top: 0.9,
+    flora: [-1, 0.7, 0.82],
+    walker: true,
+    mouth: { at: [0, 0.5, 1.38], w: 0.18, depth: 0.4 }
+  };
 }
 function deer(K, body) {
   const { p, pal } = K;
@@ -1902,6 +1987,10 @@ export function makeCreature(genome) {
     } else floraGrowth(K, body, z0, z1, y, p.flora);
   }
   fusionTrait(K, body, info);
+  if (p.fierce >= 0.55 && info.mouth) fangs(K, body, info.mouth);
+  // savage beasts bristle with a ridge of spines (species that already grow a crest keep theirs)
+  if (p.fierce >= 0.8 && !p.horn && !info.jelly && !info.shell && !info.rigid)
+    crest(K, body, info.back[2] - info.len * 0.3, info.back[2] + info.len * 0.2, info.top * 0.92, 0.12, 7);
   // land beasts get a hidden rock perch, shown when they rest in a sea pen
   let perch = null;
   if (p.habitat === 'land') {

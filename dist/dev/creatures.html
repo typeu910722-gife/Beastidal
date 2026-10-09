@@ -46,11 +46,12 @@
     <div id="hud">Developer gallery: every species (rows = family). ?seed=N re-rolls genes · ?spin=0 freezes.</div>
     <script type="module">
       import * as T from '../vendor/three.module.min.js';
-      import { makeCreature, animateCreature } from '../creatures.js?v=0.10.0';
-      import { makeGenome, FAMILIES, SPECIES, FAMILY_NAMES } from '../genetics.js?v=0.10.0';
-      import { makeSky } from '../realism.js?v=0.10.0';
+      import { makeCreature, animateCreature } from '../creatures.js?v=0.11.0';
+      import { makeGenome, FAMILIES, SPECIES, FAMILY_NAMES } from '../genetics.js?v=0.11.0';
+      import { makeSky } from '../realism.js?v=0.11.0';
       const q = new URLSearchParams(location.search),
         seed = Number(q.get('seed') || 7),
+        temper = q.get('temper'), // ?temper=255 shows every species at its most savage
         spin = q.get('spin') !== '0';
       const canvas = document.getElementById('c'),
         renderer = new T.WebGLRenderer({ canvas, antialias: true });
@@ -90,8 +91,9 @@
         labels = document.getElementById('labels');
       FAMILIES.forEach((fam, row) =>
         SPECIES[fam].forEach((name, form) => {
-          const g = makeGenome(seed * 97 + row * 13 + form, form, fam),
-            m = makeCreature(g);
+          const g = makeGenome(seed * 97 + row * 13 + form, form, fam);
+          if (temper) g.temper = [Number(temper), Number(temper)];
+          const m = makeCreature(g);
           m.rotation.y = -0.75;
           m.visible = false;
           scene.add(m);

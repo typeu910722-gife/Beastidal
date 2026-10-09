@@ -1,27 +1,28 @@
-import { expansionModels } from './expansion-models.js?v=0.10.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.10.0';
-import { normalizeHousing, penId } from './housing.js?v=0.10.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.10.0';
-export { makeCreature } from './creatures.js?v=0.10.0';
-import { makeIslands } from './island-models.js?v=0.10.0';
-import { facilityId } from './facilities.js?v=0.10.0';
+import { expansionModels } from './expansion-models.js?v=0.11.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.11.0';
+import { normalizeHousing, penId } from './housing.js?v=0.11.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.11.0';
+export { makeCreature } from './creatures.js?v=0.11.0';
+import { makeIslands } from './island-models.js?v=0.11.0';
+import { facilityId } from './facilities.js?v=0.11.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.10.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.10.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.10.0';
-import { buildError } from './rules.js?v=0.10.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.10.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.10.0';
+import { phenotype, seeded } from './genetics.js?v=0.11.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.11.0';
+import { PostFX } from './postfx.js?v=0.11.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.11.0';
+import { buildError } from './rules.js?v=0.11.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.11.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.11.0';
 const V = T.Vector3;
 const ISLAND_GROUND = 0.42; // top of the island terrain where land beasts stand
 const colors = {
-  wood: 0x976344,
-  plank: 0xbe9866,
-  darkWood: 0x524434,
-  rope: 0xd6c19b,
-  teal: 0x398c8b,
-  cloth: 0xd9cfaa,
-  metal: 0x466673,
+  wood: 0x7a6049,
+  plank: 0x9a8a71,
+  darkWood: 0x3b342c,
+  rope: 0xa8957a,
+  teal: 0x2f6b6a,
+  cloth: 0xa49d86,
+  metal: 0x4b5150,
   glow: 0x9affdf
 };
 const boxG = new T.BoxGeometry(1, 1, 1),
@@ -86,11 +87,14 @@ function woodTexture() {
       const knot =
         Math.sin(Math.hypot((x - 63) * 1.1, (y - 51) * 0.34) * 0.8) *
         Math.exp(-Math.hypot(x - 63, (y - 51) * 0.5) * 0.09);
-      const value = 218 + grain * 12 + knot * 17 + r() * 10;
+      const stain = Math.sin(x * 0.05 + y * 0.09) * Math.sin(y * 0.031 - x * 0.02),
+        crack = Math.pow(Math.abs(Math.sin(x * 0.42 + Math.sin(y * 0.055) * 1.8)), 18),
+        algae = Math.max(0, Math.sin(x * 0.07 + 1.3) * Math.sin(y * 0.045 + 0.4) - 0.55) * 2.2;
+      const value = 200 + grain * 13 + knot * 18 + r() * 16 - Math.max(0, stain) * 34 - crack * 70;
       const i = (y * size + x) * 4;
-      data[i] = value;
-      data[i + 1] = value - 8;
-      data[i + 2] = value - 20;
+      data[i] = Math.max(0, value - algae * 40);
+      data[i + 1] = Math.max(0, value - 8 - algae * 10);
+      data[i + 2] = Math.max(0, value - 18 - algae * 45);
       data[i + 3] = 255;
     }
   woodTex = new T.DataTexture(data, size, size, T.RGBAFormat);
@@ -147,13 +151,132 @@ function floorMesh() {
   for (const z of [-1.05, 0, 1.05])
     for (const x of [-1.45, 1.45])
       piece(g, new T.TorusGeometry(0.12, 0.03, 5, 10), colors.rope, [x, 0.3, z]).rotation.y = Math.PI / 2;
-  for (let i = 0; i < 7; i++) box(g, i % 3 === 0 ? 0xcba574 : colors.plank, (i - 3) * 0.49, 0.29, 0, 0.45, 0.2, 3.45);
+  for (let i = 0; i < 7; i++) box(g, i % 3 === 0 ? 0x9a8668 : colors.plank, (i - 3) * 0.49, 0.29, 0, 0.45, 0.2, 3.45);
   for (const x of [-1.45, 1.45]) {
     box(g, colors.darkWood, x, 0.06, 0, 0.17, 0.27, 3.4);
     for (const z of [-1.2, 1.2]) pole(g, 0x283e44, x, -0.21, z, 0.4, 0.7).rotation.z = Math.PI / 2;
   }
   for (const x of [-1.46, 1.46]) for (const z of [-1.44, 1.44]) ball(g, 0x695f4d, x, 0.405, z, 0.038, 0.018, 0.038);
   return g;
+}
+// Screens for the wreck desk: a cracked laptop stuck on a boot error and the handheld's dim lock screen.
+const screenTex = {};
+function screenTexture(kind) {
+  if (screenTex[kind]) return screenTex[kind];
+  if (typeof document === 'undefined') return null;
+  const c = document.createElement('canvas');
+  c.width = kind === 'laptop' ? 256 : 96;
+  c.height = kind === 'laptop' ? 160 : 192;
+  const x = c.getContext('2d'),
+    w = c.width,
+    h = c.height;
+  x.fillStyle = kind === 'laptop' ? '#06131a' : '#041018';
+  x.fillRect(0, 0, w, h);
+  if (kind === 'laptop') {
+    x.fillStyle = '#6fd8d0';
+    x.font = 'bold 13px monospace';
+    ['SYSTEM RECOVERY', '', 'DISK  ERR 0x5EA', 'CLOCK ????-??-??', 'NET   NO CARRIER', '', '> _'].forEach((l, i) =>
+      x.fillText(l, 14, 24 + i * 18)
+    );
+    // dead pixel columns
+    x.fillStyle = 'rgba(190,80,255,.45)';
+    for (const cx of [61, 62, 170]) x.fillRect(cx, 0, 1, h);
+  } else {
+    x.fillStyle = '#9fe3d7';
+    x.font = 'bold 22px monospace';
+    x.fillText('03:17', 18, 70);
+    x.font = '11px monospace';
+    x.fillText('NO SIGNAL', 20, 92);
+    x.fillStyle = '#e8a35a';
+    x.fillRect(20, 150, 14, 6);
+    x.strokeStyle = '#9fe3d7';
+    x.strokeRect(19, 149, 40, 8);
+  }
+  // spider-web crack from one corner
+  x.strokeStyle = 'rgba(230,245,245,.55)';
+  x.lineWidth = 1;
+  const ox = w * 0.82,
+    oy = h * 0.18;
+  for (let i = 0; i < 9; i++) {
+    const a = i * 0.7 + 0.3;
+    x.beginPath();
+    x.moveTo(ox, oy);
+    let px = ox,
+      py = oy;
+    for (let k = 0; k < 4; k++) {
+      px += Math.cos(a + Math.sin(k * 3 + i) * 0.4) * w * 0.12;
+      py += Math.sin(a + Math.sin(k * 3 + i) * 0.4) * w * 0.12;
+      x.lineTo(px, py);
+    }
+    x.stroke();
+  }
+  const t = new T.CanvasTexture(c);
+  t.colorSpace = T.SRGBColorSpace;
+  return (screenTex[kind] = t);
+}
+// The desk the protagonist woke up next to: warped planks, a dead laptop and the rugged handheld (until picked up).
+function deskMesh(g) {
+  const legs = [
+    [-0.75, -0.4],
+    [0.75, -0.4],
+    [-0.75, 0.4],
+    [0.72, 0.42]
+  ];
+  legs.forEach(([x, z], i) => pole(g, colors.darkWood, x, 0.83, z, 0.055, i === 3 ? 0.84 : 0.88));
+  const top = box(g, colors.plank, 0, 1.3, 0, 1.75, 0.09, 1.0);
+  top.rotation.z = -0.015;
+  box(g, colors.darkWood, 0, 1.2, 0.47, 1.6, 0.14, 0.05);
+  // laptop: scuffed base, lid tipped back, cracked screen glowing faintly
+  const lap = new T.Group();
+  lap.position.set(-0.25, 1.36, -0.05);
+  lap.rotation.y = 0.22;
+  box(lap, 0x2b2f31, 0, 0, 0, 0.62, 0.035, 0.42, { roughness: 0.55, metalness: 0.4 });
+  box(lap, 0x45494a, 0, 0.02, 0.06, 0.52, 0.006, 0.2, { roughness: 0.8 });
+  const lid = new T.Group();
+  lid.position.set(0, 0.02, -0.2);
+  lid.rotation.x = -1.85;
+  box(lid, 0x2b2f31, 0, 0, 0.2, 0.62, 0.025, 0.4, { roughness: 0.55, metalness: 0.4 });
+  const scr = new T.Mesh(
+    new T.PlaneGeometry(0.56, 0.35),
+    new T.MeshStandardMaterial({
+      color: 0x000000,
+      emissive: 0xffffff,
+      emissiveMap: screenTexture('laptop'),
+      emissiveIntensity: 0.7,
+      roughness: 0.2
+    })
+  );
+  scr.position.set(0, 0.014, 0.2);
+  scr.rotation.x = Math.PI / 2;
+  lid.add(scr);
+  lap.add(lid);
+  g.add(lap);
+  // handheld device, face up, its screen breathing a little light
+  const dev = new T.Group();
+  dev.position.set(0.45, 1.36, 0.12);
+  dev.rotation.y = -0.5;
+  box(dev, 0x1e2426, 0, 0, 0, 0.17, 0.03, 0.32, { roughness: 0.7 });
+  for (const z of [-0.155, 0.155]) box(dev, 0xb4762f, 0, 0, z, 0.18, 0.04, 0.03, { roughness: 0.85 });
+  const face = new T.Mesh(
+    new T.PlaneGeometry(0.13, 0.25),
+    new T.MeshStandardMaterial({
+      color: 0x000000,
+      emissive: 0xffffff,
+      emissiveMap: screenTexture('device'),
+      emissiveIntensity: 0.9,
+      roughness: 0.15
+    })
+  );
+  face.rotation.x = -Math.PI / 2;
+  face.position.y = 0.017;
+  dev.add(face);
+  halo(dev, 0x7fe0d0, 0, 0.1, 0, 0.6);
+  dev.userData.handheld = true;
+  g.add(dev);
+  // salvage clutter: a dented can, a coil of wire, a crate stool
+  pole(g, 0x6c6f6a, 0.65, 1.42, -0.3, 0.06, 0.16);
+  piece(g, new T.TorusGeometry(0.1, 0.012, 5, 14), 0x8a5a33, [0.1, 1.36, 0.3], [1, 1, 1]).rotation.x = Math.PI / 2;
+  box(g, colors.wood, 0.1, 0.72, 0.95, 0.6, 0.62, 0.5);
 }
 function buildingMesh(b) {
   const g = new T.Group();
@@ -173,6 +296,7 @@ function buildingMesh(b) {
     box(g, colors.plank, 0, 0.98, 0, 0.85, 0.12, 0.8);
     box(g, colors.plank, 0, 1.35, -0.36, 0.85, 0.65, 0.1);
   }
+  if (b.type === 'desk') deskMesh(g);
   if (b.type === 'table') {
     for (const x of [-0.7, 0.7]) for (const z of [-0.4, 0.4]) pole(g, colors.wood, x, 0.84, z, 0.06, 0.9);
     box(g, colors.plank, 0, 1.3, 0, 1.7, 0.15, 1.05);
@@ -423,7 +547,7 @@ function makeBoat() {
   });
   hullGeo.rotateX(Math.PI / 2);
   piece(g, hullGeo, 0x427c80, [0, 0.68, 0]);
-  for (let j = -2; j <= 2; j++) box(g, j % 2 ? 0xbe9866 : 0xd1ad73, j * 0.25, 0.29, 0, 0.23, 0.09, 2.3);
+  for (let j = -2; j <= 2; j++) box(g, j % 2 ? 0xbe9866 : 0x9f8a6a, j * 0.25, 0.29, 0, 0.23, 0.09, 2.3);
   for (const z of [-0.9, 0.8]) box(g, 0xb99868, 0, 0.62, z, 1.36, 0.11, 0.32);
   const pts = outline.getPoints(70).map(p => new V(p.x, 0.72, p.y));
   piece(g, new T.TubeGeometry(new T.CatmullRomCurve3(pts, true), 100, 0.045, 6, true), 0xd5b783);
@@ -481,7 +605,8 @@ export class OceanWorld {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = this.quality.soft ? T.PCFSoftShadowMap : T.PCFShadowMap;
     this.renderer.toneMapping = T.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.05;
+    this.renderer.toneMappingExposure = 1.0;
+    this.post = new PostFX(this.renderer, this.settings.quality);
     this.camera = new T.PerspectiveCamera(44, 1, 0.1, 1800);
     this.yaw = 0.63;
     this.pitch = 0.64;
@@ -511,9 +636,12 @@ export class OceanWorld {
     this.sun.shadow.bias = -0.0006;
     this.sun.shadow.normalBias = 0.03;
     this.scene.add(this.sun);
-    for (const c of [colors.wood, colors.plank, colors.darkWood, 0xcba574, 0xa87e50, 0xd1ad73]) {
-      mat(c).map = woodTexture();
-      mat(c).needsUpdate = true;
+    for (const c of [colors.wood, colors.plank, colors.darkWood, 0x9a8668, 0x7d654b, 0x9f8a6a]) {
+      const m = mat(c);
+      m.map = m.bumpMap = woodTexture();
+      m.bumpScale = 2.2;
+      m.roughness = 0.88;
+      m.needsUpdate = true;
     }
     this.sky = makeSky(this.quality);
     this.scene.add(this.sky);
@@ -633,13 +761,13 @@ export class OceanWorld {
     this.renderer.setSize(this.width, this.height, false);
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
+    this.post?.setSize(this.width, this.height);
   }
   rotate(yawDelta, pitchDelta) {
     const k = this.settings.camSens ?? 1;
     yawDelta *= k;
     pitchDelta *= k * (this.settings.invertY ? -1 : 1);
     this.yaw += yawDelta;
-    if (Math.abs(yawDelta) + Math.abs(pitchDelta) > 1e-4) this.lastManualCam = performance.now();
     if (this.firstPerson && !this.placement)
       this.firstPitch = Math.max(-1.15, Math.min(1.15, (this.firstPitch || 0) + pitchDelta));
     else this.pitch = Math.max(0.3, Math.min(1.2, this.pitch + pitchDelta));
@@ -657,6 +785,7 @@ export class OceanWorld {
       this.lastBuildings = key;
       while (this.home.children.length) this.home.remove(this.home.children[0]);
       for (const b of s.buildings) this.home.add(buildingMesh(b));
+      this.deviceShown = null;
       const floors = s.buildings.filter(b => b.type === 'floor');
       const minX = Math.min(...floors.map(b => b.x * 3.6)) - 1.8,
         maxX = Math.max(...floors.map(b => b.x * 3.6)) + 1.8,
@@ -668,6 +797,11 @@ export class OceanWorld {
         (maxX - minX) / 2,
         (maxZ - minZ) / 2
       );
+    }
+    const carried = !!s.device?.owned;
+    if (this.deviceShown !== carried) {
+      this.deviceShown = carried;
+      this.home.traverse(o => o.userData.handheld && (o.visible = !carried));
     }
     const syncMap = (items, map, make) => {
       const ids = new Set(items.map(x => x.id));
@@ -859,23 +993,6 @@ export class OceanWorld {
       u.uSpeed.value = this.hullSpeed;
       u.uHull.value.set(s.ship ? 11 : 1.9, s.ship ? 2.6 : 0.9);
       u.uTrail.value = this.trail.record(hx, hz, this.hullSpeed, t);
-      // Auto camera: once the player leaves the camera alone for 2.5 s, ease it round behind whatever they steer.
-      const steerSpeed = riding ? this.moveSpeed : this.hullSpeed;
-      if (
-        this.settings.camFollow !== false &&
-        !opts.title &&
-        !this.firstPerson &&
-        !this.placement &&
-        !foot &&
-        !aboard &&
-        steerSpeed > 1.2 &&
-        performance.now() - (this.lastManualCam || 0) > 2500
-      ) {
-        const heading = helm ? s.ship.heading : riding ? s.player.heading : boat.heading,
-          behind = heading + Math.PI,
-          diff = Math.atan2(Math.sin(behind - this.yaw), Math.cos(behind - this.yaw));
-        this.yaw += diff * (1 - Math.exp(-dt * 0.9 * Math.min(1, steerSpeed / 5)));
-      }
       if (this.hullSpeed > 3.2 && !s.inCave && !diving) {
         this.sprayTimer = (this.sprayTimer || 0) - dt;
         if (this.sprayTimer <= 0) {
@@ -1078,7 +1195,7 @@ export class OceanWorld {
       rain.setY(i, (rain.getY(i) - dt * 20 + 20) % 20);
     }
     rain.needsUpdate = true;
-    this.scene.fog.density = diving ? 0.035 : s.inCave ? 0.045 : 0.0026 + storm * 0.006;
+    this.scene.fog.density = diving ? 0.035 : s.inCave ? 0.045 : 0.0036 + storm * 0.007;
     if (diving || s.inCave) {
       this.scene.background.set(diving ? 0x062738 : 0x081720);
       this.scene.fog.color.copy(this.scene.background);
@@ -1163,7 +1280,10 @@ export class OceanWorld {
     this.camera.updateProjectionMatrix();
     this.sky.position.copy(this.camera.position);
     this.water.position.set(Math.round(this.camera.position.x / 4) * 4, 0, Math.round(this.camera.position.z / 4) * 4);
-    this.renderer.render(this.scene, this.camera);
+    const now = performance.now();
+    this.post.storm = this.stormLevel;
+    this.post.render(this.scene, this.camera, Math.min(0.1, (now - (this.lastRender || now)) / 1000));
+    this.lastRender = now;
   }
   homeRect() {
     const h = this.water.material.uniforms.uHome.value;

@@ -6,6 +6,10 @@ import { ACHIEVEMENTS, checkUnlocks, achievementCount } from '../dist/achievemen
 import { recordCreature, syncOwned, codexProgress, codexEntries, LORE } from '../dist/codex.js';
 import { ensureLandBeasts, normalizeWildlife, stepLandBeast, seaFamily } from '../dist/wildlife.js';
 import { ISLANDS } from '../dist/islands.js';
+import { normalizeDevice, takeDevice, readLaptop, tickDevice, DEVICE_APPS } from '../dist/device.js';
+import { placeBuilding } from '../dist/rules.js';
+import { demolish } from '../dist/construction.js';
+import { facilityId } from '../dist/facilities.js';
 import { normalizeStats, tickStats, milestoneRows, statsReport } from '../dist/stats.js';
 import {
   slotKey,
@@ -141,6 +145,43 @@ test('save slots: slot 1 keeps legacy keys, others are separate; export round-tr
   assert.equal(activeSlot(st), 1);
   setActiveSlot(st, 3);
   assert.equal(activeSlot(st), 3);
+});
+test('raft desk: device must be picked up on foot; desk is fixed; old saves get one', () => {
+  const s = createState(5);
+  assert.equal(s.device.owned, false);
+  assert.ok(s.buildings.some(b => b.type === 'desk'));
+  assert.ok(validateSave(s));
+  assert.equal(takeDevice(s).ok, false, 'still on the boat');
+  s.player = { ...s.player, mode: 'foot', x: 3.4, z: 3.2, level: 0 };
+  assert.ok(takeDevice(s).ok);
+  assert.equal(takeDevice(s).ok, false, 'only once');
+  const l = readLaptop(s);
+  assert.ok(l.ok && l.first && l.lines.length >= 4);
+  assert.equal(readLaptop(s).first, false);
+  assert.equal(placeBuilding(s, 'desk', 0, 0).ok, false, 'cannot build another desk');
+  const desk = s.buildings.find(b => b.type === 'desk');
+  assert.equal(demolish(s, facilityId(desk)).ok, false, 'cannot scrap the desk');
+  tickDevice(s, 100, true);
+  assert.ok(s.device.battery > 64 && s.device.battery <= 100);
+  // a pre-0.11 save that has already been played
+  const old = createState(6);
+  delete old.device;
+  old.buildings = old.buildings.filter(b => b.type !== 'desk');
+  old.salvaged = 4;
+  normalizeDevice(old);
+  assert.equal(old.device.owned, true);
+  assert.ok(old.buildings.some(b => b.type === 'desk'));
+  assert.ok(DEVICE_APPS.some(a => a.id === 'beasts') && DEVICE_APPS.some(a => a.id === 'status'));
+});
+test('ferocity: deep-sea and hot-tempered beasts look savage, ordinary sea beasts stay docile', () => {
+  const sea = Array.from({ length: 40 }, (_, i) => phenotype(makeGenome(300 + i, i % 4, 'sea')));
+  assert.ok(sea.filter(p => p.fierce >= 0.55).length < sea.length / 4);
+  const deep = Array.from({ length: 40 }, (_, i) => phenotype(makeGenome(300 + i, i % 4, 'deep')));
+  assert.ok(deep.filter(p => p.fierce >= 0.35).length > deep.length * 0.6);
+  const g = makeGenome(1, 0, 'sea');
+  g.temper = [255, 255];
+  assert.ok(phenotype(g).fierce >= 0.9);
+  for (const p of [...sea, ...deep]) assert.ok(p.fierce >= 0 && p.fierce <= 1);
 });
 test('offline cache lists every module with the current asset version', () => {
   const sw = readFileSync('dist/sw.js', 'utf8'),

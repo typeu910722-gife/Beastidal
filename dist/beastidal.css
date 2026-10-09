@@ -1084,3 +1084,259 @@
 html[lang='en'] .brand small {
   display: none;
 }
+
+/* ---------------------------------------------------------------- handheld device (phone-style hub) */
+/* A rugged, second-hand handheld: rubber bumpers, a cracked corner, a dim screen with scanlines. */
+body #drawer.device {
+  left: auto;
+  right: max(24px, 4vw);
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+  width: 384px;
+  height: min(780px, calc(100vh - 40px));
+  border-radius: 40px;
+  border: 11px solid #15191a;
+  outline: 3px solid #8e5b26;
+  outline-offset: -1px;
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 80% at 30% 0%, #10292c 0%, #071316 60%, #050c0e 100%);
+  box-shadow:
+    0 0 0 1px #000,
+    inset 0 0 40px #000a,
+    0 30px 70px #000c;
+  backdrop-filter: none;
+  overflow: hidden;
+  z-index: 45;
+  animation: device-in 0.22s ease-out;
+}
+@keyframes device-in {
+  from {
+    opacity: 0;
+    transform: translateY(-46%) scale(0.97);
+  }
+}
+/* spider-web crack in the top-right corner of the glass */
+body #drawer.device::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 190px;
+  height: 170px;
+  pointer-events: none;
+  opacity: 0.55;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 190 170' fill='none' stroke='%23e8f4f2' stroke-width='.8' stroke-linecap='round'%3E%3Cpath d='M160 26 L120 40 L92 33 L60 52'/%3E%3Cpath d='M160 26 L150 64 L128 90 L118 132'/%3E%3Cpath d='M160 26 L188 50'/%3E%3Cpath d='M160 26 L174 2'/%3E%3Cpath d='M160 26 L130 8 L104 0'/%3E%3Cpath d='M120 40 L112 62 L86 78'/%3E%3Cpath d='M150 64 L176 88 L188 120'/%3E%3Cpath d='M138 31 Q148 44 155 46 Q166 40 171 33'/%3E%3C/svg%3E")
+    no-repeat top right / contain;
+}
+body #drawer.device > header {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 10px 18px 12px;
+  border-bottom: 1px solid #ffffff12;
+}
+body #drawer.device .eyebrow {
+  display: flex;
+  justify-content: space-between;
+  font:
+    600 11px/1.4 ui-monospace,
+    'SFMono-Regular',
+    Menlo,
+    monospace;
+  letter-spacing: 0.06em;
+  color: #8fb8b0;
+  margin: 0 18px 6px;
+}
+body #drawer.device h2 {
+  font-size: 20px;
+  margin: 2px 0 0;
+  color: #e3efe9;
+}
+body #drawer.device #close-drawer {
+  position: absolute;
+  right: 14px;
+  top: 34px;
+  width: 34px;
+  height: 34px;
+  font-size: 18px;
+}
+body #drawer.device #drawer-body {
+  padding: 12px 16px 26px;
+  font-size: 14px;
+}
+body #drawer.device #drawer-body > p {
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+/* home indicator */
+body #drawer.device #drawer-body::after {
+  content: '';
+  display: block;
+  width: 110px;
+  height: 4px;
+  border-radius: 4px;
+  background: #ffffff30;
+  margin: 18px auto 0;
+}
+.dv-back {
+  border: 0;
+  background: none;
+  color: #8fdcc9;
+  padding: 2px 0 10px;
+  font-size: 14px;
+}
+.dv-widget {
+  border-radius: 18px;
+  padding: 14px 16px;
+  background: linear-gradient(160deg, #173a3d, #0c2124);
+  border: 1px solid #ffffff14;
+  margin-bottom: 16px;
+}
+.dv-widget-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.dv-widget-head strong {
+  font:
+    300 34px/1 ui-monospace,
+    Menlo,
+    monospace;
+  color: #e8f1ec;
+}
+.dv-widget-head span,
+.dv-widget small {
+  font-size: 12px;
+  color: #8fb0aa;
+}
+.dv-vital {
+  display: grid;
+  grid-template-columns: 38px 1fr 30px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  margin: 6px 0;
+}
+.dv-vital i {
+  height: 6px;
+  border-radius: 6px;
+  background: #ffffff14;
+  overflow: hidden;
+}
+.dv-vital b {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+}
+.dv-vital.hp b {
+  background: #9ad6b8;
+}
+.dv-vital.wt b {
+  background: #79b8d6;
+}
+.dv-vital.fd b {
+  background: #e0b578;
+}
+.dv-vital em {
+  font-style: normal;
+  text-align: right;
+  color: #c7d8d3;
+}
+.dv-apps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 8px;
+}
+.dv-apps button {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: #d7e6e1;
+}
+.dv-apps button span {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  font-size: 24px;
+  background: linear-gradient(150deg, #24494a, #10282b);
+  border: 1px solid #ffffff1c;
+  box-shadow: inset 0 1px 0 #ffffff1a;
+}
+.dv-apps button:hover span,
+.dv-apps button:focus-visible span {
+  border-color: #8fdcc9;
+}
+.dv-apps small {
+  font-size: 11px;
+}
+.dv-note {
+  margin-top: 18px;
+  font-size: 12px;
+  color: #7f9c96;
+  text-align: center;
+}
+.dv-status-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 16px;
+  font-size: 14px;
+}
+.dv-status-list span {
+  color: #8fb0aa;
+}
+.dv-status-list b {
+  font-weight: 500;
+  text-align: right;
+}
+.laptop-screen {
+  font:
+    13px/1.8 ui-monospace,
+    Menlo,
+    monospace;
+  color: #7fe0d4;
+  background: #04100f;
+  border: 1px solid #ffffff14;
+  border-radius: 6px;
+  padding: 14px 16px;
+  white-space: pre-wrap;
+  text-shadow: 0 0 6px #4fd2c255;
+}
+/* phones held sideways: the device turns landscape too */
+@media (max-height: 560px) {
+  body #drawer.device {
+    width: min(720px, calc(100vw - 32px));
+    height: calc(100vh - 20px);
+    border-radius: 26px;
+    border-width: 8px;
+  }
+  body #drawer.device > header {
+    padding: 6px 16px 8px;
+  }
+  body #drawer.device #close-drawer {
+    top: 20px;
+  }
+  body #drawer.device h2 {
+    font-size: 16px;
+  }
+  .dv-apps {
+    grid-template-columns: repeat(8, 1fr);
+  }
+  .dv-apps button span {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+  .dv-widget {
+    padding: 10px 14px;
+  }
+  .dv-widget-head strong {
+    font-size: 26px;
+  }
+}
