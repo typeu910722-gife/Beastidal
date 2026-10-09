@@ -1516,3 +1516,244 @@ body.focus-on #beast-bar {
   font-size: 12px;
   color: #8fb0aa;
 }
+
+/* ---------------------------------------------------------------- studio splash (YZ PROJECT, ~7 s) */
+/* 0.3–2.5 s the five pieces fly in from different directions and lock together · 2.5 s impact flash and
+   shock line · 3.0 s a light sweep runs across the metal · 3.4–4.8 s the studio name rises letter by letter ·
+   6.2–7.0 s everything fades to the title screen. */
+#splash {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(60% 50% at 50% 46%, #0d1517 0%, #030506 70%, #000 100%);
+  cursor: pointer;
+  animation: splash-out 0.8s ease-in 6.2s forwards;
+}
+#splash.done {
+  display: none;
+}
+.splash-stage {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 4vmin;
+}
+.splash-mark {
+  width: min(42vmin, 300px);
+  overflow: visible;
+  filter: drop-shadow(0 0 0 #9ff3ff00);
+  animation: mark-glow 1.6s ease-out 2.45s;
+}
+.yz-p {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: 1.1s cubic-bezier(0.16, 0.9, 0.22, 1.08) forwards;
+}
+.yz-y {
+  animation-name: in-left;
+  animation-delay: 0.35s;
+}
+.yz-ztop {
+  animation-name: in-top;
+  animation-delay: 0.7s;
+}
+.yz-zbot {
+  animation-name: in-bottom;
+  animation-delay: 0.95s;
+}
+.yz-zdiag {
+  animation-name: in-spin;
+  animation-delay: 1.2s;
+}
+.yz-arm {
+  animation-name: in-arm;
+  animation-delay: 1.45s;
+  animation-duration: 0.9s;
+}
+@keyframes in-left {
+  from {
+    opacity: 0;
+    transform: translate(-260%, -40%) rotate(-28deg) scale(1.3);
+    filter: blur(6px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes in-top {
+  from {
+    opacity: 0;
+    transform: translate(40%, -520%) rotate(12deg);
+    filter: blur(6px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes in-bottom {
+  from {
+    opacity: 0;
+    transform: translate(-40%, 520%) rotate(-12deg);
+    filter: blur(6px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes in-spin {
+  from {
+    opacity: 0;
+    transform: scale(3.2) rotate(160deg);
+    filter: blur(8px);
+  }
+  55% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes in-arm {
+  from {
+    opacity: 0;
+    transform: translate(420%, 260%) rotate(90deg);
+  }
+  70% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes mark-glow {
+  0% {
+    filter: drop-shadow(0 0 0 #9ff3ff00);
+  }
+  12% {
+    filter: drop-shadow(0 0 22px #bff6ffcc);
+  }
+  100% {
+    filter: drop-shadow(0 0 0 #9ff3ff00);
+  }
+}
+.yz-sheen {
+  animation: sheen 1.1s ease-in-out 3s forwards;
+}
+@keyframes sheen {
+  to {
+    transform: translateX(330px);
+  }
+}
+/* impact: a brief bloom and a thin horizontal shock line */
+.splash-flash {
+  position: absolute;
+  left: 50%;
+  top: 36%;
+  width: 140vmax;
+  height: 2px;
+  transform: translate(-50%, -50%) scaleX(0);
+  background: linear-gradient(90deg, transparent, #dffbff, transparent);
+  box-shadow: 0 0 24px 4px #9ff3ff88;
+  opacity: 0;
+  animation: shock 0.9s ease-out 2.45s;
+}
+@keyframes shock {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(0.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleX(1);
+  }
+}
+.splash-name {
+  margin: 0;
+  display: flex;
+  font:
+    300 min(5.2vmin, 34px) / 1 'Noto Sans TC',
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.32em;
+  color: #e9f1ef;
+}
+.splash-name span {
+  opacity: 0;
+  transform: translateY(0.8em);
+  filter: blur(4px);
+  animation: letter 0.7s ease-out forwards;
+}
+.splash-name .gap {
+  width: 0.6em;
+}
+.splash-name span:nth-child(1) {
+  animation-delay: 3.4s;
+}
+.splash-name span:nth-child(2) {
+  animation-delay: 3.5s;
+}
+.splash-name span:nth-child(4) {
+  animation-delay: 3.75s;
+}
+.splash-name span:nth-child(5) {
+  animation-delay: 3.85s;
+}
+.splash-name span:nth-child(6) {
+  animation-delay: 3.95s;
+}
+.splash-name span:nth-child(7) {
+  animation-delay: 4.05s;
+}
+.splash-name span:nth-child(8) {
+  animation-delay: 4.15s;
+}
+.splash-name span:nth-child(9) {
+  animation-delay: 4.25s;
+}
+.splash-name span:nth-child(10) {
+  animation-delay: 4.35s;
+}
+@keyframes letter {
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+@keyframes splash-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .yz-p,
+  .splash-name span {
+    animation: letter 0.6s ease-out 0.2s forwards;
+  }
+  .splash-flash,
+  .yz-sheen {
+    display: none;
+  }
+}

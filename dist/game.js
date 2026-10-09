@@ -111,6 +111,18 @@ import {
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+// Studio splash: pure CSS animation in index.html; this only removes it when done or skipped (tap / key).
+// ?debug skips it so automated tests can start right away.
+(() => {
+  const el = document.getElementById('splash');
+  if (!el) return;
+  const done = () => el.classList.add('done');
+  if (new URLSearchParams(location.search).has('debug')) return done();
+  el.addEventListener('animationend', e => e.target === el && done());
+  el.addEventListener('pointerdown', done);
+  addEventListener('keydown', done, { once: true });
+  setTimeout(done, 7600);
+})();
 let state = createState(),
   hasSave = false,
   storageOk = true,
