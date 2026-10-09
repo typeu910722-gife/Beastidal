@@ -1,6 +1,6 @@
-import{phenotype,clamp}from'./genetics.js?v=0.7';
-import{NODES,harvest}from'./islands.js?v=0.7';
-import{restPlace,canDeploy}from'./ship.js?v=0.7';
+import{phenotype,clamp}from'./genetics.js?v=0.7.3';
+import{NODES,harvest}from'./islands.js?v=0.7.3';
+import{restPlace,canDeploy}from'./ship.js?v=0.7.3';
 export const EXPLORE=[
  {id:'palm-cache',name:'漂流者寶箱',x:57,z:33,kind:'chest',rewards:{wood:8,food:5,metal:3}},
  {id:'archive',name:'御獸文明石碑',x:34,z:-81,kind:'ruin',rewards:{crystal:3}},

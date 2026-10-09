@@ -11,3 +11,5 @@
 .facility-hero{display:flex;align-items:center;gap:20px;padding:22px 8px;border-bottom:1px solid #c9dbbe30}.facility-hero>span{font-size:52px;color:#d6c693}.facility-hero small{letter-spacing:.18em;color:#8fb4ad}.facility-hero h3{font-size:23px;margin:7px 0}.island-route{display:flex;justify-content:space-between;margin:8px 0;text-align:left}.island-route small{color:#a6cbb9}.mouse-look #ocean{cursor:none}.mouse-look::after{content:'+';position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);color:#f5efd4;font:22px monospace;pointer-events:none;z-index:8}
 
 .housing{margin:0 0 24px}.housing-row{padding:16px 0;border-bottom:1px solid #a9c5bb30;display:grid;grid-template-columns:1fr auto;gap:8px}.housing-row label{grid-column:1/-1;font-size:14px}.housing-row small{display:block;color:#acc3b4;font-size:12px;margin-top:4px}.housing-row select{min-width:0;width:100%}.housing-row button{padding:10px 16px}
+
+#film-flash{position:fixed;inset:0;background:#fff;opacity:0;z-index:58;pointer-events:none}

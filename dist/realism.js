@@ -1,6 +1,6 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import{ISLANDS}from'./islands.js?v=0.7';
+import{ISLANDS}from'./islands.js?v=0.7.3';
 
 export const QUALITY={
  high:{label:'寫實',octaves:5,pixelRatio:2,shadow:2048,soft:true,rings:150,segments:192,envSize:256,envEvery:1.5},
