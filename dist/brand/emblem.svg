@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Beastidal emblem">
+  <title>比斯泰德 Beastidal</title>
+  <defs>
+    <radialGradient id="abyss" cx="50%" cy="38%" r="70%">
+      <stop offset="0" stop-color="#1b5a63"/>
+      <stop offset=".45" stop-color="#0b3040"/>
+      <stop offset="1" stop-color="#03111b"/>
+    </radialGradient>
+    <linearGradient id="rift" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6d8"/>
+      <stop offset=".45" stop-color="#9ce8d1"/>
+      <stop offset="1" stop-color="#2fb4b0"/>
+    </linearGradient>
+    <radialGradient id="riftGlow" cx="50%" cy="42%" r="50%">
+      <stop offset="0" stop-color="#bff7e6" stop-opacity=".85"/>
+      <stop offset=".35" stop-color="#5fd6c2" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#5fd6c2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1f7f86"/>
+      <stop offset="1" stop-color="#062431"/>
+    </linearGradient>
+    <linearGradient id="fin" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0c2b38"/>
+      <stop offset="1" stop-color="#05141d"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3d9a0"/>
+      <stop offset=".5" stop-color="#b98a4b"/>
+      <stop offset="1" stop-color="#f3d9a0"/>
+    </linearGradient>
+    <clipPath id="disc"><circle cx="256" cy="256" r="226"/></clipPath>
+  </defs>
+  <circle cx="256" cy="256" r="246" fill="#03111b"/>
+  <circle cx="256" cy="256" r="236" fill="none" stroke="url(#rim)" stroke-width="6"/>
+  <g clip-path="url(#disc)">
+    <rect width="512" height="512" fill="url(#abyss)"/>
+    <!-- distant stars of an unfamiliar sky -->
+    <g fill="#d9fff3" opacity=".75">
+      <circle cx="120" cy="120" r="2.2"/><circle cx="168" cy="82" r="1.4"/><circle cx="352" cy="96" r="1.8"/>
+      <circle cx="394" cy="150" r="1.3"/><circle cx="96" cy="196" r="1.2"/><circle cx="420" cy="214" r="1.6"/>
+      <circle cx="300" cy="62" r="1.1"/><circle cx="214" cy="58" r="1.5"/>
+    </g>
+    <!-- the rift: a tear of light between worlds -->
+    <ellipse cx="256" cy="200" rx="150" ry="170" fill="url(#riftGlow)"/>
+    <path d="M256 52 C 292 120, 300 196, 256 330 C 212 196, 220 120, 256 52 Z" fill="url(#rift)"/>
+    <path d="M256 92 C 276 140, 280 196, 256 286 C 232 196, 236 140, 256 92 Z" fill="#fffbea" opacity=".9"/>
+    <!-- the reborn: a small figure falling through the rift -->
+    <g fill="#0b2b38" transform="translate(256 168) rotate(-18)">
+      <circle cx="0" cy="-22" r="7"/>
+      <path d="M-6 -14 L6 -14 L9 10 L3 10 L1 28 L-3 28 L-5 10 L-10 10 Z"/>
+      <path d="M-6 -11 L-20 -24 M6 -11 L20 -4" stroke="#0b2b38" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <!-- light spilling onto the sea -->
+    <ellipse cx="256" cy="336" rx="120" ry="16" fill="#bff7e6" opacity=".35"/>
+    <!-- the alien ocean -->
+    <path d="M0 330 C 70 306, 120 352, 190 330 S 320 304, 380 330 S 470 352, 512 326 V512 H0 Z" fill="url(#sea)"/>
+    <path d="M0 366 C 80 344, 140 384, 220 362 S 360 340, 430 366 S 490 380, 512 360 V512 H0 Z" fill="#0a3442"/>
+    <path d="M0 404 C 90 386, 150 420, 240 400 S 380 384, 460 404 L512 396 V512 H0 Z" fill="#062230"/>
+    <path d="M60 334 C 110 322, 140 340, 180 333" stroke="#9ce8d1" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/>
+    <path d="M300 326 C 340 316, 370 334, 410 327" stroke="#9ce8d1" stroke-width="3" fill="none" opacity=".5" stroke-linecap="round"/>
+    <!-- the beast: a great finned back breaking the surface -->
+    <path d="M118 372 C 150 300, 214 262, 300 268 C 250 286, 214 316, 196 372 Z" fill="url(#fin)"/>
+    <path d="M300 268 C 330 270, 350 282, 368 300 C 344 292, 320 290, 300 268 Z" fill="url(#fin)"/>
+    <path d="M150 352 C 176 312, 214 288, 262 280" stroke="#9ce8d1" stroke-width="2.5" fill="none" opacity=".75"/>
+    <g fill="#9ce8d1"><circle cx="176" cy="330" r="3"/><circle cx="196" cy="314" r="2.6"/><circle cx="218" cy="302" r="2.2"/><circle cx="240" cy="292" r="1.8"/></g>
+    <path d="M206 378 C 230 386, 270 386, 300 376" stroke="#bff7e6" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
+  </g>
+</svg>
