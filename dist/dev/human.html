@@ -33,11 +33,12 @@
     <canvas id="c"></canvas>
     <div id="hud">
       Developer view: the protagonist idle · walking · running · sitting. ?face=1 frames the head · ?t=seconds freezes
-      time.
+      time · ?proc shows the procedural fallback.
     </div>
     <script type="module">
       import * as T from '../vendor/three.module.min.js';
       import { makeHuman, animateHuman } from '../human.js';
+      import { loadProtagonist, dressHuman } from '../protagonist.js';
       const q = new URLSearchParams(location.search),
         face = q.has('face'),
         frozen = q.has('t') ? Number(q.get('t')) : null;
@@ -68,12 +69,13 @@
         { speed: 0, mode: 'sit' }
       ];
       const people = poses.map((p, i) => {
-        const h = makeHuman();
+        const h = q.has('proc') ? makeHuman() : dressHuman(makeHuman());
         h.position.x = (i - 1.5) * 1.1;
         h.rotation.y = 0.45;
         scene.add(h);
         return h;
       });
+      window.people = people;
       const cam = new T.PerspectiveCamera(face ? 22 : 34, 1, 0.05, 100);
       if (face) {
         people.forEach((h, i) => (h.visible = i === 0));
@@ -92,6 +94,9 @@
       }
       addEventListener('resize', resize);
       resize();
+      // ?proc shows the procedural fallback figure instead of the rigged model
+      if (!q.has('proc'))
+        loadProtagonist('../models/' + (q.get('model') || 'protagonist.glb')).then(() => (window.modelReady = true));
       let last = performance.now();
       if (frozen !== null) people.forEach((h, i) => animateHuman(h, frozen, poses[i]));
       renderer.setAnimationLoop(now => {

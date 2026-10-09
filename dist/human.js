@@ -5,6 +5,7 @@
 //                   └ hip L/R 0.91 ─ knee 0.49 ─ ankle 0.07 ─ foot
 // animateHuman() drives walk / run / idle / sit / ride poses procedurally, with breathing and blinking.
 import * as T from './vendor/three.module.min.js';
+import { animateModel } from './protagonist.js?v=0.11.0';
 
 const V = T.Vector3;
 const smooth = (a, b, x) => {
@@ -459,6 +460,8 @@ export function makeHuman(opts = {}) {
 const lerp = (a, b, k) => a + (b - a) * k;
 // mode: 'walk' (speed in m/s; idle when ~0, runs above ~4), 'sit', 'ride', 'row'.
 export function animateHuman(h, dt, { speed = 0, mode = 'walk' } = {}) {
+  // once the rigged model has dressed this figure, its clips drive the body
+  if (animateModel(h, dt, { speed, mode })) return;
   const u = h.userData,
     J = u.J;
   u.t += dt;

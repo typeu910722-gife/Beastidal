@@ -10,6 +10,7 @@ import { phenotype, seeded } from './genetics.js?v=0.11.0';
 import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.11.0';
 import { PostFX } from './postfx.js?v=0.11.0';
 import { makeHuman, animateHuman } from './human.js?v=0.11.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.11.0';
 import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.11.0';
 import { buildError } from './rules.js?v=0.11.0';
 import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.11.0';
@@ -503,8 +504,11 @@ function buildingMesh(b) {
   return g;
 }
 // The protagonist (see human.js): jointed, with a face, hands and procedural walk / idle / sit poses.
-export function character() {
-  return makeHuman();
+// dressed: swap in the rigged character model once it has loaded (the intro film keeps the procedural figure,
+// whose limbs it poses directly)
+export function character(dressed = true) {
+  const h = makeHuman();
+  return dressed ? dressHuman(h) : h;
 }
 function makeBoat() {
   const g = new T.Group();
@@ -590,6 +594,7 @@ export class OceanWorld {
     this.renderer.toneMapping = T.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.0;
     this.post = new PostFX(this.renderer, this.settings.quality);
+    loadProtagonist();
     this.camera = new T.PerspectiveCamera(44, 1, 0.1, 1800);
     this.yaw = 0.63;
     this.pitch = 0.64;
@@ -1558,7 +1563,7 @@ export class IntroFilm {
     box(this.bike, 0x2a3b44, 0, 1, -0.28, 0.47, 0.17, 0.7);
     box(this.bike, 0x527f84, 0, 0.83, 0.66, 0.48, 0.85, 0.3);
     rod(this.bike, [-0.35, 1.25, 0.55], [0.35, 1.25, 0.55], 0.035, 0x223941);
-    const person = character();
+    const person = character(false);
     person.position.set(0, 0.55, -0.22);
     this.bike.add(person);
     ball(person, 0xe2d2b1, 0, 1.7, -0.01, 0.3, 0.31, 0.3);
@@ -1593,7 +1598,7 @@ export class IntroFilm {
     this.portal = new T.Scene();
     this.portal.background = new T.Color(0x051722);
     this.portal.add(new T.HemisphereLight(0x9cedda, 0x133757, 3));
-    this.soul = character();
+    this.soul = character(false);
     this.portal.add(this.soul);
     this.rings = [];
     for (let i = 0; i < 18; i++) {
