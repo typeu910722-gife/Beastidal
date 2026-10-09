@@ -1,0 +1,9 @@
+name = "beastidal"
+compatibility_date = "2025-09-01"
+
+[assets]
+directory = "./dist"
+
+[[routes]]
+pattern = "beastidal.yzprojecttw.com"
+custom_domain = true

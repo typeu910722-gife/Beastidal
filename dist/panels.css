@@ -1,0 +1,35 @@
+/* Roomier dialogs, loaded after all legacy mobile overrides. */
+#drawer{left:50%;right:auto;transform:translateX(-50%);top:76px;bottom:28px;width:min(760px,calc(100vw - 48px));border-radius:16px;animation:none;background:#082b37f5}
+#drawer>header{padding:24px 30px;flex-shrink:0}
+#drawer h2{font-size:28px;margin-top:6px}
+#drawer-body{padding:26px 30px;min-height:0;overscroll-behavior:contain;font-size:16px}
+#drawer-body>p{font-size:16px;line-height:1.85}
+#drawer .info-strip,#drawer .build-card p,#drawer .inventory-row{font-size:15px;line-height:1.8}
+#drawer .housing-row{padding:20px 0;gap:12px;grid-template-columns:minmax(0,1fr) auto}
+#drawer .housing-row label{font-size:17px}
+#drawer .housing-row small{font-size:14px}
+#drawer .gene-select{font-size:16px;min-height:48px}
+#drawer .housing-swap{grid-column:1/-1}
+#drawer .creature-card .specimen-hero{height:210px}
+#drawer .specimen-meta{padding:20px}
+#drawer .specimen-meta h3{font-size:20px}
+#drawer .specimen-meta p{font-size:14px}
+#drawer .pool-resident>.specimen-image{display:block;height:220px;background:radial-gradient(ellipse at 50% 100%,#2a676a99,#11323d)}
+#drawer .pool-resident>h3{padding:16px 20px;font-size:19px}
+#modal{width:760px;padding:40px 44px;max-height:calc(var(--game-height,100dvh) - 40px)}
+#modal-title{font-size:32px}
+#modal-body{font-size:17px;line-height:1.9}
+#modal-actions button{font-size:16px;min-height:48px}
+@media(max-width:700px){#drawer{width:calc(100vw - 24px);top:64px;bottom:14px}#drawer>header{padding:18px 20px}#drawer-body{padding:18px 20px}#drawer h2{font-size:24px}#modal{padding:24px}#modal-title{font-size:27px}#modal-body{font-size:15px}}
+.landscape-play #drawer{left:var(--edge-left,12px);right:var(--edge-right,12px);top:12px;bottom:var(--edge-bottom,12px);width:auto;transform:none;border-radius:12px;z-index:30}
+.landscape-play #drawer>header{padding:12px 20px}
+.landscape-play #drawer h2{font-size:24px;margin-top:2px}
+.landscape-play #drawer .eyebrow{font-size:11px}
+.landscape-play #drawer-body{padding:16px 22px}
+.landscape-play #drawer-body>p{font-size:15px;margin-bottom:14px}
+.landscape-play #modal-shade{padding:12px max(12px,env(safe-area-inset-right)) 12px max(12px,env(safe-area-inset-left))}
+.landscape-play #modal{width:min(820px,100%);padding:24px 28px;max-height:calc(var(--game-height,100dvh) - 24px)}
+.landscape-play #modal-title{font-size:26px;margin:8px 0 14px}
+.landscape-play #modal-body{font-size:15px}
+
+.rename-pen{padding:18px 0 24px;border-bottom:1px solid #c6dec330;margin-bottom:16px}.rename-pen label{display:block;font-size:16px;margin-bottom:10px}.rename-pen small{color:#a1bdc0;font-size:12px;margin-left:12px}.rename-pen>div{display:flex;gap:10px}.rename-pen input{min-width:0;flex:1;min-height:48px;border:1px solid #87aea666;border-radius:6px;padding:10px 14px;background:#07232e;color:#f2f7f4;font-size:17px}.rename-pen button{flex-shrink:0;padding:10px 18px;border-radius:6px}.rename-pen p{color:#efbd8f;font-size:14px;margin-top:8px}
