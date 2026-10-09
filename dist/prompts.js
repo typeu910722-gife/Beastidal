@@ -1,6 +1,6 @@
 // Input-aware wording. Game text is written for keyboard ("按 E 打撈"); this rewrites it for the device in hand.
 // Gamepad mapping follows game.js gamepad(): A interact, X build, Y creatures, LB bag, RB journal, LT dock,
-// RT repel/attack, Select expedition, L3 home, R3 view, D-pad ←/→ ride/dive, Start pause, B back.
+// RT repel/attack, Ⓨ contract (when a trusting beast is in reach), Select expedition, L3 home, R3 view, D-pad ←/→ ride/dive, Start pause, B back.
 export const PAD = {
   E: 'Ⓐ',
   B: 'Ⓧ',
@@ -16,6 +16,7 @@ export const PAD = {
   F: 'RT',
   R: 'Ⓧ',
   SPACE: 'RT',
+  X: 'Ⓨ',
   ESC: 'Ⓑ'
 };
 export const TOUCH = {
@@ -33,6 +34,7 @@ export const TOUCH = {
   F: '點「攻擊」',
   R: '點「旋轉」',
   SPACE: '點「驅離」',
+  X: '點「契約」',
   ESC: '點右上 Ⅱ'
 };
 // English wording (applied after translation, see i18n.js).
@@ -51,6 +53,7 @@ export const TOUCH_EN = {
   F: 'tap "Attack"',
   R: 'tap "Rotate"',
   SPACE: 'tap "Repel"',
+  X: 'tap "Contract"',
   ESC: 'tap Ⅱ (top right)'
 };
 const PAD_EN = { ...PAD, T: 'D-pad ←', G: 'D-pad →' };

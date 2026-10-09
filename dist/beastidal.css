@@ -1832,3 +1832,52 @@ body.focus-on #beast-bar {
   font-size: 12px;
   color: #f0a594;
 }
+
+/* contract scroll button: appears above the action button when a trusting wild beast is in reach */
+.contract-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 214px;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #2b2a14e8;
+  border: 1px solid #e8cf7a88;
+  color: #f6e7b4;
+  font-size: 14px;
+  box-shadow: 0 6px 22px #0007;
+  pointer-events: auto;
+}
+.contract-btn.danger {
+  background: #4a1915eb;
+  border-color: #e0705f99;
+  color: #ffd9d2;
+}
+.contract-btn kbd {
+  font-size: 11px;
+}
+.landscape-play .contract-btn {
+  left: auto;
+  right: calc(var(--edge-right) + 88px);
+  bottom: calc(var(--edge-bottom) + 86px);
+  transform: none;
+  width: 72px;
+  justify-content: center;
+  padding: 6px 4px;
+  font-size: 11px;
+  line-height: 1.25;
+  text-align: center;
+}
+.landscape-play .contract-btn small {
+  display: none;
+}
+.landscape-play .contract-btn kbd {
+  display: none;
+}
+body.focus-on .contract-btn {
+  display: none;
+}

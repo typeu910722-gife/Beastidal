@@ -1,8 +1,9 @@
 // Taming, 0.12: feed the same wild beast again and again (each feeding costs more bait: 1, 3, 5, 7 …). Every
 // feeding raises trust by a random 8–30 %, and by the 6th feeding (common) to 10th (rarest) it is certain to reach
-// 100 %. About 1 in 110 beasts that appear (0.9 %) is unusually tame: one feeding gives +90 %. At 100 % it follows you; then a
-// contract at the raft's work table binds it (success chance = trust %). Forcing a contract below 60 % trust can
-// send the beast into a frenzy: 1.2× speed and attack, chasing you for 6–17 seconds.
+// 100 %. About 1 in 110 beasts that appear (0.9 %) is unusually tame: one feeding gives +90 %. At 100 % it follows
+// you. Contract scrolls, made at the raft's work table and carried in the bag, bind a beast anywhere (success
+// chance = trust %). Forcing a contract below 60 % trust can send the beast into a frenzy: 1.2× speed and attack,
+// chasing you for 6–17 seconds.
 import { phenotype, geneName } from './genetics.js?v=0.11.0';
 import { freePen, normalizeHousing } from './housing.js?v=0.11.0';
 
@@ -26,6 +27,7 @@ export const frenzied = (w, elapsed) => (w.frenzyUntil || 0) > elapsed;
 
 // Old saves: trust built under the old rules turns into the equivalent number of feedings.
 export function normalizeTaming(s) {
+  s.contracts ??= 0;
   for (const w of s.wild || []) {
     w.trust ??= 0;
     if (w.feeds === undefined) w.feeds = Math.round((w.trust / 100) * feedsNeeded(w.genome));
@@ -61,23 +63,32 @@ export function feed(s, id, rng = Math.random) {
   return { ok: true, trust: w.trust, gain: got, next: baitCost(w), left: need - w.feeds };
 }
 
-// Who can be bound at a work table: beasts following you, and any beast with some trust close to the table.
-export function contractCandidates(s, table) {
-  return s.wild
-    .filter(w => w.trust > 0 && !frenzied(w, s.elapsed))
-    .filter(w => w.follow || Math.hypot(w.x - table.x * 3.6, w.z - table.z * 3.6) < 22)
-    .sort((a, b) => b.trust - a.trust);
-}
-
-export function contract(s, id, table, rng = Math.random) {
-  normalizeHousing(s);
+// Contract scrolls are made at the raft's work table and carried in the bag; one is used up per attempt.
+export const CONTRACT_COST = { fiber: 2, crystal: 1 };
+export function craftContract(s, table) {
+  if (!s.secret) return { ok: false, error: '還不知道怎麼和牠們締結契約。先調查研究浮標。' };
   if (!table) return { ok: false, error: '需要木筏上的工作桌。' };
   if (s.player.mode !== 'foot' || Math.hypot(s.player.x - table.x * 3.6, s.player.z - table.z * 3.6) > 5.5)
     return { ok: false, error: '請站在工作桌旁。' };
+  if (Object.entries(CONTRACT_COST).some(([k, v]) => (s.resources[k] || 0) < v))
+    return { ok: false, error: '製作契約書需要 2 纖維與 1 異晶。' };
+  for (const [k, v] of Object.entries(CONTRACT_COST)) s.resources[k] -= v;
+  s.contracts = (s.contracts || 0) + 1;
+  return { ok: true, message: `契約書 +1（背包裡共 ${s.contracts} 份）` };
+}
+
+// Use a contract scroll on a wild beast that trusts you, anywhere: success chance = trust %.
+export function contract(s, id, rng = Math.random) {
+  normalizeHousing(s);
+  if ((s.contracts || 0) < 1) return { ok: false, error: '背包裡沒有契約書。到木筏的工作桌製作。' };
   if (!s.buildings.some(b => b.type === 'pen')) return { ok: false, error: '先建造海洋展示池，給牠一個家。' };
   if (!freePen(s)) return { ok: false, error: '展示池已滿，請增建展示池。' };
   const w = s.wild.find(w => w.id === id);
-  if (!w || !contractCandidates(s, table).includes(w)) return { ok: false, error: '牠不在工作桌附近。' };
+  if (!w) return { ok: false, error: '生物已離開。' };
+  if (Math.hypot(w.x - s.player.x, w.z - s.player.z) > 12) return { ok: false, error: '請靠近牠再締結契約。' };
+  if (frenzied(w, s.elapsed)) return { ok: false, error: '牠正在狂暴，先拉開距離！' };
+  if (!(w.trust > 0)) return { ok: false, error: '牠還不信任你，先投餌。' };
+  s.contracts--;
   const chance = w.trust;
   if (rng() * 100 < chance) {
     const pet = {

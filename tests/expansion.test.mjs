@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { contract, feedsNeeded, frenzied, rollTame } from '../dist/taming.js';
+import { contract, craftContract, feedsNeeded, frenzied, rollTame } from '../dist/taming.js';
 import { createState, feed, placeBuilding, validateSave } from '../dist/rules.js';
 import { makeGenome, crossGenome, phenotype, seeded } from '../dist/genetics.js';
 import {
@@ -68,15 +68,20 @@ test('Taming: feedings cost 1, 3, 5 … bait, add 8–30 % trust, and are certai
   assert.equal(feed(s, t.id, () => 0).gain, 90);
   assert.ok(feed(s, t.id, () => 0.99).follow, 'a second feeding finishes it');
   assert.ok(rollTame(() => 0.0089) && !rollTame(() => 0.009));
-  // contract at the work table
+  // contract scrolls are made at the work table, carried in the bag and used anywhere
   Object.assign(s.player, { mode: 'foot', x: 0.5, z: 0.5, level: 0 });
   assert.ok(placeBuilding(s, 'table', 0, 0).ok);
   const table = s.buildings.find(b => b.type === 'table');
-  Object.assign(s.player, { mode: 'foot', x: 0.5, z: 0.5, level: 0 });
-  w.x = 2;
-  w.z = 2;
-  const r = contract(s, w.id, table, () => 0.999);
+  assert.equal(contract(s, w.id).ok, false, 'no scroll yet');
+  const fiber = s.resources.fiber;
+  assert.ok(craftContract(s, table).ok);
+  assert.equal(s.contracts, 1);
+  assert.equal(s.resources.fiber, fiber - 2);
+  Object.assign(s.player, { mode: 'boat', x: w.x + 3, z: w.z });
+  assert.equal(craftContract(s, table).ok, false, 'only at the table');
+  const r = contract(s, w.id, () => 0.999);
   assert.ok(r.ok, r.error);
+  assert.equal(s.contracts, 0);
   assert.ok(s.tamed.some(p => p.id === w.id) && !s.wild.includes(w));
 });
 test('Forcing a low-trust contract can send the beast into a frenzy for 6–17 s', () => {
@@ -88,24 +93,21 @@ test('Forcing a low-trust contract can send the beast into a frenzy for 6–17 s
   assert.ok(feed(s, w.id, () => 0).ok);
   assert.ok(feed(s, w.id, () => 0).ok);
   assert.ok(w.trust < 60);
-  placeBuilding(s, 'table', 0, 0);
-  const table = s.buildings.find(b => b.type === 'table');
-  Object.assign(s.player, { mode: 'foot', x: 0.5, z: 0.5, level: 0 });
-  w.x = 3;
-  w.z = 3;
+  s.contracts = 2;
   const rolls = [0.99, 0.5];
-  const r = contract(s, w.id, table, () => rolls.shift());
+  const r = contract(s, w.id, () => rolls.shift());
   assert.equal(r.ok, false);
+  assert.equal(s.contracts, 1, 'a failed attempt still uses the scroll');
   assert.ok(r.frenzy && r.seconds >= 6 && r.seconds <= 17);
   assert.ok(frenzied(w, s.elapsed) && !frenzied(w, s.elapsed + 18));
   assert.equal(feed(s, w.id).ok, false, 'no feeding a frenzied beast');
+  assert.equal(contract(s, w.id).ok, false, 'no contract with a frenzied beast');
   // above 60 % a failure only costs trust
   const v = s.wild[2];
   v.trust = 70;
-  v.feeds = 5;
-  v.x = 2;
-  v.z = 2;
-  const q = contract(s, v.id, table, () => 0.99);
+  s.player.x = v.x;
+  s.player.z = v.z;
+  const q = contract(s, v.id, () => 0.99);
   assert.equal(q.ok, false);
   assert.ok(!q.frenzy && v.trust === 55);
 });

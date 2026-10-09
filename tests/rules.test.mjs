@@ -2,7 +2,7 @@ import { normalizeHousing, penId, pens, used, movePet } from '../dist/housing.js
 import { facilityId, useFacility } from '../dist/facilities.js';
 import { ISLANDS, NODES, islandDocks, islandAt, harvest } from '../dist/islands.js';
 import assert from 'node:assert/strict';
-import { contract } from '../dist/taming.js';
+import { contract, craftContract } from '../dist/taming.js';
 import { makeGenome, phenotype, crossGenome, genomeValid, seeded, LOCI, dnaCode } from '../dist/genetics.js';
 import {
   createState,
@@ -108,7 +108,10 @@ test('Hidden branch can tame two founders, breed a hatchling, and breed a next g
       assert.ok(feed(s, id).ok);
     }
     Object.assign(s.player, { mode: 'foot', x: 3.4, z: 0.4, level: 0 });
-    assert.ok(contract(s, id, table, () => 0.5).ok);
+    assert.ok(craftContract(s, table).ok);
+    s.player.x = w.x;
+    s.player.z = w.z;
+    assert.ok(contract(s, id, () => 0.5).ok);
   }
   assert.equal(s.tamed.length, 2);
   s.tamed.forEach(p => (p.bond = 35));

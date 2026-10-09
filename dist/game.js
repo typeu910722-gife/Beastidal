@@ -74,7 +74,7 @@ import {
   frenzied,
   normalizeTaming,
   rollTame,
-  contractCandidates,
+  craftContract,
   contract
 } from './taming.js?v=0.11.0';
 import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.11.0';
@@ -1445,6 +1445,7 @@ function getAllTargets() {
       : arr;
 }
 function updateNearest() {
+  updateContractButton();
   const all = getAllTargets();
   let selected = selectedTarget ? all.find(t => t.id === selectedTarget) : null;
   const d = t => Math.hypot(t.x - state.player.x, t.z - state.player.z);
@@ -1588,6 +1589,11 @@ function interact() {
   } else if (t.type === 'wild') {
     if (!state.secret) {
       toast('牠正警戒地看著你。也許浮標裡有接近牠的方法。');
+      return;
+    }
+    // a beast that already trusts you fully: E uses a contract scroll
+    if (t.follow && (state.contracts || 0) > 0) {
+      performContract(t.id);
       return;
     }
     const r = feed(state, t.id);
@@ -2449,23 +2455,13 @@ function renderFocus() {
     info = pets.length ? `${pets.length} / 3 隻 · 點選牠們查看與互動` : '池裡還沒有住民。';
     extra = `<div class="focus-pets">${pets.map(p => `<button type="button" data-focus-pet="${esc(p.id)}">${esc(p.name)}</button>`).join('')}</div>`;
   } else if (b.type === 'table') {
-    const cands = contractCandidates(state, b);
-    eyebrow = '工作桌 · 御獸契約';
-    info = cands.length
-      ? '信任度就是契約的成功率。'
-      : '附近沒有信任你的野生御獸。先在海上連續投餌；信任到 100% 牠就會跟著你回來。';
-    if (!near) info += ' 走到桌旁才能締結契約。';
-    extra =
-      `<div class="contract-list">${cands
-        .map(w => {
-          const p = Math.round(w.trust),
-            risky = p < FRENZY.below;
-          return `<div class="contract-row"><span><b>${esc(geneName(w.genome))}</b><small>${RARITY[rarityOf(w.genome)]} · 信任 ${p}%${w.follow ? ' · 跟隨中' : ''}</small></span><button type="button" data-contract="${esc(w.id)}" class="${risky ? 'danger' : 'primary'}" ${near ? '' : 'disabled'}>${risky ? '強行契約' : '締結契約'} · ${p}%</button></div>`;
-        })
-        .join('')}</div>` +
-      (cands.some(w => w.trust < FRENZY.below)
-        ? '<p class="focus-warn">信任度低於 60% 時強行契約，失敗會讓牠狂暴：速度與攻擊力 1.2 倍，追擊你 6–17 秒。</p>'
-        : '');
+    eyebrow = '工作桌 · 契約書';
+    info = `背包裡有 ${state.contracts || 0} 份契約書。帶在身上，靠近信任你的野生御獸按「契約」就能締結；信任度就是成功率。`;
+    if (!near) info += ' 走到桌旁才能製作。';
+    act('製作契約書 · 纖維 2 + 異晶 1', () => focusDone(craftContract(state, b)), {
+      primary: true,
+      disabled: !near || !state.secret
+    });
     act(
       '製作誘餌 · 口糧 1 + 纖維 1 → 3 份',
       () => {
@@ -2529,7 +2525,6 @@ function renderFocus() {
       openFacility(id);
     };
   ui.querySelectorAll('[data-focus-pet]').forEach(btn => (btn.onclick = () => selectFocusPet(btn.dataset.focusPet)));
-  ui.querySelectorAll('[data-contract]').forEach(btn => (btn.onclick = () => performContract(btn.dataset.contract, b)));
   const rename = ui.querySelector('.focus-rename');
   if (rename)
     rename.onsubmit = e => {
@@ -2539,9 +2534,41 @@ function renderFocus() {
     };
   promptPanel(ui);
 }
-function performContract(id, table) {
-  const r = contract(state, id, table);
+// The contract button / X key: the wild beast currently in reach.
+function contractTarget() {
+  if (!running || !state.secret || !(state.contracts > 0)) return null;
+  const t = selectedTarget && state.wild.find(w => w.id === selectedTarget);
+  const near = t && Math.hypot(t.x - state.player.x, t.z - state.player.z) <= 12 ? t : null;
+  const w =
+    near ||
+    state.wild
+      .filter(w => w.trust > 0 && Math.hypot(w.x - state.player.x, w.z - state.player.z) <= 12)
+      .sort((a, b) => b.trust - a.trust)[0];
+  return w && w.trust > 0 && !frenzied(w, state.elapsed) ? w : null;
+}
+function contractNearest() {
+  const w = contractTarget();
+  if (w) performContract(w.id);
+  else if (!(state.contracts > 0)) toast('背包裡沒有契約書。到木筏的工作桌製作。', true);
+  else toast('附近沒有信任你的野生御獸。', true);
+}
+function updateContractButton() {
+  const w = contractTarget(),
+    btn = $('contract-btn');
+  btn.hidden = !w || !!panel || !!buildType || !!focus;
+  if (w) {
+    const p = Math.round(w.trust);
+    btn.classList.toggle('danger', p < FRENZY.below);
+    btn.querySelector('span').innerHTML =
+      `${p < FRENZY.below ? '強行契約' : '契約'} ${p}%<small> · 剩 ${state.contracts}</small>`;
+  }
+}
+// Use a contract scroll from the bag on the wild beast in front of you.
+function performContract(id) {
+  if (!running || paused) return;
+  const r = contract(state, id);
   if (r.ok) {
+    selectedTarget = null;
     haptic('discover');
     audio.note(940, 0.5);
     log(state, '御獸契約', `在工作桌前，${r.tamed.name} 把頭靠了過來。契約成立。`);
@@ -2549,16 +2576,15 @@ function performContract(id, table) {
     world.sync(state);
     save(true);
     updateUI();
-    renderFocus();
     return;
   }
   toast(r.error, true);
   if (r.frenzy) {
     haptic('hit');
     audio.splash(1);
-    exitFocus();
-  } else renderFocus();
+  }
   save(true);
+  updateUI();
 }
 // Resting in the tent: the screen dims, time passes a little, you wake up rested.
 function restInShelter() {
@@ -2786,6 +2812,7 @@ function renderPanel() {
             `<div class="inventory-row"><span>${RESOURCE_ICONS[k]} &nbsp;${RESOURCE_NAMES[k]}</span><b>${state.resources[k]}</b></div>`
         )
         .join('') +
+      `<div class="inventory-row"><span>📜 &nbsp;契約書</span><b>${state.contracts || 0}</b></div>` +
       `<div class="button-row"><button id="drink" ${state.resources.water ? '' : 'disabled'}>喝水 · 恢復 35</button><button id="eat" ${state.resources.food ? '' : 'disabled'}>進食 · 恢復 35</button></div>` +
       (state.secret
         ? `<p class="section-label">生物誘餌</p><div class="info-strip">1 口糧 + 1 纖維 → 3 份誘餌。<br>展示池中的生物會定期提供口糧與專長物資。</div><button class="full-button" id="craft-bait" ${canPay(state, { food: 1, fiber: 1 }) ? '' : 'disabled'}>製作 3 份誘餌</button>`
@@ -4056,7 +4083,8 @@ function gamepad(dt) {
     if (edge(11)) toggleView();
     if (edge(0)) interact();
     if (edge(2)) openPanel('build');
-    if (edge(3)) openPanel('creatures');
+    // Ⓨ: use a contract scroll when a trusting wild beast is in reach, otherwise the research panel
+    if (edge(3)) contractTarget() ? contractNearest() : openPanel('creatures');
     if (edge(1)) back();
     if (edge(4)) openDevice();
     if (edge(5)) openPanel('journal');
@@ -4147,6 +4175,7 @@ function setupEvents() {
   $('interact-btn').onclick = interact;
   $('repel-btn').onclick = repel;
   $('cancel-build').onclick = cancelBuild;
+  $('contract-btn').onclick = contractNearest;
   $('close-drawer').onclick = closePanel;
   document
     .querySelectorAll('[data-panel]')
@@ -4200,6 +4229,7 @@ function setupEvents() {
     if (k === 'g') beastAction('dive');
     if (k === 'f') beastAction('attack');
     if (k === 'e') interact();
+    if (k === 'x') contractNearest();
     if (k === ' ') repel();
     if (k === 'b') openPanel('build');
     if (k === 'i') openDevice();

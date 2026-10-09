@@ -1,6 +1,27 @@
 // English dictionary: Chinese source text → English. Keys use {0}, {1}… for values filled in at runtime.
 // Regenerate the key list with `npm run i18n:check`, which reports strings that still need a translation.
 export default {
+  '· 剩 {0}': '· {0} left',
+  '點「契約」': 'Tap "Contract"',
+  '工作桌 · 契約書': 'Work table · contract scrolls',
+  '背包裡有 {0} 份契約書。帶在身上，靠近信任你的野生御獸按「契約」就能締結；信任度就是成功率。':
+    'You carry {0} contract scroll(s). Take them along and press "Contract" near a wild beast that trusts you; its trust is the chance of success.',
+  '走到桌旁才能製作。': 'Walk up to the table to make them.',
+  '製作契約書 · 纖維 2 + 異晶 1': 'Make a contract scroll · 2 fiber + 1 crystal',
+  '背包裡沒有契約書。到木筏的工作桌製作。': "No contract scrolls in your bag. Make some at the raft's work table.",
+  '附近沒有信任你的野生御獸。': 'No wild beast that trusts you is in reach.',
+  契約: 'Contract',
+  '{0} {1}% · 剩 {2}': '{0} {1}% · {2} left',
+  '📜 &nbsp;契約書': '📜 &nbsp;Contract scrolls',
+  契約書: 'Contract scrolls',
+  '（在工作桌做些誘餌和契約書。連續餵同一隻生物，牠會越來越信任我；帶著契約書，靠近牠按 X 就能締結契約。）':
+    '(Make bait and contract scrolls at the work table. Keep feeding the same creature and it trusts me more each time; with a scroll in my bag, press X near it to make a contract.)',
+  '還不知道怎麼和牠們締結契約。先調查研究浮標。':
+    "You don't know how to make contracts with them yet. Investigate the research buoy first.",
+  '製作契約書需要 2 纖維與 1 異晶。': 'A contract scroll needs 2 fiber and 1 crystal.',
+  '契約書 +1（背包裡共 {0} 份）': 'Contract scroll +1 ({0} in your bag)',
+  '請靠近牠再締結契約。': 'Get closer to it to make a contract.',
+  '牠還不信任你，先投餌。': "It doesn't trust you yet — feed it first.",
   '· 似乎特別親人': '· seems unusually tame',
   '{0} · 信任 {1}% · 下次投餌 {2} 份{3}{4}': '{0} · trust {1}% · next feeding {2} bait{3}{4}',
   '牠接住了誘餌。信任 +{0}% → {1}% · 最多再餵 {2} 次必定成功 · 下次需要 {3} 份誘餌':
