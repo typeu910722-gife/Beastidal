@@ -1517,7 +1517,7 @@ body.focus-on #beast-bar {
   color: #8fb0aa;
 }
 
-/* ---------------------------------------------------------------- studio splash (YZ PROJECT, ~7 s) */
+/* ---------------------------------------------------------------- studio splash (YZProJect, ~7 s) */
 /* 0.3–2.5 s the five pieces fly in from different directions and lock together · 2.5 s impact flash and
    shock line · 3.0 s a light sweep runs across the metal · 3.4–4.8 s the studio name rises letter by letter ·
    6.2–7.0 s everything fades to the title screen. */
@@ -1695,7 +1695,7 @@ body.focus-on #beast-bar {
     300 min(5.2vmin, 34px) / 1 'Noto Sans TC',
     system-ui,
     sans-serif;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.16em;
   color: #e9f1ef;
 }
 .splash-name span {
@@ -1704,35 +1704,32 @@ body.focus-on #beast-bar {
   filter: blur(4px);
   animation: letter 0.7s ease-out forwards;
 }
-.splash-name .gap {
-  width: 0.6em;
-}
 .splash-name span:nth-child(1) {
   animation-delay: 3.4s;
 }
 .splash-name span:nth-child(2) {
   animation-delay: 3.5s;
 }
+.splash-name span:nth-child(3) {
+  animation-delay: 3.6s;
+}
 .splash-name span:nth-child(4) {
-  animation-delay: 3.75s;
+  animation-delay: 3.7s;
 }
 .splash-name span:nth-child(5) {
-  animation-delay: 3.85s;
+  animation-delay: 3.8s;
 }
 .splash-name span:nth-child(6) {
-  animation-delay: 3.95s;
+  animation-delay: 3.9s;
 }
 .splash-name span:nth-child(7) {
-  animation-delay: 4.05s;
+  animation-delay: 4.0s;
 }
 .splash-name span:nth-child(8) {
-  animation-delay: 4.15s;
+  animation-delay: 4.1s;
 }
 .splash-name span:nth-child(9) {
-  animation-delay: 4.25s;
-}
-.splash-name span:nth-child(10) {
-  animation-delay: 4.35s;
+  animation-delay: 4.2s;
 }
 @keyframes letter {
   to {
