@@ -2917,13 +2917,27 @@ function startBuild(type) {
     return;
   }
   $('build-banner').hidden = false;
-  $('build-banner-name').textContent = RECIPES[type].name;
+  updateBuildBanner();
+  updateNearest();
+}
+// How many more of this item the current materials (and the shelter's limits) allow.
+function buildsLeft(type) {
+  const cost = RECIPES[type].cost;
+  let n = Math.min(
+    99,
+    ...Object.entries(cost).map(([k, v]) => (v > 0 ? Math.floor((state.resources[k] || 0) / v) : 99))
+  );
+  if (LIMITS[type]) n = Math.min(n, LIMITS[type] - count(state, type));
+  return Math.max(0, n);
+}
+function updateBuildBanner() {
+  const n = buildsLeft(buildType);
+  $('build-banner-name').textContent = `${RECIPES[buildType].name} · 材料還夠蓋 ${n} 個`;
   $('build-banner').querySelector('span').textContent = gamepadActive
-    ? '左搖桿選格 · A 放置 · X 旋轉 · B 取消'
+    ? '左搖桿選格 · A 放置 · X 旋轉 · B 結束'
     : innerWidth < 760
       ? '點擊綠色格子放置；拖曳畫面環視'
-      : '點擊綠色格子放置 · R 旋轉 · Esc 取消';
-  updateNearest();
+      : '點擊綠色格子放置 · R 旋轉 · Esc 結束';
 }
 function cancelBuild() {
   buildType = null;
@@ -2952,12 +2966,36 @@ function place() {
   normalizeTravel(state);
   normalizeHousing(state);
   normalizeShip(state);
-  toast(RECIPES[buildType].name + ' 建造完成。');
+  const type = buildType,
+    name = RECIPES[type].name,
+    level = world.buildLevel || 0;
   audio.note(450, 0.2);
   world.sync(state);
-  cancelBuild();
   updateUI();
   save(true);
+  // Stay in build mode: keep placing the same thing while there are materials and room for it.
+  world.setPlacement(type, state, level);
+  const cells = world.gridGroup.children;
+  if (cells.length) {
+    // keep the ghost next to the piece just placed instead of jumping back to the first free cell
+    const near = cells
+      .map(c => ({ x: Math.round(c.position.x / 3.6), z: Math.round(c.position.z / 3.6) }))
+      .sort((a, b) => Math.hypot(a.x - x, a.z - z) - Math.hypot(b.x - x, b.z - z))[0];
+    world.ghostCell = near;
+    updateBuildBanner();
+    toast(`${name} 建造完成。可以繼續放置，按「結束建造」離開。`);
+    return;
+  }
+  // Nothing more of this kind fits: stay in the build menu to pick something else.
+  const why =
+    LIMITS[type] && count(state, type) >= LIMITS[type]
+      ? '已達上限'
+      : !canPay(state, RECIPES[type].cost)
+        ? '材料不夠再蓋一個'
+        : '沒有可以放的位置了';
+  cancelBuild();
+  openPanel('build');
+  toast(`${name} 建造完成。${why}，可以改蓋別的設施。`);
 }
 function returnHome() {
   if (!running || paused) return;

@@ -1,6 +1,14 @@
 // English dictionary: Chinese source text → English. Keys use {0}, {1}… for values filled in at runtime.
 // Regenerate the key list with `npm run i18n:check`, which reports strings that still need a translation.
 export default {
+  '{0} · 材料還夠蓋 {1} 個': '{0} · materials for {1} more',
+  '左搖桿選格 · A 放置 · X 旋轉 · B 結束': 'Left stick picks a cell · Ⓐ place · Ⓧ rotate · Ⓑ finish',
+  '點擊綠色格子放置 · R 旋轉 · Esc 結束': 'Click a green cell to place · R rotate · Esc finish',
+  '{0} 建造完成。可以繼續放置，按「結束建造」離開。': '{0} built. Keep placing, or press "Finish building" to stop.',
+  材料不夠再蓋一個: 'Not enough materials for another',
+  沒有可以放的位置了: 'No room left for it',
+  '{0} 建造完成。{1}，可以改蓋別的設施。': '{0} built. {1}; pick something else to build.',
+  結束建造: 'Finish building',
   '比斯泰德 Beastidal': 'Beastidal',
   '版本 {0}{1}': 'Version {0}{1}',
   '靠近一點才能開關燈。': 'Get closer to switch the lamp.',
