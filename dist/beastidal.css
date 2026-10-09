@@ -766,3 +766,103 @@
 .landscape-play.tutorial-on #toasts {
   top: 150px;
 }
+/* Save slots */
+.slots {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+.slot-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #0a2a3466;
+  flex-wrap: wrap;
+}
+.slot-card.current {
+  border-color: #9ce8d188;
+  background: #11403f66;
+}
+.slot-info {
+  flex: 1;
+  min-width: 180px;
+}
+.slot-info strong {
+  display: block;
+  font-size: 15px;
+  color: #f1ead4;
+  font-weight: 500;
+}
+.slot-info em {
+  font-style: normal;
+  font-size: 11px;
+  color: #0a3838;
+  background: var(--mint);
+  border-radius: 9px;
+  padding: 1px 7px;
+  margin-left: 8px;
+  vertical-align: 2px;
+}
+.slot-info small {
+  display: block;
+  font-size: 12px;
+  color: #a9c4c1;
+  margin-top: 4px;
+}
+.slot-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.slot-actions button {
+  min-height: 34px;
+  padding: 4px 11px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+#slots-btn {
+  margin-top: -6px;
+}
+/* Statistics */
+.stats-grid {
+  display: grid;
+  grid-template-columns: auto 1fr auto 1fr;
+  gap: 6px 14px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+.stats-grid span {
+  color: #a9c4c1;
+}
+.stats-grid b {
+  color: #f1ead4;
+  font-weight: 500;
+}
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.stats-table th {
+  text-align: left;
+  color: var(--mint);
+  font-weight: 500;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.stats-table td {
+  padding: 5px 6px;
+  border-bottom: 1px solid #ffffff0d;
+  color: #8fa9a6;
+}
+.stats-table tr.done td {
+  color: #dfe9e3;
+}
+.stats-table td:first-child {
+  width: 18px;
+  color: var(--mint);
+}

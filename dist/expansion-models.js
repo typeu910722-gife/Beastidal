@@ -77,12 +77,14 @@ export function expansionModels(scene) {
       emissiveIntensity: 0.4
     });
   }
-  const genome = makeGenome(8924, 1);
-  genome.body = [82, 210];
+  // The deep-sea guardian: an abyssal sea serpent with a turtle's armour and maximum horns.
+  const genome = makeGenome(8924, 0, 'deep');
+  genome.body = [20, 210];
   genome.horn = [255, 255];
   genome.hue = [4, 20];
+  genome.glow = [250, 250];
   const boss = makeCreature(genome);
-  boss.scale.setScalar(4.5);
+  boss.scale.setScalar(3.2);
   scene.add(boss);
   const coords = new Float32Array(360 * 3);
   for (let i = 0; i < coords.length; i += 3) {

@@ -85,6 +85,11 @@ const STEPS = [
   ],
   ['free', () => true, () => '（從通勤機車到比斯泰德號……第二次人生，好像也不壞。去更遠的海看看吧。）']
 ];
+// Story milestones already reached (their "still to do" condition is false). Used for pacing statistics.
+export const GUIDE_IDS = STEPS.map(([id]) => id).filter(id => id !== 'free' && id !== 'fusing');
+export function guideDone(s) {
+  return STEPS.filter(([id, when]) => GUIDE_IDS.includes(id) && !when(s)).map(([id]) => id);
+}
 // Later milestones skip earlier tutorial lines even if an old save never triggered them.
 export function monologue(s) {
   const start = s.ship

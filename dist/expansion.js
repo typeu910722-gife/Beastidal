@@ -126,6 +126,7 @@ export function toggleRide(s) {
     return { ok: true, message: '已返回小艇。' };
   }
   if (!p || p.bond < 45) return fail('先派出羈絆 45 的夥伴。');
+  if (phenotype(p.genome).habitat === 'land') return fail('陸棲御獸不會游泳，沒辦法下海騎乘；牠會坐在船頭陪你。');
   if (s.player.mode === 'foot') return fail('請先登艇，再騎乘夥伴。');
   if (s.player.mode === 'aboard') return fail('請在駕駛室掌舵時再騎乘出海。');
   if (p.stamina < 25) return fail('騎乘需要至少 25 耐力。');

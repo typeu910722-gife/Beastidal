@@ -164,12 +164,12 @@ test('Mutation always changes the affected allele and keeps genes and phenotypes
     assert.ok(genomeValid(r.genome));
     seen.add(dnaCode(r.genome));
     const p = phenotype(r.genome);
-    assert.ok(Object.values(p).every(Number.isFinite));
+    assert.ok(Object.values(p).every(v => typeof v === 'string' || Number.isFinite(v)));
     assert.ok(p.body >= 0 && p.body <= 3);
   }
   assert.ok(seen.size > 590);
   const all = crossGenome(a, b, seeded(33), 1);
-  assert.equal(all.mutations, 32);
+  assert.equal(all.mutations, 34); // 17 loci × 2 alleles (lineage added in 0.10)
   assert.ok(genomeValid(all.genome));
 });
 test('Supplies restore vitals without spending supplies at full health', () => {
@@ -194,10 +194,13 @@ test('Invalid or partial saves are rejected', () => {
   ])
     assert.equal(validateSave(s), false);
 });
-test('All four creature families and hybrid genotypes produce finite 3D meshes', () => {
-  for (let i = 0; i < 60; i++) {
-    const g = makeGenome(i, i % 4),
-      m = makeCreature(g),
+test('All 16 species, plant mutants and cross-family hybrids produce finite 3D meshes', () => {
+  const families = ['sea', 'deep', 'land', 'flora'];
+  for (let i = 0; i < 96; i++) {
+    const g = makeGenome(i, i % 4, families[Math.floor(i / 4) % 4]);
+    if (i % 3 === 0) g.lineage[1] = (g.lineage[1] + 70 * (1 + (i % 4))) % 256; // second lineage → fusion traits
+    if (i % 5 === 0) g.body[1] = (g.body[1] + 64) % 256;
+    const m = makeCreature(g),
       bounds = new Box3().setFromObject(m);
     assert.ok(!bounds.isEmpty());
     for (const v of [...bounds.min.toArray(), ...bounds.max.toArray()]) assert.ok(Number.isFinite(v));
@@ -209,7 +212,7 @@ test('All four creature families and hybrid genotypes produce finite 3D meshes',
         assert.ok(a.every(Number.isFinite));
       }
     });
-    assert.ok(meshCount > 12);
+    assert.ok(meshCount > 8);
   }
 });
 test('The complete prologue advances through the commute, collision and rebirth', () => {

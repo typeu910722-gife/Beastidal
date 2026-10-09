@@ -59,12 +59,23 @@ import { promptText, promptDom, PAD } from './prompts.js?v=0.9.0';
 import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.9.0';
 import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.9.0';
 import { CONFIG } from './config.js?v=0.9.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.9.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.9.0';
+export const GAME_VERSION = '0.10.0';
 import { CloudSave } from './cloud-save.js?v=0.9.0';
 import {
   readLocal,
   writeLocal,
   readMeta,
   markSynced,
+  slotKey,
+  activeSlot,
+  setActiveSlot,
+  listSlots,
+  exportSave,
+  importSave,
+  forgetLocal,
+  SLOT_COUNT,
   reconcile,
   describeSave,
   formatTime
@@ -72,7 +83,6 @@ import {
 import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.9.0';
 import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.9.0';
 import {
-  SAVE_KEY,
   RESOURCE_NAMES,
   RESOURCE_ICONS,
   RECIPES,
@@ -96,9 +106,11 @@ const $ = id => document.getElementById(id),
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 let state = createState(),
   hasSave = false,
-  storageOk = true;
+  storageOk = true,
+  slot = 1;
 try {
-  const v = readLocal(localStorage, SAVE_KEY, validateSave);
+  slot = activeSlot(localStorage);
+  const v = readLocal(localStorage, slotKey(slot), validateSave);
   if (v) {
     state = v;
     hasSave = true;
@@ -111,6 +123,7 @@ try {
 } catch {}
 // Optional Google Drive sync. Guest play never touches the network.
 const cloud = new CloudSave({ config: CONFIG });
+cloud.setSlot(slot);
 let cloudStatus = cloud.signedIn ? 'idle' : 'off',
   cloudLast = 0,
   cloudTimer = null,
@@ -210,7 +223,7 @@ const audio = {
       this.gain.gain.value = 0.18;
       src.connect(filter).connect(this.gain).connect(this.amb);
       src.start();
-      this.music = new MusicPlayer(this.ctx, this.mus, '0.9.0');
+      this.music = new MusicPlayer(this.ctx, this.mus, GAME_VERSION);
       this.rush = new WaterRush(this.ctx, this.amb);
     }
     this.ctx.resume();
@@ -673,7 +686,7 @@ function discover(title, text) {
 }
 function save(silent = false) {
   try {
-    writeLocal(localStorage, SAVE_KEY, state);
+    writeLocal(localStorage, slotKey(slot), state, Date.now(), slot);
     storageOk = true;
     hasSave = true;
     scheduleCloud();
@@ -738,12 +751,12 @@ function scheduleCloud(now = false) {
 async function pushCloud() {
   if (!cloud.signedIn || !hasSave) return;
   const account = cloud.account.id,
-    savedAt = readMeta(localStorage).savedAt;
+    savedAt = readMeta(localStorage, slot).savedAt;
   setCloud('syncing');
   try {
     await cloud.upload(structuredClone(state), savedAt);
     if (cloud.account?.id !== account) return;
-    markSynced(localStorage, account, savedAt);
+    markSynced(localStorage, account, savedAt, slot);
     cloudLast = Date.now();
     setCloud('synced');
   } catch (e) {
@@ -782,16 +795,13 @@ function adoptState(v, savedAt) {
   if (!validateSave(v)) throw new Error('雲端存檔內容無效。');
   state = v;
   hasSave = true;
-  writeLocal(localStorage, SAVE_KEY, state, savedAt);
+  writeLocal(localStorage, slotKey(slot), state, savedAt, slot);
   destination = null;
   selectedTarget = null;
   salvaging = null;
   world.sync(state);
   if (running) beginGame(false);
-  else {
-    $('start-btn').textContent = '繼續這段漂流';
-    $('new-btn').hidden = false;
-  }
+  else updateTitleButtons();
 }
 // Signs in (interactive) or reconnects a remembered account, then reconciles device and cloud copies.
 async function connectCloud(interactive) {
@@ -801,7 +811,7 @@ async function connectCloud(interactive) {
   try {
     await cloud.signIn({ interactive });
     const id = cloud.account.id,
-      meta = readMeta(localStorage),
+      meta = readMeta(localStorage, slot),
       remote = await cloud.remoteInfo();
     const decision = reconcile(hasSave ? { savedAt: meta.savedAt } : null, remote, meta.synced[id] || 0);
     if (decision === 'download' || decision === 'conflict') {
@@ -810,7 +820,7 @@ async function connectCloud(interactive) {
       if (decision === 'conflict') pick = await chooseSave(state, meta.savedAt, d.state, d.savedAt);
       if (pick === 'cloud') {
         adoptState(d.state, d.savedAt);
-        markSynced(localStorage, id, d.savedAt);
+        markSynced(localStorage, id, d.savedAt, slot);
         toast('已載入 Google Drive 上的進度。');
       } else {
         setCloud('idle');
@@ -818,7 +828,7 @@ async function connectCloud(interactive) {
       }
     } else if (decision === 'upload') {
       await pushCloud();
-    } else if (decision === 'same') markSynced(localStorage, id, meta.savedAt);
+    } else if (decision === 'same') markSynced(localStorage, id, meta.savedAt, slot);
     cloudReady = true;
     cloudLast = Date.now();
     setCloud('synced');
@@ -835,7 +845,7 @@ async function signOutCloud() {
   if (cloud.connected && hasSave) {
     save(true);
     try {
-      await cloud.upload(structuredClone(state), readMeta(localStorage).savedAt);
+      await cloud.upload(structuredClone(state), readMeta(localStorage, slot).savedAt);
     } catch {}
   }
   cloudReady = false;
@@ -875,11 +885,139 @@ function closeModal() {
   $('modal-shade').hidden = true;
   modalRestore?.focus?.();
 }
+// Title-screen buttons reflect the active slot.
+function updateTitleButtons() {
+  $('start-btn').textContent = hasSave ? '繼續這段漂流' : '開始第二次人生';
+  $('new-btn').hidden = !hasSave;
+  $('slots-btn').textContent = `💾 存檔槽 · 目前存檔 ${slot}`;
+}
+// Load another slot (title screen only); its cloud copy is reconciled the next time the game starts.
+function useSlot(n) {
+  slot = n;
+  setActiveSlot(localStorage, n);
+  cloud.setSlot(n);
+  cloudReady = false;
+  let v = null;
+  try {
+    v = readLocal(localStorage, slotKey(n), validateSave);
+  } catch {}
+  state = v || createState();
+  hasSave = !!v;
+  destination = null;
+  selectedTarget = null;
+  salvaging = null;
+  world.sync(state);
+  updateTitleButtons();
+}
+function downloadSave(n) {
+  const v = readLocal(localStorage, slotKey(n), validateSave);
+  if (!v) return;
+  const blob = new Blob([exportSave(v, readMeta(localStorage, n).savedAt)], { type: 'application/json' }),
+    a = document.createElement('a'),
+    d = new Date();
+  a.href = URL.createObjectURL(blob);
+  a.download = `beastidal-save${n}-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}.json`;
+  document.body.append(a);
+  a.click();
+  setTimeout(() => {
+    URL.revokeObjectURL(a.href);
+    a.remove();
+  }, 1000);
+  toast(`已匯出存檔 ${n}。`);
+}
+function uploadSave(n) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,application/json';
+  input.onchange = async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      const { state: v, savedAt } = importSave(await file.text(), validateSave);
+      const write = () => {
+        writeLocal(localStorage, slotKey(n), v, savedAt, n);
+        if (n === slot) useSlot(n);
+        toast(`已匯入到存檔 ${n}。`);
+        openSlots();
+      };
+      if (readLocal(localStorage, slotKey(n), validateSave))
+        modal('IMPORT · 匯入存檔', `覆蓋存檔 ${n}？`, `<p>存檔 ${n} 已有進度，匯入後會被取代。</p>`, [
+          { label: '取消', action: openSlots },
+          { label: '覆蓋', primary: true, action: write }
+        ]);
+      else write();
+    } catch (e) {
+      toast(e.message, true);
+    }
+  };
+  input.click();
+}
+function confirmDeleteSlot(n) {
+  modal(
+    'DELETE · 刪除存檔',
+    `刪除存檔 ${n}？`,
+    `<p>此裝置上的存檔 ${n} 會被永久刪除，無法復原。${cloud.signedIn ? 'Google Drive 上的雲端副本不會刪除，下次選這格並開始遊戲時會再下載回來。' : ''}建議先匯出備份。</p>`,
+    [
+      { label: '取消', action: openSlots },
+      {
+        label: '刪除',
+        action: () => {
+          forgetLocal(localStorage, slotKey(n), n);
+          if (n === slot) useSlot(n);
+          toast(`已刪除存檔 ${n}。`);
+          openSlots();
+        }
+      }
+    ]
+  );
+}
+// Slot picker: choose, start, export, import or delete each of the SLOT_COUNT saves.
+function openSlots() {
+  const rows = listSlots(localStorage, validateSave)
+    .map(
+      ({ slot: n, state: v, savedAt, corrupt }) => `<div class="slot-card ${n === slot ? 'current' : ''}">
+      <div class="slot-info"><strong>存檔 ${n}${n === slot ? '<em>使用中</em>' : ''}</strong><small>${corrupt ? '存檔損毀，可匯入備份覆蓋' : v ? `${esc(describeSave(v))} · ${formatTime(savedAt)}` : '空白存檔'}</small></div>
+      <div class="slot-actions">${v ? `${n === slot ? '' : `<button type="button" data-slot-use="${n}">選擇</button>`}<button type="button" data-slot-export="${n}">匯出</button><button type="button" data-slot-delete="${n}">刪除</button>` : `<button type="button" data-slot-new="${n}">在此開始</button>`}<button type="button" data-slot-import="${n}">匯入</button></div></div>`
+    )
+    .join('');
+  modal(
+    'SAVE SLOTS · 存檔槽',
+    '選擇一段人生',
+    `<p>共有 ${SLOT_COUNT} 個存檔槽，各自獨立保存${cloud.signedIn ? '，並各自同步到 Google Drive' : ''}。匯出的檔案可以在其他裝置或平台匯入。</p><div class="slots">${rows}</div>`,
+    [{ label: '完成', primary: true, action: closeModal }]
+  );
+  const body = $('modal-body');
+  body.querySelectorAll('[data-slot-use]').forEach(
+    b =>
+      (b.onclick = () => {
+        useSlot(Number(b.dataset.slotUse));
+        toast(`已切換到存檔 ${slot}。`);
+        openSlots();
+      })
+  );
+  body.querySelectorAll('[data-slot-new]').forEach(
+    b =>
+      (b.onclick = () => {
+        useSlot(Number(b.dataset.slotNew));
+        closeModal();
+        beginIntro();
+      })
+  );
+  body
+    .querySelectorAll('[data-slot-export]')
+    .forEach(b => (b.onclick = () => downloadSave(Number(b.dataset.slotExport))));
+  body
+    .querySelectorAll('[data-slot-import]')
+    .forEach(b => (b.onclick = () => uploadSave(Number(b.dataset.slotImport))));
+  body
+    .querySelectorAll('[data-slot-delete]')
+    .forEach(b => (b.onclick = () => confirmDeleteSlot(Number(b.dataset.slotDelete))));
+}
 function confirmNew() {
   modal(
     'ANOTHER LIFE',
     '重新開始？',
-    `<p>目前這段漂流的進度將被取代。你將重新經歷通勤與轉生。</p>${cloud.signedIn ? '<p>已登入 Google：新的進度存檔後也會取代 Google Drive 上的雲端存檔。</p>' : ''}`,
+    `<p>存檔 ${slot} 目前的進度將被取代。你將重新經歷通勤與轉生。想保留這段人生，可以改用「存檔槽」選擇空白存檔。</p>${cloud.signedIn ? '<p>已登入 Google：新的進度存檔後也會取代 Google Drive 上的雲端存檔。</p>' : ''}`,
     [
       { label: '保留現在的人生', action: closeModal },
       {
@@ -909,6 +1047,7 @@ function showMenu() {
     [
       { label: '繼續漂流', primary: true, action: closeModal },
       { label: '⚙ 設定', action: () => openSettings(showMenu) },
+      { label: '📊 統計', action: () => openStats(showMenu) },
       {
         label: '保存進度',
         action: () => {
@@ -941,8 +1080,7 @@ function showMenu() {
           updateViewport();
           $('hud').hidden = true;
           $('title-screen').hidden = false;
-          $('start-btn').textContent = '繼續這段漂流';
-          $('new-btn').hidden = false;
+          updateTitleButtons();
           scheduleCloud(true);
           updateAccountUI();
         }
@@ -959,7 +1097,8 @@ const UI_DEFAULTS = {
   prompts: 'auto',
   fontSize: 'normal',
   buttonSize: 'normal',
-  lefty: false
+  lefty: false,
+  camFollow: true
 };
 const setting = k => world.settings[k] ?? UI_DEFAULTS[k] ?? VOLUME_DEFAULTS[k];
 function applyUiSettings() {
@@ -994,7 +1133,7 @@ function openSettings(back = closeModal) {
     ['xlarge', '特大']
   ])}</div>
   <h3>聲音</h3><div class="row"><span>音樂</span>${range('musicVol', 0, 100, pct)}</div><div class="row"><span>音效</span>${range('sfxVol', 0, 100, pct)}</div><div class="row"><span>環境聲</span>${range('ambVol', 0, 100, pct)}</div>
-  <h3>操作</h3><div class="row"><span>鏡頭靈敏度</span>${range('camSens', 40, 250, pct)}</div>${check('invertY', '鏡頭上下反轉')}${check('autoPickup', '自動拾取（駛過漂流物、走過採集點自動收集）')}${check('haptics', '震動回饋（手機、手把）')}
+  <h3>操作</h3><div class="row"><span>鏡頭靈敏度</span>${range('camSens', 40, 250, pct)}</div>${check('invertY', '鏡頭上下反轉')}${check('camFollow', '鏡頭自動轉到船後方（駕駛時）')}${check('autoPickup', '自動拾取（駛過漂流物、走過採集點自動收集）')}${check('haptics', '震動回饋（手機、手把）')}
   <div class="row"><span>按鍵提示</span>${seg('prompts', [
     ['auto', '自動'],
     ['keyboard', '鍵盤'],
@@ -1080,6 +1219,10 @@ function toggleView() {
   save(true);
 }
 function beginGame(fresh = false) {
+  normalizeWildlife(state);
+  ensureLandBeasts(state);
+  normalizeStats(state).sessions++;
+  statsPrev = null;
   if (soundPref.get() && !audio.on) {
     audio.start();
     $('sound-btn').textContent = '♫';
@@ -1187,8 +1330,7 @@ function initialize() {
   $('load-screen').hidden = true;
   $('title-screen').hidden = false;
   $('start-btn').disabled = false;
-  $('start-btn').textContent = hasSave ? '繼續這段漂流' : '開始第二次人生';
-  $('new-btn').hidden = !hasSave;
+  updateTitleButtons();
   $('start-btn').focus();
   setupEvents();
   updateViewport();
@@ -1485,6 +1627,7 @@ function repel() {
   world.splash(px, pz, 1);
   audio.splash(1);
   haptic('repel');
+  if (state.stats) state.stats.repels++;
   for (const w of state.wild) {
     const d = Math.hypot(w.x - px, w.z - pz);
     if (d < 12) {
@@ -2503,7 +2646,8 @@ function updateUI() {
 const STORM_START = 288,
   STORM_END = 364.8,
   STORM_WARN = 30;
-let stormWarned = false,
+let stormSeaTime = 0,
+  stormWarned = false,
   stormShelter = null,
   stormLabel = '';
 function stormClock(elapsed) {
@@ -2536,10 +2680,65 @@ function goShelter() {
   selectedTarget = null;
   toast(`已標記避風處：${s.name}。靠岸後按 Q 登岸。`);
 }
-function updateStorm() {
+// Pacing statistics (local only).
+let statsPrev = null;
+function updateStats(dt) {
+  if (!state.stats) return;
+  const here = { x: state.player.x, z: state.player.z };
+  const moved = statsPrev ? Math.min(30 * dt, Math.hypot(here.x - statsPrev.x, here.z - statsPrev.z)) : 0;
+  statsPrev = here;
+  for (const id of tickStats(state, dt, moved, state.player.mode)) onProgress('milestone', id);
+}
+// Hook for progress events (achievements subscribe to it).
+function onProgress(kind, detail) {
+  if (typeof checkAchievements === 'function') checkAchievements(kind, detail);
+}
+function openStats(back = closeModal) {
+  normalizeStats(state);
+  const st = state.stats,
+    rows = milestoneRows(state)
+      .map(
+        r =>
+          `<tr class="${r.reached ? 'done' : ''}"><td>${r.reached ? '✓' : '·'}</td><td>${esc(r.name)}</td><td>${r.play != null ? formatDuration(r.play) : r.reached ? '紀錄前已完成' : '—'}</td><td>${r.day != null ? '第 ' + r.day + ' 日' : ''}</td></tr>`
+      )
+      .join('');
+  modal(
+    'STATISTICS · 遊玩統計',
+    `存檔 ${slot} 的旅程`,
+    `<div class="stats-grid"><span>遊玩時間</span><b>${formatDuration(st.playSeconds)}</b><span>遊玩次數</span><b>${st.sessions}</b><span>航行距離</span><b>${(st.sailed / 1000).toFixed(2)} km</b><span>步行距離</span><b>${Math.round(st.walked)} m</b><span>昏迷次數</span><b>${st.collapses}</b><span>海上撐過暴風</span><b>${st.stormsAtSea}</b></div>
+     <table class="stats-table"><thead><tr><th></th><th>里程碑</th><th>遊玩時間</th><th>遊戲天數</th></tr></thead><tbody>${rows}</tbody></table>
+     <p class="note">統計只存在這台裝置。按「複製統計資料」可以把匿名數據貼給開發者，用來調整遊戲節奏。</p>`,
+    [
+      { label: '返回', primary: true, action: () => (back === closeModal ? closeModal() : back()) },
+      {
+        label: '複製統計資料',
+        action: async () => {
+          try {
+            await navigator.clipboard.writeText(statsReport(state, GAME_VERSION));
+            toast('已複製統計資料。');
+          } catch {
+            toast('無法存取剪貼簿。', true);
+          }
+        }
+      }
+    ]
+  );
+}
+function updateStorm(dt = 1 / 30) {
   const el = $('storm-alert'),
     sc = running ? stormClock(state.elapsed) : null;
   document.body.classList.toggle('storm-alert-on', !!sc);
+  // A storm counts as weathered at sea after 30 s spent off shore while it rages.
+  if (sc?.phase === 'storm' && running && !paused) {
+    const atSea = !['foot', 'aboard'].includes(state.player.mode) && !state.inCave;
+    if (atSea) stormSeaTime += dt;
+  } else if (stormSeaTime) {
+    if (stormSeaTime >= 30 && state.stats) {
+      state.stats.stormsAtSea++;
+      onProgress('storm');
+    }
+    stormSeaTime = 0;
+  }
   if (!sc) {
     if (!el.hidden) el.hidden = true;
     stormWarned = false;
@@ -2904,6 +3103,10 @@ function movePlayer(dt, analog) {
 }
 function moveWild(dt) {
   for (const w of state.wild) {
+    if (w.island) {
+      stepLandBeast(w, dt, state.elapsed);
+      continue;
+    }
     if (stepFlee(w, dt, state.elapsed)) {
       if (islandAt(w.x, w.z, 2)) {
         w.vx *= -0.5;
@@ -2954,6 +3157,7 @@ function moveWild(dt) {
   }
 }
 function handleCollapse() {
+  if (state.stats) state.stats.collapses++;
   state.expedition.mounted = false;
   state.expedition.diving = false;
   state.expedition.activeId = null;
@@ -3164,12 +3368,12 @@ function setupEvents() {
   $('start-btn').onclick = async () => {
     const btn = $('start-btn');
     if (btn.disabled) return;
-    if (cloud.signedIn && !cloud.connected) {
+    if (cloud.signedIn && (!cloud.connected || !cloudReady)) {
       btn.disabled = true;
       btn.textContent = '正在同步雲端存檔…';
       await connectCloud(false);
       btn.disabled = false;
-      btn.textContent = hasSave ? '繼續這段漂流' : '開始第二次人生';
+      updateTitleButtons();
       if (!$('modal-shade').hidden) return;
     }
     hasSave ? beginGame(false) : beginIntro();
@@ -3183,6 +3387,7 @@ function setupEvents() {
   $('signout-btn').onclick = signOutCloud;
   updateAccountUI();
   $('settings-btn').onclick = () => openSettings();
+  $('slots-btn').onclick = openSlots;
   $('storm-go').onclick = goShelter;
   $('tut-skip').onclick = () => endTutorial(true);
   applyUiSettings();
@@ -3579,7 +3784,7 @@ function frame(now) {
   if (document.hidden) return;
   updateSound(dt);
   refreshPrompts();
-  updateStorm();
+  updateStorm(dt);
   updateTutorial();
   if (orientationBlocked) {
     if (!film) {
@@ -3612,6 +3817,7 @@ function frame(now) {
     attackCooldown = Math.max(0, attackCooldown - dt);
     movePlayer(dt, analog);
     moveWild(dt);
+    updateStats(dt);
     const events = tickSystems(state, dt, !!panel || !!buildType);
     for (const message of tickExpansion(state, dt, !!panel || !!buildType)) toast(message);
     for (const ev of tickShip(state))
@@ -3650,6 +3856,7 @@ function frame(now) {
     }
     if (spawnTimer > 3) {
       spawnTimer = 0;
+      ensureLandBeasts(state);
       clearLand(state);
       world.sync(state);
       const nearby = state.wild.filter(w => Math.hypot(w.x - state.player.x, w.z - state.player.z) < 65);
@@ -3664,7 +3871,7 @@ function frame(now) {
           homeX: x,
           homeZ: z,
           phase: Math.random() * 6,
-          genome: makeGenome(Math.random() * 1e9, Math.floor(Math.random() * 4)),
+          genome: seaGenome(x, z),
           trust: 0,
           hostile: Math.hypot(x, z) > 90 && Math.random() < 0.3
         });

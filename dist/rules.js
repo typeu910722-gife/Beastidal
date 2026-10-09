@@ -171,7 +171,8 @@ function initialWild(seed) {
     [52, -20, 0],
     [25, 52, 2]
   ].map(([x, z, form], i) => {
-    const genome = makeGenome(seed + i * 1531, form);
+    // a couple of deep-sea species and one plant mutant among the first creatures a new player meets
+    const genome = makeGenome(seed + i * 1531, form, i === 5 || i === 7 ? 'deep' : i === 3 ? 'flora' : 'sea');
     if (i === 6) genome.temper = [245, 245];
     return { id: 'wild-' + i, x, z, homeX: x, homeZ: z, genome, trust: 0, phase: i * 1.3, hostile: i === 6 };
   });

@@ -55,6 +55,15 @@ export class CloudSave {
       this.account = null;
     }
   }
+  // Each save slot is its own Drive file; slot 1 keeps the original file name.
+  fileName() {
+    const slot = this.slot || 1;
+    return slot === 1 ? this.config.driveFileName : this.config.driveFileName.replace(/\.json$/, `-slot${slot}.json`);
+  }
+  setSlot(slot) {
+    if (slot !== this.slot) this.fileId = null;
+    this.slot = slot;
+  }
   get configured() {
     return !!(this.native() || this.config.googleClientId);
   }
@@ -163,7 +172,7 @@ export class CloudSave {
   }
 
   async remoteInfo() {
-    const q = encodeURIComponent(`name='${this.config.driveFileName}' and trashed=false`);
+    const q = encodeURIComponent(`name='${this.fileName()}' and trashed=false`);
     const r = await this.api(
       `${DRIVE}?spaces=appDataFolder&q=${q}&orderBy=modifiedTime desc&fields=files(id,modifiedTime,appProperties)`
     );
@@ -193,7 +202,7 @@ export class CloudSave {
     if (this.fileId === null) await this.remoteInfo();
     const boundary = 'beastidal' + Math.random().toString(36).slice(2);
     const meta = {
-      name: this.config.driveFileName,
+      name: this.fileName(),
       mimeType: 'application/json',
       appProperties: { savedAt: String(savedAt) }
     };

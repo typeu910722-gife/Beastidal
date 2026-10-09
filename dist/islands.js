@@ -53,6 +53,7 @@ export function harvest(s, id) {
 // Relocate pre-existing drift items that would otherwise be buried beneath new land.
 export function clearLand(s) {
   for (const a of [...s.loot, ...s.wild]) {
+    if (a.island) continue; // land beasts belong on their island
     const i = islandAt(a.x, a.z, 2);
     if (!i) continue;
     const theta = Math.atan2(a.x - i.x, a.z - i.z);

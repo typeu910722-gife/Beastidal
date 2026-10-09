@@ -1,7 +1,7 @@
 import { expansionModels } from './expansion-models.js?v=0.9.0';
 import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.9.0';
 import { normalizeHousing, penId } from './housing.js?v=0.9.0';
-import { makeCreature, animateCreature } from './creatures.js?v=0.9.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.9.0';
 export { makeCreature } from './creatures.js?v=0.9.0';
 import { makeIslands } from './island-models.js?v=0.9.0';
 import { facilityId } from './facilities.js?v=0.9.0';
@@ -13,6 +13,7 @@ import { buildError } from './rules.js?v=0.9.0';
 import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.9.0';
 import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.9.0';
 const V = T.Vector3;
+const ISLAND_GROUND = 0.42; // top of the island terrain where land beasts stand
 const colors = {
   wood: 0x976344,
   plank: 0xbe9866,
@@ -475,6 +476,7 @@ export class OceanWorld {
     this.mobile = !!(navigator.maxTouchPoints > 0 || window.matchMedia?.('(pointer:coarse)').matches);
     this.settings = loadSettings(this.mobile);
     this.quality = QUALITY[this.settings.quality];
+    setCreatureDetail(this.settings.quality);
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, this.quality.pixelRatio));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = this.quality.soft ? T.PCFSoftShadowMap : T.PCFShadowMap;
@@ -637,6 +639,7 @@ export class OceanWorld {
     yawDelta *= k;
     pitchDelta *= k * (this.settings.invertY ? -1 : 1);
     this.yaw += yawDelta;
+    if (Math.abs(yawDelta) + Math.abs(pitchDelta) > 1e-4) this.lastManualCam = performance.now();
     if (this.firstPerson && !this.placement)
       this.firstPitch = Math.max(-1.15, Math.min(1.15, (this.firstPitch || 0) + pitchDelta));
     else this.pitch = Math.max(0.3, Math.min(1.2, this.pitch + pitchDelta));
@@ -856,6 +859,23 @@ export class OceanWorld {
       u.uSpeed.value = this.hullSpeed;
       u.uHull.value.set(s.ship ? 11 : 1.9, s.ship ? 2.6 : 0.9);
       u.uTrail.value = this.trail.record(hx, hz, this.hullSpeed, t);
+      // Auto camera: once the player leaves the camera alone for 2.5 s, ease it round behind whatever they steer.
+      const steerSpeed = riding ? this.moveSpeed : this.hullSpeed;
+      if (
+        this.settings.camFollow !== false &&
+        !opts.title &&
+        !this.firstPerson &&
+        !this.placement &&
+        !foot &&
+        !aboard &&
+        steerSpeed > 1.2 &&
+        performance.now() - (this.lastManualCam || 0) > 2500
+      ) {
+        const heading = helm ? s.ship.heading : riding ? s.player.heading : boat.heading,
+          behind = heading + Math.PI,
+          diff = Math.atan2(Math.sin(behind - this.yaw), Math.cos(behind - this.yaw));
+        this.yaw += diff * (1 - Math.exp(-dt * 0.9 * Math.min(1, steerSpeed / 5)));
+      }
       if (this.hullSpeed > 3.2 && !s.inCave && !diving) {
         this.sprayTimer = (this.sprayTimer || 0) - dt;
         if (this.sprayTimer <= 0) {
@@ -895,9 +915,15 @@ export class OceanWorld {
         ud.lz = c.z;
         ud.swim = (ud.swim || c.phase) + dt * (1 + Math.min(mv, 8) * 0.55);
         ud.dip = (ud.dip || 0) + ((c.diving || 0) - (ud.dip || 0)) * Math.min(1, dt * 3);
-        m.position.set(c.x, 0.03 + waveHeight(c.x, c.z, t, storm, home) - ud.dip * 1.1, c.z);
+        if (ud.phenotype.habitat === 'land') {
+          // land beasts walk on the island surface
+          m.position.set(c.x, ISLAND_GROUND, c.z);
+          m.rotation.x = 0;
+        } else {
+          m.position.set(c.x, 0.03 + waveHeight(c.x, c.z, t, storm, home) - ud.dip * 1.1, c.z);
+          m.rotation.x = ud.dip * 0.35;
+        }
         m.rotation.y = c.heading || 0;
-        m.rotation.x = ud.dip * 0.35;
         this.animateCreature(m, ud.swim);
       }
     }
@@ -910,11 +936,24 @@ export class OceanWorld {
       const pen = pools.get(c.penId);
       m.visible = !!pen;
       if (!pen) continue;
+      const landPet = m.userData.phenotype.habitat === 'land';
+      if (m.userData.perch) m.userData.perch.visible = false;
       if (c.id === s.expedition?.activeId) {
+        // Land beasts can't swim: at sea they ride along on the bow of the boat.
+        if (landPet && !foot && !aboard) {
+          const h = helm ? s.ship.heading : s.boat.heading,
+            bx = helm ? helmPos.x : this.boat.position.x,
+            bz = helm ? helmPos.z : this.boat.position.z;
+          m.scale.setScalar(phenotype(c.genome).size * 0.32);
+          m.position.set(bx + Math.sin(h) * 1.15, (helm ? DECKS[4].y : this.boat.position.y) + 0.38, bz + Math.cos(h) * 1.15);
+          m.rotation.y = h;
+          this.animateCreature(m, t);
+          continue;
+        }
         m.scale.setScalar(phenotype(c.genome).size * (riding ? 1 : 0.75));
         const target = new V(
           s.player.x + (riding ? 0 : Math.cos(t * 0.4) * 2.5),
-          this.baseY + (foot ? 0.8 : 0),
+          this.baseY + (foot ? (landPet ? 0.42 : 0.8) : 0),
           s.player.z + (riding ? 0 : Math.sin(t * 0.4) * 2.5)
         );
         m.position.lerp(target, 1 - Math.exp(-dt * 3));
@@ -941,7 +980,11 @@ export class OceanWorld {
           a = i * 2.1 + t * 0.05,
           r = 3.6 + (i % 3) * 1.4;
         m.scale.setScalar(phenotype(c.genome).size * 0.5);
-        m.position.set(isl.x + Math.sin(a) * r, 0.75 + Math.sin(t * 1.2 + i) * 0.08, isl.z + Math.cos(a) * r * 0.8);
+        m.position.set(
+          isl.x + Math.sin(a) * r,
+          landPet ? ISLAND_GROUND : 0.75 + Math.sin(t * 1.2 + i) * 0.08,
+          isl.z + Math.cos(a) * r * 0.8
+        );
         m.rotation.y = a + Math.PI / 2;
         this.animateCreature(m, t * 0.5 + i);
         i++;
@@ -957,10 +1000,12 @@ export class OceanWorld {
         [0, -0.65]
       ];
       const [x, z] = positions[slot] || [0, 0];
+      // land beasts rest on a rock perch in the pen instead of swimming
+      if (m.userData.perch) m.userData.perch.visible = true;
       m.position.set(
-        pen.x * 3.6 + x + Math.cos(a) * 0.12,
-        0.08 + Math.sin(a * 2) * 0.04,
-        pen.z * 3.6 + z + Math.sin(a) * 0.13
+        pen.x * 3.6 + x + (landPet ? 0 : Math.cos(a) * 0.12),
+        landPet ? 0.32 : 0.08 + Math.sin(a * 2) * 0.04,
+        pen.z * 3.6 + z + (landPet ? 0 : Math.sin(a) * 0.13)
       );
       m.rotation.y = Math.sin(a) * 0.3;
       this.animateCreature(m, t + i);
@@ -969,7 +1014,7 @@ export class OceanWorld {
 
     this.motes.children.forEach((m, i) => {
       m.position.y = 0.1 + Math.sin(t + m.userData.phase) * 0.06;
-      m.scale.setScalar(0.6 + Math.sin(t * 2 + i) * 0.4);
+      m.scale.setScalar(0.035 * (0.6 + Math.sin(t * 2 + i) * 0.4)); // twinkling specks, not metre-wide domes
     });
     if (opts.title) {
       this.follow.set(3, 0, 1);
