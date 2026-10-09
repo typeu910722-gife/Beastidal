@@ -321,10 +321,11 @@
   background: #9ce8d1;
   color: #0a3838;
 }
+/* right thumb: sprint sits just above the repel button, the action button to their left */
 .landscape-play #sprint-btn {
   position: absolute;
-  left: 126px;
-  bottom: 30px;
+  right: 3px;
+  bottom: 72px;
   width: 52px;
   height: 52px;
   min-height: 52px;
@@ -565,8 +566,8 @@
   right: calc(var(--edge-right) + 16px);
 }
 .landscape-play.lefty #sprint-btn {
-  left: auto;
-  right: 126px;
+  right: auto;
+  left: 3px;
 }
 .landscape-play.lefty #context-action {
   right: auto;
@@ -1339,4 +1340,8 @@ body #drawer.device #drawer-body::after {
   .dv-widget-head strong {
     font-size: 26px;
   }
+}
+/* the dock button moves up to clear the sprint button */
+.landscape-play .dock-button {
+  bottom: calc(var(--edge-bottom) + 142px);
 }
