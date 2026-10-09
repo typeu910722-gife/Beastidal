@@ -1,5 +1,5 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import{ISLANDS,onIsland,islandAt,islandDocks}from'./islands.js?v=0.7.3';
+import{ISLANDS,onIsland,islandAt,islandDocks}from'./islands.js?v=0.8.0';
 export const LIMITS={floor:20,pen:5,dock:1};
 export const LIMIT_NAMES={floor:'浮動地基',pen:'海洋展示池',dock:'船隻停靠站'};
 export const CLAIM_COST={wood:20,metal:12,fiber:8,crystal:5};

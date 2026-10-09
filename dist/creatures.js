@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.min.js';
-import{phenotype}from'./genetics.js?v=0.7.3';
+import{phenotype}from'./genetics.js?v=0.8.0';
 const V=T.Vector3;
 function mesh(parent,geo,material){const m=new T.Mesh(geo,material);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 function tube(parent,pts,r,material){return mesh(parent,new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(p=>new V(...p))),Math.max(12,pts.length*5),r,5,false),material);}

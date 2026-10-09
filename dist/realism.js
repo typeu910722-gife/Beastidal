@@ -1,6 +1,8 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import{ISLANDS}from'./islands.js?v=0.7.3';
+import{ISLANDS}from'./islands.js?v=0.8.0';
+import{WAVE_SET,WAVE_TIME}from'./physics.js?v=0.8.0';
+export const TRAIL=40,SPLASHES=4;
 
 export const QUALITY={
  high:{label:'寫實',octaves:5,pixelRatio:2,shadow:2048,soft:true,rings:150,segments:192,envSize:256,envEvery:1.5},
@@ -64,29 +66,48 @@ function oceanGeometry(rings,segments){const pos=[0,0,0],idx=[];for(let i=1;i<=r
  for(let i=0;i<rings-1;i++)for(let j=0;j<segments;j++){const a=1+i*segments+j,b=1+i*segments+(j+1)%segments,c=a+segments,d=b+segments;idx.push(a,b,c,b,d,c);}
  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeBoundingSphere();g.boundingSphere.radius=1e5;return g;}
 
+// Generated from physics.js so boats and debris float on exactly this swell.
 const WAVES=`
-const int NW=5;
+const int NW=${WAVE_SET.length};
 vec4 W[NW];
-void setupWaves(){W[0]=vec4(.92,.38,.055,42.);W[1]=vec4(.42,.91,.05,27.);W[2]=vec4(-.6,.8,.045,17.);W[3]=vec4(.98,-.2,.035,11.);W[4]=vec4(-.31,-.95,.03,7.5);}
+void setupWaves(){${WAVE_SET.map((w,i)=>`W[${i}]=vec4(${w.map(v=>v.toFixed(4)).join(',')});`).join('')}}
 `;
 const waterVertex=`uniform float uTime;uniform float uStorm;uniform vec4 uHome;varying vec3 vWorld;varying vec3 vNormalW;varying float vCrest;
 ${WAVES}
 void main(){setupWaves();vec3 p=(modelMatrix*vec4(position,1.)).xyz;vec2 g=p.xz;
  vec2 hd=abs(g-uHome.xy)-uHome.zw;float calm=mix(.45,1.,smoothstep(0.,14.,length(max(hd,0.))));
  float amp=calm*(1.+uStorm*1.6);vec3 t=vec3(1.,0.,0.),b=vec3(0.,0.,1.);vec3 off=vec3(0.);float crest=0.;
- for(int i=0;i<NW;i++){vec4 w=W[i];float k=6.28318/w.w,c=sqrt(9.8/k);vec2 d=normalize(w.xy);float f=k*(dot(d,g)-c*uTime*.55);float st=w.z*amp,a=st/k;float sf=sin(f),cf=cos(f);
+ for(int i=0;i<NW;i++){vec4 w=W[i];float k=6.28318/w.w,c=sqrt(9.8/k);vec2 d=normalize(w.xy);float f=k*(dot(d,g)-c*uTime*${WAVE_TIME.toFixed(4)});float st=w.z*amp,a=st/k;float sf=sin(f),cf=cos(f);
   off+=vec3(d.x*a*cf,a*sf,d.y*a*cf);t+=vec3(-d.x*d.x*st*sf,d.x*st*cf,-d.x*d.y*st*sf);b+=vec3(-d.x*d.y*st*sf,d.y*st*cf,-d.y*d.y*st*sf);crest+=sf*st;}
  float fade=1.-smoothstep(160.,520.,length(p.xz-cameraPosition.xz));p+=off*fade;vWorld=p;vNormalW=normalize(cross(b,t));vCrest=crest/(amp*.215)*fade;
  gl_Position=projectionMatrix*viewMatrix*vec4(p,1.);}`;
-const waterFrag=`uniform float uTime;uniform float uNight;uniform vec3 uBoat;uniform float uHeading;uniform float uSpeed;uniform vec4 uHome;uniform vec3 uFog;uniform float uFogDensity;uniform vec4 uIslands[${ISLANDS.length}];uniform float uSunPower;
+const waterFrag=`uniform float uTime;uniform float uNight;uniform vec3 uBoat;uniform float uHeading;uniform float uSpeed;uniform vec4 uHome;uniform vec3 uFog;uniform float uFogDensity;uniform vec4 uIslands[${ISLANDS.length}];uniform float uSunPower;uniform vec4 uTrail[${TRAIL}];uniform vec4 uSplash[${SPLASHES}];uniform vec2 uHull;
 varying vec3 vWorld;varying vec3 vNormalW;varying float vCrest;
 ${SKY_GLSL}${NOISE_GLSL}
 float rh(vec2 p,float t){return fbm(p*.55+vec2(t*.21,t*.13))*.6+noise(p*1.9-vec2(t*.33,-t*.27))*.4;}
 vec2 ripple(vec2 p,float t){float e=.12,h=rh(p,t);return vec2(rh(p+vec2(e,0.),t)-h,rh(p+vec2(0.,e),t)-h)/e;}
+// Wake from the recorded hull trail. Each trail point radiates a ring whose radius grows at ~0.36x the hull speed,
+// so the envelope of the rings opens at asin(.36) ~ 21 deg (Kelvin angle); right behind the hull is churned prop wash.
+float wakeField(vec2 p,inout vec2 nOff){float foam=0.,rings=0.;
+ for(int i=0;i<${TRAIL};i++){vec4 tr=uTrail[i];if(tr.w<=0.)break;float age=uTime-tr.z;if(age<0.||age>9.)continue;
+  vec2 dir=vec2(sin(uHeading),cos(uHeading));if(i>0){vec2 dd=uTrail[i-1].xy-tr.xy;float l=length(dd);if(l>1e-3)dir=dd/l;}
+  vec2 rel=p-tr.xy;float d=length(rel)+1e-4;float life=1.-age/9.;float v=min(tr.w,12.);
+  float w0=.45+age*.24;float wash=exp(-d*d/(w0*w0))*life*life*min(1.,v*.3);
+  float r=.36*v*age,sideAmt=abs(dir.x*rel.y-dir.y*rel.x)/d;
+  float ring=exp(-pow((d-r)/(.22+age*.06),2.))*life*min(1.,v*.22)*smoothstep(0.,.3,age)*sideAmt;
+  rings+=ring;foam=max(foam,wash*.85);nOff+=rel/d*sin((d-r)*7.)*ring*.12;}
+ // Crests pile up only along the envelope (the two Kelvin arms); inside the V they stay as faint transverse ripples.
+ foam=max(foam,smoothstep(1.1,3.,rings)*.55);
+ vec2 fw=vec2(sin(uHeading),cos(uHeading)),rel=p-uBoat.xz-fw*uHull.x;float bow=exp(-dot(rel,rel)/(uHull.y*uHull.y))*min(1.,uSpeed*.18);foam=max(foam,bow);
+ for(int i=0;i<${SPLASHES};i++){vec4 sp=uSplash[i];if(sp.w<=0.)continue;float age=uTime-sp.z;if(age<0.||age>4.)continue;vec2 rl=p-sp.xy;float d=length(rl)+1e-4;float r1=age*3.4,r2=age*2.1;
+  float ring=(exp(-pow((d-r1)/.3,2.))+.6*exp(-pow((d-r2)/.25,2.)))*exp(-age*1.1)*sp.w;float core=exp(-d*d/(.7+age))*exp(-age*2.2)*sp.w;
+  foam=max(foam,max(ring*.65,core));nOff+=rl/d*sin((d-r1)*9.)*ring*.6;}
+ return foam;}
 void main(){
  vec3 V=cameraPosition-vWorld;float dist=length(V);V/=dist;vec2 p=vWorld.xz;
  float detail=1.-smoothstep(25.,180.,dist);vec2 rp=ripple(p,uTime)*detail*mix(.22,.4,uStorm);
- vec3 n=normalize(vNormalW+vec3(-rp.x,0.,-rp.y));
+ vec2 wn=vec2(0.);float wake=dist<160.?wakeField(p,wn):0.;
+ vec3 n=normalize(vNormalW+vec3(-rp.x-wn.x,0.,-rp.y-wn.y));
  float NdV=max(dot(n,V),0.);float F=.02+.98*pow(1.-NdV,5.);
  vec3 R=reflect(-V,n);R.y=max(R.y,.015);vec3 refl=skyRadiance(normalize(R));
  float day=smoothstep(-.18,.12,uSunDir.y);vec3 deep=vec3(.002,.018,.032),shallow=vec3(.02,.20,.19);
@@ -102,8 +123,7 @@ void main(){
  float foam=smoothstep(.6,.9,vCrest)*smoothstep(.5,.8,noise(p*2.3+uTime*.5))*(.25+uStorm);
  for(int i=0;i<${ISLANDS.length};i++){vec4 isl=uIslands[i];float e=length((p-isl.xy)/isl.zw);foam+=(1.-smoothstep(.0,.12,abs(e-1.08-.03*sin(uTime*1.3+p.x))))*(.45+.55*noise(p*3.+uTime));}
  foam+=(1.-smoothstep(.08,.7,homeD))*step(0.,max(hd.x,hd.y))*(.35+.4*noise(p*4.+uTime*.8));
- vec2 d=p-uBoat.xz;vec2 fw=vec2(sin(uHeading),cos(uHeading));float aft=-dot(d,fw),side=abs(dot(d,vec2(fw.y,-fw.x)));
- foam+=(1.-smoothstep(.04,.45,abs(side-(.52+aft*.2))))*smoothstep(0.,1.6,aft)*(1.-smoothstep(3.,14.,aft))*min(1.,uSpeed*.25)*(.5+.5*noise(p*3.));
+ foam+=wake*(.55+.45*noise(p*3.1+uTime*.7));
  foam=clamp(foam,0.,1.)*detail;col=mix(col,vec3(.75,.8,.8)*(.08+.92*sunlit)+refl*.15,foam*.85);
  float fog=1.-exp(-dist*uFogDensity);col=mix(col,uFog,fog);
  gl_FragColor=vec4(col,mix(.86,1.,F));
@@ -112,7 +132,7 @@ void main(){
 }`;
 export function makeWater(quality){
  const m=new T.Mesh(oceanGeometry(quality.rings,quality.segments),new T.ShaderMaterial({transparent:true,depthWrite:false,defines:{OCTAVES:quality.octaves},
-  uniforms:{uTime:{value:0},uNight:{value:0},uStorm:{value:0},uCamera:{value:new T.Vector3()},uBoat:{value:new T.Vector3()},uHeading:{value:0},uSpeed:{value:0},uHome:{value:new T.Vector4(1.8,1.8,3.6,3.6)},uSunDir:{value:new T.Vector3(0,1,0)},uFog:{value:new T.Color()},uFogDensity:{value:.0045},uSunPower:{value:1},uIslands:{value:ISLANDS.map(i=>new T.Vector4(i.x,i.z,i.rx,i.rz))}},
+  uniforms:{uTime:{value:0},uNight:{value:0},uStorm:{value:0},uCamera:{value:new T.Vector3()},uBoat:{value:new T.Vector3()},uHeading:{value:0},uSpeed:{value:0},uHome:{value:new T.Vector4(1.8,1.8,3.6,3.6)},uSunDir:{value:new T.Vector3(0,1,0)},uFog:{value:new T.Color()},uFogDensity:{value:.0045},uSunPower:{value:1},uIslands:{value:ISLANDS.map(i=>new T.Vector4(i.x,i.z,i.rx,i.rz))},uTrail:{value:new Float32Array(TRAIL*4)},uSplash:{value:new Float32Array(SPLASHES*4)},uHull:{value:new T.Vector2(1.9,.9)}},
   vertexShader:waterVertex,fragmentShader:waterFrag}));
  m.frustumCulled=false;m.renderOrder=1;return m;
 }

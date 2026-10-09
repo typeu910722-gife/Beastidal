@@ -37,3 +37,12 @@
 .quality-row button.active{border-color:var(--mint);color:var(--mint);background:#2c564966}
 @media(max-width:760px),(max-height:630px){.account-box{top:62px;padding:9px 11px}.account-box p{font-size:11px}.google-button{min-height:34px;padding:6px 10px;font-size:12px}}
 @media(pointer:coarse) and (orientation:landscape) and (max-height:600px){.account-box{top:56px;grid-template-columns:1fr;width:min(280px,36vw)}.account-icon{display:none}.account-box p{font-size:10px;line-height:1.5}}
+/* Mobile: sprint + repel cluster, instant press feedback, no double-tap zoom delay */
+.touch-actions{display:flex;gap:12px;align-items:flex-end;pointer-events:auto}
+#sprint-btn{border-radius:50%;height:58px;width:58px;min-height:58px;font-size:12px;background:#153d4880;touch-action:none;user-select:none;-webkit-user-select:none}
+#sprint-btn.active{background:#9ce8d1;color:#0a3838;border-color:#9ce8d1;box-shadow:0 0 16px #9ce8d1aa}
+.landscape-play #sprint-btn{background:#173d43bd;border:1px solid #c1cbb854;box-shadow:0 4px 20px #051d2b40}
+.landscape-play #sprint-btn.active{background:#9ce8d1;color:#0a3838}
+.landscape-play #sprint-btn{position:absolute;left:126px;bottom:30px;width:52px;height:52px;min-height:52px}
+#hud button,#touch-controls button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#hud button.pressed,#touch-controls button.pressed{filter:brightness(1.35);transform:scale(.95)}
