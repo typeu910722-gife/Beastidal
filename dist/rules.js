@@ -82,7 +82,13 @@ Object.assign(RECIPES, {
     desc: '消耗 1 口糧恢復 15 體力。',
     kind: 'furniture'
   },
-  table: { name: '工作餐桌', icon: '▱', cost: { wood: 5, metal: 1 }, desc: '整理物資與製作誘餌。', kind: 'furniture' },
+  table: {
+    name: '工作桌',
+    icon: '▱',
+    cost: { wood: 5, metal: 1 },
+    desc: '製作誘餌，並和信任你的野生御獸締結契約。',
+    kind: 'furniture'
+  },
   lamp: {
     name: '晶光立燈',
     icon: '✦',
@@ -104,7 +110,9 @@ Object.assign(RECIPES, {
     icon: '⚓',
     cost: { wood: 24, metal: 16, fiber: 10 },
     desc: '大型船隻的繫泊碼頭。需先占領一座島嶼；戰艦融合的必要設施。',
-    kind: 'water'
+    kind: 'water',
+    // blueprint: stays out of the build menu (no spoilers) until the first island is claimed
+    unlock: s => (s.occupied || []).length > 0
   }
 });
 export function uid(prefix = 'c') {
@@ -288,41 +296,8 @@ export function craftBait(s) {
   s.resources.bait += 3;
   return { ok: true };
 }
-export function feed(s, id) {
-  normalizeHousing(s);
-  if (!s.secret) return { ok: false, error: '你還不知道如何接近牠。試著調查研究浮標。' };
-  if (!count(s, 'pen')) return { ok: false, error: '先建造海洋展示池，給牠一個安全的家。' };
-  if (s.tamed.length + s.eggs.length >= count(s, 'pen') * 3) return { ok: false, error: '展示池已滿，請增建展示池。' };
-  const w = s.wild.find(w => w.id === id);
-  if (!w) return { ok: false, error: '生物已離開。' };
-  if (Math.hypot(w.x - s.player.x, w.z - s.player.z) > 11) return { ok: false, error: '請航行到生物身旁，再投餌。' };
-  if (s.elapsed - (w.lastFeed ?? -999) < 18)
-    return { ok: false, error: `牠仍在觀察你，再等 ${Math.ceil(18 - s.elapsed + (w.lastFeed ?? 0))} 秒。` };
-  if (!pay(s, { bait: 1 })) return { ok: false, error: '誘餌用完了，在背包用口糧和纖維製作。' };
-  w.lastFeed = s.elapsed;
-  const p = phenotype(w.genome);
-  w.trust = Math.min(100, w.trust + (w.hostile ? 5 : 7 + Math.floor(p.affinity / 30)));
-  if (w.trust >= 100) {
-    const pet = {
-      id: w.id,
-      genome: w.genome,
-      name: geneName(w.genome),
-      generation: 0,
-      parents: [],
-      mutations: 0,
-      bond: 10,
-      stamina: 100,
-      health: 100,
-      role: 'exhibit',
-      penId: freePen(s)
-    };
-    s.tamed.push(pet);
-    s.wild = s.wild.filter(c => c.id !== id);
-    log(s, '第一次聽懂海洋', pet.name + ' 願意跟著我回家。或許這些突變生物不只是威脅。');
-    return { ok: true, tamed: pet };
-  }
-  return { ok: true, trust: w.trust };
-}
+// Feeding and contracts live in taming.js (0.12).
+export { feed } from './taming.js?v=0.11.0';
 export function breed(s, aId, bId, rng = Math.random) {
   normalizeHousing(s);
   normalizeExpansion(s);

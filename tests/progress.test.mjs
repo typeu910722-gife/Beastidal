@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { createState, validateSave } from '../dist/rules.js';
+import { createState, validateSave, RECIPES } from '../dist/rules.js';
 import { makeGenome, phenotype, genomeValid, dnaCode, crossGenome, seeded, SPECIES } from '../dist/genetics.js';
 import { ACHIEVEMENTS, checkUnlocks, achievementCount } from '../dist/achievements.js';
 import { recordCreature, syncOwned, codexProgress, codexEntries, LORE } from '../dist/codex.js';
@@ -217,6 +217,12 @@ test('the protagonist rig: feet on the ground when standing, finite poses in eve
       }
   assert.equal(h.userData.legs.length, 2);
   assert.equal(h.userData.arms.length, 2);
+});
+test('the dock blueprint stays hidden until an island is claimed', () => {
+  const s = createState(9);
+  assert.equal(RECIPES.dock.unlock(s), false);
+  s.occupied = ['palm'];
+  assert.equal(RECIPES.dock.unlock(s), true);
 });
 test('offline cache lists every module with the current asset version', () => {
   const sw = readFileSync('dist/sw.js', 'utf8'),

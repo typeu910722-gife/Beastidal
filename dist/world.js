@@ -1052,8 +1052,29 @@ export class OceanWorld {
         ud.lz = c.z;
         ud.swim = (ud.swim || c.phase) + dt * (1 + Math.min(mv, 8) * 0.55);
         ud.dip = (ud.dip || 0) + ((c.diving || 0) - (ud.dip || 0)) * Math.min(1, dt * 3);
+        // a frenzied beast (failed forced contract) burns with a red aura
+        const rage = (c.frenzyUntil || 0) > s.elapsed;
+        if (rage && !ud.rage) ud.rage = halo(m, 0xff3b2a, 0, 0.6, 0, 4.5);
+        if (ud.rage) {
+          ud.rage.visible = rage;
+          ud.rage.material.opacity = 0.45 + Math.sin(t * 9) * 0.25;
+        }
+        if (c.riding) {
+          // a land beast that trusts you rides along on the boat's bow
+          const h = s.boat.heading;
+          m.position.set(
+            this.boat.position.x + Math.sin(h) * 1.15,
+            this.boat.position.y + 0.38,
+            this.boat.position.z + Math.cos(h) * 1.15
+          );
+          m.rotation.y = h;
+          m.scale.setScalar(ud.phenotype.size * 0.32);
+          this.animateCreature(m, t);
+          continue;
+        }
+        if (m.scale.x !== ud.phenotype.size) m.scale.setScalar(ud.phenotype.size);
         if (ud.phenotype.habitat === 'land') {
-          // land beasts walk on the island surface
+          // land beasts walk on the island surface (and on the raft when they follow you home)
           m.position.set(c.x, ISLAND_GROUND, c.z);
           m.rotation.x = 0;
         } else {

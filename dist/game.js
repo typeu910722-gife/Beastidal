@@ -66,6 +66,16 @@ import { CONFIG } from './config.js?v=0.11.0';
 import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.11.0';
 import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.11.0';
 import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.11.0';
+import {
+  RARITY,
+  FRENZY,
+  rarityOf,
+  baitCost,
+  frenzied,
+  normalizeTaming,
+  contractCandidates,
+  contract
+} from './taming.js?v=0.11.0';
 import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.11.0';
 import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.11.0';
 export const GAME_VERSION = '0.11.0';
@@ -1274,6 +1284,7 @@ function toggleView() {
 }
 function beginGame(fresh = false) {
   normalizeWildlife(state);
+  normalizeTaming(state);
   normalizeDevice(state);
   ensureLandBeasts(state);
   normalizeStats(state).sessions++;
@@ -1471,7 +1482,11 @@ function updateNearest() {
                   : selected.type === 'buoy'
                     ? '訊號微弱 · 有人留下了紀錄'
                     : state.secret
-                      ? `信任 ${selected.trust}% · ${selected.hostile ? '危險個體' : '可嘗試投餌'}`
+                      ? frenzied(selected, state.elapsed)
+                        ? '狂暴中！快拉開距離'
+                        : selected.follow
+                          ? '完全信任 · 跟著你 · 回工作桌締結契約'
+                          : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.hostile ? ' · 危險個體' : ''}`
                       : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
     $('context-verb').textContent =
@@ -1576,14 +1591,18 @@ function interact() {
     }
     const r = feed(state, t.id);
     if (!r.ok) toast(r.error, true);
-    else if (r.tamed) {
+    else if (r.follow) {
       selectedTarget = null;
-      discover('建立羈絆', r.tamed.name + ' 已入住展示池。');
-      world.sync(state);
+      discover(
+        '完全信任',
+        `${geneName(state.wild.find(w => w.id === t.id).genome)} 會跟著你。回木筏的工作桌締結契約。`
+      );
+      haptic('discover');
       save(true);
     } else {
-      toast(`牠接住了誘餌。信任提升至 ${r.trust}%`);
-      audio.note(670, 0.2);
+      toast(`牠接住了誘餌。信任 ${r.trust}% · 再餵 ${r.left} 次 · 下次需要 ${r.next} 份誘餌`);
+      audio.note(620 + r.trust * 3, 0.2);
+      save(true);
     }
     updateUI();
   }
@@ -2263,7 +2282,8 @@ const FOCUS_VIEW = {
   beacon: { local: [0, 3.2, 0], dist: 9, pitch: 0.32, yaw: 0.6 },
   desk: { local: [0.05, 1.32, 0], dist: 2.3, pitch: 0.62, yaw: 0.25, hidePlayer: true },
   laptop: { local: [-0.25, 1.55, -0.12], dist: 1.1, pitch: 0.2, yaw: 0.22, fov: 50, hidePlayer: true, lift: 0.22 },
-  dock: { local: [0, 0.3, 0], dist: 10, pitch: 0.6, yaw: 0.5 }
+  dock: { local: [0, 0.3, 0], dist: 10, pitch: 0.6, yaw: 0.5 },
+  table: { local: [0, 1.3, 0], dist: 3.2, pitch: 0.62, yaw: 0.4, hidePlayer: true }
 };
 const nearBuilding = b =>
   (state.player.mode === 'foot' || state.player.mode === 'aboard') &&
@@ -2295,10 +2315,6 @@ function enterFocus(id) {
     toast('坐下來喘口氣，體力 +15。');
     save(true);
     updateUI();
-    return;
-  }
-  if (b.type === 'table') {
-    openDevice('bag');
     return;
   }
   if (!FOCUS_VIEW[b.type]) {
@@ -2431,6 +2447,32 @@ function renderFocus() {
     const pets = occupants(state, penId(b));
     info = pets.length ? `${pets.length} / 3 隻 · 點選牠們查看與互動` : '池裡還沒有住民。';
     extra = `<div class="focus-pets">${pets.map(p => `<button type="button" data-focus-pet="${esc(p.id)}">${esc(p.name)}</button>`).join('')}</div>`;
+  } else if (b.type === 'table') {
+    const cands = contractCandidates(state, b);
+    eyebrow = '工作桌 · 御獸契約';
+    info = cands.length
+      ? '信任度就是契約的成功率。'
+      : '附近沒有信任你的野生御獸。先在海上連續投餌；信任到 100% 牠就會跟著你回來。';
+    if (!near) info += ' 走到桌旁才能締結契約。';
+    extra =
+      `<div class="contract-list">${cands
+        .map(w => {
+          const p = Math.round(w.trust),
+            risky = p < FRENZY.below;
+          return `<div class="contract-row"><span><b>${esc(geneName(w.genome))}</b><small>${RARITY[rarityOf(w.genome)]} · 信任 ${p}%${w.follow ? ' · 跟隨中' : ''}</small></span><button type="button" data-contract="${esc(w.id)}" class="${risky ? 'danger' : 'primary'}" ${near ? '' : 'disabled'}>${risky ? '強行契約' : '締結契約'} · ${p}%</button></div>`;
+        })
+        .join('')}</div>` +
+      (cands.some(w => w.trust < FRENZY.below)
+        ? '<p class="focus-warn">信任度低於 60% 時強行契約，失敗會讓牠狂暴：速度與攻擊力 1.2 倍，追擊你 6–17 秒。</p>'
+        : '');
+    act(
+      '製作誘餌 · 口糧 1 + 纖維 1 → 3 份',
+      () => {
+        const r = craftBait(state);
+        focusDone(r.ok ? { ok: true, message: `誘餌 +3（共 ${state.resources.bait} 份）` } : r);
+      },
+      { disabled: !state.secret }
+    );
   } else if (b.type === 'desk') {
     normalizeDevice(state);
     if (!state.device.owned)
@@ -2486,6 +2528,7 @@ function renderFocus() {
       openFacility(id);
     };
   ui.querySelectorAll('[data-focus-pet]').forEach(btn => (btn.onclick = () => selectFocusPet(btn.dataset.focusPet)));
+  ui.querySelectorAll('[data-contract]').forEach(btn => (btn.onclick = () => performContract(btn.dataset.contract, b)));
   const rename = ui.querySelector('.focus-rename');
   if (rename)
     rename.onsubmit = e => {
@@ -2494,6 +2537,27 @@ function renderFocus() {
       focusDone(r.ok ? { ok: true, message: `改名為「${r.name}」。` } : r);
     };
   promptPanel(ui);
+}
+function performContract(id, table) {
+  const r = contract(state, id, table);
+  if (r.ok) {
+    haptic('discover');
+    audio.note(940, 0.5);
+    log(state, '御獸契約', `在工作桌前，${r.tamed.name} 把頭靠了過來。契約成立。`);
+    discover('契約成立', `${r.tamed.name} 成為你的御獸，已入住${penLabel(state, r.tamed.penId)}。`);
+    world.sync(state);
+    save(true);
+    updateUI();
+    renderFocus();
+    return;
+  }
+  toast(r.error, true);
+  if (r.frenzy) {
+    haptic('hit');
+    audio.splash(1);
+    exitFocus();
+  } else renderFocus();
+  save(true);
 }
 // Resting in the tent: the screen dims, time passes a little, you wake up rested.
 function restInShelter() {
@@ -2690,7 +2754,7 @@ function renderPanel() {
     body.innerHTML =
       `<p>回到木筏附近，選擇設施後放在綠色格子。擴建地基與展示池需連接木筏邊缘。</p><div class="info-strip">已建 ${count(state, 'floor')} 格地基 · ${count(state, 'shelter') ? '已有遮蔽' : '尚無遮蔽'} · ${count(state, 'collector') ? '有淡水產出' : '缺少淡水來源'}</div>` +
       Object.entries(RECIPES)
-        .filter(([k, r]) => !r.fixed && (!r.hidden || state.secret))
+        .filter(([k, r]) => !r.fixed && (!r.hidden || state.secret) && (!r.unlock || r.unlock(state)))
         .map(
           ([k, r]) =>
             `<article class="build-card"><span>${r.icon}</span><div><h3>${r.name}</h3><p>${r.desc}</p><div class="cost">${costLabel(r.cost)}</div>${LIMITS[k] ? `<div class="limit">避難所上限 ${count(state, k)} / ${LIMITS[k]}</div>` : ''}</div><button data-build="${k}" ${!canPay(state, r.cost) || (LIMITS[k] && count(state, k) >= LIMITS[k]) ? 'disabled' : ''}>${LIMITS[k] && count(state, k) >= LIMITS[k] ? '已達上限' : '建造'}</button></article>`
@@ -3719,9 +3783,49 @@ function movePlayer(dt, analog) {
     toast('已靠近木筏。點「登上避難所」，或繞過設施。');
   }
 }
+// A beast that fully trusts you follows a few metres behind; land beasts hop into the boat when you put to sea.
+function followPlayer(w, dt) {
+  const p = state.player;
+  if (w.island && p.mode !== 'foot') {
+    w.riding = true;
+    w.x = state.boat.x;
+    w.z = state.boat.z;
+    return;
+  }
+  w.riding = false;
+  const h = p.heading || 0,
+    tx = p.x - Math.sin(h) * 2.6,
+    tz = p.z - Math.cos(h) * 2.6,
+    dx = tx - w.x,
+    dz = tz - w.z,
+    d = Math.hypot(dx, dz);
+  if (d > 40) {
+    w.x = tx;
+    w.z = tz;
+    return;
+  }
+  if (d < 0.6) return;
+  const v = Math.min(9, 2.5 + d * 1.2),
+    nx = w.x + (dx / d) * v * dt,
+    nz = w.z + (dz / d) * v * dt;
+  if (w.island || !islandAt(nx, nz, 2)) {
+    w.x = nx;
+    w.z = nz;
+  }
+  w.heading = turnToward(w.heading || 0, Math.atan2(dx, dz), dt * 3);
+}
 function moveWild(dt) {
   for (const w of state.wild) {
-    if (w.island) {
+    const fren = frenzied(w, state.elapsed);
+    if (w.frenzyUntil && !fren) {
+      delete w.frenzyUntil;
+      toast('狂暴的御獸冷靜下來，退開了。');
+    }
+    if (w.follow && !fren) {
+      followPlayer(w, dt);
+      continue;
+    }
+    if (w.island && !fren) {
       stepLandBeast(w, dt, state.elapsed);
       continue;
     }
@@ -3738,20 +3842,22 @@ function moveWild(dt) {
     let tx = w.homeX + Math.sin(state.elapsed * 0.1 + w.phase) * 4,
       tz = w.homeZ + Math.cos(state.elapsed * 0.075 + w.phase) * 4;
     let speed = 0.45 + phenotype(w.genome).speed / 150;
+    // a frenzied beast (failed forced contract) hunts you anywhere, 1.2x faster and harder-hitting
     if (
-      (state.player.mode === 'boat' || state.expedition.mounted) &&
-      w.hostile &&
-      d < 16 &&
-      (!w.fleeUntil || state.elapsed > w.fleeUntil) &&
-      !panel
+      fren ||
+      ((state.player.mode === 'boat' || state.expedition.mounted) &&
+        w.hostile &&
+        d < 16 &&
+        (!w.fleeUntil || state.elapsed > w.fleeUntil) &&
+        !panel)
     ) {
       tx = state.player.x;
       tz = state.player.z;
-      speed = 2.2;
-      if (d < 2.2 && attackCooldown <= 0) {
+      speed = 2.2 * (fren ? FRENZY.power : 1);
+      if (d < (fren ? 3.2 : 2.2) && attackCooldown <= 0) {
         const guardians = state.tamed.filter(p => phenotype(p.genome).ability === 1);
         const defense = guardians.reduce((sum, p) => sum + phenotype(p.genome).armor / 100, 0);
-        const damage = Math.max(1, 7 / (1 + defense));
+        const damage = Math.max(1, (7 * (fren ? FRENZY.power : 1)) / (1 + defense));
         state.vitals.health = Math.max(0, state.vitals.health - damage);
         attackCooldown = 3;
         $('damage-flash').style.opacity = '.5';
@@ -3767,7 +3873,8 @@ function moveWild(dt) {
     if (len > 0.4) {
       const nx = w.x + (dx / len) * speed * dt,
         nz = w.z + (dz / len) * speed * dt;
-      if (!islandAt(nx, nz, 2)) {
+      // sea beasts stay off the islands; a frenzied land beast stays on its island
+      if (w.island ? islandAt(nx, nz, -1) : !islandAt(nx, nz, 2)) {
         w.x = nx;
         w.z = nz;
       }

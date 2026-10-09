@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { contract, feedsNeeded, frenzied } from '../dist/taming.js';
 import { createState, feed, placeBuilding, validateSave } from '../dist/rules.js';
 import { makeGenome, crossGenome, phenotype, seeded } from '../dist/genetics.js';
 import {
@@ -30,21 +31,67 @@ function ready() {
   normalizeExpansion(s);
   return s;
 }
-test('Taming requires repeated contact and cooldown cannot consume bait', () => {
+test('Taming: back-to-back feedings cost 1, 3, 5 … bait; full trust follows; the work table binds it', () => {
   const s = ready(),
-    w = s.wild[0];
+    w = s.wild[0],
+    need = feedsNeeded(w.genome);
+  s.player.x = w.x;
+  s.player.z = w.z;
+  let bait = s.resources.bait;
+  for (let k = 1; k <= need; k++) {
+    const r = feed(s, w.id);
+    assert.ok(r.ok, r.error);
+    assert.equal(bait - s.resources.bait, 2 * k - 1, 'feeding ' + k + ' costs ' + (2 * k - 1));
+    bait = s.resources.bait;
+    assert.equal(w.trust, Math.min(100, Math.round((k / need) * 100)));
+  }
+  assert.ok(w.follow && need >= 6 && need <= 10);
+  assert.equal(feed(s, w.id).ok, false, 'nothing left to gain');
+  // contract at the work table
+  assert.ok(placeBuilding(s, 'table', 0, 0).ok);
+  const table = s.buildings.find(b => b.type === 'table');
+  Object.assign(s.player, { mode: 'foot', x: 0.5, z: 0.5, level: 0 });
+  w.x = 2;
+  w.z = 2;
+  const r = contract(s, w.id, table, () => 0.999);
+  assert.ok(r.ok, r.error);
+  assert.ok(s.tamed.some(p => p.id === w.id) && !s.wild.includes(w));
+});
+test('Forcing a low-trust contract can send the beast into a frenzy for 6–17 s', () => {
+  const s = ready(),
+    w = s.wild[1];
   s.player.x = w.x;
   s.player.z = w.z;
   assert.ok(feed(s, w.id).ok);
-  assert.ok(w.trust <= 10);
-  const bait = s.resources.bait;
-  assert.equal(feed(s, w.id).ok, false);
-  assert.equal(s.resources.bait, bait);
-  for (let i = 0; i < 30 && s.wild.includes(w); i++) {
-    s.elapsed += 18;
-    assert.ok(feed(s, w.id).ok);
-  }
-  assert.ok(s.tamed.some(p => p.id === w.id));
+  assert.ok(feed(s, w.id).ok);
+  assert.ok(w.trust < 60);
+  placeBuilding(s, 'table', 0, 0);
+  const table = s.buildings.find(b => b.type === 'table');
+  Object.assign(s.player, { mode: 'foot', x: 0.5, z: 0.5, level: 0 });
+  w.x = 3;
+  w.z = 3;
+  const rolls = [0.99, 0.5];
+  const r = contract(s, w.id, table, () => rolls.shift());
+  assert.equal(r.ok, false);
+  assert.ok(r.frenzy && r.seconds >= 6 && r.seconds <= 17);
+  assert.ok(frenzied(w, s.elapsed) && !frenzied(w, s.elapsed + 18));
+  assert.equal(feed(s, w.id).ok, false, 'no feeding a frenzied beast');
+  // above 60 % a failure only costs trust
+  const v = s.wild[2];
+  v.trust = 70;
+  v.feeds = 5;
+  v.x = 2;
+  v.z = 2;
+  const q = contract(s, v.id, table, () => 0.99);
+  assert.equal(q.ok, false);
+  assert.ok(!q.frenzy && v.trust === 55);
+});
+test('Rarity sets how many feedings full trust takes: 6 for common, up to 10 for the rarest', () => {
+  assert.equal(feedsNeeded(makeGenome(5, 0, 'sea')) >= 6, true);
+  const all = Array.from({ length: 80 }, (_, i) =>
+    feedsNeeded(makeGenome(100 + i, i % 4, ['sea', 'land', 'deep', 'flora'][i % 4]))
+  );
+  assert.ok(Math.min(...all) === 6 && Math.max(...all) <= 10 && Math.max(...all) >= 9);
 });
 test('Bond progression is gated, persisted, and cannot spam training', () => {
   const s = ready(),

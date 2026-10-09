@@ -44,6 +44,7 @@ const FILES = [
   './postfx.js?v=0.11.0',
   './device.js?v=0.11.0',
   './human.js?v=0.11.0',
+  './taming.js?v=0.11.0',
   './i18n/en.js?v=0.11.0',
   './brand/emblem.svg',
   './brand/icon-192.png',

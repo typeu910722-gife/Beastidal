@@ -2,6 +2,7 @@ import { normalizeHousing, penId, pens, used, movePet } from '../dist/housing.js
 import { facilityId, useFacility } from '../dist/facilities.js';
 import { ISLANDS, NODES, islandDocks, islandAt, harvest } from '../dist/islands.js';
 import assert from 'node:assert/strict';
+import { contract } from '../dist/taming.js';
 import { makeGenome, phenotype, crossGenome, genomeValid, seeded, LOCI, dnaCode } from '../dist/genetics.js';
 import {
   createState,
@@ -96,16 +97,18 @@ test('Hidden branch can tame two founders, breed a hatchling, and breed a next g
   Object.keys(s.resources).forEach(k => (s.resources[k] = 100));
   assert.ok(placeBuilding(s, 'pen', -1, 0).ok);
   assert.ok(placeBuilding(s, 'hatchery', 0, 0).ok);
+  assert.ok(placeBuilding(s, 'table', 1, 0).ok);
+  const table = s.buildings.find(b => b.type === 'table');
   const founders = [s.wild[0].id, s.wild[1].id];
   for (const id of founders) {
-    for (let i = 0; i < 24; i++) {
-      s.elapsed += 18;
-      const w = s.wild.find(w => w.id === id);
-      if (!w) break;
+    const w = s.wild.find(w => w.id === id);
+    while (!w.follow) {
       s.player.x = w.x;
       s.player.z = w.z;
       assert.ok(feed(s, id).ok);
     }
+    Object.assign(s.player, { mode: 'foot', x: 3.4, z: 0.4, level: 0 });
+    assert.ok(contract(s, id, table, () => 0.5).ok);
   }
   assert.equal(s.tamed.length, 2);
   s.tamed.forEach(p => (p.bond = 35));

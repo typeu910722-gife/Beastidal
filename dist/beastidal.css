@@ -1790,3 +1790,45 @@ body.focus-on #beast-bar {
     display: none;
   }
 }
+
+/* work-table contracts */
+.contract-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+.contract-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #ffffff0a;
+  border: 1px solid #ffffff12;
+}
+.contract-row b {
+  display: block;
+  font-weight: 500;
+  font-size: 14px;
+}
+.contract-row small {
+  font-size: 12px;
+  color: #9fb8b2;
+}
+.contract-row button {
+  flex: none;
+  min-height: 38px;
+  padding: 6px 12px;
+  border-radius: 9px;
+}
+.contract-row button.danger {
+  background: #5a1f1a;
+  border-color: #e0705f88;
+  color: #ffd9d2;
+}
+.focus-warn {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #f0a594;
+}
