@@ -1,6 +1,6 @@
 // Offline cache so the guest build keeps working without a network (PWA / Trusted Web Activity).
 // Bump VERSION whenever any file in dist/ changes.
-const VERSION='beastidal-0.7.1';
+const VERSION='beastidal-0.7.2';
 const FILES=['./','./index.html','./manifest.webmanifest','./favicon.svg','./style.css?v=0.7','./mobile.css?v=0.7','./panels.css?v=0.7','./expansion.css?v=0.7','./beastidal.css?v=0.7',
  './game.js?v=0.7','./world.js?v=0.7','./realism.js?v=0.7','./config.js?v=0.7','./cloud-save.js?v=0.7','./save-store.js?v=0.7','./rules.js?v=0.7','./genetics.js?v=0.7','./creatures.js?v=0.7',
  './navigation.js?v=0.7','./islands.js?v=0.7','./island-models.js?v=0.7','./facilities.js?v=0.7','./housing.js?v=0.7','./expansion.js?v=0.7','./expansion-ui.js?v=0.7','./expansion-models.js?v=0.7',
