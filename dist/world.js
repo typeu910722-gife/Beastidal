@@ -9,6 +9,7 @@ import * as T from './vendor/three.module.min.js';
 import { phenotype, seeded } from './genetics.js?v=0.11.0';
 import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.11.0';
 import { PostFX } from './postfx.js?v=0.11.0';
+import { makeHuman, animateHuman } from './human.js?v=0.11.0';
 import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.11.0';
 import { buildError } from './rules.js?v=0.11.0';
 import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.11.0';
@@ -501,56 +502,9 @@ function buildingMesh(b) {
   g.rotation.y = b.rot || 0;
   return g;
 }
+// The protagonist (see human.js): jointed, with a face, hands and procedural walk / idle / sit poses.
 export function character() {
-  const g = new T.Group();
-  piece(g, new T.CylinderGeometry(0.25, 0.22, 0.62, 8), 0xd1dfd4, [0, 1.02, 0], [1, 1, 0.7]);
-  box(g, 0x324f5c, 0, 0.69, 0, 0.48, 0.17, 0.3);
-  box(g, 0x967c53, 0, 0.73, 0.16, 0.12, 0.07, 0.035);
-  const legs = [],
-    arms = [];
-  for (const side of [-1, 1]) {
-    const leg = new T.Group();
-    leg.position.set(side * 0.14, 0.65, 0);
-    g.add(leg);
-    piece(leg, new T.CylinderGeometry(0.105, 0.083, 0.48, 10), 0x365668, [0, -0.24, 0], [1, 1, 1]);
-    box(leg, 0x283e46, 0, -0.52, 0.06, 0.23, 0.13, 0.36);
-    legs.push(leg);
-    const arm = new T.Group();
-    arm.position.set(side * 0.3, 1.24, 0);
-    g.add(arm);
-    piece(arm, new T.CylinderGeometry(0.1, 0.084, 0.3, 10), 0xbbcfc5, [0, -0.16, 0], [1, 1, 1]);
-    piece(arm, new T.CylinderGeometry(0.075, 0.058, 0.2, 10), 0xd7b18b, [0, -0.36, 0.035], [1, 1, 1]);
-    ball(arm, 0xe0b892, 0, -0.46, 0.045, 0.09, 0.09, 0.085);
-    arms.push(arm);
-  }
-  pole(g, 0xdab98f, 0, 1.39, 0, 0.105, 0.18);
-  ball(g, 0xdfb793, 0, 1.63, 0.012, 0.23, 0.27, 0.215);
-  ball(g, 0x293e44, 0, 1.79, -0.035, 0.238, 0.14, 0.22);
-  box(g, 0x293e44, 0, 1.77, -0.155, 0.39, 0.16, 0.1);
-  for (const side of [-1, 1]) {
-    ball(g, 0x293d40, side * 0.083, 1.65, 0.208, 0.025, 0.026, 0.016);
-    ball(g, 0xe2bb99, side * 0.224, 1.63, 0, 0.045, 0.075, 0.05);
-  }
-  box(g, 0xf0ead3, 0, 1.32, 0.16, 0.18, 0.09, 0.03);
-  box(g, 0x365a69, 0, 1.14, 0.177, 0.045, 0.28, 0.024).rotation.z = -0.1;
-  for (const y of [0.92, 1.08]) ball(g, 0xeee8d0, 0.06, y, 0.18, 0.016);
-  box(g, 0x927953, 0, 1.04, -0.22, 0.37, 0.43, 0.16);
-  box(g, 0xb89d71, 0, 1.23, -0.23, 0.4, 0.12, 0.18);
-  for (const side of [-1, 1]) box(g, 0x5d6453, side * 0.2, 1.07, -0.005, 0.05, 0.49, 0.28);
-  for (let i = 0; i < 7; i++) {
-    const h = piece(
-      g,
-      coneG,
-      0x293e44,
-      [Math.sin(i * 0.9) * 0.13, 1.86, -0.05 + Math.cos(i * 0.9) * 0.1],
-      [0.07, 0.2, 0.07]
-    );
-    h.rotation.set(-0.5 + Math.cos(i * 0.9) * 0.3, 0, Math.sin(i * 0.9) * 0.6);
-  }
-  piece(g, new T.TorusGeometry(0.17, 0.05, 6, 16), 0x2e7c78, [0, 1.36, 0]).rotation.x = Math.PI / 2;
-  box(g, 0x2e7c78, 0.1, 1.18, 0.18, 0.08, 0.3, 0.03).rotation.z = 0.2;
-  g.userData = { legs, arms };
-  return g;
+  return makeHuman();
 }
 function makeBoat() {
   const g = new T.Group();
@@ -585,7 +539,7 @@ function makeBoat() {
       const rib = rod(g, [side * 0.65, 0.32, z], [side * 0.79, 0.65, z], 0.035, 0x72583b);
     }
   const human = character();
-  human.position.set(0, 0.53, 0.05);
+  human.position.set(0, 0.5, -0.85);
   g.add(human);
   rod(g, [0.6, 0.85, -0.45], [1.7, 0.15, 0.7], 0.045, colors.wood);
   box(g, colors.wood, 1.63, 0.16, 0.68, 0.27, 0.09, 0.64).rotation.y = -0.65;
@@ -1040,12 +994,9 @@ export class OceanWorld {
     this.boat.scale.x = 1 + (s.expedition?.boatLevel || 0) * 0.07;
     this.walker.rotation.y = helm ? s.ship.heading : s.player.heading;
     this.walkPhase += dt * this.moveSpeed * 3.2;
-    this.walker.userData.legs.forEach(
-      (m, i) => (m.rotation.x = Math.sin(this.walkPhase + i * Math.PI) * Math.min(0.48, this.moveSpeed * 0.15))
-    );
-    this.walker.userData.arms.forEach(
-      (m, i) => (m.rotation.x = -Math.sin(this.walkPhase + i * Math.PI) * Math.min(0.35, this.moveSpeed * 0.12))
-    );
+    animateHuman(this.walker, dt, { speed: riding ? 0 : this.moveSpeed, mode: riding ? 'ride' : 'walk' });
+    // in the boat: seated on the stern thwart, paddling while under way
+    animateHuman(this.boat.userData.human, dt, { speed: this.hullSpeed || 0, mode: 'row' });
     this.boat.userData.flag.rotation.y = Math.sin(t * 2.4) * 0.13;
     {
       const u = this.water.material.uniforms,

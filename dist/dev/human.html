@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Beastidal · Character (dev)</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #0b1417;
+        color: #dfe9e3;
+        font:
+          13px system-ui,
+          sans-serif;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      #hud {
+        position: fixed;
+        left: 12px;
+        top: 10px;
+        opacity: 0.75;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div id="hud">
+      Developer view: the protagonist idle · walking · running · sitting. ?face=1 frames the head · ?t=seconds freezes
+      time.
+    </div>
+    <script type="module">
+      import * as T from '../vendor/three.module.min.js';
+      import { makeHuman, animateHuman } from '../human.js';
+      const q = new URLSearchParams(location.search),
+        face = q.has('face'),
+        frozen = q.has('t') ? Number(q.get('t')) : null;
+      const renderer = new T.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.toneMapping = T.ACESFilmicToneMapping;
+      renderer.shadowMap.enabled = true;
+      const scene = new T.Scene();
+      scene.background = new T.Color(0x182429);
+      scene.add(new T.HemisphereLight(0xcfe0e6, 0x2a2420, 1.2));
+      const sun = new T.DirectionalLight(0xfff0dc, 2.6);
+      sun.position.set(3, 6, 5);
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(2048, 2048);
+      Object.assign(sun.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5 });
+      scene.add(sun);
+      const rim = new T.DirectionalLight(0x9fd8ff, 1.2);
+      rim.position.set(-4, 3, -5);
+      scene.add(rim);
+      const floor = new T.Mesh(new T.PlaneGeometry(30, 30), new T.MeshStandardMaterial({ color: 0x4a443c }));
+      floor.rotation.x = -Math.PI / 2;
+      floor.receiveShadow = true;
+      scene.add(floor);
+      const poses = [
+        { speed: 0, mode: 'walk' },
+        { speed: 1.6, mode: 'walk' },
+        { speed: 5.5, mode: 'walk' },
+        { speed: 0, mode: 'sit' }
+      ];
+      const people = poses.map((p, i) => {
+        const h = makeHuman();
+        h.position.x = (i - 1.5) * 1.1;
+        h.rotation.y = 0.45;
+        scene.add(h);
+        return h;
+      });
+      const cam = new T.PerspectiveCamera(face ? 22 : 34, 1, 0.05, 100);
+      if (face) {
+        people.forEach((h, i) => (h.visible = i === 0));
+        people[0].position.x = 0;
+        people[0].rotation.y = 0.35;
+        cam.position.set(0.25, 1.66, 0.75);
+        cam.lookAt(0, 1.6, 0);
+      } else {
+        cam.position.set(0, 1.4, 5.2);
+        cam.lookAt(0, 0.9, 0);
+      }
+      function resize() {
+        renderer.setSize(innerWidth, innerHeight, false);
+        cam.aspect = innerWidth / innerHeight;
+        cam.updateProjectionMatrix();
+      }
+      addEventListener('resize', resize);
+      resize();
+      let last = performance.now();
+      if (frozen !== null) people.forEach((h, i) => animateHuman(h, frozen, poses[i]));
+      renderer.setAnimationLoop(now => {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        if (frozen === null) people.forEach((h, i) => animateHuman(h, dt, poses[i]));
+        renderer.render(scene, cam);
+      });
+    </script>
+  </body>
+</html>

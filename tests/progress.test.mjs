@@ -10,6 +10,7 @@ import { normalizeDevice, takeDevice, readLaptop, tickDevice, DEVICE_APPS } from
 import { placeBuilding } from '../dist/rules.js';
 import { demolish } from '../dist/construction.js';
 import { renamePet } from '../dist/housing.js';
+import { makeHuman, animateHuman } from '../dist/human.js';
 import { facilityId } from '../dist/facilities.js';
 import { normalizeStats, tickStats, milestoneRows, statsReport } from '../dist/stats.js';
 import {
@@ -192,6 +193,30 @@ test('beasts can be renamed from the pen close-up', () => {
   assert.equal(renamePet(s, 'p1', '').ok, false);
   assert.equal(renamePet(s, 'p1', 'x'.repeat(17)).ok, false);
   assert.equal(renamePet(s, 'nope', 'a').ok, false);
+});
+test('the protagonist rig: feet on the ground when standing, finite poses in every mode', () => {
+  const h = makeHuman();
+  h.updateMatrixWorld(true);
+  const sole = () => {
+    let min = Infinity;
+    h.traverse(o => {
+      if (!o.isMesh) return;
+      o.geometry.computeBoundingBox();
+      const b = o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld);
+      min = Math.min(min, b.min.y);
+    });
+    return min;
+  };
+  assert.ok(Math.abs(sole()) < 0.03, 'soles at y=0, got ' + sole());
+  for (const mode of ['walk', 'sit', 'ride', 'row'])
+    for (const speed of [0, 1.5, 3, 5])
+      for (let i = 0; i < 20; i++) {
+        animateHuman(h, 0.05, { speed, mode });
+        h.updateMatrixWorld(true);
+        h.traverse(o => assert.ok(Number.isFinite(o.matrixWorld.elements[13]), mode));
+      }
+  assert.equal(h.userData.legs.length, 2);
+  assert.equal(h.userData.arms.length, 2);
 });
 test('offline cache lists every module with the current asset version', () => {
   const sw = readFileSync('dist/sw.js', 'utf8'),
