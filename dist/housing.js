@@ -65,3 +65,16 @@ export function renamePen(s, id, value) {
   b.name = name;
   return { ok: true, name };
 }
+export function renamePet(s, id, value) {
+  const p = s.tamed.find(p => p.id === id);
+  if (!p) return { ok: false, error: '找不到這隻御獸。' };
+  const name = String(value ?? '')
+    .trim()
+    .replace(/\s+/g, ' ');
+  if (!name) return { ok: false, error: '請輸入名字。' };
+  if ([...name].length > 16) return { ok: false, error: '名稱最多 16 個字。' };
+  // eslint-disable-next-line no-control-regex -- rejecting control characters is the point
+  if (/[\u0000-\u001f\u007f]/.test(name)) return { ok: false, error: '名稱含有無法使用的字元。' };
+  p.name = name;
+  return { ok: true, name };
+}

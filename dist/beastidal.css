@@ -1345,3 +1345,138 @@ body #drawer.device #drawer-body::after {
 .landscape-play .dock-button {
   bottom: calc(var(--edge-bottom) + 142px);
 }
+
+/* ---------------------------------------------------------------- close-up interactions */
+/* While the camera is in on a facility, the HUD steps aside and only a slim action card remains. */
+body.focus-on .left-hud,
+body.focus-on .right-hud,
+body.focus-on .action-bar,
+body.focus-on #touch-controls,
+body.focus-on #context-action,
+body.focus-on #target-card,
+body.focus-on .dock-button,
+body.focus-on #travel-status,
+body.focus-on #monologue,
+body.focus-on #tutorial,
+body.focus-on .control-hint,
+body.focus-on #world-labels,
+body.focus-on .vitals,
+body.focus-on #beast-bar {
+  opacity: 0;
+  pointer-events: none !important;
+  transition: opacity 0.3s;
+}
+.focus-ui {
+  position: absolute;
+  left: 50%;
+  bottom: max(22px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(560px, calc(100vw - 32px));
+  max-height: 60vh;
+  overflow-y: auto;
+  z-index: 30;
+  padding: 16px 18px 14px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #071a1fd9, #050f12f0);
+  border: 1px solid #ffffff1a;
+  box-shadow: 0 18px 50px #000a;
+  backdrop-filter: blur(10px);
+  pointer-events: auto;
+  animation: focus-in 0.35s ease-out;
+}
+@keyframes focus-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 16px);
+  }
+}
+.focus-ui header small {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #8fb8b0;
+}
+.focus-ui header h3 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 3px 0 4px;
+}
+.focus-ui header p,
+.focus-meta {
+  font-size: 13px;
+  color: #a9c2bd;
+  line-height: 1.6;
+  margin: 0;
+}
+.focus-ui .gene-chips {
+  margin: 10px 0 6px;
+}
+.focus-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.focus-actions button {
+  flex: 1 1 auto;
+  min-height: 42px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.focus-actions [data-focus-back],
+.focus-actions [data-focus-manage] {
+  flex: 0 0 auto;
+  background: transparent;
+}
+.focus-pets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.focus-pets button {
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+.focus-rename {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.focus-rename input {
+  flex: 1;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #ffffff2a;
+  background: #ffffff0d;
+  color: inherit;
+}
+.focus-ui .laptop-screen {
+  margin: 10px 0 4px;
+}
+#focus-fade {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+#focus-fade.on {
+  opacity: 0.94;
+}
+.landscape-play .focus-ui {
+  bottom: max(8px, env(safe-area-inset-bottom));
+  padding: 10px 14px;
+  max-height: 64vh;
+}
+.landscape-play .focus-ui header h3 {
+  font-size: 16px;
+}
+.landscape-play .focus-actions button {
+  min-height: 38px;
+  font-size: 13px;
+}

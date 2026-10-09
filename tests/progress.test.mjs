@@ -9,6 +9,7 @@ import { ISLANDS } from '../dist/islands.js';
 import { normalizeDevice, takeDevice, readLaptop, tickDevice, DEVICE_APPS } from '../dist/device.js';
 import { placeBuilding } from '../dist/rules.js';
 import { demolish } from '../dist/construction.js';
+import { renamePet } from '../dist/housing.js';
 import { facilityId } from '../dist/facilities.js';
 import { normalizeStats, tickStats, milestoneRows, statsReport } from '../dist/stats.js';
 import {
@@ -182,6 +183,15 @@ test('ferocity: deep-sea and hot-tempered beasts look savage, ordinary sea beast
   g.temper = [255, 255];
   assert.ok(phenotype(g).fierce >= 0.9);
   for (const p of [...sea, ...deep]) assert.ok(p.fierce >= 0 && p.fierce <= 1);
+});
+test('beasts can be renamed from the pen close-up', () => {
+  const s = createState(8);
+  s.tamed.push({ id: 'p1', genome: makeGenome(3, 0), name: '舊名', generation: 0 });
+  assert.equal(renamePet(s, 'p1', '  小  浪  ').name, '小 浪');
+  assert.equal(s.tamed[0].name, '小 浪');
+  assert.equal(renamePet(s, 'p1', '').ok, false);
+  assert.equal(renamePet(s, 'p1', 'x'.repeat(17)).ok, false);
+  assert.equal(renamePet(s, 'nope', 'a').ok, false);
 });
 test('offline cache lists every module with the current asset version', () => {
   const sw = readFileSync('dist/sw.js', 'utf8'),

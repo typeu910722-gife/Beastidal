@@ -7,7 +7,9 @@ import {
   toggleDive,
   attack,
   explore,
-  tickExpansion
+  tickExpansion,
+  trainPet,
+  commandPet
 } from './expansion.js?v=0.11.0';
 import { renderAdventure } from './expansion-ui.js?v=0.11.0';
 import {
@@ -47,6 +49,7 @@ import {
   reserved,
   used,
   movePet,
+  renamePet,
   penLabel,
   renamePen
 } from './housing.js?v=0.11.0';
@@ -1338,6 +1341,9 @@ function initialize() {
       },
       keys,
       openDevice,
+      enterFocus,
+      exitFocus,
+      selectFocusPet,
       step(dt, n = 1) {
         for (let i = 0; i < n; i++) {
           movePlayer(dt, null);
@@ -1496,7 +1502,7 @@ function interact() {
     return;
   }
   if (t.type === 'facility') {
-    openFacility(t.id);
+    enterFocus(t.id);
     return;
   }
   if (t.type === 'node') {
@@ -2210,11 +2216,268 @@ function gather(id) {
 function activateObject(hit) {
   if (hit.type === 'claim') claim(hit.id);
   else if (hit.type === 'site') handleExploration(hit.id);
-  else if (hit.type === 'facility') openFacility(hit.id);
+  else if (hit.type === 'facility') enterFocus(hit.id);
   else if (hit.type === 'node') {
     selectedTarget = hit.id;
     gather(hit.id);
   }
+}
+/* ---------------------------------------------------------------- close-up interactions
+   Pressing 操作 on a facility moves the camera in on it and shows only a few action buttons (#focus-ui). Simple
+   things act at once (lamps, chairs, stairs, the work table). The text panel is still one tap away ("管理"). */
+let focus = null;
+const FOCUS_VIEW = {
+  shelter: { local: [0, 0.85, -0.55], dist: 1.9, pitch: 0.3, yaw: 0, fov: 62, hidePlayer: true, lift: 0.05 },
+  collector: { local: [0, 1.4, 0], dist: 4.6, pitch: 0.42, yaw: 0.55 },
+  pen: { local: [0, 0, 0], dist: 5.2, pitch: 0.95, yaw: 0.35 },
+  hatchery: { local: [0, 1.6, 0], dist: 3.4, pitch: 0.45, yaw: 0.5 },
+  beacon: { local: [0, 3.2, 0], dist: 9, pitch: 0.32, yaw: 0.6 },
+  desk: { local: [0.05, 1.32, 0], dist: 2.3, pitch: 0.62, yaw: 0.25, hidePlayer: true },
+  laptop: { local: [-0.25, 1.55, -0.12], dist: 1.1, pitch: 0.2, yaw: 0.22, fov: 50, hidePlayer: true, lift: 0.22 },
+  dock: { local: [0, 0.3, 0], dist: 10, pitch: 0.6, yaw: 0.5 }
+};
+const nearBuilding = b =>
+  (state.player.mode === 'foot' || state.player.mode === 'aboard') &&
+  Math.hypot(state.player.x - b.x * 3.6, state.player.z - b.z * 3.6) <= 5.5;
+function enterFocus(id) {
+  const b = findFacility(state, id);
+  if (!b || !running || paused) return;
+  // one-press furniture: no close-up needed
+  if (b.type === 'lamp') {
+    if (!nearBuilding(b)) return toast('靠近一點才能開關燈。', true);
+    b.off = !b.off;
+    toast(b.off ? '燈熄了。' : '燈亮了。');
+    audio.note(b.off ? 420 : 660, 0.08);
+    world.sync(state);
+    save(true);
+    return;
+  }
+  if (b.type === 'stairs') {
+    const r = climb(state, b);
+    toast(r.ok ? r.message : r.error, !r.ok);
+    if (r.ok) world.sync(state);
+    return;
+  }
+  if (b.type === 'chair') {
+    if (!nearBuilding(b)) return toast('走到椅子旁才能坐下。', true);
+    if (state.vitals.health >= 98 || state.resources.food < 1) return toast('目前不需要休息，或口糧不足。');
+    state.resources.food--;
+    state.vitals.health = Math.min(100, state.vitals.health + 15);
+    toast('坐下來喘口氣，體力 +15。');
+    save(true);
+    updateUI();
+    return;
+  }
+  if (b.type === 'table') {
+    openDevice('bag');
+    return;
+  }
+  if (!FOCUS_VIEW[b.type]) {
+    openFacility(id);
+    return;
+  }
+  closePanel();
+  releaseMouse();
+  keys.clear();
+  destination = null;
+  focus = { id, type: b.type, petId: null, sub: null };
+  world.focusOn({ id, ...FOCUS_VIEW[b.type] });
+  document.body.classList.add('focus-on');
+  renderFocus();
+}
+function exitFocus() {
+  if (!focus) return;
+  focus = null;
+  world.clearFocus();
+  document.body.classList.remove('focus-on');
+  $('focus-ui').hidden = true;
+}
+// Esc / B: step back out one level (beast → pen, laptop → desk, then leave)
+function focusBack() {
+  if (focus?.petId || focus?.sub) {
+    focus.petId = null;
+    focus.sub = null;
+    world.focusOn({ id: focus.id, ...FOCUS_VIEW[focus.type] });
+    renderFocus();
+  } else exitFocus();
+}
+function selectFocusPet(id) {
+  const p = state.tamed.find(p => p.id === id);
+  if (!p) return;
+  focus.petId = id;
+  const size = phenotype(p.genome).size;
+  world.focusOn({ petId: id, dist: 1.6 + size * 0.9, pitch: 0.78, yaw: world.yaw, lift: 0.1 });
+  renderFocus();
+}
+function focusDone(r) {
+  toast(r.ok ? r.message : r.error, !r.ok);
+  if (r.ok) {
+    world.sync(state);
+    save(true);
+    updateUI();
+  }
+  renderFocus();
+}
+function renderFocus() {
+  if (!focus) return;
+  const b = findFacility(state, focus.id);
+  if (!b) return exitFocus();
+  const ui = $('focus-ui'),
+    near = nearBuilding(b),
+    recipe = RECIPES[b.type],
+    acts = [],
+    act = (label, fn, opts = {}) => acts.push({ label, fn, ...opts });
+  let eyebrow = recipe.name,
+    title = b.type === 'pen' ? penLabel(state, penId(b)) : recipe.name,
+    info = near ? '' : '走近一點才能操作。',
+    extra = '';
+  if (focus.petId) {
+    const p = state.tamed.find(p => p.id === focus.petId);
+    if (!p) {
+      focus.petId = null;
+      return renderFocus();
+    }
+    const ph = phenotype(p.genome),
+      active = state.expedition?.activeId === p.id;
+    eyebrow = `${penLabel(state, p.penId)} · 第 ${p.generation} 代`;
+    title = p.name;
+    info = `羈絆 ${Math.round(p.bond || 0)} · 體力 ${Math.round(p.health ?? 100)} · 精力 ${Math.round(p.stamina ?? 100)}`;
+    extra = `<div class="gene-chips">${describeGenes(p.genome)
+      .map(t => `<span>${esc(t)}</span>`)
+      .join(
+        ''
+      )}</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small>`;
+    act('默契訓練 · 口糧 2 / 異晶 1', () => focusDone(trainPet(state, p.id)), { primary: true });
+    if (active) act('讓牠回池休息', () => focusDone(commandPet(state, p.id, 'home')));
+    else act('帶牠出發（跟隨）', () => focusDone(commandPet(state, p.id, 'follow')));
+    act('改名', () => {
+      const form = ui.querySelector('.focus-rename');
+      form.hidden = false;
+      form.querySelector('input').focus();
+    });
+    act('換展示池', () => {
+      exitFocus();
+      geneTab = 'collection';
+      openPanel('creatures');
+    });
+    extra += `<form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
+  } else if (focus.sub === 'laptop') {
+    eyebrow = '破舊筆電';
+    title = '系統修復模式';
+    const r = readLaptop(state);
+    if (r.ok && r.first) log(state, '破舊筆電', '開機畫面停在修復模式。最後一筆同步，是我出車禍的那個早上。');
+    extra = `<pre class="laptop-screen">${(r.lines || []).map(esc).join('\n')}</pre>`;
+    info = '（電源鍵按不太下去。也許哪天找到零件，可以把它修好。）';
+  } else if (b.type === 'shelter') {
+    eyebrow = '帳篷內';
+    title = '帆布避難所';
+    info = near ? '雨打在帆布上。至少這裡是乾的。' : info;
+    act('躺下休息 · 口糧 1 / 淡水 1 → 體力 +45', () => restInShelter(), { primary: true, disabled: !near });
+  } else if (b.type === 'collector') {
+    info = `儲水 ${b.waterStored || 0} / 20 · 每 35 秒 +2` + (near ? '' : ' · ' + info);
+    act('取出淡水', () => focusDone(useFacility(state, focus.id, 'collect')), {
+      primary: true,
+      disabled: !near || !b.waterStored
+    });
+  } else if (b.type === 'beacon') {
+    act('掃描島嶼訊號', () => focusDone(useFacility(state, focus.id, 'signal')), { primary: true, disabled: !near });
+    act('島嶼航線', () => {
+      exitFocus();
+      journalTab = 'log';
+      openPanel('journal');
+    });
+  } else if (b.type === 'hatchery') {
+    const eggs = state.eggs.filter(e => e.readyAt > state.elapsed);
+    info = eggs.length ? `${eggs.length} 顆卵正在孵育` : '孵化槽是空的。';
+    act(
+      '基因配對與孵育',
+      () => {
+        exitFocus();
+        geneTab = 'breed';
+        openPanel('creatures');
+      },
+      { primary: true }
+    );
+  } else if (b.type === 'pen') {
+    const pets = occupants(state, penId(b));
+    info = pets.length ? `${pets.length} / 3 隻 · 點選牠們查看與互動` : '池裡還沒有住民。';
+    extra = `<div class="focus-pets">${pets.map(p => `<button type="button" data-focus-pet="${esc(p.id)}">${esc(p.name)}</button>`).join('')}</div>`;
+  } else if (b.type === 'desk') {
+    normalizeDevice(state);
+    if (!state.device.owned)
+      act(
+        '拿起隨身裝置',
+        () => {
+          const r = takeDevice(state);
+          if (r.ok) {
+            haptic('discover');
+            log(
+              state,
+              '隨身裝置',
+              '螢幕裂了一角，電量只剩一點，但還能開機。沒有訊號——這裡沒有任何基地台。至少它能幫我記住每一件事。'
+            );
+          }
+          focusDone(r);
+          if (r.ok) {
+            exitFocus();
+            openDevice();
+          }
+        },
+        { primary: true, disabled: !near }
+      );
+    act(
+      '看看筆電',
+      () => {
+        if (!near) return toast('請走到書桌旁。', true);
+        focus.sub = 'laptop';
+        world.focusOn({ id: focus.id, ...FOCUS_VIEW.laptop });
+        renderFocus();
+        save(true);
+      },
+      { disabled: !near }
+    );
+  }
+  ui.innerHTML = `<header><small>${esc(eyebrow)}</small><h3>${esc(title)}</h3>${info ? `<p>${esc(info)}</p>` : ''}</header>${extra}<div class="focus-actions">${acts
+    .map(
+      (a, i) =>
+        `<button type="button" data-focus-act="${i}" class="${a.primary ? 'primary' : ''}" ${a.disabled ? 'disabled' : ''}>${esc(a.label)}</button>`
+    )
+    .join(
+      ''
+    )}${focus.petId || focus.sub ? '' : '<button type="button" data-focus-manage>管理</button>'}<button type="button" data-focus-back>${focus.petId || focus.sub ? '返回' : '離開'}</button></div>`;
+  ui.hidden = false;
+  if (gamepadActive) setTimeout(() => focusMenu(0, true), 0);
+  ui.querySelectorAll('[data-focus-act]').forEach(btn => (btn.onclick = () => acts[btn.dataset.focusAct].fn()));
+  ui.querySelector('[data-focus-back]').onclick = focusBack;
+  const manage = ui.querySelector('[data-focus-manage]');
+  if (manage)
+    manage.onclick = () => {
+      const id = focus.id;
+      exitFocus();
+      openFacility(id);
+    };
+  ui.querySelectorAll('[data-focus-pet]').forEach(btn => (btn.onclick = () => selectFocusPet(btn.dataset.focusPet)));
+  const rename = ui.querySelector('.focus-rename');
+  if (rename)
+    rename.onsubmit = e => {
+      e.preventDefault();
+      const r = renamePet(state, focus.petId, rename.querySelector('input').value);
+      focusDone(r.ok ? { ok: true, message: `改名為「${r.name}」。` } : r);
+    };
+  promptPanel(ui);
+}
+// Resting in the tent: the screen dims, time passes a little, you wake up rested.
+function restInShelter() {
+  const r = useFacility(state, focus.id, 'rest');
+  if (!r.ok) return toast(r.error, true);
+  const fade = $('focus-fade');
+  fade.hidden = false;
+  requestAnimationFrame(() => fade.classList.add('on'));
+  setTimeout(() => {
+    fade.classList.remove('on');
+    setTimeout(() => (fade.hidden = true), 700);
+    focusDone(r);
+  }, 1100);
 }
 function openFacility(id) {
   activeFacility = id;
@@ -3303,6 +3566,12 @@ function movePlayer(dt, analog) {
   let sx = kx + joystick.x + (analog?.x || 0),
     sy = ky - joystick.y - (analog?.y || 0),
     m = Math.hypot(sx, sy);
+  // walking away ends a close-up
+  if (focus) {
+    world.moveSpeed = 0;
+    if (m > 0.35) exitFocus();
+    return;
+  }
   const sprint = sprinting(m, dt);
   const shipDrive = state.player.mode === 'ship' && !state.expedition.mounted,
     mounted = !!state.expedition.mounted,
@@ -3473,7 +3742,15 @@ function handleCollapse() {
   );
 }
 function focusables() {
-  const root = !$('modal-shade').hidden ? $('modal') : panel ? $('drawer') : !running ? $('title-screen') : null;
+  const root = !$('modal-shade').hidden
+    ? $('modal')
+    : panel
+      ? $('drawer')
+      : focus
+        ? $('focus-ui')
+        : !running
+          ? $('title-screen')
+          : null;
   return root
     ? [...root.querySelectorAll('button:not(:disabled):not([hidden]), select:not(:disabled)')].filter(
         e => e.offsetParent !== null
@@ -3514,6 +3791,10 @@ function back() {
     closePanel();
     return;
   }
+  if (focus) {
+    focusBack();
+    return;
+  }
   if (running) showMenu();
 }
 function gamepad(dt) {
@@ -3543,7 +3824,7 @@ function gamepad(dt) {
   padGridTimer -= dt;
   if (film) {
     if (edge(0) || edge(1) || edge(9)) beginGame(true);
-  } else if (!running || paused || panel) {
+  } else if (!running || paused || panel || focus) {
     if (edge(12) || (ay < -0.65 && padNavCooldown <= 0)) {
       focusMenu(-1);
       padNavCooldown = 0.2;
@@ -3731,6 +4012,14 @@ function setupEvents() {
       if (k === 'arrowdown') world.ghostCell.z++;
       return;
     }
+    // in a close-up, E presses the main action; other hotkeys step out first
+    if (focus) {
+      if (k === 'e') $('focus-ui').querySelector('.focus-actions button.primary:not(:disabled)')?.click();
+      else if (!['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) {
+        exitFocus();
+      } else return;
+      if (k === 'e') return;
+    }
     if (k === 'k') openPanel('adventure');
     if (k === 't') beastAction('ride');
     if (k === 'g') beastAction('dive');
@@ -3757,6 +4046,11 @@ function setupEvents() {
   let pinch = null;
   const canvasTouches = () => [...pointers.values()].filter(p => p.touch);
   const tapAt = e => {
+    if (focus) {
+      const pet = world.pickPet(e.clientX, e.clientY);
+      if (pet && (focus.type === 'pen' || focus.petId)) selectFocusPet(pet);
+      return;
+    }
     const hit = !buildType ? world.pickObject(e.clientX, e.clientY) : null;
     if (hit) {
       activateObject(hit);

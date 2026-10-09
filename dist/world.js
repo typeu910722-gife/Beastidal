@@ -246,7 +246,8 @@ function deskMesh(g) {
       roughness: 0.2
     })
   );
-  scr.position.set(0, 0.014, 0.2);
+  // the screen is the lid's underside when closed, so it faces the user once the lid is up
+  scr.position.set(0, -0.014, 0.2);
   scr.rotation.x = Math.PI / 2;
   lid.add(scr);
   lap.add(lid);
@@ -464,6 +465,18 @@ function buildingMesh(b) {
     }
     box(g, 0x8c714c, -1.1, 0.64, -0.9, 0.46, 0.4, 0.42);
     halo(g, 0xffce85, 1.24, 1.8, 1.22, 1.2);
+    // inside: a lantern hanging from the ridge, a rumpled blanket, a water jug and a few salvaged things
+    rod(g, [0, 3.05, -0.2], [0, 2.45, -0.2], 0.01, colors.rope);
+    ball(g, 0xffc27a, 0, 2.32, -0.2, 0.11, 0.15, 0.11, { emissive: 0xffa94d, emissiveIntensity: 1.6 });
+    const glow = new T.PointLight(0xffb36b, 5, 4.5, 1.6);
+    glow.position.set(0, 2.25, -0.2);
+    g.add(glow);
+    box(g, 0x6e5a48, 0.12, 0.69, 0.05, 1.05, 0.06, 0.7).rotation.y = 0.12;
+    box(g, 0x4c5e52, -0.2, 0.71, 0.35, 0.6, 0.05, 0.3).rotation.y = -0.3;
+    pole(g, 0x7c8f93, 0.82, 0.78, 0.35, 0.11, 0.42);
+    pole(g, 0x2d3638, 0.82, 1.02, 0.35, 0.05, 0.08);
+    box(g, 0x9a8668, -0.85, 0.62, 0.55, 0.42, 0.3, 0.32);
+    box(g, 0xcfc6ad, -0.86, 0.79, 0.55, 0.24, 0.02, 0.17).rotation.y = 0.4;
   }
   if (b.type === 'beacon') halo(g, 0xaeffdb, 0, 5.3, 0, 2.6);
   if (b.type === 'hatchery') halo(g, 0x9cebd6, 0, 1.85, 0, 1.8);
@@ -611,6 +624,11 @@ export class OceanWorld {
     this.yaw = 0.63;
     this.pitch = 0.64;
     this.distance = 42;
+    // Close-up "focus" on a facility or beast (see focusOn): the camera eases in and back out again.
+    this.focus = null;
+    this.focusLast = null;
+    this.focusBlend = 0;
+    this.focusTarget = new V();
     this.look = new V(2, 0, 2);
     this.follow = new V(2, 0, 2);
     this.time = 0;
@@ -826,6 +844,7 @@ export class OceanWorld {
     syncMap(s.wild, this.wildMeshes, c => makeCreature(c.genome));
     syncMap(s.tamed, this.petMeshes, c => {
       const m = makeCreature(c.genome);
+      m.userData.petId = c.id;
       m.scale.multiplyScalar(0.22);
       return m;
     });
@@ -1154,12 +1173,28 @@ export class OceanWorld {
           : helm && !opts.title
             ? Math.max(44, this.distance * 1.2)
             : this.distance * (foot && !this.placement && !opts.title ? 0.7 : 1);
+    // blend toward the focus close-up (and back out once it is released)
+    this.focusBlend += ((this.focus ? 1 : 0) - this.focusBlend) * (1 - Math.exp(-dt * 3.2));
+    if (this.focusBlend < 0.002 && !this.focus) this.focusLast = null;
+    let yaw = this.yaw,
+      pitch = this.pitch,
+      camDist = dist,
+      look = this.look;
+    const f = this.focus || this.focusLast;
+    if (f && this.focusPose(f)) {
+      const e = this.focusBlend * this.focusBlend * (3 - 2 * this.focusBlend),
+        dy = Math.atan2(Math.sin(this.focusYaw - yaw), Math.cos(this.focusYaw - yaw));
+      yaw += dy * e;
+      pitch += (f.pitch - pitch) * e;
+      camDist += (f.dist - camDist) * e;
+      look = this.look.clone().lerp(this.focusTarget, e);
+    }
     this.camera.position.set(
-      this.look.x + Math.sin(this.yaw) * Math.cos(this.pitch) * dist,
-      this.look.y + Math.sin(this.pitch) * dist,
-      this.look.z + Math.cos(this.yaw) * Math.cos(this.pitch) * dist
+      look.x + Math.sin(yaw) * Math.cos(pitch) * camDist,
+      look.y + Math.sin(pitch) * camDist,
+      look.z + Math.cos(yaw) * Math.cos(pitch) * camDist
     );
-    this.camera.lookAt(this.look);
+    this.camera.lookAt(look);
     this.water.material.uniforms.uCamera.value.copy(this.camera.position);
     if (this.placement) this.updateGhost(s);
     if (this.target) {
@@ -1252,8 +1287,48 @@ export class OceanWorld {
     animateCreature(m, t);
   }
 
+  // Focus: { id: facilityId, local: [x, y, z], dist, pitch, yaw (relative to the building), fov, hidePlayer }
+  // or { petId, dist, pitch, yaw } to follow one beast. The camera eases in; clearFocus() eases back out.
+  focusOn(spec) {
+    this.focus = { pitch: 0.5, dist: 6, yaw: 0.4, ...spec };
+    this.focusLast = this.focus;
+  }
+  clearFocus() {
+    this.focus = null;
+  }
+  focusPose(f) {
+    let obj = null;
+    if (f.petId) obj = this.petMeshes.get(f.petId);
+    else this.home.children.forEach(g => g.userData.facilityId === f.id && (obj = g));
+    if (!obj) return false;
+    obj.updateWorldMatrix(true, false);
+    if (f.petId) {
+      obj.getWorldPosition(this.focusTarget);
+      this.focusTarget.y += 0.25 * (obj.userData.phenotype?.size || 1);
+      this.focusYaw = f.yaw;
+    } else {
+      this.focusTarget.set(...(f.local || [0, 1, 0]));
+      obj.localToWorld(this.focusTarget);
+      this.focusYaw = f.yaw + obj.rotation.y;
+    }
+    // aim a little below the subject so it sits above the action card at the bottom of the screen
+    this.focusTarget.y -= f.dist * (f.lift ?? 0.16);
+    return true;
+  }
+  // A beast under the pointer (only the ones resting in pens are pickable).
+  pickPet(clientX, clientY) {
+    const rect = this.canvas.getBoundingClientRect();
+    this.pointer.set(((clientX - rect.left) / rect.width) * 2 - 1, (-(clientY - rect.top) / rect.height) * 2 + 1);
+    this.ray.setFromCamera(this.pointer, this.camera);
+    const meshes = [...this.petMeshes.values()].filter(m => m.visible);
+    const hit = this.ray.intersectObjects(meshes, true)[0];
+    let o = hit?.object;
+    while (o && !o.userData.petId) o = o.parent;
+    return o?.userData.petId || null;
+  }
   render() {
-    if (this.firstPerson && !this.placement && !this.titleMode) {
+    const close = this.focusBlend > 0.02 && (this.focus || this.focusLast);
+    if (this.firstPerson && !this.placement && !this.titleMode && !close) {
       const x = this.playerAnchor.x,
         z = this.playerAnchor.z,
         p = this.firstPitch || 0,
@@ -1273,9 +1348,11 @@ export class OceanWorld {
       this.walker.visible = false;
       this.water.material.uniforms.uCamera.value.copy(this.camera.position);
     } else {
-      this.camera.fov = 44;
+      const f = this.focus || this.focusLast,
+        e = close ? this.focusBlend : 0;
+      this.camera.fov = 44 + ((f?.fov || 44) - 44) * e;
       this.boat.userData.human.visible = !this.onFoot && !this.onRiding && !this.hasShip;
-      this.walker.visible = this.onFoot || this.onRiding;
+      this.walker.visible = (this.onFoot || this.onRiding) && !(f?.hidePlayer && e > 0.4);
     }
     this.camera.updateProjectionMatrix();
     this.sky.position.copy(this.camera.position);
