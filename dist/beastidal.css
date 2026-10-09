@@ -1518,7 +1518,7 @@ body.focus-on #beast-bar {
 }
 
 /* ---------------------------------------------------------------- studio splash (YZProJect, ~7 s) */
-/* 0.3–2.5 s the five pieces fly in from different directions and lock together · 2.5 s impact flash and
+/* 0.3–2.5 s the six pieces fly in from different directions and lock together · 2.5 s impact flash and
    shock line · 3.0 s a light sweep runs across the metal · 3.4–4.8 s the studio name rises letter by letter ·
    6.2–7.0 s everything fades to the title screen. */
 #splash {
@@ -1572,6 +1572,24 @@ body.focus-on #beast-bar {
   animation-name: in-arm;
   animation-delay: 1.45s;
   animation-duration: 0.9s;
+}
+.yz-hook {
+  animation-name: in-hook;
+  animation-delay: 1.6s;
+  animation-duration: 0.85s;
+}
+@keyframes in-hook {
+  from {
+    opacity: 0;
+    transform: translate(-420%, -180%) rotate(-140deg) scale(0.4);
+  }
+  70% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 @keyframes in-left {
   from {
@@ -1655,6 +1673,23 @@ body.focus-on #beast-bar {
   }
   100% {
     filter: drop-shadow(0 0 0 #9ff3ff00);
+  }
+}
+.yz-final {
+  opacity: 0;
+  animation: final-in 0.12s linear 2.42s forwards;
+}
+.yz-pieces {
+  animation: final-out 0.12s linear 2.5s forwards;
+}
+@keyframes final-in {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes final-out {
+  to {
+    opacity: 0;
   }
 }
 .yz-sheen {
@@ -1745,6 +1780,7 @@ body.focus-on #beast-bar {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .yz-final,
   .yz-p,
   .splash-name span {
     animation: letter 0.6s ease-out 0.2s forwards;

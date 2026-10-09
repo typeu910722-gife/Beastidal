@@ -22,9 +22,9 @@
     <!-- Studio splash (about 7 s, tap or any key to skip): the YZ mark assembles, then the studio name rises. -->
     <div id="splash" aria-label="YZProJect" role="img" data-no-i18n>
       <div class="splash-stage">
-        <svg class="splash-mark" viewBox="-20 -20 262 227" aria-hidden="true">
+        <svg class="splash-mark" viewBox="-20 -20 264 227" aria-hidden="true">
           <defs>
-            <linearGradient id="yz-metal" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id="yz-metal" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="224" y2="187">
               <stop offset="0" stop-color="#f4f7f6" />
               <stop offset="0.48" stop-color="#b9c4c2" />
               <stop offset="0.52" stop-color="#8d9997" />
@@ -35,18 +35,25 @@
               <stop offset="0.5" stop-color="#fff" stop-opacity="0.9" />
               <stop offset="1" stop-color="#fff" stop-opacity="0" />
             </linearGradient>
+            <!-- the finished mark, traced from the YZ logo: exactly two shapes -->
             <clipPath id="yz-clip">
-              <polygon points="0,0 34,0 80,72 80,152 64,172 64,96" />
-              <polygon points="98,24 120,24 82,80 80,58" />
-              <polygon points="108,0 222,0 222,16 118,160 217,160 217,187 82,187 82,172 188,18 108,18" />
+              <polygon points="0,0 32,0 96,104 116,75 129,75 65,180 64,106" />
+              <polygon points="91,0 223,0 211,24 130,156 214,158 214,186 78,187 172,29 110,29 84,66 68,40" />
             </clipPath>
           </defs>
-          <g class="yz-pieces" fill="url(#yz-metal)">
-            <polygon class="yz-p yz-y" points="0,0 34,0 80,72 80,152 64,172 64,96" />
-            <polygon class="yz-p yz-arm" points="98,24 120,24 82,80 80,58" />
-            <polygon class="yz-p yz-ztop" points="108,0 222,0 222,16 188,18 108,18" />
-            <polygon class="yz-p yz-zdiag" points="222,16 118,160 82,172 188,18" />
-            <polygon class="yz-p yz-zbot" points="118,160 217,160 217,187 82,187 82,172" />
+          <!-- six pieces that tile the two shapes exactly (shared edges), so the assembled mark is the logo -->
+          <g class="yz-pieces" fill="url(#yz-metal)" stroke="url(#yz-metal)" stroke-width="0.6" stroke-linejoin="round">
+            <polygon class="yz-p yz-y" points="0,0 32,0 96,104 64,106" />
+            <polygon class="yz-p yz-arm" points="64,106 96,104 116,75 129,75 65,180" />
+            <polygon class="yz-p yz-ztop" points="91,0 223,0 211,24 172,29 110,29" />
+            <polygon class="yz-p yz-hook" points="91,0 110,29 84,66 68,40" />
+            <polygon class="yz-p yz-zdiag" points="211,24 130,156 96.4,156 172,29" />
+            <polygon class="yz-p yz-zbot" points="96.4,156 130,156 214,158 214,186 78,187" />
+          </g>
+          <!-- the moment the pieces lock, the seamless mark takes over: the final frame is exactly the logo -->
+          <g class="yz-final" fill="url(#yz-metal)">
+            <polygon points="0,0 32,0 96,104 116,75 129,75 65,180 64,106" />
+            <polygon points="91,0 223,0 211,24 130,156 214,158 214,186 78,187 172,29 110,29 84,66 68,40" />
           </g>
           <g clip-path="url(#yz-clip)">
             <rect class="yz-sheen" x="-120" y="-20" width="70" height="230" fill="url(#yz-sheen)" />
