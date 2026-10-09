@@ -1,0 +1,218 @@
+<!doctype html>
+<!--
+  Converts a Microsoft Rocketbox avatar (FBX) into the game's protagonist GLB, in the browser:
+    - materials rebuilt as MeshStandardMaterial (colour + normal maps, alpha-tested hair cards);
+    - Biped bones renamed to Mixamo names (Hips, LeftUpLeg …) so dist/protagonist.js finds them;
+    - Idle / Walk / Run retargeted from the Mixamo Soldier.glb and baked in (idle keeps straight legs).
+  Setup, in one folder served over HTTP (e.g. `python3 -m http.server`):
+    build/ and jsm/          from the three@0.180.0 npm package (build/, examples/jsm/)
+    av/protagonist-src.glb   three.js examples/models/gltf/Soldier.glb (the motion source)
+    av/<Avatar>/<Avatar>.fbx and its textures, converted to <code>_<part>_color.jpg, <code>_<part>_normal.jpg
+                             (1024 px) and <code>_opacity_color.png
+  Open convert.html?a=Business_Male_06&c=m025&export and save window.out.b64 (base64 GLB) to a file;
+  scripts/avatars/README.md has the exact commands used for the shipped models.
+-->
+<script type="module">
+  import * as T from 'three';
+  import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+  import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+  import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+  const q = new URLSearchParams(location.search),
+    name = q.get('a'),
+    code = q.get('c');
+  // Rocketbox (3ds Max Biped) -> Mixamo names, so the game's pose code finds the same bones on every rig
+  const MAP = {
+    Bip01_Pelvis: 'Hips',
+    Bip01_Spine: 'Spine',
+    Bip01_Spine1: 'Spine1',
+    Bip01_Spine2: 'Spine2',
+    Bip01_Neck: 'Neck',
+    Bip01_Head: 'Head'
+  };
+  const FING = { 0: 'Thumb', 1: 'Index', 2: 'Middle', 3: 'Ring', 4: 'Pinky' };
+  for (const [s, S] of [
+    ['L', 'Left'],
+    ['R', 'Right']
+  ]) {
+    Object.assign(MAP, {
+      [`Bip01_${s}_Clavicle`]: S + 'Shoulder',
+      [`Bip01_${s}_UpperArm`]: S + 'Arm',
+      [`Bip01_${s}_Forearm`]: S + 'ForeArm',
+      [`Bip01_${s}_Hand`]: S + 'Hand',
+      [`Bip01_${s}_Thigh`]: S + 'UpLeg',
+      [`Bip01_${s}_Calf`]: S + 'Leg',
+      [`Bip01_${s}_Foot`]: S + 'Foot',
+      [`Bip01_${s}_Toe0`]: S + 'ToeBase'
+    });
+    for (let f = 0; f < 5; f++) {
+      MAP[`Bip01_${s}_Finger${f}`] = `${S}Hand${FING[f]}1`;
+      MAP[`Bip01_${s}_Finger${f}1`] = `${S}Hand${FING[f]}2`;
+      MAP[`Bip01_${s}_Finger${f}2`] = `${S}Hand${FING[f]}3`;
+    }
+  }
+  const tl = new T.TextureLoader();
+  const tex = async (file, color) => {
+    const t = await tl.loadAsync(`av/${name}/${file}`);
+    t.flipY = true;
+    if (color) t.colorSpace = T.SRGBColorSpace;
+    t.userData.mimeType = file.endsWith('.png') ? 'image/png' : 'image/jpeg';
+    t.name = file;
+    return t;
+  };
+  const fbx = await new FBXLoader().loadAsync(`av/${name}/${name}.fbx`);
+  const mesh = (() => {
+    let m;
+    fbx.traverse(o => o.isSkinnedMesh && (m = o));
+    return m;
+  })();
+  const mats = [];
+  for (const m of mesh.material) {
+    const part = m.name.replace(code + '_', '');
+    let nm;
+    if (part === 'opacity')
+      nm = new T.MeshStandardMaterial({
+        name: m.name,
+        map: await tex(`${code}_opacity_color.png`, true),
+        alphaTest: 0.4,
+        side: T.DoubleSide,
+        roughness: 0.8
+      });
+    else
+      nm = new T.MeshStandardMaterial({
+        name: m.name,
+        map: await tex(`${code}_${part}_color.jpg`, true),
+        normalMap: await tex(`${code}_${part}_normal.jpg`),
+        roughness: part === 'head' ? 0.55 : 0.78
+      });
+    mats.push(nm);
+  }
+  mesh.material = mats;
+  fbx.animations = [];
+  fbx.traverse(o => {
+    if (o.isBone) o.name = MAP[o.name] || o.name.replace(/^Bip01_?/, '') || 'Root';
+  });
+  fbx.name = name;
+  fbx.updateMatrixWorld(true);
+
+  // --- retarget the Soldier's Idle / Walk / Run (Mixamo) onto this rig ---
+  const gl = await new GLTFLoader().loadAsync('av/protagonist-src.glb');
+  const src = gl.scene;
+  src.updateMatrixWorld(true);
+  const strip = n => n.replace(/^mixamorig:?/, '');
+  const sBones = {};
+  src.traverse(o => o.isBone && (sBones[strip(o.name)] = o));
+  const tBones = {};
+  fbx.traverse(o => o.isBone && (tBones[o.name] = o));
+  const rotOf = m => {
+    const q = new T.Quaternion();
+    m.decompose(new T.Vector3(), q, new T.Vector3());
+    return q;
+  };
+  const posOf = o => new T.Vector3().setFromMatrixPosition(o.matrixWorld);
+  const facing = b => (posOf(b.LeftUpLeg).x > posOf(b.RightUpLeg).x ? 1 : -1);
+  const F =
+      facing(sBones) === facing(tBones)
+        ? new T.Quaternion()
+        : new T.Quaternion().setFromAxisAngle(new T.Vector3(0, 1, 0), Math.PI),
+    Finv = F.clone().invert();
+  // the next bone down the chain (the one that defines this bone's direction)
+  const CHILD = { Hips: 'Spine', Spine: 'Spine1', Spine1: 'Spine2', Spine2: 'Neck', Neck: 'Head' };
+  for (const S of ['Left', 'Right']) {
+    Object.assign(CHILD, {
+      [S + 'Shoulder']: S + 'Arm',
+      [S + 'Arm']: S + 'ForeArm',
+      [S + 'ForeArm']: S + 'Hand',
+      [S + 'Hand']: S + 'HandMiddle1',
+      [S + 'UpLeg']: S + 'Leg',
+      [S + 'Leg']: S + 'Foot',
+      [S + 'Foot']: S + 'ToeBase'
+    });
+    for (const f of Object.values(FING)) {
+      CHILD[`${S}Hand${f}1`] = `${S}Hand${f}2`;
+      CHILD[`${S}Hand${f}2`] = `${S}Hand${f}3`;
+    }
+  }
+  const pairs = [];
+  fbx.traverse(b => {
+    if (!b.isBone || !sBones[b.name] || !Object.values(MAP).includes(b.name)) return;
+    const s = sBones[b.name];
+    // rest alignment: turn the target's rest bone so it points where the source's rest bone points (e.g. A-pose -> T-pose)
+    let align = new T.Quaternion();
+    const c = CHILD[b.name];
+    if (c && tBones[c] && sBones[c]) {
+      const dt = posOf(tBones[c]).sub(posOf(b)).normalize();
+      const ds = posOf(sBones[c]).sub(posOf(s)).applyQuaternion(F).normalize();
+      align.setFromUnitVectors(dt, ds);
+    } else {
+      const pp = pairs.find(p => p.b === b.parent);
+      if (pp) align.copy(pp.align);
+    }
+    pairs.push({ b, s, align, sRestInv: rotOf(s.matrixWorld).invert(), tRest: rotOf(b.matrixWorld) });
+  });
+  const world = new Map();
+  const mixer = new T.AnimationMixer(src);
+  const clips = gl.animations
+    .filter(c => /^(idle|walk|run)$/i.test(c.name))
+    .map(clip => {
+      mixer.stopAllAction();
+      const act = mixer.clipAction(clip);
+      act.play();
+      const fps = 30,
+        frames = Math.max(2, Math.round(clip.duration * fps) + 1),
+        times = new Float32Array(frames);
+      const vals = pairs.map(() => new Float32Array(frames * 4));
+      const hipY = new Float32Array(frames * 3);
+      const sHip0 = posOf(sBones.Hips).y,
+        tHip = tBones.Hips,
+        tHipPos0 = tHip.position.clone();
+      const scaleRatio = posOf(tHip).y / sHip0;
+      const q = new T.Quaternion(),
+        pr = new T.Quaternion();
+      // the source idle is a crouched guard stance: an office worker stands with straight legs instead
+      const stand = /idle/i.test(clip.name),
+        LEGS = /^(Hips|(Left|Right)(UpLeg|Leg|Foot|ToeBase))$/;
+      for (let f = 0; f < frames; f++) {
+        const t = Math.min(clip.duration, f / fps);
+        times[f] = t;
+        mixer.setTime(t);
+        src.updateMatrixWorld(true);
+        world.clear();
+        pairs.forEach((p, k) => {
+          if (stand && LEGS.test(p.b.name)) q.copy(p.align).multiply(p.tRest);
+          else
+            q.copy(F)
+              .multiply(rotOf(p.s.matrixWorld))
+              .multiply(p.sRestInv)
+              .multiply(Finv)
+              .multiply(p.align)
+              .multiply(p.tRest);
+          world.set(p.b, q.clone());
+          pr.copy(world.has(p.b.parent) ? world.get(p.b.parent) : rotOf(p.b.parent.matrixWorld));
+          pr.invert()
+            .multiply(q)
+            .toArray(vals[k], f * 4);
+        });
+        // hips bob: vertical motion only, in the parent's frame
+        const dy = stand ? 0 : (posOf(sBones.Hips).y - sHip0) * scaleRatio;
+        const up = new T.Vector3(0, dy, 0)
+          .applyQuaternion(rotOf(tHip.parent.matrixWorld).invert())
+          .divideScalar(new T.Vector3().setFromMatrixScale(tHip.parent.matrixWorld).x);
+        tHipPos0
+          .clone()
+          .add(up)
+          .toArray(hipY, f * 3);
+      }
+      act.stop();
+      const tracks = pairs.map((p, k) => new T.QuaternionKeyframeTrack(p.b.name + '.quaternion', times, vals[k]));
+      tracks.push(new T.VectorKeyframeTrack('Hips.position', times, hipY));
+      return new T.AnimationClip(clip.name, clip.duration, tracks);
+    });
+  window.preview = { fbx, clips };
+  if (q.has('export')) {
+    const glb = await new GLTFExporter().parseAsync(fbx, { binary: true, animations: clips });
+    const bytes = new Uint8Array(glb);
+    let s = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    window.out = { b64: btoa(s), clips: clips.map(c => c.name), n: bytes.length };
+  } else window.out = { clips: clips.map(c => c.name + ':' + c.duration), pairs: pairs.length, F: F.toArray() };
+</script>

@@ -1533,5 +1533,14 @@ export default {
   '💾 存檔槽 · 目前存檔 {0}': '💾 Save slots · current: save {0}',
   '📊 統計': '📊 Statistics',
   '📖 圖鑑新增（馴化）：{0}': '📖 New codex entry (tamed): {0}',
-  '📖 圖鑑新增：{0}': '📖 New codex entry: {0}'
+  '📖 圖鑑新增：{0}': '📖 New codex entry: {0}',
+  主角: 'Protagonist',
+  外觀: 'Look',
+  男: 'Male',
+  女: 'Female',
+  '男 · 白襯衫上班族': 'Male · office worker in a white shirt',
+  '女 · 套裝上班族': 'Female · office worker in a suit',
+  '那天加班到深夜的是誰？': 'Who was working late that night?',
+  '選擇主角的外觀。之後也可以在「設定」裡更換。':
+    'Choose how the protagonist looks. You can change it later in Settings.'
 };

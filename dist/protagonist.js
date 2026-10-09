@@ -7,48 +7,88 @@ import * as T from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/addons/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from './vendor/addons/utils/SkeletonUtils.js';
 
-const HEIGHT = 1.76; // metres, soles to crown
-let source = null,
-  clips = [],
-  fit = 1,
-  failed = false;
-const waiting = new Set();
+// Two looks, both office workers in shirt and suit (Microsoft Rocketbox, MIT). Their rigs were renamed to Mixamo bone
+// names and given Idle / Walk / Run clips offline (retargeted from Mixamo motions), so the code below treats both
+// the same way.
+export const LOOKS = {
+  male: { url: 'protagonist.glb', height: 1.78 },
+  female: { url: 'protagonist-female.glb', height: 1.68 }
+};
+const loaded = {},
+  pending = {},
+  failed = {};
+let base = './models/';
+const waiting = new Map(); // figure -> look it is waiting for
 
-export function loadProtagonist(url = './models/protagonist.glb') {
-  if (typeof document === 'undefined') return Promise.resolve(null);
-  return new GLTFLoader().loadAsync(url).then(
-    gltf => {
-      source = gltf.scene;
-      clips = gltf.animations;
-      source.updateMatrixWorld(true);
-      const box = new T.Box3().setFromObject(source);
-      fit = HEIGHT / Math.max(0.1, box.max.y - box.min.y);
-      for (const h of waiting) attach(h);
-      waiting.clear();
-      return source;
-    },
-    err => {
-      failed = true;
-      console.warn('Protagonist model unavailable, keeping the procedural figure.', err);
+function loadLook(look) {
+  if (loaded[look]) return Promise.resolve(loaded[look]);
+  if (pending[look]) return pending[look];
+  const spec = LOOKS[look];
+  pending[look] = new GLTFLoader()
+    .loadAsync(base + spec.url)
+    .then(gltf => {
+      const scene = gltf.scene;
+      scene.updateMatrixWorld(true);
+      const box = new T.Box3().setFromObject(scene);
+      const clips = gltf.animations.filter(c => /^(idle|walk|run)$/i.test(c.name));
+      return (loaded[look] = { scene, clips, fit: spec.height / Math.max(0.1, box.max.y - box.min.y) });
+    })
+    .catch(err => {
+      failed[look] = true;
+      console.warn(`Protagonist model "${look}" unavailable, keeping the procedural figure.`, err);
       return null;
-    }
-  );
+    });
+  return pending[look];
+}
+// Which way a rig faces in its file: +1 for +z, -1 for -z (from where its left leg sits).
+function facing(scene) {
+  scene.updateMatrixWorld(true);
+  const l = new T.Vector3(),
+    r = new T.Vector3();
+  let L = null,
+    R = null;
+  scene.traverse(o => {
+    if (o.isBone && /LeftUpLeg$/.test(o.name)) L = o;
+    if (o.isBone && /RightUpLeg$/.test(o.name)) R = o;
+  });
+  if (!L || !R) return -1;
+  L.getWorldPosition(l);
+  R.getWorldPosition(r);
+  return l.x > r.x ? 1 : -1; // facing +z, your left is +x
+}
+// Back-compat entry point: start loading the default look (the world calls this once).
+export function loadProtagonist(url) {
+  if (typeof document === 'undefined') return Promise.resolve(null);
+  if (url) base = url.replace(/[^/]*$/, '');
+  return loadLook('male');
 }
 
-// Give a human.js figure the real body (now, or as soon as the model has loaded).
-export function dressHuman(h) {
-  if (source) attach(h);
-  else if (!failed) waiting.add(h);
+// Give a human.js figure a real body (now, or as soon as that look has loaded). Calling it again with another
+// look swaps the body.
+export function dressHuman(h, look = 'male') {
+  if (!LOOKS[look]) look = 'male';
+  if (h.userData.model?.look === look) return h;
+  if (typeof document === 'undefined') return h;
+  waiting.set(h, look);
+  loadLook(look).then(data => {
+    if (waiting.get(h) !== look) return; // asked for another look meanwhile
+    waiting.delete(h);
+    if (data) attach(h, look, data);
+  });
   return h;
 }
 
 const BONES = ['Hips', 'Spine', 'Spine1', 'Spine2', 'Neck', 'Head'];
 for (const s of ['Left', 'Right']) BONES.push(s + 'UpLeg', s + 'Leg', s + 'Foot', s + 'Arm', s + 'ForeArm', s + 'Hand');
-function attach(h) {
-  if (h.userData.model) return;
-  const m = cloneSkinned(source);
+function attach(h, look, { scene, clips, fit }) {
+  if (h.userData.model) {
+    h.userData.model.mixer.stopAllAction();
+    h.remove(h.userData.model.root);
+    h.userData.model = null;
+  }
+  const m = cloneSkinned(scene);
   m.scale.multiplyScalar(fit);
-  m.rotation.y = Math.PI; // the model faces -z; the game's forward is +z
+  if (facing(scene) < 0) m.rotation.y = Math.PI; // the game's forward is +z
   m.traverse(o => {
     if (o.isMesh) {
       o.castShadow = true;
@@ -74,21 +114,28 @@ function attach(h) {
   if (actions.idle) actions.idle.setEffectiveWeight(1);
   h.add(m);
   h.userData.J.hips.visible = false;
-  h.userData.model = { root: m, mixer, actions, bones, rest: {} };
-  for (const [k, b] of Object.entries(bones)) h.userData.model.rest[k] = b.quaternion.clone();
+  h.userData.model = { look, root: m, mixer, actions, bones };
 }
 
 const smooth = (a, b, x) => {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
   return t * t * (3 - 2 * t);
 };
-const q = new T.Quaternion(),
-  e = new T.Euler();
-// rotate a bone by extra Euler angles (radians) on top of whatever the clip set this frame
-function bend(bone, x = 0, y = 0, z = 0) {
-  if (!bone) return;
-  q.setFromEuler(e.set(x, y, z));
-  bone.quaternion.multiply(q);
+const AX = new T.Vector3(1, 0, 0),
+  AZ = new T.Vector3(0, 0, 1),
+  hq = new T.Quaternion(),
+  pq = new T.Quaternion(),
+  rq = new T.Quaternion();
+// Rotate a bone about an axis of the *figure's* frame (x right-to-left, y up, z forward), on top of whatever the
+// clip set this frame, so poses work on any rig whatever its bone axes.
+function bend(h, bone, axis, angle) {
+  if (!bone || !angle) return;
+  bone.parent.updateWorldMatrix(true, false);
+  h.getWorldQuaternion(hq);
+  bone.parent.getWorldQuaternion(pq);
+  pq.premultiply(hq.invert()); // parent rotation in the figure's frame
+  rq.setFromAxisAngle(axis, angle);
+  bone.quaternion.premultiply(pq.clone().invert().multiply(rq).multiply(pq));
 }
 
 // Returns true when the model handled this frame (otherwise human.js animates the procedural figure).
@@ -110,18 +157,18 @@ export function animateModel(h, dt, { speed = 0, mode = 'walk' } = {}) {
   if (seated) {
     const ride = mode === 'ride',
       row = mode === 'row' ? Math.sin((md.t = (md.t || 0) + dt) * 2.2) * Math.min(1, speed * 0.4) : 0;
-    // hips drop to the seat; thighs forward, knees folded, hands forward on the knees (or pulling an oar).
-    // Bone axes in this rig (model facing +z): thigh -x swings forward, knee +x folds, left arm -x / right arm +x
-    // swing forward, spine +x leans forward.
+    // hips drop to the seat; thighs swing forward, knees fold, hands forward on the knees (or pulling an oar),
+    // a slight forward lean. Axes are the figure's own: x across (to its left), z forward.
     md.root.position.y = ride ? 0 : -0.74;
+    bend(h, B.Spine, AX, 0.12 + row * 0.25);
     for (const s of ['Left', 'Right']) {
       const side = s === 'Left' ? 1 : -1;
-      bend(B[s + 'UpLeg'], -1.5, 0, -side * (ride ? 0.5 : 0.08));
-      bend(B[s + 'Leg'], ride ? 1.4 : 1.7, 0, 0);
-      bend(B[s + 'Arm'], -side * (0.6 + row * 0.5), 0, 0);
-      bend(B[s + 'ForeArm'], -side * (0.8 - row * 0.4), 0, 0);
+      bend(h, B[s + 'UpLeg'], AX, -1.5);
+      bend(h, B[s + 'UpLeg'], AZ, side * (ride ? 0.45 : 0.06));
+      bend(h, B[s + 'Leg'], AX, ride ? 1.4 : 1.7);
+      bend(h, B[s + 'Arm'], AX, -(0.4 + row * 0.5));
+      bend(h, B[s + 'ForeArm'], AX, -(0.55 - row * 0.3));
     }
-    bend(B.Spine, 0.12 + row * 0.25, 0, 0);
   }
   return true;
 }

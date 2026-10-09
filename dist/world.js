@@ -506,9 +506,9 @@ function buildingMesh(b) {
 // The protagonist (see human.js): jointed, with a face, hands and procedural walk / idle / sit poses.
 // dressed: swap in the rigged character model once it has loaded (the intro film keeps the procedural figure,
 // whose limbs it poses directly)
-export function character(dressed = true) {
+export function character(dressed = true, look = 'male') {
   const h = makeHuman();
-  return dressed ? dressHuman(h) : h;
+  return dressed ? dressHuman(h, look) : h;
 }
 function makeBoat() {
   const g = new T.Group();
@@ -770,7 +770,15 @@ export class OceanWorld {
     this.firstPitch = 0;
     return this.firstPerson;
   }
+  // The protagonist's look ('male' / 'female'), on foot and in the boat.
+  setHero(look = 'male') {
+    if (this.hero === look) return;
+    this.hero = look;
+    dressHuman(this.walker, look);
+    dressHuman(this.boat.userData.human, look);
+  }
   sync(s) {
+    this.setHero(s.hero);
     normalizeHousing(s);
     normalizeExpansion(s);
     const key = JSON.stringify(s.buildings.map(({ type, x, z, rot, level, off }) => ({ type, x, z, rot, level, off })));

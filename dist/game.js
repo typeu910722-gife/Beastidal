@@ -1180,6 +1180,7 @@ function openSettings(back = closeModal) {
         `<button type="button" data-val="${v}" class="${LANG === v ? 'active' : ''}" data-no-i18n>${l}</button>`
     )
     .join('')}</span></div>
+  ${running ? `<h3>主角</h3><div class="row"><span>外觀</span><span class="seg" data-key="hero">${HEROES.map(([v, l]) => `<button type="button" data-val="${v}" class="${state.hero === v ? 'active' : ''}">${l.split(' · ')[0]}</button>`).join('')}</span></div>` : ''}
   <h3>畫面</h3><div class="row"><span>畫質</span>${seg(
     'quality',
     Object.entries(QUALITY).map(([k, q]) => [k, q.label])
@@ -1234,6 +1235,12 @@ function openSettings(back = closeModal) {
             }
             return;
           }
+          if (key === 'hero') {
+            state.hero = v;
+            world.setHero(v);
+            save(true);
+            return;
+          }
           if (key === 'quality') {
             if (world.setQuality(v)) {
               if (running) save(true);
@@ -1284,6 +1291,7 @@ function toggleView() {
   save(true);
 }
 function beginGame(fresh = false) {
+  state.hero ??= 'male';
   normalizeWildlife(state);
   normalizeTaming(state);
   normalizeDevice(state);
@@ -1333,7 +1341,30 @@ function beginGame(fresh = false) {
   else updateTutorial(true);
   setTimeout(() => updateMonologue(true), fresh ? 6200 : 1500);
 }
+// A new life starts by choosing who is reborn: the office worker in the white shirt or the one in the suit.
+const HEROES = [
+  ['male', '男 · 白襯衫上班族'],
+  ['female', '女 · 套裝上班族']
+];
 function beginIntro() {
+  if (state.hero) return startIntro();
+  modal(
+    'WHO WAS REBORN',
+    '那天加班到深夜的是誰？',
+    '<p>選擇主角的外觀。之後也可以在「設定」裡更換。</p>',
+    HEROES.map(([v, label], i) => ({
+      label,
+      primary: i === 0,
+      action: () => {
+        closeModal();
+        state.hero = v;
+        world.setHero(v);
+        startIntro();
+      }
+    }))
+  );
+}
+function startIntro() {
   running = false;
   closePanel();
   $('hud').hidden = true;

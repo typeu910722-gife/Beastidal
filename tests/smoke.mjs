@@ -33,6 +33,9 @@ try {
     await page.goto(`http://localhost:${PORT}/?debug`);
     await page.waitForFunction(() => window.tidalReady, null, { timeout: 60000 });
     await page.click('#start-btn');
+    // a new life first asks who is reborn (male on desktop, female on mobile, so both models load)
+    await page.waitForSelector('#modal-actions button');
+    await page.click(`#modal-actions button:nth-child(${mobile ? 2 : 1})`);
     await page.waitForTimeout(1200);
     if (await page.isVisible('#skip-intro')) await page.click('#skip-intro');
     await page.waitForFunction(() => window.__beastidal && !document.getElementById('hud').hidden, null, {

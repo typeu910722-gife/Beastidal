@@ -33,12 +33,14 @@
     <canvas id="c"></canvas>
     <div id="hud">
       Developer view: the protagonist idle · walking · running · sitting. ?face=1 frames the head · ?t=seconds freezes
-      time · ?proc shows the procedural fallback.
+      time · ?look=female shows the female body · ?proc shows the procedural fallback.
     </div>
     <script type="module">
       import * as T from '../vendor/three.module.min.js';
       import { makeHuman, animateHuman } from '../human.js';
       import { loadProtagonist, dressHuman } from '../protagonist.js';
+      // models live one folder up from this page
+      if (!new URLSearchParams(location.search).has('proc')) loadProtagonist('../models/');
       const q = new URLSearchParams(location.search),
         face = q.has('face'),
         frozen = q.has('t') ? Number(q.get('t')) : null;
@@ -69,7 +71,7 @@
         { speed: 0, mode: 'sit' }
       ];
       const people = poses.map((p, i) => {
-        const h = q.has('proc') ? makeHuman() : dressHuman(makeHuman());
+        const h = q.has('proc') ? makeHuman() : dressHuman(makeHuman(), q.get('look') || 'male');
         h.position.x = (i - 1.5) * 1.1;
         h.rotation.y = 0.45;
         scene.add(h);
@@ -95,8 +97,16 @@
       addEventListener('resize', resize);
       resize();
       // ?proc shows the procedural fallback figure instead of the rigged model
-      if (!q.has('proc'))
-        loadProtagonist('../models/' + (q.get('model') || 'protagonist.glb')).then(() => (window.modelReady = true));
+      if (!q.has('proc')) {
+        const ready = setInterval(() => {
+          if (people.every(h => h.userData.model)) {
+            clearInterval(ready);
+            // a frozen pose is set again once the models are in
+            if (frozen !== null) people.forEach((h, i) => animateHuman(h, frozen, poses[i]));
+            window.modelReady = true;
+          }
+        }, 200);
+      }
       let last = performance.now();
       if (frozen !== null) people.forEach((h, i) => animateHuman(h, frozen, poses[i]));
       renderer.setAnimationLoop(now => {

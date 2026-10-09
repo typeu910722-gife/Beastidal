@@ -503,15 +503,20 @@ B 建造：新增二樓地板、樓梯、椅子、工作餐桌、晶光燈。施
      - 信任度低於 60%：按鈕會變成紅色的「強行契約」。失敗時牠進入**狂暴**，速度和攻擊力變成 1.2 倍，不管你在哪都追擊你 6–17 秒，身上冒紅光；之後冷靜退開，信任度 −30%。狂暴時不能餵牠，也不能締結契約。
 5. 舊存檔：照舊規則累積的信任度，會換算成對應的投餌次數。
 
-### 主角換成寫實的 3D 人物模型
+### 主角：男女兩位寫實上班族
 
-- 主角換成有骨架和動作的寫實人物模型：`dist/models/protagonist.glb`。
-- 來源：Adobe Mixamo 的「Vanguard」，取自 three.js 官方範例。包含待機、走路、跑步動作；Mixamo 允許在遊戲裡免費商業使用，詳見 `dist/models/CREDITS.md`。
-- 動作跟著實際速度走：
-  - 待機、走路、跑步會依速度平滑切換，步伐速度也跟著調整。
+- 主角是轉生前的社畜，所以換成真人比例的上班族模型：
+  - 男：白襯衫、黑西裝褲（`dist/models/protagonist.glb`）。
+  - 女：深色條紋套裝（`dist/models/protagonist-female.glb`）。
+- 來源：Microsoft Rocketbox 頭像庫的 `Business_Male_06` 與 `Business_Female_04`，MIT 授權，詳見 `dist/models/CREDITS.md`。
+- 開新遊戲時先選男或女；之後可以在「設定 → 主角 → 外觀」隨時更換。舊存檔預設為男主角。
+- 動作：
+  - 待機、走路、跑步動作從 Mixamo 動作轉移到 Rocketbox 骨架，已預先烘焙進 GLB 檔。
+  - 待機改成自然站直的姿勢。
+  - 依速度平滑切換，步伐速度也跟著調整。
   - 坐在小艇上、騎乘御獸的姿勢，用骨骼直接擺出來；航行時會做划槳動作。
 - 模型在背景載入。載入前或載入失敗時，會先顯示原本程式生成的人物。
-- 想換別的人物時，把 `dist/models/protagonist.glb` 換成任何 Mixamo 骨架的 GLB 就行，程式不用改。
+- 轉檔工具在 `scripts/avatars/`：把 Rocketbox 的 FBX 轉成 GLB，把骨骼改名成 Mixamo 名稱，並烘焙動作。用法見檔案開頭的說明。
 - 開發者展示頁 `dist/dev/human.html`：
-  - `?model=檔名.glb` 可以預覽別的模型
+  - `?look=female` 看女主角
   - `?proc` 看原本程式生成的人物

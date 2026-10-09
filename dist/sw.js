@@ -47,6 +47,7 @@ const FILES = [
   './taming.js?v=0.11.0',
   './protagonist.js?v=0.11.0',
   './models/protagonist.glb',
+  './models/protagonist-female.glb',
   './vendor/addons/loaders/GLTFLoader.js',
   './vendor/addons/utils/BufferGeometryUtils.js',
   './vendor/addons/utils/SkeletonUtils.js',
