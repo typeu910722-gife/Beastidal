@@ -1,0 +1,16 @@
+{
+  "name": "比斯泰德 Beastidal",
+  "short_name": "Beastidal",
+  "description": "社畜轉生御獸師：在海上打撈、建造、馴化突變御獸。免登入單機遊玩，可選擇以 Google Drive 同步存檔。",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#092f3d",
+  "theme_color": "#082c37",
+  "categories": ["games"],
+  "icons": [
+    {"src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}

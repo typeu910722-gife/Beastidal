@@ -25,3 +25,15 @@
 .cargo-row .button-row{display:flex;flex-wrap:wrap;gap:6px}
 .cargo-row button{padding:8px 11px;border-radius:5px}
 @media (max-width:760px),(max-height:520px){#monologue{top:62px;padding:9px 12px}#monologue p{font-size:13px;line-height:1.55}}
+.account-box{position:absolute;top:84px;right:4.5%;z-index:2;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;padding:13px 15px;width:min(340px,40vw);border:1px solid var(--border);border-radius:8px;background:#06222dcc;backdrop-filter:blur(10px)}
+.account-icon{grid-row:span 3;font-size:24px;color:var(--mint);align-self:start}
+.account-box p{font-size:12px;line-height:1.7;color:#b4cdca}.account-box p b{color:#eef5ef;font-weight:500}
+.google-button{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:6px;padding:9px 14px;min-height:40px;border-radius:5px;background:#f4f6f3;color:#1f2b2e;border-color:#f4f6f3;font-size:13px;font-weight:600}
+.google-button:hover:not(:disabled){background:#fff;border-color:#fff}
+.g-mark{display:inline-grid;place-content:center;width:20px;height:20px;border-radius:50%;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0);color:#fff;font:700 12px/1 system-ui}
+.account-box .signout{margin:4px 0 0;font-size:12px;min-height:28px;color:#9fbcbb;text-align:left}
+.quality-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.quality-row button{min-height:34px;padding:5px 14px;border-radius:4px;font-size:13px}
+.quality-row button.active{border-color:var(--mint);color:var(--mint);background:#2c564966}
+@media(max-width:760px),(max-height:630px){.account-box{top:62px;padding:9px 11px}.account-box p{font-size:11px}.google-button{min-height:34px;padding:6px 10px;font-size:12px}}
+@media(pointer:coarse) and (orientation:landscape) and (max-height:600px){.account-box{top:56px;grid-template-columns:1fr;width:min(280px,36vw)}.account-icon{display:none}.account-box p{font-size:10px;line-height:1.5}}
