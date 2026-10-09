@@ -114,7 +114,19 @@ function attach(h, look, { scene, clips, fit }) {
   if (actions.idle) actions.idle.setEffectiveWeight(1);
   h.add(m);
   h.userData.J.hips.visible = false;
-  h.userData.model = { look, root: m, mixer, actions, bones };
+  // how high the hip joint sits when standing (figure units), to seat the model at a fixed height
+  h.updateMatrixWorld(true);
+  const hipH = bones.Hips ? h.worldToLocal(bones.Hips.getWorldPosition(new T.Vector3())).y : 0.95;
+  h.userData.model = {
+    look,
+    root: m,
+    mixer,
+    actions,
+    bones,
+    hipH,
+    t: 0,
+    idle: { yaw: 0, pitch: 0, toYaw: 0, toPitch: 0, next: 2 }
+  };
 }
 
 const smooth = (a, b, x) => {
@@ -122,6 +134,7 @@ const smooth = (a, b, x) => {
   return t * t * (3 - 2 * t);
 };
 const AX = new T.Vector3(1, 0, 0),
+  AY = new T.Vector3(0, 1, 0),
   AZ = new T.Vector3(0, 0, 1),
   hq = new T.Quaternion(),
   pq = new T.Quaternion(),
@@ -136,6 +149,37 @@ function bend(h, bone, axis, angle) {
   pq.premultiply(hq.invert()); // parent rotation in the figure's frame
   rq.setFromAxisAngle(axis, angle);
   bone.quaternion.premultiply(pq.clone().invert().multiply(rq).multiply(pq));
+}
+
+// Small signs of life while standing still, layered on the idle clip: breathing, a slow shift of weight from foot
+// to foot, and now and then a glance around. weight 0..1 fades it out as the figure starts to walk.
+function idleLife(h, md, dt, weight) {
+  if (weight < 0.02) return;
+  const B = md.bones,
+    t = md.t,
+    I = md.idle;
+  // pick somewhere new to look every few seconds, and ease the head toward it
+  I.next -= dt;
+  if (I.next <= 0) {
+    const glance = Math.random() < 0.6;
+    I.toYaw = glance ? (Math.random() * 2 - 1) * 0.7 : 0;
+    I.toPitch = glance ? (Math.random() * 2 - 1) * 0.15 - 0.05 : 0;
+    I.next = 2.5 + Math.random() * 4;
+  }
+  const ease = 1 - Math.exp(-dt * 2.2);
+  I.yaw += (I.toYaw - I.yaw) * ease;
+  I.pitch += (I.toPitch - I.pitch) * ease;
+  const breathe = Math.sin(t * 1.7),
+    sway = Math.sin(t * 0.45);
+  bend(h, B.Spine1, AX, breathe * 0.025 * weight);
+  bend(h, B.Spine, AZ, sway * 0.03 * weight);
+  bend(h, B.Neck, AY, I.yaw * 0.4 * weight);
+  bend(h, B.Head, AY, I.yaw * 0.6 * weight);
+  bend(h, B.Head, AX, I.pitch * weight);
+  for (const s of ['Left', 'Right']) {
+    const side = s === 'Left' ? 1 : -1;
+    bend(h, B[s + 'Arm'], AZ, (-side * 0.04 + breathe * 0.015 * side) * weight);
+  }
 }
 
 // Returns true when the model handled this frame (otherwise human.js animates the procedural figure).
@@ -153,22 +197,26 @@ export function animateModel(h, dt, { speed = 0, mode = 'walk' } = {}) {
   if (A.walk) A.walk.setEffectiveTimeScale(Math.min(1.8, Math.max(0.6, speed / 1.6)));
   if (A.run) A.run.setEffectiveTimeScale(Math.min(1.6, Math.max(0.7, speed / 4.6)));
   md.mixer.update(dt);
+  md.t += dt;
   md.root.position.y = 0;
   if (seated) {
     const ride = mode === 'ride',
-      row = mode === 'row' ? Math.sin((md.t = (md.t || 0) + dt) * 2.2) * Math.min(1, speed * 0.4) : 0;
-    // hips drop to the seat; thighs swing forward, knees fold, hands forward on the knees (or pulling an oar),
-    // a slight forward lean. Axes are the figure's own: x across (to its left), z forward.
-    md.root.position.y = ride ? 0 : -0.74;
+      row = mode === 'row' ? Math.sin(md.t * 2.2) * Math.min(1, speed * 0.4) : 0;
+    // hips on the seat (the hip joint 0.28 above the figure's origin, whatever the model's size); thighs forward,
+    // knees bent so the feet rest on the boards in front instead of sinking through them; hands on the knees (or
+    // pulling an oar), a slight forward lean. Axes are the figure's own: x across (to its left), z forward.
+    md.root.position.y = ride ? 0 : 0.28 - md.hipH;
     bend(h, B.Spine, AX, 0.12 + row * 0.25);
     for (const s of ['Left', 'Right']) {
       const side = s === 'Left' ? 1 : -1;
       bend(h, B[s + 'UpLeg'], AX, -1.5);
-      bend(h, B[s + 'UpLeg'], AZ, side * (ride ? 0.45 : 0.06));
-      bend(h, B[s + 'Leg'], AX, ride ? 1.4 : 1.7);
+      bend(h, B[s + 'UpLeg'], AZ, side * (ride ? 0.45 : 0.08));
+      bend(h, B[s + 'Leg'], AX, ride ? 1.4 : 1.45);
+      bend(h, B[s + 'Foot'], AX, ride ? 0 : -0.2);
       bend(h, B[s + 'Arm'], AX, -(0.4 + row * 0.5));
       bend(h, B[s + 'ForeArm'], AX, -(0.55 - row * 0.3));
     }
-  }
+    idleLife(h, md, dt, 0.5);
+  } else idleLife(h, md, dt, 1 - move);
   return true;
 }
