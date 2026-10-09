@@ -1059,6 +1059,12 @@ export class OceanWorld {
           ud.rage.visible = rage;
           ud.rage.material.opacity = 0.45 + Math.sin(t * 9) * 0.25;
         }
+        // the rare, unusually tame individual gives off a faint warm shimmer
+        if (c.tame && !ud.kind) ud.kind = halo(m, 0xffd98a, 0, 0.7, 0, 2.2);
+        if (ud.kind) {
+          ud.kind.visible = !!c.tame && !rage;
+          ud.kind.material.opacity = 0.18 + Math.sin(t * 2.2 + c.phase) * 0.1;
+        }
         if (c.riding) {
           // a land beast that trusts you rides along on the boat's bow
           const h = s.boat.heading;

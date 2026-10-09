@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { contract, feedsNeeded, frenzied } from '../dist/taming.js';
+import { contract, feedsNeeded, frenzied, rollTame } from '../dist/taming.js';
 import { createState, feed, placeBuilding, validateSave } from '../dist/rules.js';
 import { makeGenome, crossGenome, phenotype, seeded } from '../dist/genetics.js';
 import {
@@ -31,23 +31,45 @@ function ready() {
   normalizeExpansion(s);
   return s;
 }
-test('Taming: back-to-back feedings cost 1, 3, 5 … bait; full trust follows; the work table binds it', () => {
+test('Taming: feedings cost 1, 3, 5 … bait, add 8–30 % trust, and are certain by the rarity limit', () => {
   const s = ready(),
     w = s.wild[0],
     need = feedsNeeded(w.genome);
   s.player.x = w.x;
   s.player.z = w.z;
-  let bait = s.resources.bait;
-  for (let k = 1; k <= need; k++) {
-    const r = feed(s, w.id);
+  w.tame = false;
+  let bait = s.resources.bait,
+    k = 0;
+  const rolls = seeded(4);
+  while (!w.follow) {
+    const before = w.trust,
+      r = feed(s, w.id, rolls);
+    k++;
     assert.ok(r.ok, r.error);
     assert.equal(bait - s.resources.bait, 2 * k - 1, 'feeding ' + k + ' costs ' + (2 * k - 1));
     bait = s.resources.bait;
-    assert.equal(w.trust, Math.min(100, Math.round((k / need) * 100)));
+    if (!w.follow) assert.ok(r.gain >= 8 && r.gain <= 30, 'gain ' + r.gain);
+    assert.ok(w.trust > before);
   }
-  assert.ok(w.follow && need >= 6 && need <= 10);
+  assert.ok(k <= need && need >= 6 && need <= 10);
   assert.equal(feed(s, w.id).ok, false, 'nothing left to gain');
+  // the guarantee: even with the smallest gains, the rarity limit reaches 100 %
+  const v = s.wild[3];
+  s.player.x = v.x;
+  s.player.z = v.z;
+  v.tame = false;
+  for (let i = 0; i < feedsNeeded(v.genome); i++) assert.ok(feed(s, v.id, () => 0).ok);
+  assert.ok(v.follow && v.trust === 100);
+  // an unusually tame beast: one feeding gives +90 %
+  const t = s.wild[4];
+  s.player.x = t.x;
+  s.player.z = t.z;
+  t.tame = true;
+  assert.equal(feed(s, t.id, () => 0).gain, 90);
+  assert.ok(feed(s, t.id, () => 0.99).follow, 'a second feeding finishes it');
+  assert.ok(rollTame(() => 0.0089) && !rollTame(() => 0.009));
   // contract at the work table
+  Object.assign(s.player, { mode: 'foot', x: 0.5, z: 0.5, level: 0 });
   assert.ok(placeBuilding(s, 'table', 0, 0).ok);
   const table = s.buildings.find(b => b.type === 'table');
   Object.assign(s.player, { mode: 'foot', x: 0.5, z: 0.5, level: 0 });
@@ -62,8 +84,9 @@ test('Forcing a low-trust contract can send the beast into a frenzy for 6–17 s
     w = s.wild[1];
   s.player.x = w.x;
   s.player.z = w.z;
-  assert.ok(feed(s, w.id).ok);
-  assert.ok(feed(s, w.id).ok);
+  w.tame = false;
+  assert.ok(feed(s, w.id, () => 0).ok);
+  assert.ok(feed(s, w.id, () => 0).ok);
   assert.ok(w.trust < 60);
   placeBuilding(s, 'table', 0, 0);
   const table = s.buildings.find(b => b.type === 'table');

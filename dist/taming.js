@@ -1,5 +1,6 @@
-// Taming, 0.12: feed the same wild beast again and again (each feeding costs more bait: 1, 3, 5, 7 …). Its trust
-// climbs to 100 % after 6 feedings for common beasts and up to 10 for the rarest. At 100 % it follows you; then a
+// Taming, 0.12: feed the same wild beast again and again (each feeding costs more bait: 1, 3, 5, 7 …). Every
+// feeding raises trust by a random 8–30 %, and by the 6th feeding (common) to 10th (rarest) it is certain to reach
+// 100 %. About 1 in 110 beasts that appear (0.9 %) is unusually tame: one feeding gives +90 %. At 100 % it follows you; then a
 // contract at the raft's work table binds it (success chance = trust %). Forcing a contract below 60 % trust can
 // send the beast into a frenzy: 1.2× speed and attack, chasing you for 6–17 seconds.
 import { phenotype, geneName } from './genetics.js?v=0.11.0';
@@ -7,6 +8,9 @@ import { freePen, normalizeHousing } from './housing.js?v=0.11.0';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 6, max: 17, below: 60 };
+export const TRUST_GAIN = { min: 8, max: 30, tame: 90, tameChance: 0.009 };
+// Rolled once when a wild beast appears.
+export const rollTame = (rng = Math.random) => rng() < TRUST_GAIN.tameChance;
 
 // Rarity tier 0–4: shallow-sea beasts are common; land, deep and plant lineages are rarer; strong bioluminescence
 // and mixed blood add a tier each.
@@ -30,7 +34,7 @@ export function normalizeTaming(s) {
   return s;
 }
 
-export function feed(s, id) {
+export function feed(s, id, rng = Math.random) {
   if (!s.secret) return { ok: false, error: '你還不知道如何接近牠。試著調查研究浮標。' };
   const w = s.wild.find(w => w.id === id);
   if (!w) return { ok: false, error: '生物已離開。' };
@@ -44,13 +48,17 @@ export function feed(s, id) {
   s.resources.bait -= cost;
   w.feeds++;
   w.lastFeed = s.elapsed;
-  const need = feedsNeeded(w.genome);
-  w.trust = Math.min(100, Math.round((w.feeds / need) * 100));
+  const need = feedsNeeded(w.genome),
+    before = w.trust,
+    gain = w.tame ? TRUST_GAIN.tame : TRUST_GAIN.min + Math.floor(rng() * (TRUST_GAIN.max - TRUST_GAIN.min + 1));
+  w.tame = false; // the bonus is for the first feeding only
+  w.trust = w.feeds >= need ? 100 : Math.min(100, w.trust + gain);
+  const got = w.trust - before;
   if (w.trust >= 100) {
     w.follow = true;
-    return { ok: true, trust: 100, follow: true };
+    return { ok: true, trust: 100, gain: got, follow: true };
   }
-  return { ok: true, trust: w.trust, next: baitCost(w), left: need - w.feeds };
+  return { ok: true, trust: w.trust, gain: got, next: baitCost(w), left: need - w.feeds };
 }
 
 // Who can be bound at a work table: beasts following you, and any beast with some trust close to the table.
@@ -89,16 +97,13 @@ export function contract(s, id, table, rng = Math.random) {
     s.wild = s.wild.filter(c => c !== w);
     return { ok: true, tamed: pet, chance };
   }
-  const need = feedsNeeded(w.genome);
   w.follow = false;
   if (chance < FRENZY.below) {
     const secs = Math.round(FRENZY.min + rng() * (FRENZY.max - FRENZY.min));
     w.frenzyUntil = s.elapsed + secs;
     w.trust = Math.max(0, chance - 30);
-    w.feeds = Math.round((w.trust / 100) * need);
     return { ok: false, frenzy: true, seconds: secs, chance, error: '契約失敗！牠陷入狂暴，正朝你衝過來！' };
   }
   w.trust = Math.max(0, chance - 15);
-  w.feeds = Math.round((w.trust / 100) * need);
   return { ok: false, chance, error: `契約失敗，牠退縮了。信任度降到 ${w.trust}%。` };
 }

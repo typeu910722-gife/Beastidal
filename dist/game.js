@@ -73,6 +73,7 @@ import {
   baitCost,
   frenzied,
   normalizeTaming,
+  rollTame,
   contractCandidates,
   contract
 } from './taming.js?v=0.11.0';
@@ -1486,7 +1487,7 @@ function updateNearest() {
                         ? '狂暴中！快拉開距離'
                         : selected.follow
                           ? '完全信任 · 跟著你 · 回工作桌締結契約'
-                          : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.hostile ? ' · 危險個體' : ''}`
+                          : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
                       : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
     $('context-verb').textContent =
@@ -1600,7 +1601,7 @@ function interact() {
       haptic('discover');
       save(true);
     } else {
-      toast(`牠接住了誘餌。信任 ${r.trust}% · 再餵 ${r.left} 次 · 下次需要 ${r.next} 份誘餌`);
+      toast(`牠接住了誘餌。信任 +${r.gain}% → ${r.trust}% · 最多再餵 ${r.left} 次必定成功 · 下次需要 ${r.next} 份誘餌`);
       audio.note(620 + r.trust * 3, 0.2);
       save(true);
     }
@@ -4627,6 +4628,7 @@ function frame(now) {
           phase: Math.random() * 6,
           genome: seaGenome(x, z),
           trust: 0,
+          tame: rollTame(),
           hostile: Math.hypot(x, z) > 90 && Math.random() < 0.3
         });
         world.sync(state);

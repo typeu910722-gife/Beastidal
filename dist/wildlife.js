@@ -34,6 +34,7 @@ export function ensureLandBeasts(s, r = Math.random) {
         phase: r() * 6,
         genome: makeGenome(Math.floor(r() * 1e9), Math.floor(r() * 4), 'land'),
         trust: 0,
+        tame: r() < 0.009, // a rare, unusually tame individual (see taming.js)
         hostile: false
       };
     s.wild.push(w);

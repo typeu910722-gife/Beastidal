@@ -1,6 +1,10 @@
 // English dictionary: Chinese source text → English. Keys use {0}, {1}… for values filled in at runtime.
 // Regenerate the key list with `npm run i18n:check`, which reports strings that still need a translation.
 export default {
+  '· 似乎特別親人': '· seems unusually tame',
+  '{0} · 信任 {1}% · 下次投餌 {2} 份{3}{4}': '{0} · trust {1}% · next feeding {2} bait{3}{4}',
+  '牠接住了誘餌。信任 +{0}% → {1}% · 最多再餵 {2} 次必定成功 · 下次需要 {3} 份誘餌':
+    'It takes the bait. Trust +{0}% → {1}% · certain within {2} more feedings · next one needs {3} bait',
   '狂暴中！快拉開距離': 'Frenzied! Get away from it',
   '完全信任 · 跟著你 · 回工作桌締結契約': 'Full trust · following you · bind it at the work table',
   '· 危險個體': '· dangerous',
