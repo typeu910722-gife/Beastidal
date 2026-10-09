@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.min.js';
-import{ISLANDS,NODES}from'./islands.js?v=0.8.0';
+import{ISLANDS,NODES}from'./islands.js?v=0.9.0';
 const material=(color,extra={})=>new T.MeshStandardMaterial({color,roughness:.85,...extra});
 const sand=material(0xd5c49c),rock=material(0x566c6a),trunk=material(0x8e7952),leaf=material(0x4c8263,{side:T.DoubleSide}),metal=material(0x658086,{metalness:.5});
 function add(g,geo,mat,pos=[0,0,0],scale=[1,1,1]){const m=new T.Mesh(geo,mat);m.position.set(...pos);m.scale.set(...scale);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}

@@ -4,10 +4,10 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#082c37"><meta name="description" content="比斯泰德 Beastidal：社畜轉生御獸師。打撈、建造海上避難所、馴化突變御獸、占領島嶼，最後把家融合成五層遠洋戰艦。">
   <title>比斯泰德 · Beastidal</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./style.css?v=0.8.0"><link rel="stylesheet" href="./mobile.css?v=0.8.0">
-<link rel="stylesheet" href="./panels.css?v=0.8.0">
-<link rel="stylesheet" href="./expansion.css?v=0.8.0">
-<link rel="stylesheet" href="./beastidal.css?v=0.8.0">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./style.css?v=0.9.0"><link rel="stylesheet" href="./mobile.css?v=0.9.0">
+<link rel="stylesheet" href="./panels.css?v=0.9.0">
+<link rel="stylesheet" href="./expansion.css?v=0.9.0">
+<link rel="stylesheet" href="./beastidal.css?v=0.9.0">
 </head>
 <body>
   <main id="app">
@@ -15,12 +15,12 @@
     <div class="vignette" aria-hidden="true"></div>
     <div id="load-screen"><span class="eyebrow">BEASTIDAL</span><p id="load-text">正在越過世界的邊界…</p><div class="loading-line"></div></div>
     <section id="title-screen" hidden>
-      <div class="title-top"><span class="logo-mark">≈</span><span>一場新的漂流</span><span class="version">BEASTIDAL / 0.8</span></div>
+      <div class="title-top"><span class="logo-mark">≈</span><span>一場新的漂流</span><span class="version">BEASTIDAL / 0.9</span></div>
       <div class="title-copy"><p class="eyebrow">B E A S T I D A L</p><h1>比斯<span>泰德</span><i>。</i></h1>
         <div class="title-rule"></div><p class="intro">那天，你沒能抵達公司。<br>醒來後，世界只剩下海。</p>
         <p class="story-small">剛畢業的你，騎車上班途中被砂石車撞上。<br>第二次人生，從一塊漂流木與未知的呼吸開始。</p>
         <button id="start-btn" class="primary large" disabled>正在準備海域…</button>
-        <button id="new-btn" class="text-button" hidden>重新開始一段人生</button>
+        <button id="new-btn" class="text-button" hidden>重新開始一段人生</button><button id="settings-btn" class="text-button">⚙ 設定</button>
         <p class="start-note">手機請橫屏遊玩・建議戴上耳機<br><span>免登入即可遊玩 · 鍵鼠／觸控／手把 · <a href="./privacy.html" style="color:inherit">隱私權政策</a></span></p>
       </div>
       <div id="account-box" class="account-box"><span class="account-icon" aria-hidden="true">☁</span><p id="account-text"></p><button id="google-btn" class="google-button" hidden><span class="g-mark" aria-hidden="true">G</span><span id="google-btn-text">使用 Google 登入</span></button><button id="signout-btn" class="text-button signout" hidden>登出 Google</button></div>
@@ -37,7 +37,7 @@
       </aside>
       <aside class="right-hud"><div class="map-shell"><canvas id="minimap" width="190" height="190" aria-label="附近物資、生物與避難所雷達"></canvas><span class="map-north">N</span><span class="map-label">海流觀測</span></div><div class="location"><span id="zone-text">初醒淺海</span><small id="coords">00.0 N / 00.0 E</small></div><button id="home-btn" class="small-button">⌂ 導航回避難所 <kbd>H</kbd></button></aside>
       <div id="world-labels" aria-hidden="true"></div>
-      <div id="monologue" hidden role="status"><span class="mono-face" aria-hidden="true">💭</span><div><small>內心獨白</small><p></p></div></div>
+      <div id="tutorial" hidden role="status" aria-live="polite"><div class="tut-head"><span class="tut-step"></span><strong class="tut-title"></strong><button type="button" id="tut-skip">跳過教學</button></div><p class="tut-text"></p><div class="tut-dots"></div></div><div id="storm-alert" hidden role="status"><span class="storm-text"></span><button type="button" id="storm-go" hidden></button></div><div id="monologue" hidden role="status"><span class="mono-face" aria-hidden="true">💭</span><div><small>內心獨白</small><p></p></div></div>
       <div id="target-card" class="target-card" hidden></div>
       <button id="dock-btn" class="dock-button" hidden><span id="dock-label">登上避難所</span><small id="dock-detail">停泊小艇</small><kbd>Q</kbd></button>
       <div id="travel-status"><span id="travel-mode">海上航行</span><i></i><span id="travel-tip">靠近木筏可登岸</span></div>
@@ -57,7 +57,7 @@
     <div id="damage-flash" aria-hidden="true"></div>
     <section id="rotate-screen" hidden role="dialog" aria-label="請橫屏遊玩"><div class="rotate-device" aria-hidden="true">▯ <span>↻</span></div><p class="eyebrow">A WIDER HORIZON</p><h2>把手機橫過來，<br>讓海展開。</h2><p>橫屏使用左手移動、右手環視與互動。<br>若畫面沒有旋轉，請先關閉手機的直向鎖定。</p><small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button></section>
   </main>
-  <script type="module" src="./game.js?v=0.8.0"></script>
+  <script type="module" src="./game.js?v=0.9.0"></script>
   <script>if('serviceWorker'in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));</script>
   <script>setTimeout(()=>{if(!window.tidalReady){const e=document.getElementById('load-text');if(e)e.textContent='載入時間較長，請確認網路後重新整理。';}},18000);</script>
 </body></html>

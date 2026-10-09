@@ -1,17 +1,17 @@
-import{expansionModels}from'./expansion-models.js?v=0.8.0';
-import{normalizeExpansion,activePet,EXPLORE}from'./expansion.js?v=0.8.0';
-import{normalizeHousing,penId}from'./housing.js?v=0.8.0';
-import{makeCreature,animateCreature}from'./creatures.js?v=0.8.0';
-export{makeCreature}from'./creatures.js?v=0.8.0';
-import{makeIslands}from'./island-models.js?v=0.8.0';
-import{facilityId}from'./facilities.js?v=0.8.0';
+import{expansionModels}from'./expansion-models.js?v=0.9.0';
+import{normalizeExpansion,activePet,EXPLORE}from'./expansion.js?v=0.9.0';
+import{normalizeHousing,penId}from'./housing.js?v=0.9.0';
+import{makeCreature,animateCreature}from'./creatures.js?v=0.9.0';
+export{makeCreature}from'./creatures.js?v=0.9.0';
+import{makeIslands}from'./island-models.js?v=0.9.0';
+import{facilityId}from'./facilities.js?v=0.9.0';
 import * as T from './vendor/three.module.min.js';
-import{phenotype,seeded}from'./genetics.js?v=0.8.0';
-import{QUALITY,loadSettings,saveSettings,makeSky,makeWater,Atmosphere,SPLASHES}from'./realism.js?v=0.8.0';
-import{waveHeight,floatPose,WakeTrail}from'./physics.js?v=0.8.0';
-import{buildError}from'./rules.js?v=0.8.0';
-import{makeWarship,dockMesh,LOUNGE_SLOTS}from'./ship-models.js?v=0.8.0';
-import{DECKS,toWorld,restPlace,restIsland,dockMoor}from'./ship.js?v=0.8.0';
+import{phenotype,seeded}from'./genetics.js?v=0.9.0';
+import{QUALITY,loadSettings,saveSettings,makeSky,makeWater,Atmosphere,SPLASHES}from'./realism.js?v=0.9.0';
+import{waveHeight,floatPose,WakeTrail}from'./physics.js?v=0.9.0';
+import{buildError}from'./rules.js?v=0.9.0';
+import{makeWarship,dockMesh,LOUNGE_SLOTS}from'./ship-models.js?v=0.9.0';
+import{DECKS,toWorld,restPlace,restIsland,dockMoor}from'./ship.js?v=0.9.0';
 const V=T.Vector3;
 const colors={wood:0x976344,plank:0xbe9866,darkWood:0x524434,rope:0xd6c19b,teal:0x398c8b,cloth:0xd9cfaa,metal:0x466673,glow:0x9affdf};
 const boxG=new T.BoxGeometry(1,1,1),sphereG=new T.SphereGeometry(1,16,12),coneG=new T.ConeGeometry(1,1,8),cylG=new T.CylinderGeometry(1,1,1,12);
@@ -120,7 +120,7 @@ export class OceanWorld{
  this.extra=expansionModels(this.scene);this.ship=makeWarship(mat,halo);this.ship.visible=false;this.scene.add(this.ship);this.cannonFx=ball(this.scene,0xffc27a,0,0,0,1,1,1,{emissive:0xff9a40,emissiveIntensity:2,transparent:true,opacity:.8});this.cannonFx.visible=false;this.resize();this.sync(state);this.update(0,state,{title:true});
  }
  resize(){const rect=this.canvas.getBoundingClientRect();this.width=rect.width||innerWidth;this.height=rect.height||innerHeight;this.renderer.setSize(this.width,this.height,false);this.camera.aspect=this.width/this.height;this.camera.updateProjectionMatrix();}
- rotate(yawDelta,pitchDelta){this.yaw+=yawDelta;if(this.firstPerson&&!this.placement)this.firstPitch=Math.max(-1.15,Math.min(1.15,(this.firstPitch||0)+pitchDelta));else this.pitch=Math.max(.3,Math.min(1.2,this.pitch+pitchDelta));}
+ rotate(yawDelta,pitchDelta){const k=this.settings.camSens??1;yawDelta*=k;pitchDelta*=k*(this.settings.invertY?-1:1);this.yaw+=yawDelta;if(this.firstPerson&&!this.placement)this.firstPitch=Math.max(-1.15,Math.min(1.15,(this.firstPitch||0)+pitchDelta));else this.pitch=Math.max(.3,Math.min(1.2,this.pitch+pitchDelta));}
  toggleView(){this.firstPerson=!this.firstPerson;this.firstPitch=0;return this.firstPerson;}
  sync(s){normalizeHousing(s);normalizeExpansion(s);const key=JSON.stringify(s.buildings.map(({type,x,z,rot,level,off})=>({type,x,z,rot,level,off})));if(key!==this.lastBuildings){this.lastBuildings=key;while(this.home.children.length)this.home.remove(this.home.children[0]);for(const b of s.buildings)this.home.add(buildingMesh(b));const floors=s.buildings.filter(b=>b.type==='floor');const minX=Math.min(...floors.map(b=>b.x*3.6))-1.8,maxX=Math.max(...floors.map(b=>b.x*3.6))+1.8,minZ=Math.min(...floors.map(b=>b.z*3.6))-1.8,maxZ=Math.max(...floors.map(b=>b.z*3.6))+1.8;this.water.material.uniforms.uHome.value.set((minX+maxX)/2,(minZ+maxZ)/2,(maxX-minX)/2,(maxZ-minZ)/2);}
   const syncMap=(items,map,make)=>{const ids=new Set(items.map(x=>x.id));for(const[id,m]of map)if(!ids.has(id)){this.scene.remove(m);map.delete(id);}for(const v of items)if(!map.has(v.id)){const m=make(v);map.set(v.id,m);this.scene.add(m);}};
@@ -163,6 +163,7 @@ export class OceanWorld{
  makeSpray(){const n=220,g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(new Float32Array(n*3).fill(-999),3));this.spray={points:new T.Points(g,new T.PointsMaterial({color:0xf2fbfa,size:.3,transparent:true,opacity:.9,depthWrite:false})),vel:new Float32Array(n*3),life:new Float32Array(n),next:0,n};this.spray.points.frustumCulled=false;this.scene.add(this.spray.points);}
  emitSpray(x,z,vx,vz,vy,life){const sp=this.spray,i=sp.next++%sp.n,pos=sp.points.geometry.attributes.position;pos.setXYZ(i,x,waveHeight(x,z,this.time,this.stormLevel,this.homeRect())+.1,z);sp.vel.set([vx,vy,vz],i*3);sp.life[i]=life;}
  updateSpray(dt){const sp=this.spray,pos=sp.points.geometry.attributes.position;let any=false;for(let i=0;i<sp.n;i++){if(sp.life[i]<=0)continue;any=true;sp.life[i]-=dt;sp.vel[i*3+1]-=9.8*dt;const x=pos.getX(i)+sp.vel[i*3]*dt,y=pos.getY(i)+sp.vel[i*3+1]*dt,z=pos.getZ(i)+sp.vel[i*3+2]*dt;if(sp.life[i]<=0||y<-.3){sp.life[i]=0;pos.setXYZ(i,0,-999,0);}else pos.setXYZ(i,x,y,z);}if(any||sp.dirty){pos.needsUpdate=true;sp.dirty=any;}}
+ saveSettings(){saveSettings(this.settings);}
  setQuality(name){if(!QUALITY[name]||name===this.settings.quality)return false;this.settings.quality=name;saveSettings(this.settings);return true;}
  thumbnail(genome,key){if(this.previewCache.has(key))return this.previewCache.get(key);const scene=new T.Scene();scene.add(new T.HemisphereLight(0xffffff,0x407886,2.8));const sun=new T.DirectionalLight(0xffe5ba,3);sun.position.set(-3,5,4);scene.add(sun);const m=makeCreature(genome);m.rotation.y=-.65;scene.add(m);const cam=new T.PerspectiveCamera(40,2.2,.1,30);cam.position.set(5,3,7);cam.lookAt(0,0,0);const w=440,h=200,rt=new T.WebGLRenderTarget(w,h),old=this.renderer.getRenderTarget(),oldColor=this.renderer.getClearColor(new T.Color()).clone(),oldAlpha=this.renderer.getClearAlpha();this.renderer.setRenderTarget(rt);this.renderer.setClearColor(0x0c2935,0);this.renderer.clear();this.renderer.render(scene,cam);const pixels=new Uint8Array(w*h*4);this.renderer.readRenderTargetPixels(rt,0,0,w,h,pixels);this.renderer.setRenderTarget(old);this.renderer.setClearColor(oldColor,oldAlpha);rt.dispose();const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d'),im=ctx.createImageData(w,h);for(let y=0;y<h;y++)im.data.set(pixels.subarray((h-y-1)*w*4,(h-y)*w*4),y*w*4);ctx.putImageData(im,0,0);const url=c.toDataURL();this.previewCache.set(key,url);return url;}
 }

@@ -1,7 +1,7 @@
-import{EXPLORE,STAGES,normalizeExpansion,activePet,trainPet,commandPet,toggleRide,toggleDive,upgradeBoat,awaken,attack}from'./expansion.js?v=0.8.0';
-import{penLabel}from'./housing.js?v=0.8.0';
-import{restPlace,restIsland}from'./ship.js?v=0.8.0';
-import{phenotype,FORMS}from'./genetics.js?v=0.8.0';
+import{EXPLORE,STAGES,normalizeExpansion,activePet,trainPet,commandPet,toggleRide,toggleDive,upgradeBoat,awaken,attack}from'./expansion.js?v=0.9.0';
+import{penLabel}from'./housing.js?v=0.9.0';
+import{restPlace,restIsland}from'./ship.js?v=0.9.0';
+import{phenotype,FORMS}from'./genetics.js?v=0.9.0';
 let tab='beasts';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function renderAdventure(body,s,ctx){normalizeExpansion(s);const e=s.expedition,p=activePet(s);body.innerHTML=`<div class="tabs"><button data-exp-tab="beasts" class="${tab==='beasts'?'active':''}">御獸夥伴</button><button data-exp-tab="voyage" class="${tab==='voyage'?'active':''}">航務與遺跡</button></div>`;const run=(r,close=false)=>{ctx.toast(r.ok?r.message:r.error,!r.ok);ctx.save();ctx.sync();if(r.ok&&close)ctx.close();else ctx.refresh();};

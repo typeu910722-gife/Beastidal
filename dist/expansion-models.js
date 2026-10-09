@@ -1,7 +1,7 @@
 import * as T from './vendor/three.module.min.js';
-import{EXPLORE,CAVE}from'./expansion.js?v=0.8.0';
-import{makeCreature}from'./creatures.js?v=0.8.0';
-import{makeGenome}from'./genetics.js?v=0.8.0';
+import{EXPLORE,CAVE}from'./expansion.js?v=0.9.0';
+import{makeCreature}from'./creatures.js?v=0.9.0';
+import{makeGenome}from'./genetics.js?v=0.9.0';
 const mat=(color,extra={})=>new T.MeshStandardMaterial({color,roughness:.65,...extra});
 function m(g,geo,c,x,y,z,s=[1,1,1],extra={}){const mesh=new T.Mesh(geo,mat(c,extra));mesh.position.set(x,y,z);mesh.scale.set(...s);mesh.castShadow=true;mesh.receiveShadow=true;g.add(mesh);return mesh;}
 export function expansionModels(scene){const group=new T.Group(),sites=new Map();scene.add(group);for(const p of EXPLORE){const g=new T.Group();g.position.set(p.x,p.deep?-8:.42,p.z);g.userData.siteId=p.id;group.add(g);sites.set(p.id,g);if(p.kind==='entrance'||p.kind==='exit'){for(let i=0;i<9;i++){const a=i/8*Math.PI;m(g,new T.DodecahedronGeometry(.7,1),0x536778,Math.cos(a)*1.3,.2+Math.sin(a)*2.1,0,[.8,1,1]);}m(g,new T.CircleGeometry(1,32),0x102739,0,1.2,.1,[1.1,1.4,1],{side:T.DoubleSide,emissive:0x174451,emissiveIntensity:.6});}else if(p.kind==='ruin'){m(g,new T.BoxGeometry(1.3,2.5,.4),0x5d7c79,0,1.25,0);for(let n=0;n<6;n++)m(g,new T.BoxGeometry(.5+n%2*.25,.035,.035),0x9edde0,0,.6+n*.28,.22,[1,1,1],{emissive:0x6fbab1,emissiveIntensity:.9});}else{m(g,new T.BoxGeometry(1.1,.65,.8),p.deep?0x516f91:0x8c7156,0,.34,0);for(const x of[-.39,.39])m(g,new T.BoxGeometry(.08,.72,.86),0xc6b78c,x,.36,0);m(g,new T.OctahedronGeometry(.18),0x99e7dc,0,.84,0,[1,1,1],{emissive:0x7adbc9,emissiveIntensity:1});}}
