@@ -26,6 +26,7 @@ import {
   takeHelm,
   leaveHelm,
   climbShip,
+  // (0.20 moved the holds and the lounge into the cabin)
   disembark,
   transferCargo,
   toggleLounge,
@@ -44,6 +45,7 @@ import {
 import { monologue } from '../dist/guide.js';
 import { makeWarship } from '../dist/ship-models.js';
 import { MeshStandardMaterial } from '../dist/vendor/three.module.min.js';
+import { enterCabin, leaveCabin, useLadder, finishLadder } from '../dist/cabin.js';
 const test = (name, fn) => {
   fn();
   console.log('PASS ' + name);
@@ -172,7 +174,7 @@ test('Boarding lands on the main deck and only the bridge helm can steer', () =>
   assert.ok(leaveHelm(s).ok);
   assert.equal(s.player.deck, 4);
 });
-test('Five decks connect by ladders; cargo holds and lounge enforce their rules', () => {
+test('The hatch leads into the cabin (0.20); the hold takes cargo and the lounge enforces its rules', () => {
   const s = shipState();
   Object.assign(s.player, { x: s.ship.x, z: s.ship.z });
   boardShip(s);
@@ -181,12 +183,21 @@ test('Five decks connect by ladders; cargo holds and lounge enforce their rules'
     Object.assign(s.player, { lx: p.lx, lz: p.lz });
     return climbShip(s, id);
   };
-  assert.ok(go('down-3').ok);
-  assert.equal(DECKS[s.player.deck].id, 'lounge');
-  assert.ok(go('down-2').ok);
-  assert.ok(go('down-1').ok);
-  assert.equal(s.player.deck, 0);
-  assert.equal(transferCargo(s, 'food', 10).ok, false);
+  assert.ok(go('to-bridge').ok);
+  assert.equal(DECKS[s.player.deck].id, 'bridge');
+  assert.ok(go('from-bridge').ok);
+  assert.equal(s.player.deck, 3);
+  // cargo is handled in the cabin's hold, not on deck
+  assert.equal(transferCargo(s, 'wood', 10).ok, false);
+  const door = SHIP_POINTS.find(v => v.id === 'cabin-door');
+  Object.assign(s.player, { lx: door.lx, lz: door.lz });
+  assert.ok(enterCabin(s).ok);
+  const r = useLadder(s, 'ladder-down', true);
+  Object.assign(s.player, { cx: 10, cz: 7 });
+  const down = useLadder(s, 'ladder-down');
+  assert.ok(down.ok, r.error);
+  finishLadder(s, down);
+  assert.equal(s.player.floor, 0);
   const wood = s.resources.wood;
   assert.ok(transferCargo(s, 'wood', 50).ok);
   assert.equal(s.ship.cargo.wood, 50);
@@ -195,9 +206,10 @@ test('Five decks connect by ladders; cargo holds and lounge enforce their rules'
   for (const k of Object.keys(s.resources)) s.resources[k] = 0;
   assert.ok(transferCargo(s, 'wood', -20).ok);
   assert.equal(s.ship.cargo.wood, 30);
-  assert.equal(go('down-1').ok, false);
-  for (const d of [0, 1, 2, 3]) assert.ok(deckWalk(d, 0, 0));
-  assert.equal(deckWalk(0, 6, 0), false);
+  assert.ok(leaveCabin(s).ok);
+  assert.equal(s.player.deck, 3);
+  for (const d of [3, 4]) assert.ok(deckWalk(d, 0, d === 4 ? -9 : 0));
+  assert.equal(deckWalk(3, 6, 0), false);
   assert.ok(toggleLounge(s, 'p1').ok);
   assert.equal(restPlace(s, s.tamed[0]), 'lounge');
   // the fortress carries the whole base, so beasts can leave the lounge far out at sea too

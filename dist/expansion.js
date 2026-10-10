@@ -1,14 +1,14 @@
-import { phenotype, clamp } from './genetics.js?v=0.19.0';
-import { NODES, harvest } from './islands.js?v=0.19.0';
-import { restPlace } from './ship.js?v=0.19.0';
-import { dayOf, dayPhase } from './clock.js?v=0.19.0';
-import { remember, rememberFirst } from './memories.js?v=0.19.0';
-import { spend, give, stow } from './bag.js?v=0.19.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.19.0';
-import { islandAt } from './islands.js?v=0.19.0';
-import { hasPerk } from './codex.js?v=0.19.0';
-import { tally } from './stats.js?v=0.19.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.19.0';
+import { phenotype, clamp } from './genetics.js?v=0.20.0';
+import { NODES, harvest } from './islands.js?v=0.20.0';
+import { restPlace } from './ship.js?v=0.20.0';
+import { dayOf, dayPhase } from './clock.js?v=0.20.0';
+import { remember, rememberFirst } from './memories.js?v=0.20.0';
+import { spend, give, stow } from './bag.js?v=0.20.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.20.0';
+import { islandAt } from './islands.js?v=0.20.0';
+import { hasPerk } from './codex.js?v=0.20.0';
+import { tally } from './stats.js?v=0.20.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.20.0';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
 // the 深淵潛行者 collection perk lengthens every dive

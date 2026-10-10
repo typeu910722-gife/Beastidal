@@ -1,6 +1,6 @@
 // Procedural warship "比斯泰德號": keel + five walkable deck bands that can be cut away.
 import * as T from './vendor/three.module.min.js';
-import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.19.0';
+import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.20.0';
 export const LOUNGE_SLOTS = [
   [-2.4, -7],
   [2.4, -7],
@@ -309,6 +309,16 @@ export function makeWarship(mat, halo) {
     for (let i = 0; i < 9; i++) box(b, C.strake, 0, y + 0.35 + i * 0.31, -4.6 - i * 0.23, 1.5, 0.08, 0.32);
     for (const s of [-0.8, 0.8]) rod(b, [s, y + 0.6, -4.5], [s, y + 3.5, -6.6], 0.04, C.gold);
     box(b, C.strake, 3.7, y + 0.12, 1, 1.3, 0.12, 1.6);
+    // the companionway: a small deckhouse over the hatch down into the cabin (0.20)
+    box(b, C.strake, 0, y + 1.0, 3.2, 2.4, 2.0, 1.8);
+    box(b, C.trim, 0, y + 2.06, 3.2, 2.7, 0.12, 2.1);
+    box(b, 0x2a1a10, 0, y + 0.95, 2.28, 1.1, 1.8, 0.06);
+    box(b, C.gold, 0.35, y + 1.0, 2.24, 0.1, 0.1, 0.06, { emissive: 0xd6b15c, emissiveIntensity: 0.6 });
+    add(b, new T.CircleGeometry(0.28, 20), C.glass, [0, y + 1.45, 2.26], [1, 1, 1], {
+      emissive: 0xffd9a0,
+      emissiveIntensity: 1.2,
+      side: T.DoubleSide
+    });
     for (const zz of [0.3, 1.7]) cyl(b, C.gold, 4.3, y + 0.7, zz, 0.05, 1.2);
     for (let i = 0; i < 3; i++) cyl(b, 0x8b5e3c, -3, y + 0.5, 8 + i * 1.1, 0.4, 1);
   }

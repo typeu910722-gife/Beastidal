@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.19.0';
-import { renderAdventure } from './expansion-ui.js?v=0.19.0';
+} from './expansion.js?v=0.20.0';
+import { renderAdventure } from './expansion-ui.js?v=0.20.0';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.19.0';
-import { monologue, markGuide } from './guide.js?v=0.19.0';
-import { climb, demolish, relocate } from './construction.js?v=0.19.0';
+} from './ship.js?v=0.20.0';
+import { monologue, markGuide } from './guide.js?v=0.20.0';
+import { climb, demolish, relocate } from './construction.js?v=0.20.0';
 import {
   normalizeHousing,
   penId,
@@ -54,7 +54,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.19.0';
+} from './housing.js?v=0.20.0';
 import {
   ISLANDS,
   NODES,
@@ -65,10 +65,29 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.19.0';
-import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.19.0';
-import { lakeMinimap } from './lake-map.js?v=0.19.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.19.0';
+} from './islands.js?v=0.20.0';
+import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.20.0';
+import { lakeMinimap } from './lake-map.js?v=0.20.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.20.0';
+import {
+  CABIN_ITEMS,
+  CABIN_POINTS,
+  FLOORS,
+  ITEM_LIMIT,
+  enterCabin,
+  leaveCabin,
+  climbToBridge,
+  useLadder,
+  finishLadder,
+  placeItem,
+  removeItem,
+  placeError,
+  itemCount,
+  cabinPointsWorld,
+  moveCabin,
+  syncCabin,
+  costText
+} from './cabin.js?v=0.20.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -83,19 +102,19 @@ import {
   finishCrossing,
   tickStory,
   duelActive
-} from './story.js?v=0.19.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.19.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.19.0';
-import { QUALITY } from './realism.js?v=0.19.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.19.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.19.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.19.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.19.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.19.0';
-import { CONFIG } from './config.js?v=0.19.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.19.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.19.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.19.0';
+} from './story.js?v=0.20.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.20.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.20.0';
+import { QUALITY } from './realism.js?v=0.20.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.20.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.20.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.20.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.20.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.20.0';
+import { CONFIG } from './config.js?v=0.20.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.20.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.20.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.20.0';
 import {
   RARITY,
   FRENZY,
@@ -106,10 +125,10 @@ import {
   rollTame,
   craftContract,
   contract
-} from './taming.js?v=0.19.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.19.0';
-import { BeastStage } from './beast-stage.js?v=0.19.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.19.0';
+} from './taming.js?v=0.20.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.20.0';
+import { BeastStage } from './beast-stage.js?v=0.20.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.20.0';
 import {
   funds,
   normalizeBag,
@@ -127,12 +146,12 @@ import {
   stash,
   unstash,
   CARRY
-} from './bag.js?v=0.19.0';
-import { iconFor } from './icons.js?v=0.19.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.19.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.19.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.19.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.19.0';
+} from './bag.js?v=0.20.0';
+import { iconFor } from './icons.js?v=0.20.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.20.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.20.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.20.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.20.0';
 import {
   homePos,
   facilityPos,
@@ -144,10 +163,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.19.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.19.0';
-export const GAME_VERSION = '0.19.0';
-import { CloudSave } from './cloud-save.js?v=0.19.0';
+} from './fortress.js?v=0.20.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.20.0';
+export const GAME_VERSION = '0.20.0';
+import { CloudSave } from './cloud-save.js?v=0.20.0';
 import {
   readLocal,
   writeLocal,
@@ -164,9 +183,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.19.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.19.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.19.0';
+} from './save-store.js?v=0.20.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.20.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.20.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -186,8 +205,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.19.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.19.0';
+} from './rules.js?v=0.20.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.20.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -547,7 +566,7 @@ async function fullscreen() {
 const shipControls = () => {
   if (!state.ship) return false;
   const m = state.player.mode;
-  if (!state.skiff || m === 'aboard' || m === 'ship') return true;
+  if (!state.skiff || m === 'aboard' || m === 'ship' || m === 'cabin') return true;
   return m === 'boat' ? !!shipDockOption(state) : !state.player.level && !state.inCave && nearShip(state, 6);
 };
 function updateDock() {
@@ -559,20 +578,24 @@ function updateDock() {
     $('dock-detail').textContent = o?.detail || '';
     $('dock-btn').querySelector('kbd').textContent = gamepadActive ? 'LT' : 'Q';
     $('travel-mode').textContent =
-      m === 'aboard'
-        ? '比斯泰德號 · ' + DECKS[state.player.deck].name
-        : m === 'ship'
-          ? '掌舵航行 · 駕駛室'
-          : onIsland(state.player.x, state.player.z)?.name ||
-            (onLand(state.player.x, state.player.z) ? '環湖山麓' : '避難所步行');
+      m === 'cabin'
+        ? '比斯泰德號 · ' + FLOORS[state.player.floor | 0].name
+        : m === 'aboard'
+          ? '比斯泰德號 · ' + DECKS[state.player.deck].name
+          : m === 'ship'
+            ? '掌舵航行 · 駕駛室'
+            : onIsland(state.player.x, state.player.z)?.name ||
+              (onLand(state.player.x, state.player.z) ? '環湖山麓' : '避難所步行');
     $('travel-tip').textContent = P(
-      m === 'aboard'
-        ? state.player.deck === 4
-          ? '走到舵輪前按 E 掌舵'
-          : '樓梯在船身中央，按 E 上下層'
-        : m === 'ship'
-          ? '按空白鍵發射艦砲 · 按 Q 離開舵輪'
-          : '走近戰艦按 Q 登船'
+      m === 'cabin'
+        ? '走近設施按 E · B 擺設家具 · Q 回到甲板'
+        : m === 'aboard'
+          ? state.player.deck === 4
+            ? '走到舵輪前按 E 掌舵'
+            : '船尾樓梯上駕駛室，船中艙門進入船艙'
+          : m === 'ship'
+            ? '按空白鍵發射艦砲 · 按 Q 離開舵輪'
+            : '走近戰艦按 Q 登船'
     );
     return;
   }
@@ -627,11 +650,14 @@ function dock() {
           ? launchSkiff(state)
           : m === 'foot'
             ? boardShip(state)
-            : m === 'ship'
-              ? leaveHelm(state)
-              : disembark(state);
+            : m === 'cabin'
+              ? leaveCabin(state)
+              : m === 'ship'
+                ? leaveHelm(state)
+                : disembark(state);
     toast(res.ok ? res.message : res.error, !res.ok);
     if (res.ok) {
+      if (m === 'cabin') cabinView(false);
       destination = null;
       selectedTarget = null;
       keys.clear();
@@ -1419,6 +1445,10 @@ function openSettings(back = closeModal) {
 }
 function toggleView() {
   if (!running || paused || film) return;
+  if (state.player.mode === 'cabin') {
+    toast('船艙內是第一人稱視角。');
+    return;
+  }
   const first = world.toggleView();
   state.view = first ? 'first' : 'third';
   if (first) lockMouse();
@@ -1462,7 +1492,7 @@ function beginGame(fresh = false) {
   $('film-fade').hidden = true;
   $('ocean').style.filter = '';
   if ($('film-flash')) $('film-flash').style.opacity = 0;
-  world.firstPerson = state.view === 'first';
+  world.firstPerson = state.view === 'first' || state.player.mode === 'cabin';
   world.firstPitch = 0;
   $('view-btn').textContent = world.firstPerson ? '第一人稱' : '第三人稱';
   world.yaw = 0.63;
@@ -1586,6 +1616,7 @@ function initialize() {
   requestAnimationFrame(frame);
 }
 function getAllTargets() {
+  if (state.player.mode === 'cabin') return cabinPointsWorld(state);
   if (state.player.mode === 'aboard') return shipPointsWorld(state);
   const arr = state.loot.map(l => ({ ...l, type: 'loot', name: lootNames[l.kind] }));
   for (const w of state.wild)
@@ -1656,7 +1687,9 @@ function updateNearest() {
     $('context-title').textContent = selected.name;
     $('context-subtitle').textContent = P(
       selected.type === 'shippoint'
-        ? DECKS[state.player.deck].name + ' · 按 E ' + selected.verb
+        ? (state.player.mode === 'cabin' ? FLOORS[state.player.floor | 0] : DECKS[state.player.deck] || DECKS[3]).name +
+            ' · 按 E ' +
+            selected.verb
         : selected.type === 'claim'
           ? (state.occupied || []).includes(selected.claimId)
             ? '你的領地 · 御獸在此休息'
@@ -1734,6 +1767,10 @@ function updateNearest() {
 }
 function interact() {
   if (!running || paused || panel || buildType || salvaging) return;
+  if (cabinPlace) {
+    confirmPlace();
+    return;
+  }
   if (!nearest) {
     if (state.ship ? shipDockOption(state)?.near : dockOption(state)?.near) {
       dock();
@@ -1937,19 +1974,23 @@ let touchUp = false,
   surfaceHold = 0;
 function doJump() {
   if (!running || paused || panel || buildType || focus || jump.on) return;
-  if (!['foot', 'aboard'].includes(state.player.mode)) return;
+  if (!['foot', 'aboard', 'cabin'].includes(state.player.mode)) return;
   Object.assign(jump, { on: true, y: 0.001, vy: 4.6 });
   haptic('pickup');
 }
 // Space / the touch action button mean different things afoot (jump), under water (rise) and afloat (repel).
 function actionKey() {
-  if (['foot', 'aboard'].includes(state.player.mode)) doJump();
+  if (['foot', 'aboard', 'cabin'].includes(state.player.mode)) doJump();
   else if (!state.expedition.diving) repel();
 }
 function syncActionButton() {
   const b = $('repel-btn');
   if (!b) return;
-  const label = state.expedition?.diving ? '上浮' : ['foot', 'aboard'].includes(state.player.mode) ? '跳躍' : '驅離';
+  const label = state.expedition?.diving
+    ? '上浮'
+    : ['foot', 'aboard', 'cabin'].includes(state.player.mode)
+      ? '跳躍'
+      : '驅離';
   if (b.textContent !== label) b.textContent = label;
 }
 function repel() {
@@ -2004,6 +2045,7 @@ function closePanel() {
 }
 function openPanel(name, inDevice = false) {
   if (!running || paused || film) return;
+  if (name === 'build' && state.player.mode === 'cabin') name = 'decor';
   releaseMouse();
   cancelBuild();
   if (panel === name && deviceMode === inDevice) {
@@ -2592,6 +2634,27 @@ function shipPoint(id) {
   } else if (id === 'chart') {
     openPanel('journal');
     return;
+  } else if (id === 'cabin-door') {
+    r = enterCabin(state);
+    if (r.ok) cabinView(true);
+  } else if (id === 'exit-door') {
+    r = leaveCabin(state);
+    if (r.ok) cabinView(false);
+  } else if (id === 'bridge-stair') {
+    r = climbToBridge(state);
+    if (r.ok) cabinView(false);
+  } else if (id === 'ladder-up' || id === 'ladder-down') {
+    r = useLadder(state, id);
+    if (r.ok) {
+      startClimb(id, r);
+      r = { ok: true, message: '抓住梯子。' };
+    }
+  } else if (id === 'decor') {
+    openPanel('decor');
+    return;
+  } else if (id.startsWith('pick:')) {
+    r = removeItem(state, id.slice(5));
+    if (r.ok) world.sync(state);
   } else r = climbShip(state, id);
   toast(r.ok ? r.message : r.error, !r.ok);
   if (r.ok) {
@@ -2644,14 +2707,13 @@ function moved(r) {
   renderPanel();
 }
 function renderCargo(body) {
-  const deck = DECKS[state.player.deck];
-  if (!state.ship || state.player.mode !== 'aboard' || !deck.cargo) {
-    body.innerHTML = '<p class="dv-note">請到戰艦下層的物資艙操作貨櫃。</p>';
+  // 0.20: one hold in the cabin's lower floor holds every kind of goods
+  if (!state.ship || state.player.mode !== 'cabin') {
+    body.innerHTML = '<p class="dv-note">請到船艙下層的物資艙操作貨櫃。</p>';
     return;
   }
-  $('drawer-title').textContent = deck.name;
   body.innerHTML =
-    invBox('hold', deck.name, `${cargoTotal(state)} / ${CARGO_CAPACITY}`, slotItems(deck.cargo, state.ship.cargo), {
+    invBox('hold', '物資艙', `${cargoTotal(state)} / ${CARGO_CAPACITY}`, slotItems(CARRY, state.ship.cargo), {
       cols: 9,
       rows: 1
     }) +
@@ -2661,7 +2723,6 @@ function renderCargo(body) {
   bindInv(body, {
     refresh: renderPanel,
     onSlot: (grid, key) => {
-      if (grid === 'bag' && !deck.cargo.includes(key)) return toast('這項物資存放在另一層貨艙。', true);
       const n = Math.min(moveAmount(), 99999);
       moved(transferCargo(state, key, grid === 'hold' ? -n : n));
     }
@@ -3396,7 +3457,8 @@ function renderPanel() {
     lounge: ['BEAST LOUNGE', '御獸休息室'],
     device: ['HANDHELD', '隨身裝置'],
     beasts: ['BEASTS', '御獸倉庫'],
-    locker: ['STORAGE', '書桌儲物箱']
+    locker: ['STORAGE', '書桌儲物箱'],
+    decor: ['INTERIOR', '船艙擺設']
   };
   $('drawer-eyebrow').textContent = settings[panel][0];
   $('drawer-title').textContent = settings[panel][1];
@@ -3428,6 +3490,10 @@ function renderPanel() {
   }
   if (panel === 'facility') {
     renderFacility(body);
+    return;
+  }
+  if (panel === 'decor') {
+    renderDecor(body);
     return;
   }
   if (panel === 'cargo') {
@@ -3756,6 +3822,7 @@ function updateBuildBanner() {
       : '點擊綠色格子放置 · R 旋轉 · Esc 結束';
 }
 function cancelBuild() {
+  cancelPlace();
   buildType = null;
   if (moving) {
     moving = null;
@@ -3868,6 +3935,128 @@ function place() {
   openPanel('build');
   toast(`${name} 建造完成。${why}，可以改蓋別的設施。`);
 }
+// ---------- 0.20: the warship's cabin — first person inside, ladder climbs, free furniture placement ----------
+let ladderClimb = null,
+  cabinPlace = null,
+  viewBeforeCabin = null;
+// inside the cabin the view is always first person; the old view comes back at the hatch
+function cabinView(inside) {
+  if (inside) {
+    viewBeforeCabin = world.firstPerson;
+    world.firstPerson = true;
+    world.firstPitch = 0;
+    world.yaw = 0; // facing into the suite from the hatch
+    lockMouse();
+  } else {
+    cancelPlace();
+    ladderClimb = null;
+    world.climbY = 0;
+    if (viewBeforeCabin === false) {
+      world.firstPerson = false;
+      releaseMouse();
+    }
+    viewBeforeCabin = null;
+  }
+  $('view-btn').textContent = world.firstPerson ? '第一人稱' : '第三人稱';
+}
+// the ladder: a short ladderClimb with the camera, then the other floor
+function startClimb(id, r) {
+  const p = CABIN_POINTS.find(v => v.id === id);
+  Object.assign(state.player, { cx: p.x - 1.1, cz: p.z });
+  syncCabin(state);
+  ladderClimb = { t: 0, dur: 1.5, r };
+  keys.clear();
+  joystick = { x: 0, y: 0 };
+  world.yaw = -Math.PI / 2; // facing the rungs
+  haptic('pickup');
+}
+function tickClimb(dt) {
+  ladderClimb.t += dt;
+  const k = Math.min(1, ladderClimb.t / ladderClimb.dur),
+    e = k * k * (3 - 2 * k),
+    rise = ladderClimb.r.to - ladderClimb.r.from;
+  world.climbY = rise * e + Math.sin(k * Math.PI * 5) * 0.06;
+  world.firstPitch = (rise > 0 ? -0.35 : 0.35) * Math.sin(k * Math.PI);
+  if (k >= 1) {
+    const r = finishLadder(state, ladderClimb.r);
+    ladderClimb = null;
+    world.climbY = 0;
+    world.firstPitch = 0;
+    toast(r.message);
+    save(true);
+    updateDock();
+    updateNearest();
+  }
+}
+// furniture: pick a piece, walk to where it should stand (the preview floats in front of you), E to set it down
+function startPlace(type) {
+  cabinPlace = { type, rot: 0, at: null };
+  closePanel();
+  $('build-banner').hidden = false;
+  $('build-banner-name').textContent = `${CABIN_ITEMS[type].name} · ${costText(CABIN_ITEMS[type].cost)}`;
+  $('build-banner').querySelector('span').textContent = '走到想放的位置，按 E 放下 · R 旋轉 · Esc 結束';
+  lockMouse();
+}
+function updateGhost() {
+  const def = CABIN_ITEMS[cabinPlace.type],
+    d = 1.4 + Math.max(def.size[0], def.size[1]) / 2,
+    yaw = world.yaw,
+    x = state.player.cx - Math.sin(yaw) * d,
+    z = state.player.cz - Math.cos(yaw) * d,
+    rot = yaw + cabinPlace.rot,
+    err = placeError(state, cabinPlace.type, state.player.floor, x, z, rot);
+  cabinPlace.at = { x, z, rot, err };
+  world.cabin.setGhost(cabinPlace.type, state.player.floor, x, z, rot, !err);
+}
+function confirmPlace() {
+  const a = cabinPlace?.at;
+  if (!a) return;
+  if (a.err) {
+    toast(a.err, true);
+    return;
+  }
+  const r = placeItem(state, cabinPlace.type, a.x, a.z, a.rot);
+  toast(r.ok ? r.message : r.error, !r.ok);
+  if (!r.ok) return;
+  audio.note(520, 0.1);
+  haptic('pickup');
+  world.sync(state);
+  save(true);
+  updateUI();
+  if (!canPay(state, CABIN_ITEMS[cabinPlace.type].cost)) cancelPlace();
+}
+function cancelPlace() {
+  if (!cabinPlace) return;
+  cabinPlace = null;
+  world?.cabin?.setGhost(null);
+  $('build-banner').hidden = true;
+  $('build-banner').querySelector('span').textContent = '點擊綠色格子放置 · R 旋轉 · Esc 結束';
+}
+function renderDecor(body) {
+  if (state.player.mode !== 'cabin') {
+    body.innerHTML = '<p class="dv-note">到船艙裡才能擺設家具。</p>';
+    return;
+  }
+  body.innerHTML =
+    `<p class="dv-note">船艙家具 ${itemCount(state)} / ${ITEM_LIMIT}。選一件，走到位置按 E 放下；走到家具旁按 E 收起，材料全退。</p>` +
+    `<div class="reward-grid decor-grid">${Object.entries(CABIN_ITEMS)
+      .map(
+        ([k, d]) =>
+          `<button type="button" class="reward-tile${canPay(state, d.cost) ? ' ready' : ''}" data-decor="${k}"><b><span class="ico">${d.icon}</span> ${esc(d.name)}</b><small>${d.size[0]} × ${d.size[1]} 公尺</small><span>${esc(costText(d.cost))}</span></button>`
+      )
+      .join('')}</div>`;
+  body.querySelectorAll('[data-decor]').forEach(
+    b =>
+      (b.onclick = () => {
+        const d = CABIN_ITEMS[b.dataset.decor];
+        if (!canPay(state, d.cost)) {
+          toast('材料不夠：' + costText(d.cost), true);
+          return;
+        }
+        startPlace(b.dataset.decor);
+      })
+  );
+}
 // ---------- 0.19: the lake chart, markers and route guidance ----------
 let route = null,
   routeIdx = 0,
@@ -3875,7 +4064,7 @@ let route = null,
   bigMapOpen = false,
   sailing = false;
 const vesselDraft = () =>
-  state.player.mode === 'foot' || state.player.mode === 'aboard'
+  state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin'
     ? null
     : state.expedition?.mounted
       ? DRAFT.mount
@@ -4272,7 +4461,7 @@ function updateUI() {
       .join('');
   }
   // the bottom bar follows where you are: on the raft, build and the device; at sea, the device and expeditions
-  const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard';
+  const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin';
   $('build-tool').hidden = !onFoot || !atHome(state);
   $('home-btn').firstChild.textContent = state.ship ? '⌂ 回到戰艦 ' : '⌂ 導航回避難所 ';
   $('adventure-btn').hidden = onFoot;
@@ -4547,7 +4736,7 @@ function updateStorm(dt = 1 / 30) {
   document.body.classList.toggle('storm-alert-on', !!sc);
   // A storm counts as weathered at sea after 30 s spent off shore while it rages.
   if (sc?.phase === 'storm' && running && !paused) {
-    const atSea = !['foot', 'aboard'].includes(state.player.mode) && !state.inCave;
+    const atSea = !['foot', 'aboard', 'cabin'].includes(state.player.mode) && !state.inCave;
     if (atSea) stormSeaTime += dt;
   } else if (stormSeaTime) {
     if (stormSeaTime >= 30 && state.stats) {
@@ -4563,7 +4752,11 @@ function updateStorm(dt = 1 / 30) {
     return;
   }
   const safe =
-    state.player.mode === 'foot' || state.player.mode === 'aboard' || !!state.inCave || !!state.expedition?.diving;
+    state.player.mode === 'foot' ||
+    state.player.mode === 'aboard' ||
+    state.player.mode === 'cabin' ||
+    !!state.inCave ||
+    !!state.expedition?.diving;
   stormShelter = safe ? null : nearestShelter();
   if (sc.phase === 'warn' && !stormWarned) {
     stormWarned = true;
@@ -4911,9 +5104,15 @@ function movePlayer(dt, analog) {
     world.moveSpeed = 0;
     return;
   }
+  if (ladderClimb) {
+    tickClimb(dt);
+    world.moveSpeed = 0;
+    return;
+  }
   let x = 0,
     z = 0;
-  const foot = state.player.mode === 'foot';
+  const cabin = state.player.mode === 'cabin',
+    foot = state.player.mode === 'foot' || cabin;
   const kx = (keys.has('d') || keys.has('arrowright') ? 1 : 0) - (keys.has('a') || keys.has('arrowleft') ? 1 : 0),
     ky = (keys.has('w') || keys.has('arrowup') ? 1 : 0) - (keys.has('s') || keys.has('arrowdown') ? 1 : 0);
   let sx = kx + joystick.x + (analog?.x || 0),
@@ -5013,7 +5212,9 @@ function movePlayer(dt, analog) {
       surfaceHold = 0;
       beastAction('dive');
     }
-  } else moveTravel(state, dx, dz);
+  } else if (cabin) moveCabin(state, dx, dz);
+  else moveTravel(state, dx, dz);
+  if (cabinPlace) updateGhost();
   if (jump.on) {
     jump.y += jump.vy * dt;
     jump.vy -= 15 * dt;
@@ -5212,6 +5413,10 @@ function back() {
     closeModal();
     return;
   }
+  if (cabinPlace) {
+    cancelPlace();
+    return;
+  }
   if (buildType) {
     cancelBuild();
     return;
@@ -5316,7 +5521,7 @@ function gamepad(dt) {
     if (edge(2)) openPanel('build');
     // Ⓨ: use a contract scroll when a trusting wild beast is in reach, otherwise the research panel
     if (edge(3)) contractTarget() ? contractNearest() : openPanel('creatures');
-    if (edge(1)) ['foot', 'aboard'].includes(state.player.mode) && !focus ? doJump() : back();
+    if (edge(1)) ['foot', 'aboard', 'cabin'].includes(state.player.mode) && !focus ? doJump() : back();
     padUp = down(1) && !!state.expedition?.diving;
     if (edge(4)) openDevice();
     if (edge(5)) openPanel('journal');
@@ -5488,6 +5693,10 @@ function setupEvents() {
       } else return;
       if (k === 'e') return;
     }
+    if (k === 'r' && cabinPlace) {
+      cabinPlace.rot += Math.PI / 4;
+      return;
+    }
     if (k === 'k') openPanel('adventure');
     if (k === 't') beastAction('ride');
     if (k === 'g') beastAction('dive');
@@ -5517,6 +5726,10 @@ function setupEvents() {
   const canvasTouches = () => [...pointers.values()].filter(p => p.touch);
   const tapAt = e => {
     if (sleeping) return;
+    if (cabinPlace) {
+      confirmPlace();
+      return;
+    }
     if (focus) return tapInFocus(e);
     const hit = !buildType ? world.pickObject(e.clientX, e.clientY) : null;
     if (hit) {
@@ -5802,7 +6015,7 @@ function musicMood() {
     (boss && !boss.defeated && Math.hypot(boss.x - state.player.x, boss.z - state.player.z) < 70)
   )
     return 'deep';
-  if (state.player.mode === 'foot' || state.player.mode === 'aboard') return 'island';
+  if (state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin') return 'island';
   const hours = hourOf(state);
   return stormAt(state) || hours < 5.6 || hours > 18.6 ? 'night' : 'day';
 }
@@ -5828,7 +6041,13 @@ function updateSound(dt) {
     moodSince = now;
   }
   if (now - moodSince > (audio.music?.current ? 2500 : 0)) audio.mood(m);
-  const vessel = running && !paused && state.player.mode !== 'foot' && state.player.mode !== 'aboard' && !state.inCave;
+  const vessel =
+    running &&
+    !paused &&
+    state.player.mode !== 'foot' &&
+    state.player.mode !== 'aboard' &&
+    state.player.mode !== 'cabin' &&
+    !state.inCave;
   audio.motion(vessel ? world.hullSpeed || 0 : 0);
 }
 function frame(now) {

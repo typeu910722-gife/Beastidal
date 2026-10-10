@@ -72,6 +72,14 @@ const SPOTS = [
   [
     '20-settings',
     `document.getElementById('menu-btn').click();[...document.querySelectorAll('#modal-actions button')].find(b=>b.textContent.includes('設定')).click();`
+  ],
+  [
+    '21-cabin',
+    `document.querySelectorAll('#modal-shade').forEach(e=>e.hidden=true);s.ship={x:0,z:40,heading:0,cargo:{},lounge:[]};s.skiff=false;if(!s.tamed.length)s.tamed.push({id:'shot-pet',name:'shot',genome:G.makeGenome(5,1,'sea'),generation:0,parents:[],bond:70,stamina:100,health:100,penId:null});s.tamed.push({id:'shot-land',name:'land',genome:G.makeGenome(9,2,'land'),generation:0,parents:[],bond:70,stamina:100,health:100,penId:null});s.ship.lounge=['shot-pet','shot-land'];s.ship.cabin={items:[{id:'a',type:'sofa',floor:1,x:-3,z:4,rot:0},{id:'b',type:'table',floor:1,x:-3,z:1.8,rot:0},{id:'c',type:'lamp',floor:1,x:-5,z:4,rot:0},{id:'d',type:'rug',floor:1,x:-3,z:2.5,rot:0},{id:'e',type:'bookcase',floor:1,x:0,z:-9.3,rot:0},{id:'f',type:'piano',floor:1,x:-9,z:5,rot:0.6},{id:'g',type:'bar',floor:1,x:12,z:8.2,rot:Math.PI}]};Object.assign(s.player,{mode:'cabin',floor:1,cx:0,cz:9,heading:0});w.firstPerson=true;w.firstPitch=0.05;w.yaw=0.35;w.sync(s);`
+  ],
+  [
+    '22-cabin-hold',
+    `Object.assign(s.player,{mode:'cabin',floor:0,cx:2,cz:6});w.firstPerson=true;w.firstPitch=0.08;w.yaw=-0.3;w.sync(s);`
   ]
 ];
 try {

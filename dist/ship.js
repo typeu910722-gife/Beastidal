@@ -1,11 +1,12 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.19.0';
-import { waterNear, groundAt } from './lake.js?v=0.19.0';
-import { onWatcherDown } from './story.js?v=0.19.0';
-import { dayOf } from './clock.js?v=0.19.0';
-import { spend, give, bagRoom } from './bag.js?v=0.19.0';
-import { pens, penId } from './housing.js?v=0.19.0';
-import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.19.0';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.20.0';
+import { waterNear, groundAt } from './lake.js?v=0.20.0';
+import { onWatcherDown } from './story.js?v=0.20.0';
+import { dayOf } from './clock.js?v=0.20.0';
+import { spend, give, bagRoom } from './bag.js?v=0.20.0';
+import { pens, penId } from './housing.js?v=0.20.0';
+import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.20.0';
+import { normalizeCabin, syncCabin } from './cabin.js?v=0.20.0';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
@@ -27,30 +28,12 @@ export const DECKS = [
 export const BAND_HEIGHT = 2.6;
 // Interaction points in ship-local coordinates (+z is the bow).
 export const SHIP_POINTS = [
-  { id: 'cargo-b', deck: 0, lx: 0, lz: 6.5, name: '材料貨櫃', verb: '存取' },
-  { id: 'cargo-a', deck: 1, lx: 0, lz: 6.5, name: '糧水貨櫃', verb: '存取' },
-  { id: 'lounge', deck: 2, lx: 0, lz: 7, name: '御獸休息室管理台', verb: '管理' },
+  { id: 'cabin-door', deck: 3, lx: 0, lz: 1.4, name: '艙門 · 進入船艙', verb: '進入' },
   { id: 'gangway', deck: 3, lx: 3.7, lz: 1, name: '舷梯 · 上下船', verb: '下船' },
   { id: 'to-bridge', deck: 3, lx: 0, lz: -4.6, name: '駕駛室樓梯', verb: '上樓' },
   { id: 'helm', deck: 4, lx: 0, lz: -10.6, name: '舵輪 · 掌舵', verb: '掌舵' },
   { id: 'chart', deck: 4, lx: 2, lz: -8.4, name: '航海圖桌', verb: '查看' },
-  { id: 'from-bridge', deck: 4, lx: 0, lz: -6.6, name: '下樓梯 · 主甲板', verb: '下樓' },
-  ...[0, 1, 2].map(d => ({
-    id: 'up-' + d,
-    deck: d,
-    lx: 1.1,
-    lz: 2,
-    name: '上層梯 → ' + DECKS[d + 1].short,
-    verb: '上樓'
-  })),
-  ...[1, 2, 3].map(d => ({
-    id: 'down-' + d,
-    deck: d,
-    lx: -1.1,
-    lz: 2,
-    name: '下層梯 → ' + DECKS[d - 1].short,
-    verb: '下樓'
-  }))
+  { id: 'from-bridge', deck: 4, lx: 0, lz: -6.6, name: '下樓梯 · 主甲板', verb: '下樓' }
 ];
 const fail = error => ({ ok: false, error });
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
@@ -97,9 +80,10 @@ export function normalizeShip(s) {
     moveBaseAboard(s);
     s.skiff = !!s.skiff;
     if (!s.skiff) s.boat = { x: p.x, z: p.z, heading: p.heading };
-    if (!['ship', 'aboard', 'foot', ...(s.skiff ? ['boat'] : [])].includes(s.player.mode)) s.player.mode = 'ship';
+    if (!['ship', 'aboard', 'cabin', 'foot', ...(s.skiff ? ['boat'] : [])].includes(s.player.mode))
+      s.player.mode = 'ship';
     if (s.player.mode === 'aboard') {
-      s.player.deck = Math.max(0, Math.min(4, s.player.deck | 0));
+      s.player.deck = Math.max(3, Math.min(4, s.player.deck | 0));
       if (!deckWalk(s.player.deck, s.player.lx, s.player.lz)) {
         s.player.deck = 3;
         s.player.lx = 2.6;
@@ -107,9 +91,10 @@ export function normalizeShip(s) {
       }
       syncAboard(s);
     }
+    if (s.player.mode === 'cabin') normalizeCabin(s);
     if (s.player.mode === 'ship' && !s.expedition?.mounted)
       Object.assign(s.player, { x: p.x, z: p.z, heading: p.heading });
-  } else if (['ship', 'aboard'].includes(s.player.mode)) s.player.mode = 'boat';
+  } else if (['ship', 'aboard', 'cabin'].includes(s.player.mode)) s.player.mode = 'boat';
   return s;
 }
 export function syncAboard(s) {
@@ -211,6 +196,7 @@ export function tickShip(s) {
   }
   if (s.ship) {
     if (s.player.mode === 'aboard') syncAboard(s);
+    if (s.player.mode === 'cabin') syncCabin(s);
     if (!s.skiff && (!s.expedition?.mounted || s.player.mode !== 'ship'))
       s.boat = { x: s.ship.x, z: s.ship.z, heading: s.ship.heading };
   }
@@ -317,6 +303,7 @@ export function shipDockOption(s) {
     };
   }
   if (m === 'ship') return { mode: 'leave-helm', near: true, label: '離開舵輪', detail: '在駕駛室內自由走動' };
+  if (m === 'cabin') return { mode: 'leave-cabin', near: true, label: '回到主甲板', detail: '從艙門出去' };
   if (m === 'boat' && s.skiff)
     return nearShip(s, SKIFF_REACH)
       ? { mode: 'stow-skiff', near: true, label: '收回小艇', detail: '登上比斯泰德號' }
@@ -423,9 +410,7 @@ export function cargoTotal(s) {
 }
 export function transferCargo(s, kind, amount) {
   if (!s.ship) return fail('沒有戰艦。');
-  if (s.player.mode !== 'aboard') return fail('請在貨艙內操作。');
-  const deck = DECKS[s.player.deck];
-  if (!deck.cargo?.includes(kind)) return fail('這項物資存放在另一層貨艙。');
+  if (s.player.mode !== 'cabin') return fail('請到船艙下層的物資艙操作。');
   const c = s.ship.cargo;
   if (amount > 0) {
     const n = Math.min(amount, s.resources[kind], CARGO_CAPACITY - cargoTotal(s));

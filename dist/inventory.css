@@ -383,3 +383,12 @@
 #drawer.device .reward-tile {
   min-height: 70px;
 }
+
+/* 0.20: the cabin furniture catalogue */
+.decor-grid .reward-tile .ico {
+  font-size: 20px;
+  margin-right: 2px;
+}
+.decor-grid .reward-tile small {
+  color: #8aa39f;
+}
