@@ -1,22 +1,22 @@
-import { expansionModels } from './expansion-models.js?v=0.13.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.13.0';
-import { normalizeHousing, penId } from './housing.js?v=0.13.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.13.0';
-export { makeCreature } from './creatures.js?v=0.13.0';
-import { makeIslands } from './island-models.js?v=0.13.0';
-import { facilityId } from './facilities.js?v=0.13.0';
+import { expansionModels } from './expansion-models.js?v=0.14.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.14.0';
+import { normalizeHousing, penId } from './housing.js?v=0.14.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.14.0';
+export { makeCreature } from './creatures.js?v=0.14.0';
+import { makeIslands } from './island-models.js?v=0.14.0';
+import { facilityId } from './facilities.js?v=0.14.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.13.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.13.0';
-import { PostFX } from './postfx.js?v=0.13.0';
-import { makeHuman, animateHuman } from './human.js?v=0.13.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.13.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.13.0';
-import { buildError } from './rules.js?v=0.13.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.13.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.13.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.13.0';
-import { dayPhase } from './clock.js?v=0.13.0';
+import { phenotype, seeded } from './genetics.js?v=0.14.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.14.0';
+import { PostFX } from './postfx.js?v=0.14.0';
+import { makeHuman, animateHuman } from './human.js?v=0.14.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.14.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.14.0';
+import { buildError } from './rules.js?v=0.14.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.14.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.14.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.14.0';
+import { dayPhase } from './clock.js?v=0.14.0';
 const V = T.Vector3;
 const ISLAND_GROUND = 0.42; // top of the island terrain where land beasts stand
 const colors = {
@@ -282,6 +282,28 @@ function deskMesh(g) {
   pole(g, 0x6c6f6a, 0.65, 1.42, -0.3, 0.06, 0.16);
   piece(g, new T.TorusGeometry(0.1, 0.012, 5, 14), 0x8a5a33, [0.1, 1.36, 0.3], [1, 1, 1]).rotation.x = Math.PI / 2;
   box(g, colors.wood, 0.1, 0.72, 0.95, 0.6, 0.62, 0.5);
+}
+// A tangle of drift net and a float or two, wrapped round a beast.
+function netMesh(parent) {
+  const g = new T.Group(),
+    rope = new T.MeshStandardMaterial({ color: 0xc9b98f, roughness: 0.9 });
+  for (let i = 0; i < 5; i++) {
+    const ring = new T.Mesh(new T.TorusGeometry(0.9 + i * 0.07, 0.025, 4, 18), rope);
+    ring.rotation.set(Math.PI / 2 + (i - 2) * 0.35, i * 0.6, (i % 2) * 0.5);
+    g.add(ring);
+  }
+  const float = new T.MeshStandardMaterial({ color: 0xe0753f, roughness: 0.6 });
+  for (const [x, z] of [
+    [0.9, 0.2],
+    [-0.7, -0.6]
+  ]) {
+    const f = new T.Mesh(new T.SphereGeometry(0.16, 10, 8), float);
+    f.position.set(x, 0.15, z);
+    g.add(f);
+  }
+  g.position.y = 0.2;
+  parent.add(g);
+  return g;
 }
 function buildingMesh(b) {
   const g = new T.Group();
@@ -1100,6 +1122,12 @@ export class OceanWorld {
         ud.lz = c.z;
         ud.swim = (ud.swim || c.phase) + dt * (1 + Math.min(mv, 8) * 0.55);
         ud.dip = (ud.dip || 0) + ((c.diving || 0) - (ud.dip || 0)) * Math.min(1, dt * 3);
+        // the first companion, caught in a drifting net until you free it
+        if (c.rescue === 'tangled' && !ud.net) ud.net = netMesh(m);
+        if (ud.net) {
+          ud.net.visible = c.rescue === 'tangled';
+          if (ud.net.visible) ud.net.rotation.y = Math.sin(this.time * 2.3) * 0.15;
+        }
         // a frenzied beast (failed forced contract) burns with a red aura
         const rage = (c.frenzyUntil || 0) > s.elapsed;
         if (rage && !ud.rage) ud.rage = halo(m, 0xff3b2a, 0, 0.6, 0, 4.5);

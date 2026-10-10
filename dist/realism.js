@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { ISLANDS } from './islands.js?v=0.13.0';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.13.0';
+import { ISLANDS } from './islands.js?v=0.14.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.14.0';
 export const TRAIL = 40,
   SPLASHES = 4;
 

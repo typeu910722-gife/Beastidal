@@ -1,8 +1,9 @@
-import { phenotype, clamp } from './genetics.js?v=0.13.0';
-import { NODES, harvest } from './islands.js?v=0.13.0';
-import { restPlace } from './ship.js?v=0.13.0';
-import { dayOf, dayPhase } from './clock.js?v=0.13.0';
-import { spend, give, stow } from './bag.js?v=0.13.0';
+import { phenotype, clamp } from './genetics.js?v=0.14.0';
+import { NODES, harvest } from './islands.js?v=0.14.0';
+import { restPlace } from './ship.js?v=0.14.0';
+import { dayOf, dayPhase } from './clock.js?v=0.14.0';
+import { remember, rememberFirst } from './memories.js?v=0.14.0';
+import { spend, give, stow } from './bag.js?v=0.14.0';
 export const EXPLORE = [
   { id: 'palm-cache', name: '漂流者寶箱', x: 57, z: 33, kind: 'chest', rewards: { wood: 8, food: 5, metal: 3 } },
   { id: 'archive', name: '御獸文明石碑', x: 34, z: -81, kind: 'ruin', rewards: { crystal: 3 } },
@@ -97,6 +98,7 @@ export function commandPet(s, id, order = 'follow') {
   if (p.health < 15 || p.stamina < 10) return fail('夥伴需要回池休息或訓練照護。');
   s.expedition.activeId = id;
   s.expedition.order = order;
+  rememberFirst(s, p, 'out', '第一次跟著你出海。');
   return {
     ok: true,
     message: p.name + '：' + { follow: '跟隨', gather: '協助採集', guard: '守護協戰' }[order] + '。原池名額會保留。'
@@ -134,6 +136,7 @@ export function toggleDive(s) {
   if (!e.mounted || !p || p.bond < 60) return fail('深潛需要騎乘羈絆 60 的夥伴。');
   if (e.oxygen < 25 || p.stamina < 20) return fail('先浮上水面補充氧氣與耐力。');
   e.diving = true;
+  rememberFirst(s, p, 'dive', '第一次帶你潛進深海。');
   return { ok: true, message: '潛入 8 公尺深處。氧氣耗尽會自動浮上；尋找深海記憶核心。' };
 }
 export function upgradeBoat(s) {
@@ -185,7 +188,13 @@ export function explore(s, id) {
     'palm-cache': '補給箱中找到漂流者留下的食物與材料。'
   };
   s.log.unshift({ day: dayOf(s), title: site.name, text: texts[id] });
-  return { ok: true, message: texts[id] };
+  // exploring together deepens the bond more than training does
+  const p = activePet(s);
+  if (p) {
+    p.bond = Math.min(100, p.bond + 3);
+    remember(s, p, `一起找到了${site.name}。`);
+  }
+  return { ok: true, message: texts[id] + (p ? ` ${p.name} 的羈絆 +3。` : '') };
 }
 export function attack(s) {
   normalizeExpansion(s);
@@ -213,6 +222,7 @@ export function attack(s) {
   if (target.hp <= 0) {
     if (target === b) {
       b.defeated = true;
+      remember(s, p, '並肩擊退了深海守望者。');
       reward(s, { crystal: 12, metal: 15, food: 5 });
       p.bond = Math.min(100, p.bond + 6);
       s.log.unshift({
@@ -239,6 +249,7 @@ export function awaken(s, id) {
     return fail('先完成御獸石碑、晶窟封印、深海記憶與守望者挑戰。');
   if (!pay(s, { crystal: 12 })) return fail('契印覺醒需要 12 異晶。');
   p.awakened = true;
+  remember(s, p, '契印覺醒，身上亮起了環形靈光。');
   return { ok: true, message: '契印覺醒：戰鬥傷害 +12，夥伴獲得環形靈光。幻獸之路的第一步。' };
 }
 export function tickExpansion(s, dt, safe = false) {
@@ -293,6 +304,7 @@ export function tickExpansion(s, dt, safe = false) {
       if (got) {
         p.stamina -= 8;
         p.bond = Math.min(100, p.bond + 1);
+        rememberFirst(s, p, 'gather', '第一次幫你採集物資。');
         events.push('夥伴協助採集，物資已放入背包，羈絆 +1。');
       }
     }

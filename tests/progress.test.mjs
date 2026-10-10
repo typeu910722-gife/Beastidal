@@ -13,6 +13,8 @@ import { renamePet } from '../dist/housing.js';
 import { makeHuman, animateHuman } from '../dist/human.js';
 import { facilityId } from '../dist/facilities.js';
 import { DAY, dayOf, hourOf, isNight, nextMorning } from '../dist/clock.js';
+import { spawnRescue, freeRescue, shareFood, tickRescue, RESCUE_ID } from '../dist/rescue.js';
+import { monologue } from '../dist/guide.js';
 import { normalizeStats, tickStats, milestoneRows, statsReport } from '../dist/stats.js';
 import {
   slotKey,
@@ -251,5 +253,35 @@ test('A day lasts 20 real minutes; night runs from about 18:36 to 05:36', () => 
   assert.equal(isNight(at(DAY)), false); // 06:30 next day
   assert.equal(nextMorning(at(0.6 * DAY)), DAY);
   assert.equal(nextMorning(at(0.95 * DAY + DAY)), 2 * DAY);
+});
+test('The first companion: free the tangled beast, share food, it swims along, then waits by the raft', () => {
+  const s = createState(5);
+  spawnRescue(s);
+  const w = s.wild.find(w => w.id === RESCUE_ID);
+  assert.ok(w && w.rescue === 'tangled');
+  s.salvaged = 3;
+  assert.equal(monologue(s).id, 'rescue', 'the guide points at it after the first salvage');
+  assert.equal(freeRescue(s).ok, false, 'too far away');
+  Object.assign(s.player, { x: w.x + 3, z: w.z });
+  assert.ok(freeRescue(s).ok);
+  assert.equal(w.trust, 30);
+  s.resources.food = 0;
+  assert.equal(shareFood(s).ok, false, 'no food to share');
+  s.resources.food = 2;
+  assert.ok(shareFood(s).ok);
+  assert.equal(s.resources.food, 1);
+  assert.ok(w.follow && w.trust === 60, 'it trusts you enough to follow, and a later contract is safe');
+  s.elapsed += 300;
+  tickRescue(s);
+  assert.equal(w.follow, false, 'after a while it waits near the raft');
+  assert.ok(Math.hypot(w.homeX, w.homeZ) < 15);
+  // only once, and never in an old game
+  spawnRescue(s);
+  assert.equal(s.wild.filter(w => w.id === RESCUE_ID).length, 1);
+  const old = createState(6);
+  old.secret = true;
+  spawnRescue(old);
+  assert.equal(old.rescue, 'skipped');
+  assert.ok(!old.wild.some(w => w.id === RESCUE_ID));
 });
 console.log(`${passed} progress tests passed.`);

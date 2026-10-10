@@ -4,10 +4,11 @@
 // you. Contract scrolls, made at the raft's work table and carried in the bag, bind a beast anywhere (success
 // chance = trust %). Forcing a contract below 60 % trust can send the beast into a frenzy: 1.2× speed and attack,
 // chasing you for 6–17 seconds.
-import { phenotype, geneName } from './genetics.js?v=0.13.0';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.13.0';
-import { spend } from './bag.js?v=0.13.0';
-import { nearFacility } from './fortress.js?v=0.13.0';
+import { phenotype, geneName } from './genetics.js?v=0.14.0';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.14.0';
+import { spend } from './bag.js?v=0.14.0';
+import { remember } from './memories.js?v=0.14.0';
+import { nearFacility } from './fortress.js?v=0.14.0';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 6, max: 17, below: 60 };
@@ -44,7 +45,7 @@ export function feed(s, id, rng = Math.random) {
   if (!w) return { ok: false, error: '生物已離開。' };
   if (Math.hypot(w.x - s.player.x, w.z - s.player.z) > 11) return { ok: false, error: '請靠近生物身旁，再投餌。' };
   if (frenzied(w, s.elapsed)) return { ok: false, error: '牠正在狂暴，先拉開距離！' };
-  if (w.follow) return { ok: false, error: '牠已經完全信任你了。帶牠回木筏的工作桌締結契約。' };
+  if (w.follow) return { ok: false, error: '牠已經完全信任你了。帶著契約書，在牠旁邊按 X 締結。' };
   normalizeTaming(s);
   const cost = baitCost(w);
   if ((s.resources.bait || 0) < cost)
@@ -102,6 +103,7 @@ export function contract(s, id, rng = Math.random) {
       role: 'exhibit',
       penId: freePen(s)
     };
+    remember(s, pet, `締結契約。牠的信任度是 ${chance}%。`);
     s.tamed.push(pet);
     s.wild = s.wild.filter(c => c !== w);
     return { ok: true, tamed: pet, chance };

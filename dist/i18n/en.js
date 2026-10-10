@@ -1666,5 +1666,55 @@ export default {
   '避難所與 LV3 小艇融合成五層甲板的移動堡壘：基地設施全部搬上甲板繼續運作；小艇仍可放下單獨探索。':
     'Fuse the shelter and a LV3 boat into a five-deck mobile fortress: every base facility moves aboard and keeps working; the skiff can still explore alone.',
   '還沒有解鎖這項建造。': 'Not unlocked yet.',
-  '離開休息室，回到原本的住處。': 'left the lounge and went back to where it lives.'
+  '離開休息室，回到原本的住處。': 'left the lounge and went back to where it lives.',
+  '{0} 會跟著你。帶著契約書按 X 締結。': '{0} will follow you. With a contract scroll, press X to bind it.',
+  '{0} 的羈絆 +3。': "{0}'s bond +3.",
+  一個小小的同伴: 'A small companion',
+  '一起找到了{0}。': 'Found {0} together.',
+  '上升，下一次要多花一點誘餌。到工作桌做':
+    'rises, and the next feeding costs a little more bait. At the work table, make a',
+  '並肩擊退了深海守望者。': 'Drove off the Deep Warden side by side.',
+  '信任 100% · 跟著你 · 帶著契約書按 X 締結': 'Trust 100% · following you · press X with a contract scroll',
+  '信任 {0}% · 跟著你 · 等你學會締結契約': 'Trust {0}% · following you · waiting until you learn to make a contract',
+  信任度: 'trust',
+  做: 'Make',
+  受困的小獸: 'Trapped little beast',
+  '契印覺醒，身上亮起了環形靈光。': 'Its seal awakened; a ring of light shone around it.',
+  '契約書亮了起來，{0} 把頭靠了過來。契約成立。':
+    'The contract scroll lit up and {0} leaned its head in. The contract is made.',
+  '帶在身上，在信任你的生物旁按 X 締結，信任度就是成功率。收服之後，你們之間的是':
+    ', carry it, and press X next to a creature that trusts you; its trust is the chance of success. Once it is yours, what grows between you is',
+  '帶誘餌連續餵同一隻野生生物提高信任度，再用契約書締結。收服的御獸都會住進御獸倉庫；展示池用來陳列牠們。':
+    'Feed the same wild creature bait again and again to raise its trust, then bind it with a contract scroll. Every beast you take in lives in the beast storage; pens are for showing them.',
+  '我解開了漁網，分給牠一點口糧。牠游在船邊，好像在說謝謝。':
+    'I untangled the net and shared some food. It swims beside the boat as if saying thank you.',
+  '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先以誘餌建立信任，再用契約書締結，最後讓兩個不同個體配對。':
+    "The buoy's research notes say the crystals give every sea creature one shared genetic language. Earn trust with bait, bind with a contract scroll, then pair two different individuals.",
+  漁網裡的小傢伙: 'The little one in the net',
+  '漁網鬆開了。牠沒有逃走，只是怯生生地看著你。': 'The net comes loose. It does not flee; it just watches you shyly.',
+  '牠小心地吃完了，然後游到你的船邊。牠決定跟著你一會兒。':
+    'It eats carefully, then swims up to your boat. It has decided to follow you for a while.',
+  '牠已經完全信任你了。帶著契約書，在牠旁邊按 X 締結。':
+    'It trusts you completely. With a contract scroll, press X beside it to bind it.',
+  '牠現在不需要食物。': 'It does not need food right now.',
+  '牠還在發抖 · 分一點口糧給牠（口糧 1）': 'Still trembling · share some food (1 food)',
+  '破殼而出，第一眼看見的是你。': 'Hatched, and the first thing it saw was you.',
+  '第一次帶你潛進深海。': 'Took you into the deep for the first time.',
+  '第一次幫你採集物資。': 'Gathered supplies for you for the first time.',
+  '第一次跟著你出海。': 'Went to sea with you for the first time.',
+  '締結契約。牠的信任度是 {0}%。': 'Contract made. Its trust was {0}%.',
+  '被漂流漁網纏住了 · 按 E 解開': 'Caught in a drifting net · press E to free it',
+  解開: 'Free',
+  '身上沒有口糧了。打撈漂流物找一點吧。': 'You have no food left. Salvage drift to find some.',
+  '這裡沒有被困住的生物。': 'Nothing is trapped here.',
+  餵食: 'Feed',
+  '（口糧 1 + 纖維 1 → 3 份），連續餵同一隻野生生物：每餵一次':
+    '(1 food + 1 fiber → 3) and feed the same wild creature again and again: with every feeding its',
+  '（牠沒有逃走，還在發抖。分一點口糧給牠吧——靠近按 E。）':
+    '(It did not run away; it is still trembling. Share a little food — get close and press E.)',
+  '（那團漂流漁網裡……有東西在掙扎？是一隻小小的生物。開過去按 E 解開牠。）':
+    '(Something is struggling in that drifting net… a tiny creature. Sail over and press E to free it.)',
+  '（那隻被我救下的小傢伙一直待在木筏邊。蓋一座海洋展示池，給牠一個能回來的家。）':
+    '(The little one I rescued keeps waiting by the raft. Build an ocean pen and give it a home to come back to.)',
+  '，靠一起冒險慢慢加深。': ', deepened little by little through adventures together.'
 };

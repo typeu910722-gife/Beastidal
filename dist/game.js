@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.13.0';
-import { renderAdventure } from './expansion-ui.js?v=0.13.0';
+} from './expansion.js?v=0.14.0';
+import { renderAdventure } from './expansion-ui.js?v=0.14.0';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.13.0';
-import { monologue, markGuide } from './guide.js?v=0.13.0';
-import { climb, demolish, relocate } from './construction.js?v=0.13.0';
+} from './ship.js?v=0.14.0';
+import { monologue, markGuide } from './guide.js?v=0.14.0';
+import { climb, demolish, relocate } from './construction.js?v=0.14.0';
 import {
   normalizeHousing,
   penId,
@@ -54,20 +54,20 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.13.0';
-import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.13.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.13.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.13.0';
-import { QUALITY } from './realism.js?v=0.13.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.13.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.13.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.13.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.13.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.13.0';
-import { CONFIG } from './config.js?v=0.13.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.13.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.13.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.13.0';
+} from './housing.js?v=0.14.0';
+import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.14.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.14.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.14.0';
+import { QUALITY } from './realism.js?v=0.14.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.14.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.14.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.14.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.14.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.14.0';
+import { CONFIG } from './config.js?v=0.14.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.14.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.14.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.14.0';
 import {
   RARITY,
   FRENZY,
@@ -78,9 +78,10 @@ import {
   rollTame,
   craftContract,
   contract
-} from './taming.js?v=0.13.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.13.0';
-import { BeastStage } from './beast-stage.js?v=0.13.0';
+} from './taming.js?v=0.14.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.14.0';
+import { BeastStage } from './beast-stage.js?v=0.14.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.14.0';
 import {
   funds,
   normalizeBag,
@@ -95,7 +96,7 @@ import {
   upgradeBag,
   nextBag,
   atHome
-} from './bag.js?v=0.13.0';
+} from './bag.js?v=0.14.0';
 import {
   homePos,
   facilityPos,
@@ -107,10 +108,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.13.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.13.0';
-export const GAME_VERSION = '0.13.0';
-import { CloudSave } from './cloud-save.js?v=0.13.0';
+} from './fortress.js?v=0.14.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.14.0';
+export const GAME_VERSION = '0.14.0';
+import { CloudSave } from './cloud-save.js?v=0.14.0';
 import {
   readLocal,
   writeLocal,
@@ -127,9 +128,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.13.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.13.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.13.0';
+} from './save-store.js?v=0.14.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.14.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.14.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -149,8 +150,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.13.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.13.0';
+} from './rules.js?v=0.14.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.14.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -1348,6 +1349,7 @@ function toggleView() {
 function beginGame(fresh = false) {
   state.hero ??= 'male';
   migrateBag(state);
+  spawnRescue(state);
   normalizeWildlife(state);
   normalizeTaming(state);
   normalizeDevice(state);
@@ -1497,7 +1499,8 @@ function initialize() {
 function getAllTargets() {
   if (state.player.mode === 'aboard') return shipPointsWorld(state);
   const arr = state.loot.map(l => ({ ...l, type: 'loot', name: lootNames[l.kind] }));
-  for (const w of state.wild) arr.push({ ...w, type: 'wild', name: geneName(w.genome) });
+  for (const w of state.wild)
+    arr.push({ ...w, type: 'wild', name: w.rescue === 'tangled' ? '受困的小獸' : geneName(w.genome) });
   if (!state.buoyFound) arr.push({ id: 'buoy', x: 17, z: -13, type: 'buoy', name: '失落研究浮標' });
   const onDeck = state.player.mode === 'aboard' && state.player.deck === FORTRESS_DECK;
   for (const b of state.buildings)
@@ -1571,13 +1574,19 @@ function updateNearest() {
                   ? `${Math.round(d(selected))}m · 可打撈物資`
                   : selected.type === 'buoy'
                     ? '訊號微弱 · 有人留下了紀錄'
-                    : state.secret
-                      ? frenzied(selected, state.elapsed)
-                        ? '狂暴中！快拉開距離'
-                        : selected.follow
-                          ? '完全信任 · 跟著你 · 回工作桌締結契約'
-                          : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
-                      : '未知生命 · 調查浮標，或按空白鍵驅離'
+                    : selected.rescue === 'tangled'
+                      ? '被漂流漁網纏住了 · 按 E 解開'
+                      : selected.rescue === 'freed'
+                        ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
+                        : selected.rescue === 'friend' && !state.secret
+                          ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
+                          : state.secret
+                            ? frenzied(selected, state.elapsed)
+                              ? '狂暴中！快拉開距離'
+                              : selected.follow
+                                ? '信任 100% · 跟著你 · 帶著契約書按 X 締結'
+                                : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
+                            : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
     $('context-verb').textContent =
       selected.type === 'shippoint'
@@ -1596,9 +1605,13 @@ function updateNearest() {
                   ? '打撈'
                   : selected.type === 'buoy'
                     ? '調查'
-                    : state.secret
-                      ? '投餌'
-                      : '觀察';
+                    : selected.rescue === 'tangled'
+                      ? '解開'
+                      : selected.rescue === 'freed'
+                        ? '餵食'
+                        : state.secret
+                          ? '投餌'
+                          : '觀察';
   }
   $('target-card').hidden = !selected || inRange || !!panel || !!buildType;
   if (selected && !inRange && !panel) {
@@ -1651,7 +1664,7 @@ function interact() {
     log(
       state,
       '隱藏航線：共生計畫',
-      '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先建展示池，以誘餌建立信任，再讓兩個不同個體配對。'
+      '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先以誘餌建立信任，再用契約書締結，最後讓兩個不同個體配對。'
     );
     selectedTarget = null;
     world.sync(state);
@@ -1660,7 +1673,7 @@ function interact() {
     modal(
       'HIDDEN QUEST · 共生計畫',
       '牠們並不是怪物。',
-      '<p>「我們曾試圖消滅突變，最後才發現，<strong>共生才是生存的方法</strong>。」</p><p>浮標中找到 6 份誘餌、3 顆異晶與 4 束纖維，以及一張展示池藍圖。</p><p>建造<strong>海洋展示池</strong>，靠近生物間隔 18 秒反覆投餌。馴化兩隻後，建造<strong>基因孵化台</strong>，培育你的第一隻混血生命。</p>',
+      '<p>「我們曾試圖消滅突變，最後才發現，<strong>共生才是生存的方法</strong>。」</p><p>浮標中找到 6 份誘餌、3 顆異晶與 4 束纖維，以及一張展示池藍圖。</p><p>做<strong>誘餌</strong>（口糧 1 + 纖維 1 → 3 份），連續餵同一隻野生生物：每餵一次<strong>信任度</strong>上升，下一次要多花一點誘餌。到工作桌做<strong>契約書</strong>帶在身上，在信任你的生物旁按 X 締結，信任度就是成功率。收服之後，你們之間的是<strong>羈絆</strong>，靠一起冒險慢慢加深。</p>',
       [
         {
           label: '開啟共生之路',
@@ -1673,6 +1686,23 @@ function interact() {
       ]
     );
   } else if (t.type === 'wild') {
+    // the first companion: free it from the net, then share some food (no taming knowledge needed)
+    // (targets are snapshots refreshed a few times a second: read the beast's state now)
+    const stage = state.wild.find(w => w.id === t.id)?.rescue;
+    if (stage === 'tangled' || stage === 'freed') {
+      const r = stage === 'tangled' ? freeRescue(state) : shareFood(state);
+      if (!r.ok) return toast(r.error, true);
+      haptic('discover');
+      audio.note(stage === 'tangled' ? 520 : 780, 0.4);
+      if (stage === 'freed') {
+        discover('一個小小的同伴', r.message);
+        log(state, '漁網裡的小傢伙', '我解開了漁網，分給牠一點口糧。牠游在船邊，好像在說謝謝。');
+      } else toast(r.message);
+      selectedTarget = null;
+      save(true);
+      updateUI();
+      return;
+    }
     if (!state.secret) {
       toast('牠正警戒地看著你。也許浮標裡有接近牠的方法。');
       return;
@@ -1686,10 +1716,7 @@ function interact() {
     if (!r.ok) toast(r.error, true);
     else if (r.follow) {
       selectedTarget = null;
-      discover(
-        '完全信任',
-        `${geneName(state.wild.find(w => w.id === t.id).genome)} 會跟著你。回木筏的工作桌締結契約。`
-      );
+      discover('完全信任', `${geneName(state.wild.find(w => w.id === t.id).genome)} 會跟著你。帶著契約書按 X 締結。`);
       haptic('discover');
       save(true);
     } else {
@@ -1912,7 +1939,14 @@ function renderBeastStorage(body) {
       .map(t => `<span>${esc(t)}</span>`)
       .join(
         ''
-      )}</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small></div></div><div class="bx-actions"><button type="button" class="primary" data-bx="train">默契訓練 · 口糧 2 / 異晶 1</button><button type="button" data-bx="go">${active ? '讓牠回去休息' : '帶牠出發'}</button><button type="button" data-bx="rename">改名</button></div><form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
+      )}</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small>${
+      p.memories?.length
+        ? `<ul class="bx-memories">${p.memories
+            .slice(0, 3)
+            .map(m => `<li><small>第 ${m.day} 日</small> ${esc(m.text)}</li>`)
+            .join('')}</ul>`
+        : ''
+    }</div></div><div class="bx-actions"><button type="button" class="primary" data-bx="train">默契訓練 · 口糧 2 / 異晶 1</button><button type="button" data-bx="go">${active ? '讓牠回去休息' : '帶牠出發'}</button><button type="button" data-bx="rename">改名</button></div><form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
     const done = r => {
       toast(r.ok ? r.message : r.error, !r.ok);
       if (r.ok) {
@@ -2759,7 +2793,7 @@ function performContract(id) {
     selectedTarget = null;
     haptic('discover');
     audio.note(940, 0.5);
-    log(state, '御獸契約', `在工作桌前，${r.tamed.name} 把頭靠了過來。契約成立。`);
+    log(state, '御獸契約', `契約書亮了起來，${r.tamed.name} 把頭靠了過來。契約成立。`);
     discover(
       '契約成立',
       r.tamed.penId
@@ -3134,7 +3168,7 @@ function renderPanel() {
     if (geneTab === 'collection') {
       if (!state.tamed.length) {
         body.innerHTML +=
-          '<p>先建造展示池，再帶誘餌靠近生物。間隔 18 秒投餌、約 10–20 次建立信任，牠就會回到這裡。</p><button class="full-button" id="go-build-pen">建造展示池</button>';
+          '<p>帶誘餌連續餵同一隻野生生物提高信任度，再用契約書締結。收服的御獸都會住進御獸倉庫；展示池用來陳列牠們。</p><button class="full-button" id="go-build-pen">建造展示池</button>';
         $('go-build-pen').onclick = () => openPanel('build');
       } else {
         body.innerHTML += state.tamed
@@ -4214,7 +4248,9 @@ function followPlayer(w, dt) {
   w.heading = turnToward(w.heading || 0, Math.atan2(dx, dz), dt * 3);
 }
 function moveWild(dt) {
+  tickRescue(state);
   for (const w of state.wild) {
+    if (w.rescue === 'tangled') continue; // caught in the net
     const fren = frenzied(w, state.elapsed);
     if (w.frenzyUntil && !fren) {
       delete w.frenzyUntil;

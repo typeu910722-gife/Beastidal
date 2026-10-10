@@ -1,4 +1,4 @@
-import { stow, bagRoom, bagFullError } from './bag.js?v=0.13.0';
+import { stow, bagRoom, bagFullError } from './bag.js?v=0.14.0';
 // Stable coordinates keep existing saves compatible with the new archipelago.
 export const ISLANDS = [
   { id: 'palm', name: '棕櫚環礁', x: 53, z: 32, rx: 11, rz: 9, tint: 0x749b67 },

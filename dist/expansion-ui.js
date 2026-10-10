@@ -1,4 +1,4 @@
-import { EXPLORE, STAGES, normalizeExpansion, commandPet, upgradeBoat, awaken } from './expansion.js?v=0.13.0';
+import { EXPLORE, STAGES, normalizeExpansion, commandPet, upgradeBoat, awaken } from './expansion.js?v=0.14.0';
 let tab = 'beasts',
   page = 0;
 const esc = s =>
