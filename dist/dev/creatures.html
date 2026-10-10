@@ -46,9 +46,9 @@
     <div id="hud">Developer gallery: every species (rows = family). ?seed=N re-rolls genes · ?spin=0 freezes.</div>
     <script type="module">
       import * as T from '../vendor/three.module.min.js';
-      import { makeCreature, animateCreature } from '../creatures.js?v=0.18.0';
-      import { makeGenome, FAMILIES, SPECIES, FAMILY_NAMES } from '../genetics.js?v=0.18.0';
-      import { makeSky } from '../realism.js?v=0.18.0';
+      import { makeCreature, animateCreature } from '../creatures.js?v=0.19.0';
+      import { makeGenome, FAMILIES, SPECIES, FAMILY_NAMES } from '../genetics.js?v=0.19.0';
+      import { makeSky } from '../realism.js?v=0.19.0';
       const q = new URLSearchParams(location.search),
         seed = Number(q.get('seed') || 7),
         temper = q.get('temper'), // ?temper=255 shows every species at its most savage

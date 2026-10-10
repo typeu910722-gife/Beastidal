@@ -12,12 +12,12 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./brand/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./style.css?v=0.18.0" />
-    <link rel="stylesheet" href="./mobile.css?v=0.18.0" />
-    <link rel="stylesheet" href="./panels.css?v=0.18.0" />
-    <link rel="stylesheet" href="./expansion.css?v=0.18.0" />
-    <link rel="stylesheet" href="./beastidal.css?v=0.18.0" />
-    <link rel="stylesheet" href="./inventory.css?v=0.18.0" />
+    <link rel="stylesheet" href="./style.css?v=0.19.0" />
+    <link rel="stylesheet" href="./mobile.css?v=0.19.0" />
+    <link rel="stylesheet" href="./panels.css?v=0.19.0" />
+    <link rel="stylesheet" href="./expansion.css?v=0.19.0" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.19.0" />
+    <link rel="stylesheet" href="./inventory.css?v=0.19.0" />
   </head>
   <body>
     <!-- Studio splash (about 7 s, tap or any key to skip): the YZ mark assembles, then the studio name rises. -->
@@ -116,11 +116,11 @@
           </div>
           <div id="resources" class="resource-bar" aria-label="背包物資"></div>
           <div class="header-tools">
-            <button id="fullscreen-btn" class="icon-button" aria-label="全螢幕遊玩" title="全螢幕">⛶</button
-            ><button id="view-btn" class="view-button" aria-label="切換第一人稱或第三人稱" title="切換視角 · V / R3">
+            <button id="fullscreen-btn" class="icon-button" hidden aria-label="全螢幕遊玩" title="全螢幕">⛶</button
+            ><button id="view-btn" class="view-button" hidden aria-label="切換第一人稱或第三人稱" title="切換視角 · V / R3">
               第三人稱</button
-            ><button id="sound-btn" class="icon-button" aria-label="開啟海洋環境音" title="環境音">♫</button
-            ><button id="menu-btn" class="icon-button" aria-label="暫停及操作說明" title="暫停 · Esc">Ⅱ</button>
+            ><button id="sound-btn" class="icon-button" hidden aria-label="開啟海洋環境音" title="環境音">♫</button
+            ><button id="menu-btn" class="icon-button menu-button" aria-label="選單" title="選單 · Esc">☰</button>
           </div>
         </header>
         <aside class="left-hud">
@@ -152,12 +152,26 @@
         <aside class="right-hud">
           <div class="map-shell">
             <canvas id="minimap" width="190" height="190" aria-label="附近物資、生物與避難所雷達"></canvas
-            ><span class="map-north">N</span><span class="map-label">海流觀測</span>
+            ><span class="map-north">N</span><span class="map-label">點開地圖 · M</span>
           </div>
           <div class="location"><span id="zone-text">初醒淺海</span><small id="coords">00.0 N / 00.0 E</small></div>
           <button id="home-btn" class="small-button">⌂ 導航回避難所 <kbd>H</kbd></button>
         </aside>
         <div id="world-labels" aria-hidden="true"></div>
+        <section id="bigmap" hidden aria-label="湖域地圖">
+          <header>
+            <div><p class="eyebrow">LAKE CHART</p><h2>湖域地圖</h2></div>
+            <div class="bigmap-tools">
+              <button type="button" id="bigmap-sail" class="small-button">沿路線航行</button
+              ><button type="button" id="bigmap-clear" class="small-button">清除標記</button
+              ><button type="button" id="bigmap-close" class="icon-button" aria-label="關閉地圖">×</button>
+            </div>
+          </header>
+          <div class="bigmap-body">
+            <canvas id="bigmap-canvas"></canvas>
+            <p class="bigmap-hint" id="bigmap-hint">點地圖放置標記，航線會自動繞開陸地與淺灘。</p>
+          </div>
+        </section>
         <div id="achievement-pop" hidden role="status">
           <span class="ach-pop-icon"></span>
           <div><em>成就解鎖</em><strong></strong><small></small></div>
@@ -285,7 +299,7 @@
         <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
       </section>
     </main>
-    <script type="module" src="./game.js?v=0.18.0"></script>
+    <script type="module" src="./game.js?v=0.19.0"></script>
     <script>
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));

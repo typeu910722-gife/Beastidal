@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.18.0';
-import { renderAdventure } from './expansion-ui.js?v=0.18.0';
+} from './expansion.js?v=0.19.0';
+import { renderAdventure } from './expansion-ui.js?v=0.19.0';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.18.0';
-import { monologue, markGuide } from './guide.js?v=0.18.0';
-import { climb, demolish, relocate } from './construction.js?v=0.18.0';
+} from './ship.js?v=0.19.0';
+import { monologue, markGuide } from './guide.js?v=0.19.0';
+import { climb, demolish, relocate } from './construction.js?v=0.19.0';
 import {
   normalizeHousing,
   penId,
@@ -54,7 +54,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.18.0';
+} from './housing.js?v=0.19.0';
 import {
   ISLANDS,
   NODES,
@@ -65,9 +65,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.18.0';
-import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.18.0';
-import { lakeMinimap } from './lake-map.js?v=0.18.0';
+} from './islands.js?v=0.19.0';
+import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.19.0';
+import { lakeMinimap } from './lake-map.js?v=0.19.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.19.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -82,19 +83,19 @@ import {
   finishCrossing,
   tickStory,
   duelActive
-} from './story.js?v=0.18.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.18.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.18.0';
-import { QUALITY } from './realism.js?v=0.18.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.18.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.18.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.18.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.18.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.18.0';
-import { CONFIG } from './config.js?v=0.18.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.18.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.18.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.18.0';
+} from './story.js?v=0.19.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.19.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.19.0';
+import { QUALITY } from './realism.js?v=0.19.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.19.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.19.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.19.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.19.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.19.0';
+import { CONFIG } from './config.js?v=0.19.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.19.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.19.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.19.0';
 import {
   RARITY,
   FRENZY,
@@ -105,10 +106,10 @@ import {
   rollTame,
   craftContract,
   contract
-} from './taming.js?v=0.18.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.18.0';
-import { BeastStage } from './beast-stage.js?v=0.18.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.18.0';
+} from './taming.js?v=0.19.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.19.0';
+import { BeastStage } from './beast-stage.js?v=0.19.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.19.0';
 import {
   funds,
   normalizeBag,
@@ -126,12 +127,12 @@ import {
   stash,
   unstash,
   CARRY
-} from './bag.js?v=0.18.0';
-import { iconFor } from './icons.js?v=0.18.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.18.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.18.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.18.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.18.0';
+} from './bag.js?v=0.19.0';
+import { iconFor } from './icons.js?v=0.19.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.19.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.19.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.19.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.19.0';
 import {
   homePos,
   facilityPos,
@@ -143,10 +144,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.18.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.18.0';
-export const GAME_VERSION = '0.18.0';
-import { CloudSave } from './cloud-save.js?v=0.18.0';
+} from './fortress.js?v=0.19.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.19.0';
+export const GAME_VERSION = '0.19.0';
+import { CloudSave } from './cloud-save.js?v=0.19.0';
 import {
   readLocal,
   writeLocal,
@@ -163,9 +164,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.18.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.18.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.18.0';
+} from './save-store.js?v=0.19.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.19.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.19.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -185,8 +186,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.18.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.18.0';
+} from './rules.js?v=0.19.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.19.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -232,6 +233,7 @@ normalizeHousing(state);
 normalizeShip(state);
 normalizeJobs(state);
 normalizeEvents(state);
+state.marker ??= null;
 let orientationBlocked = false,
   activeFacility = null,
   buildLevel = 0;
@@ -239,7 +241,7 @@ function releaseMouse() {
   if (document.pointerLockElement) document.exitPointerLock?.();
 }
 function lockMouse() {
-  if (touchDevice() || !world?.firstPerson || !running || panel || paused || gamepadActive) return;
+  if (touchUI() || !world?.firstPerson || !running || panel || paused || gamepadActive) return;
   try {
     const promise = $('ocean').requestPointerLock?.();
     promise?.catch?.(() => toast('點一下畫面啟用滑鼠環視；也可按住右鍵拖曳。'));
@@ -254,6 +256,13 @@ const touchDevice = () =>
     window.matchMedia?.('(pointer:coarse)').matches ||
     (navigator.maxTouchPoints > 0 && !window.matchMedia?.('(hover:hover)').matches)
   );
+// 0.19: the play style can be pinned in settings (遊玩方式) so a PC never shows the touch pad and a phone with a
+// keyboard attached can still play by touch; 'auto' falls back to detection.
+const controlMode = () => {
+  const c = world?.settings?.controls;
+  return c && c !== 'auto' ? c : touchDevice() ? 'touch' : 'keyboard';
+};
+const touchUI = () => controlMode() === 'touch';
 let world,
   running = false,
   panel = null,
@@ -503,9 +512,9 @@ function updateViewport() {
   const width = window.visualViewport?.width || innerWidth,
     height = window.visualViewport?.height || innerHeight;
   document.documentElement.style.setProperty('--game-height', height + 'px');
-  document.body.classList.toggle('touch-device', touchDevice());
-  document.body.classList.toggle('landscape-play', width > height && height < 700 && touchDevice());
-  orientationBlocked = touchDevice() && width < height && width < 650 && !!(running || film);
+  document.body.classList.toggle('touch-device', touchUI());
+  document.body.classList.toggle('landscape-play', width > height && height < 700 && touchUI());
+  orientationBlocked = touchUI() && width < height && width < 650 && !!(running || film);
   $('rotate-screen').hidden = !orientationBlocked;
   if (orientationBlocked) {
     keys.clear();
@@ -524,7 +533,7 @@ async function fullscreen() {
       }
       await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
     }
-    if (touchDevice() && window.screen?.orientation?.lock) {
+    if (touchUI() && window.screen?.orientation?.lock) {
       try {
         await window.screen.orientation.lock('landscape');
       } catch {}
@@ -683,7 +692,7 @@ function dock() {
 let sawKey = false,
   promptMode = '';
 function inputMode() {
-  const pin = world?.settings?.prompts;
+  const pin = world?.settings?.controls;
   if (pin && pin !== 'auto') return pin;
   if (gamepadActive && lastInput === 'gamepad') return 'gamepad';
   if (lastInput === 'touch') return 'touch';
@@ -1192,55 +1201,69 @@ function confirmNew() {
     ]
   );
 }
+function showHelp(back = showMenu) {
+  modal(
+    'HOW TO PLAY · 操作說明',
+    '每一種玩法的按鍵',
+    `<div class="help-keys"><span>鍵盤</span><span>WASD 移動／駕艇 · Shift 加速 · E 互動 · Q 登岸／登艇 · 空白鍵驅離／跳躍<br>M 地圖與標記 · 潛水時往哪裡看就往哪裡游，空白鍵上浮、Z 下潛<br>B 建造 · I 背包 · J 日誌 · C 生物<br>H 返航 · R 旋轉設施 · V 切換視角 · Esc 返回<br>K 御獸遠航 · T 騎乘 · G 潛水／浮上 · F 夥伴攻擊<br>戰艦：Q 登船／下船／離開舵輪 · 駕駛室舵輪按 E 掌舵 · 掌舵時空白鍵發射艦砲</span><span>滑鼠／觸控</span><span>點擊海面航行；第三人稱右鍵拖曳環視<br>第一人稱移動滑鼠轉頭，Esc 釋放游標<br>手機橫屏：左下搖桿移動（推到底約半秒自動加速），右側單指環視、雙指縮放／旋轉<br>搖桿旁「加速」點一下開啟、停下自動關閉；可同時移動、環視與按按鈕；駛過漂流物、走過採集點會自動收集<br>靠近木筏或島嶼，點登岸即可步行<br>建築可直接點擊；J 日誌可設定島嶼航線<br>滾輪／雙指縮放，點擊按鈕互動</span><span>遊戲手把</span><span>左搖桿駕艇（推到底加速）· 右搖桿環視 · 十字鍵←騎乘／→潛水 · R3 切換視角<br>A 互動 · X 建造 · Y 生物 · B 返回<br>LB 背包 · RB 日誌 · LT 登岸／登艇<br>RT 夥伴攻擊（未出戰時驅離）· Select 御獸遠航 · L3 返航<br>十字鍵選單 · 左右切換親代 · Start 暫停</span></div>`,
+    [{ label: '返回', primary: true, action: back }]
+  );
+}
 function showMenu() {
   closePanel();
-  modal(
-    'PAUSED · 海風暫停',
-    '漂流者，休息一下。',
-    `${cloudMenuHTML()}<div class="help-keys"><span>鍵盤</span><span>WASD 移動／駕艇 · Shift 加速 · E 互動 · Q 登岸／登艇 · 空白鍵驅離<br>B 建造 · I 背包 · J 日誌 · C 生物<br>H 返航 · R 旋轉設施 · V 切換視角 · Esc 返回<br>K 御獸遠航 · T 騎乘 · G 潛水／浮上 · F 夥伴攻擊<br>戰艦：Q 登船／下船／離開舵輪 · 駕駛室舵輪按 E 掌舵 · 掌舵時空白鍵發射艦砲</span><span>滑鼠／觸控</span><span>點擊海面航行；第三人稱右鍵拖曳環視<br>第一人稱移動滑鼠轉頭，Esc 釋放游標<br>手機橫屏：左下搖桿移動（推到底約半秒自動加速），右側單指環視、雙指縮放／旋轉<br>搖桿旁「加速」點一下開啟、停下自動關閉；可同時移動、環視與按按鈕；駛過漂流物、走過採集點會自動收集<br>靠近木筏或島嶼，點登岸即可步行<br>建築可直接點擊；J 日誌可設定島嶼航線<br>滾輪／雙指縮放，點擊按鈕互動</span><span>遊戲手把</span><span>左搖桿駕艇（推到底加速）· 右搖桿環視 · 十字鍵←騎乘／→潛水 · R3 切換視角<br>A 互動 · X 建造 · Y 生物 · B 返回<br>LB 背包 · RB 日誌 · LT 登岸／登艇<br>RT 夥伴攻擊（未出戰時驅離）· Select 御獸遠航 · L3 返航<br>十字鍵選單 · 左右切換親代 · Start 暫停</span></div>`,
-    [
-      { label: '繼續漂流', primary: true, action: closeModal },
-      { label: '⚙ 設定', action: () => openSettings(showMenu) },
-      { label: '📊 統計', action: () => openStats(showMenu) },
-      {
-        label: '保存進度',
-        action: () => {
-          save(false);
-          scheduleCloud(true);
-        }
-      },
-      ...(cloud.configured
-        ? [
-            cloud.signedIn
-              ? {
-                  label: cloud.connected ? '立即同步雲端' : '連線 Google Drive',
-                  action: () => {
-                    if (cloud.connected) {
-                      save(true);
-                      scheduleCloud(true);
-                      toast('正在同步到 Google Drive…');
-                    } else connectCloud(true);
-                  }
-                }
-              : { label: 'Google 登入', action: () => connectCloud(true) }
-          ]
-        : []),
-      {
-        label: '回到主畫面',
-        action: () => {
-          save(true);
-          closeModal();
-          running = false;
-          updateViewport();
-          $('hud').hidden = true;
-          $('title-screen').hidden = false;
-          updateTitleButtons();
-          scheduleCloud(true);
-          updateAccountUI();
-        }
+  closeBigMap();
+  modal('MENU · 選單', '漂流者，休息一下。', cloudMenuHTML(), [
+    { label: '繼續漂流', primary: true, action: closeModal },
+    {
+      label: world.firstPerson ? '切換為第三人稱' : '切換為第一人稱',
+      action: () => {
+        closeModal();
+        toggleView();
       }
-    ]
-  );
+    },
+    { label: document.fullscreenElement ? '離開全螢幕' : '全螢幕', action: () => (closeModal(), fullscreen()) },
+    { label: audio.on ? '關閉環境音' : '開啟環境音', action: () => ($('sound-btn').click(), showMenu()) },
+    { label: '⚙ 設定', action: () => openSettings(showMenu) },
+    { label: '操作說明', action: () => showHelp(showMenu) },
+    { label: '📊 統計', action: () => openStats(showMenu) },
+    {
+      label: '保存進度',
+      action: () => {
+        save(false);
+        scheduleCloud(true);
+      }
+    },
+    ...(cloud.configured
+      ? [
+          cloud.signedIn
+            ? {
+                label: cloud.connected ? '立即同步雲端' : '連線 Google Drive',
+                action: () => {
+                  if (cloud.connected) {
+                    save(true);
+                    scheduleCloud(true);
+                    toast('正在同步到 Google Drive…');
+                  } else connectCloud(true);
+                }
+              }
+            : { label: 'Google 登入', action: () => connectCloud(true) }
+        ]
+      : []),
+    {
+      label: '回到主畫面',
+      action: () => {
+        save(true);
+        closeModal();
+        running = false;
+        updateViewport();
+        $('hud').hidden = true;
+        $('title-screen').hidden = false;
+        updateTitleButtons();
+        scheduleCloud(true);
+        updateAccountUI();
+      }
+    }
+  ]);
 }
 // Settings page (stored per device with the graphics settings).
 const UI_DEFAULTS = {
@@ -1248,12 +1271,17 @@ const UI_DEFAULTS = {
   invertY: false,
   autoPickup: true,
   haptics: true,
-  prompts: 'auto',
+  controls: 'auto',
   fontSize: 'normal',
   buttonSize: 'normal',
   lefty: false
 };
 const setting = k => world.settings[k] ?? UI_DEFAULTS[k] ?? VOLUME_DEFAULTS[k];
+function migrateSettings() {
+  const st = world.settings;
+  if (st.prompts && !st.controls) st.controls = st.prompts;
+  delete st.prompts;
+}
 function applyUiSettings() {
   const b = document.body.classList;
   b.toggle('font-lg', setting('fontSize') === 'large');
@@ -1262,6 +1290,7 @@ function applyUiSettings() {
   b.toggle('btn-lg', setting('buttonSize') === 'large');
   b.toggle('lefty', !!setting('lefty'));
   applyVolumes();
+  updateViewport();
   refreshPrompts(true);
 }
 function openSettings(back = closeModal) {
@@ -1294,18 +1323,22 @@ function openSettings(back = closeModal) {
     ['xlarge', '特大']
   ])}</div>
   <h3>聲音</h3><div class="row"><span>音樂</span>${range('musicVol', 0, 100, pct)}</div><div class="row"><span>音效</span>${range('sfxVol', 0, 100, pct)}</div><div class="row"><span>環境聲</span>${range('ambVol', 0, 100, pct)}</div>
-  <h3>操作</h3><div class="row"><span>鏡頭靈敏度</span>${range('camSens', 40, 250, pct)}</div>${check('invertY', '鏡頭上下反轉')}${check('autoPickup', '自動拾取（駛過漂流物、走過採集點自動收集）')}${check('haptics', '震動回饋（手機、手把）')}
-  <div class="row"><span>按鍵提示</span>${seg('prompts', [
+  <h3>操作</h3><div class="row"><span>遊玩方式</span>${seg('controls', [
     ['auto', '自動'],
-    ['keyboard', '鍵盤'],
-    ['touch', '觸控'],
+    ['keyboard', '電腦'],
+    ['touch', '手機觸控'],
     ['gamepad', '手把']
-  ])}</div>
-  <h3>手機</h3><div class="row"><span>按鈕大小</span>${seg('buttonSize', [
-    ['small', '小'],
-    ['normal', '標準'],
-    ['large', '大']
-  ])}</div>${check('lefty', '左右手對調（搖桿在右、動作鈕在左）')}
+  ])}</div><p class="note">決定畫面上的按鍵提示與虛擬搖桿：選「電腦」就不會出現觸控搖桿。</p>
+  <div class="row"><span>鏡頭靈敏度</span>${range('camSens', 40, 250, pct)}</div>${check('invertY', '鏡頭上下反轉')}${check('autoPickup', '自動拾取（駛過漂流物、走過採集點自動收集）')}${check('haptics', '震動回饋（手機、手把）')}
+  ${
+    touchUI()
+      ? `<h3>觸控</h3><div class="row"><span>按鈕大小</span>${seg('buttonSize', [
+          ['small', '小'],
+          ['normal', '標準'],
+          ['large', '大']
+        ])}</div>${check('lefty', '左右手對調（搖桿在右、動作鈕在左）')}`
+      : ''
+  }
   <div class="row"><span>新手教學</span><button type="button" class="small-button" id="replay-tutorial">${running ? '重新播放教學' : '下次開始時播放'}</button></div></div>`,
     [
       {
@@ -1354,6 +1387,7 @@ function openSettings(back = closeModal) {
           }
           world.settings[key] = v;
           store();
+          if (key === 'controls') openSettings(back);
         })
     )
   );
@@ -1414,6 +1448,10 @@ function beginGame(fresh = false) {
   normalizeShip(state);
   normalizeJobs(state);
   normalizeEvents(state);
+  state.marker ??= null;
+  route = null;
+  sailing = false;
+  closeBigMap();
   running = true;
   paused = false;
   film = null;
@@ -1429,7 +1467,7 @@ function beginGame(fresh = false) {
   $('view-btn').textContent = world.firstPerson ? '第一人稱' : '第三人稱';
   world.yaw = 0.63;
   world.pitch = 0.64;
-  world.distance = touchDevice() ? 30 : 36;
+  world.distance = touchUI() ? 30 : 36;
   keys.clear();
   if (fresh) {
     state.player = { x: 7, z: 10, heading: 0 };
@@ -1891,6 +1929,29 @@ function finishSalvage() {
     updateUI();
   } else toast(r.error, true);
 }
+// Jumping (0.19): a short hop on foot, on the raft, on an island or on the warship's decks.
+const DIVE_TOP = -1.5,
+  jump = { on: false, y: 0, vy: 0 };
+let touchUp = false,
+  padUp = false,
+  surfaceHold = 0;
+function doJump() {
+  if (!running || paused || panel || buildType || focus || jump.on) return;
+  if (!['foot', 'aboard'].includes(state.player.mode)) return;
+  Object.assign(jump, { on: true, y: 0.001, vy: 4.6 });
+  haptic('pickup');
+}
+// Space / the touch action button mean different things afoot (jump), under water (rise) and afloat (repel).
+function actionKey() {
+  if (['foot', 'aboard'].includes(state.player.mode)) doJump();
+  else if (!state.expedition.diving) repel();
+}
+function syncActionButton() {
+  const b = $('repel-btn');
+  if (!b) return;
+  const label = state.expedition?.diving ? '上浮' : ['foot', 'aboard'].includes(state.player.mode) ? '跳躍' : '驅離';
+  if (b.textContent !== label) b.textContent = label;
+}
 function repel() {
   if (!running || paused || panel || buildType) return;
   if (state.ship && state.player.mode === 'ship' && !state.expedition.mounted) {
@@ -1950,6 +2011,7 @@ function openPanel(name, inDevice = false) {
     return;
   }
   deviceMode = inDevice;
+  closeBigMap();
   destination = null;
   salvaging = null;
   $('salvage-progress').hidden = true;
@@ -3806,6 +3868,262 @@ function place() {
   openPanel('build');
   toast(`${name} 建造完成。${why}，可以改蓋別的設施。`);
 }
+// ---------- 0.19: the lake chart, markers and route guidance ----------
+let route = null,
+  routeIdx = 0,
+  routeAt = -99,
+  bigMapOpen = false,
+  sailing = false;
+const vesselDraft = () =>
+  state.player.mode === 'foot' || state.player.mode === 'aboard'
+    ? null
+    : state.expedition?.mounted
+      ? DRAFT.mount
+      : state.player.mode === 'ship'
+        ? DRAFT.ship
+        : DRAFT.boat;
+function planRoute() {
+  const mk = state.marker,
+    draft = vesselDraft();
+  routeAt = state.elapsed;
+  routeIdx = 0;
+  if (!mk || draft === null || state.inCave) {
+    route = null;
+    return;
+  }
+  route = findRoute(state.player.x, state.player.z, mk.x, mk.z, draft);
+}
+function setMarker(x, z) {
+  state.marker = { x, z };
+  sailing = false;
+  planRoute();
+  save(true);
+}
+function clearMarker(quiet = false) {
+  state.marker = null;
+  route = null;
+  sailing = false;
+  if (!quiet) toast('已清除標記。');
+  save(true);
+}
+// distance from the player to the nearest point of the planned route
+function offRoute() {
+  if (!route) return Infinity;
+  let best = Infinity;
+  for (let i = 1; i < route.length; i++) {
+    const a = route[i - 1],
+      b = route[i],
+      vx = b.x - a.x,
+      vz = b.z - a.z,
+      l2 = vx * vx + vz * vz || 1,
+      t = clamp(((state.player.x - a.x) * vx + (state.player.z - a.z) * vz) / l2, 0, 1);
+    best = Math.min(best, Math.hypot(state.player.x - (a.x + vx * t), state.player.z - (a.z + vz * t)));
+  }
+  return best;
+}
+function tickRoute() {
+  const mk = state.marker;
+  if (!mk) return;
+  const d = Math.hypot(mk.x - state.player.x, mk.z - state.player.z),
+    end = route?.[route.length - 1],
+    ashore =
+      sailing &&
+      end &&
+      Math.hypot(end.x - mk.x, end.z - mk.z) > 1 &&
+      Math.hypot(end.x - state.player.x, end.z - state.player.z) < 5;
+  if (d < 7 || ashore) {
+    toast(ashore ? '已抵達離標記最近的水域，剩下的路上岸走。' : '已抵達標記地點。');
+    clearMarker(true);
+    return;
+  }
+  // re-plan when the vessel changed or you wandered off the route
+  if (state.elapsed - routeAt > 4 && (!route || offRoute() > 30)) planRoute();
+  if (sailing && route && !destination && vesselDraft() !== null) {
+    while (
+      routeIdx < route.length - 1 &&
+      Math.hypot(route[routeIdx].x - state.player.x, route[routeIdx].z - state.player.z) < 6
+    )
+      routeIdx++;
+    if (routeIdx < route.length) destination = { x: route[routeIdx].x, z: route[routeIdx].z };
+  }
+}
+function sailRoute() {
+  if (!state.marker) {
+    toast('先在地圖上點一個標記。', true);
+    return;
+  }
+  if (vesselDraft() === null) {
+    toast('上船後才能沿路線航行；步行時請看地圖上的直線方向。', true);
+    return;
+  }
+  planRoute();
+  if (!route) {
+    toast('找不到通往那裡的水路。', true);
+    return;
+  }
+  sailing = true;
+  destination = null;
+  tickRoute();
+  closeBigMap();
+  toast(`沿路線航行，約 ${Math.round(routeLength(route))} 公尺。`);
+}
+function openBigMap() {
+  if (!running || paused || film || !state) return;
+  closePanel();
+  releaseMouse();
+  keys.clear();
+  joystick = { x: 0, y: 0 };
+  bigMapOpen = true;
+  $('bigmap').hidden = false;
+  drawBigMap();
+}
+function closeBigMap() {
+  bigMapOpen = false;
+  $('bigmap').hidden = true;
+}
+function toggleBigMap() {
+  bigMapOpen ? closeBigMap() : openBigMap();
+}
+// chart pixel ↔ game metres
+function chartFrame() {
+  const lm = lakeMinimap(),
+    c = $('bigmap-canvas'),
+    box = c.parentElement.getBoundingClientRect(),
+    W = Math.max(200, Math.floor(box.width - 20)),
+    H = Math.max(160, Math.floor(box.height - 40));
+  if (!lm) return null;
+  const k = Math.min(W / lm.w, H / lm.h),
+    w = Math.round(lm.w * k),
+    h = Math.round(lm.h * k);
+  if (c.width !== w || c.height !== h) {
+    c.width = w;
+    c.height = h;
+  }
+  return {
+    lm,
+    k,
+    w,
+    h,
+    pt: (x, z) => ({ x: (x - lm.x0) * k, y: (z - lm.z0) * k }),
+    at: (px, py) => ({ x: lm.x0 + px / k, z: lm.z0 + py / k })
+  };
+}
+function drawBigMap() {
+  const f = chartFrame();
+  if (!f) return;
+  const { lm, pt, w, h } = f,
+    ctx = $('bigmap-canvas').getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(lm.canvas, 0, 0, w, h);
+  ctx.fillStyle = '#04141c55';
+  ctx.fillRect(0, 0, w, h);
+  const label = (x, z, text, color = '#f1e5bb', size = 12) => {
+    const p = pt(x, z);
+    ctx.font = `${size}px system-ui`;
+    ctx.textAlign = 'center';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#06202b';
+    ctx.strokeText(text, p.x, p.y - 8);
+    ctx.fillStyle = color;
+    ctx.fillText(text, p.x, p.y - 8);
+  };
+  const dot = (x, z, color, r) => {
+    const p = pt(x, z);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+    ctx.fill();
+  };
+  const diving = !!state.expedition?.diving;
+  for (const i of ISLANDS)
+    label(i.x, i.z, ((state.occupied || []).includes(i.id) ? '⚑ ' : '△ ') + tr(i.name), '#ecc78e', 13);
+  for (const lmk of Object.values(LANDMARKS)) {
+    dot(lmk.x, lmk.z, lmk.under ? '#9ce8d1' : '#f1e5bb', 3);
+    label(lmk.x, lmk.z, (lmk.under ? '◈ ' : '◇ ') + tr(lmk.name), lmk.under ? '#9ce8d1' : '#dfe9e4', 11);
+  }
+  if (!state.buoyFound) {
+    dot(17, -13, '#bcbfe9', 4);
+    label(17, -13, tr('研究浮標'), '#bcbfe9', 11);
+  }
+  if (state.ship) {
+    dot(state.ship.x, state.ship.z, '#d6b15c', 5);
+    label(state.ship.x, state.ship.z, '⌂ ' + tr('比斯泰德號'), '#ecc78e', 12);
+  } else {
+    dot(1.8, 1.8, '#d6b15c', 4);
+    label(1.8, 1.8, '⌂ ' + tr('你的木筏'), '#ecc78e', 12);
+  }
+  if (state.lakeEvent) {
+    const p = pt(state.lakeEvent.x, state.lakeEvent.z);
+    ctx.strokeStyle = '#ecc78e';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+    ctx.stroke();
+    label(state.lakeEvent.x, state.lakeEvent.z, '◎ ' + tr(EVENTS[state.lakeEvent.kind].name), '#ecc78e', 12);
+  }
+  if (route) {
+    ctx.strokeStyle = '#ecc78ecc';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath();
+    route.forEach((p, i) => {
+      const q = pt(p.x, p.z);
+      i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+  } else if (state.marker) {
+    const a = pt(state.player.x, state.player.z),
+      b = pt(state.marker.x, state.marker.z);
+    ctx.strokeStyle = '#ecc78e77';
+    ctx.setLineDash([3, 6]);
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  if (state.marker) {
+    const p = pt(state.marker.x, state.marker.z);
+    ctx.fillStyle = '#ff9f6e';
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(p.x - 7, p.y - 16);
+    ctx.lineTo(p.x + 7, p.y - 16);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(p.x, p.y - 18, 6, 0, Math.PI * 2);
+    ctx.fill();
+    const d = Math.round(
+      route ? routeLength(route) : Math.hypot(state.marker.x - state.player.x, state.marker.z - state.player.z)
+    );
+    label(state.marker.x, state.marker.z - 30 / f.k, `📍 ${tr('標記')} · ${d} m`, '#ffc8a8', 12);
+  }
+  {
+    const p = pt(state.player.x, state.player.z);
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(-state.player.heading);
+    ctx.fillStyle = diving ? '#9ce8d1' : '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(0, 8);
+    ctx.lineTo(-5, -5);
+    ctx.lineTo(5, -5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+  $('bigmap-hint').textContent = state.marker
+    ? route
+      ? tr('已規劃水路，按「沿路線航行」自動前往；或自己照虛線開。')
+      : vesselDraft() === null
+        ? tr('步行時只顯示直線方向；上船後會規劃水路。')
+        : tr('這裡沒有可通行的水路，換一個地點試試。')
+    : tr('點地圖放置標記，航線會自動繞開陸地與淺灘。');
+  $('bigmap-sail').disabled = !route;
+  $('bigmap-clear').disabled = !state.marker;
+}
 function returnHome() {
   if (!running || paused) return;
   if (state.inCave) {
@@ -3855,6 +4173,7 @@ function returnHome() {
   selectedTarget = null;
 }
 function updateUI() {
+  syncActionButton();
   updateDock();
   updateBeastHUD();
   const resourceKeys = ['wood', 'metal', 'fiber', 'crystal'];
@@ -4422,6 +4741,47 @@ function drawMap() {
     ctx.fillStyle = '#d6b15c';
     ctx.fillRect(p.x + 1, p.y - 7, 5, 3);
   }
+  if (state.marker) {
+    if (route) {
+      ctx.strokeStyle = '#ecc78eaa';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      route.forEach((q, i) => {
+        const p = pt(q.x, q.z);
+        i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.lineWidth = 1;
+    }
+    let p = pt(state.marker.x, state.marker.z);
+    const dx = p.x - c,
+      dy = p.y - c,
+      r = Math.hypot(dx, dy);
+    if (r > 80) {
+      p = { x: c + (dx / r) * 80, y: c + (dy / r) * 80 };
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(Math.atan2(dy, dx));
+      ctx.fillStyle = '#ff9f6e';
+      ctx.beginPath();
+      ctx.moveTo(6, 0);
+      ctx.lineTo(-4, -5);
+      ctx.lineTo(-4, 5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    } else {
+      ctx.fillStyle = '#ff9f6e';
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x - 4, p.y - 9);
+      ctx.lineTo(p.x + 4, p.y - 9);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
   if (destination) {
     const p = pt(destination.x, destination.z);
     ctx.strokeStyle = '#d0dbd177';
@@ -4494,6 +4854,14 @@ function worldLabels() {
       text: '◎ ' + EVENTS[state.lakeEvent.kind].name,
       className: 'gold'
     });
+  if (state.marker && !state.inCave)
+    labels.push({
+      x: state.marker.x,
+      y: Math.max(0, groundAt(state.marker.x, state.marker.z)) + 7,
+      z: state.marker.z,
+      text: `📍 ${tr('標記')} · ${Math.round(Math.hypot(state.marker.x - state.player.x, state.marker.z - state.player.z))} m`,
+      className: 'gold'
+    });
   if (!state.buoyFound) labels.push({ x: 17, y: 3, z: -13, text: '◇ 研究浮標', className: '' });
   // once the base has gone to sea, the warship is home
   if (!state.ship)
@@ -4539,7 +4907,7 @@ function sprinting(stick, dt) {
   return keys.has('shift') || sprintTouch || fullTilt > 0.5;
 }
 function movePlayer(dt, analog) {
-  if (paused || panel || buildType) {
+  if (paused || panel || buildType || bigMapOpen) {
     world.moveSpeed = 0;
     return;
   }
@@ -4560,25 +4928,33 @@ function movePlayer(dt, analog) {
   const sprint = sprinting(m, dt);
   const shipDrive = state.player.mode === 'ship' && !state.expedition.mounted,
     mounted = !!state.expedition.mounted,
+    diving = mounted && !!state.expedition.diving,
     vessel = !foot && state.player.mode !== 'aboard';
+  // under water, forward means where the camera looks: pitch becomes vertical motion
+  const lookPitch = world.firstPerson ? world.firstPitch || 0 : world.pitch,
+    tilt = diving ? Math.cos(lookPitch) : 1;
+  let vy = 0;
   let brake = 1;
   if (m > 0.06) {
     destination = null;
+    sailing = false;
     if (m > 1) {
       sx /= m;
       sy /= m;
     }
-    x = Math.cos(world.yaw) * sx - Math.sin(world.yaw) * sy;
-    z = -Math.sin(world.yaw) * sx - Math.cos(world.yaw) * sy;
+    x = Math.cos(world.yaw) * sx - Math.sin(world.yaw) * sy * tilt;
+    z = -Math.sin(world.yaw) * sx - Math.cos(world.yaw) * sy * tilt;
+    if (diving) vy = -Math.sin(lookPitch) * sy;
   } else if (destination && state.player.mode !== 'aboard') {
     const dx = destination.x - state.player.x,
       dz = destination.z - state.player.z,
       d = Math.hypot(dx, dz);
-    if (d < (foot ? 0.28 : 1.2)) destination = null;
+    const more = sailing && route && routeIdx < route.length - 1;
+    if (d < (foot ? 0.28 : more ? 6 : 1.2)) destination = null;
     else {
       x = dx / d;
       z = dz / d;
-      if (vessel) brake = Math.min(1, d / 7);
+      if (vessel && !more) brake = Math.min(1, d / 7);
     }
   }
   const speed =
@@ -4620,7 +4996,30 @@ function movePlayer(dt, analog) {
       state.player.heading = turnToward(state.player.heading, desired, dt * 12);
     }
   }
-  moveTravel(state, dx, dz);
+  if (diving) {
+    if (keys.has(' ') || touchUp || padUp) vy = 1;
+    if (keys.has('z') || keys.has('control')) vy = -1;
+    const e = state.expedition,
+      floorAt = (px, pz) => groundAt(px, pz) + 1.6;
+    // slide along the lakebed: a gentle rise is swum over, a wall stops you
+    const okAt = (px, pz) => !islandAt(px, pz, 1) && floorAt(px, pz) <= e.depth + 1.2;
+    if (okAt(state.player.x + dx, state.player.z)) state.player.x += dx;
+    if (okAt(state.player.x, state.player.z + dz)) state.player.z += dz;
+    e.depth = clamp(e.depth + vy * speed * dt, floorAt(state.player.x, state.player.z), DIVE_TOP);
+    world.diveDir += (vy - world.diveDir) * Math.min(1, dt * 5);
+    // pushing up at the surface for a moment brings you back up on the beast
+    surfaceHold = e.depth >= DIVE_TOP - 0.01 && vy > 0.3 ? surfaceHold + dt : 0;
+    if (surfaceHold > 0.45) {
+      surfaceHold = 0;
+      beastAction('dive');
+    }
+  } else moveTravel(state, dx, dz);
+  if (jump.on) {
+    jump.y += jump.vy * dt;
+    jump.vy -= 15 * dt;
+    if (jump.y <= 0) Object.assign(jump, { on: false, y: 0, vy: 0 });
+    world.jumpY = jump.y;
+  }
   const travelled = Math.hypot(state.player.x - oldx, state.player.z - oldz),
     wanted = Math.hypot(dx, dz);
   world.moveSpeed = dt ? travelled / dt : 0;
@@ -4817,6 +5216,10 @@ function back() {
     cancelBuild();
     return;
   }
+  if (bigMapOpen) {
+    closeBigMap();
+    return;
+  }
   if (panel) {
     closePanel();
     return;
@@ -4913,7 +5316,8 @@ function gamepad(dt) {
     if (edge(2)) openPanel('build');
     // Ⓨ: use a contract scroll when a trusting wild beast is in reach, otherwise the research panel
     if (edge(3)) contractTarget() ? contractNearest() : openPanel('creatures');
-    if (edge(1)) back();
+    if (edge(1)) ['foot', 'aboard'].includes(state.player.mode) && !focus ? doJump() : back();
+    padUp = down(1) && !!state.expedition?.diving;
     if (edge(4)) openDevice();
     if (edge(5)) openPanel('journal');
     if (edge(6)) dock();
@@ -4987,6 +5391,7 @@ function setupEvents() {
   $('slots-btn').onclick = openSlots;
   $('storm-go').onclick = goShelter;
   $('tut-skip').onclick = () => endTutorial(true);
+  migrateSettings();
   applyUiSettings();
   $('new-btn').onclick = confirmNew;
   $('menu-btn').onclick = showMenu;
@@ -5002,8 +5407,31 @@ function setupEvents() {
     $('sound-btn').setAttribute('aria-label', audio.on ? '關閉海洋環境音' : '開啟海洋環境音');
   };
   $('home-btn').onclick = returnHome;
+  $('minimap').onclick = openBigMap;
+  $('bigmap-close').onclick = closeBigMap;
+  $('bigmap-clear').onclick = () => {
+    clearMarker();
+    drawBigMap();
+  };
+  $('bigmap-sail').onclick = sailRoute;
+  $('bigmap-canvas').onclick = e => {
+    const f = chartFrame();
+    if (!f) return;
+    const r = e.currentTarget.getBoundingClientRect(),
+      q = f.at(((e.clientX - r.left) / r.width) * f.w, ((e.clientY - r.top) / r.height) * f.h);
+    if (state.marker && Math.hypot(state.marker.x - q.x, state.marker.z - q.z) < 25 / f.k) clearMarker();
+    else {
+      setMarker(q.x, q.z);
+      toast(route ? `已標記，水路約 ${Math.round(routeLength(route))} 公尺。` : '已標記。');
+    }
+    drawBigMap();
+  };
+  addEventListener('resize', () => bigMapOpen && drawBigMap());
   $('interact-btn').onclick = interact;
-  $('repel-btn').onclick = repel;
+  $('repel-btn').onclick = actionKey;
+  $('repel-btn').onpointerdown = () => (touchUp = !!state.expedition?.diving);
+  for (const ev of ['pointerup', 'pointercancel', 'pointerleave'])
+    $('repel-btn').addEventListener(ev, () => (touchUp = false));
   $('cancel-build').onclick = cancelBuild;
   $('contract-btn').onclick = contractNearest;
   $('close-drawer').onclick = closePanel;
@@ -5066,12 +5494,13 @@ function setupEvents() {
     if (k === 'f') beastAction('attack');
     if (k === 'e') interact();
     if (k === 'x') contractNearest();
-    if (k === ' ') repel();
+    if (k === ' ') actionKey();
     if (k === 'b') openPanel('build');
     if (k === 'i') openDevice();
     if (k === 'j') openPanel('journal');
     if (k === 'c') openPanel('creatures');
     if (k === 'h') returnHome();
+    if (k === 'm') toggleBigMap();
     if (k === 'v') toggleView();
     if (k === 'q') dock();
   });
@@ -5448,6 +5877,7 @@ function frame(now) {
     const events = tickSystems(state, dt, !!panel || !!buildType);
     for (const message of tickExpansion(state, dt, !!panel || !!buildType)) toast(message);
     if (!panel && !buildType) storyEvents(dt);
+    syncActionButton();
     const haul = tickJobs(state);
     if (haul)
       toast(
@@ -5534,7 +5964,9 @@ function frame(now) {
       uiTimer = 0;
       updateUI();
       updateNearest();
+      tickRoute();
       drawMap();
+      if (bigMapOpen) drawBigMap();
       worldLabels();
       updateMonologue();
     }

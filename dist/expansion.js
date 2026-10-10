@@ -1,14 +1,14 @@
-import { phenotype, clamp } from './genetics.js?v=0.18.0';
-import { NODES, harvest } from './islands.js?v=0.18.0';
-import { restPlace } from './ship.js?v=0.18.0';
-import { dayOf, dayPhase } from './clock.js?v=0.18.0';
-import { remember, rememberFirst } from './memories.js?v=0.18.0';
-import { spend, give, stow } from './bag.js?v=0.18.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.18.0';
-import { islandAt } from './islands.js?v=0.18.0';
-import { hasPerk } from './codex.js?v=0.18.0';
-import { tally } from './stats.js?v=0.18.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.18.0';
+import { phenotype, clamp } from './genetics.js?v=0.19.0';
+import { NODES, harvest } from './islands.js?v=0.19.0';
+import { restPlace } from './ship.js?v=0.19.0';
+import { dayOf, dayPhase } from './clock.js?v=0.19.0';
+import { remember, rememberFirst } from './memories.js?v=0.19.0';
+import { spend, give, stow } from './bag.js?v=0.19.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.19.0';
+import { islandAt } from './islands.js?v=0.19.0';
+import { hasPerk } from './codex.js?v=0.19.0';
+import { tally } from './stats.js?v=0.19.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.19.0';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
 // the 深淵潛行者 collection perk lengthens every dive
@@ -67,6 +67,10 @@ export function normalizeExpansion(s) {
   e.activeId ??= null;
   e.order ??= 'follow';
   e.oxygen ??= 90;
+  // metres below the surface while diving (≤ 0); 0.19 lets you swim freely in three dimensions
+  e.depth ??= 0;
+  if (e.diving && !(e.depth < 0)) e.depth = -3;
+  if (!e.diving) e.depth = 0;
   e.collected ??= [];
   e.boss ??= { x: BOSS_HOME.x, z: BOSS_HOME.z, hp: 480, maxHp: 480, defeated: false, lastAttack: -999 };
   // 0.15 moved the world into the basin: re-home anything left on the new land or in the old cave pocket
@@ -160,13 +164,15 @@ export function toggleDive(s) {
     p = activePet(s);
   if (e.diving) {
     e.diving = false;
+    e.depth = 0;
     return { ok: true, message: '已浮上海面。' };
   }
   if (!e.mounted || !p || p.bond < 60) return fail('深潛需要騎乘羈絆 60 的夥伴。');
   if (e.oxygen < 25 || p.stamina < 20) return fail('先浮上水面補充氧氣與耐力。');
   e.diving = true;
+  e.depth = -2.5;
   rememberFirst(s, p, 'dive', '第一次帶你潛進深海。');
-  return { ok: true, message: '潛向湖底。氧氣耗盡會自動浮上；沉城廣場的湖底記憶核心在等你。' };
+  return { ok: true, message: '潛向湖底。往哪裡看就往哪裡游，按住空白鍵上浮；氧氣耗盡會自動浮上。' };
 }
 export function upgradeBoat(s) {
   normalizeExpansion(s);
@@ -312,6 +318,7 @@ export function tickExpansion(s, dt, safe = false) {
     e.oxygen = Math.max(0, e.oxygen - dt);
     if (e.oxygen === 0) {
       e.diving = false;
+      e.depth = 0;
       events.push('氧氣不足，夥伴已帶你浮上海面。');
     }
   } else e.oxygen = Math.min(oxygenMax(s), e.oxygen + dt * 7);

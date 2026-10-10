@@ -1,8 +1,8 @@
 // Beast jobs (0.18): a resting partner can be given work at your land — felling driftwood, mining, foraging,
 // fishing or standing guard. Every cycle working beasts bring their haul to the desk's storage box. Land beasts
 // are better at land work, sea beasts at fishing; bond and temperament scale the haul.
-import { phenotype } from './genetics.js?v=0.18.0';
-import { hasPerk } from './codex.js?v=0.18.0';
+import { phenotype } from './genetics.js?v=0.19.0';
+import { hasPerk } from './codex.js?v=0.19.0';
 
 export const JOBS = {
   lumber: { name: '伐木', icon: '🪓', out: { wood: 2 }, land: true, note: '帶回漂流木' },

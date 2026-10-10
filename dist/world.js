@@ -1,26 +1,26 @@
-import { expansionModels } from './expansion-models.js?v=0.18.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.18.0';
-import { normalizeHousing, penId } from './housing.js?v=0.18.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.18.0';
-export { makeCreature } from './creatures.js?v=0.18.0';
-import { makeIslands } from './island-models.js?v=0.18.0';
-import { facilityId } from './facilities.js?v=0.18.0';
+import { expansionModels } from './expansion-models.js?v=0.19.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.19.0';
+import { normalizeHousing, penId } from './housing.js?v=0.19.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.19.0';
+export { makeCreature } from './creatures.js?v=0.19.0';
+import { makeIslands } from './island-models.js?v=0.19.0';
+import { facilityId } from './facilities.js?v=0.19.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.18.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.18.0';
-import { makeLake } from './lake-models.js?v=0.18.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.18.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.18.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.18.0';
-import { PostFX } from './postfx.js?v=0.18.0';
-import { makeHuman, animateHuman } from './human.js?v=0.18.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.18.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.18.0';
-import { buildError } from './rules.js?v=0.18.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.18.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.18.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.18.0';
-import { dayPhase } from './clock.js?v=0.18.0';
+import { phenotype, seeded } from './genetics.js?v=0.19.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.19.0';
+import { makeLake } from './lake-models.js?v=0.19.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.19.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.19.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.19.0';
+import { PostFX } from './postfx.js?v=0.19.0';
+import { makeHuman, animateHuman } from './human.js?v=0.19.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.19.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.19.0';
+import { buildError } from './rules.js?v=0.19.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.19.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.19.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.19.0';
+import { dayPhase } from './clock.js?v=0.19.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -680,6 +680,8 @@ export class OceanWorld {
     this.camera = new T.PerspectiveCamera(44, 1, 0.1, 1800);
     this.yaw = 0.63;
     this.pitch = 0.64;
+    this.diveDir = 0;
+    this.jumpY = 0;
     this.distance = 42;
     // The facility the player is using (game.js enterFocus); in third person the shelter's roof lifts off.
     this.inside = null;
@@ -763,6 +765,11 @@ export class OceanWorld {
     );
     this.eventBeam.visible = false;
     this.scene.add(this.eventBeam);
+    // 0.19: a thinner pillar marks the spot you pinned on the chart
+    this.markerBeam = new T.Mesh(new T.CylinderGeometry(0.5, 1.4, 120, 12, 1, true), this.eventBeam.material.clone());
+    this.markerBeam.material.color.set(0xffb48a);
+    this.markerBeam.visible = false;
+    this.scene.add(this.markerBeam);
     this.eventChest = new T.Group();
     box(this.eventChest, 0x7a5534, 0, 0.5, 0, 2, 1, 1.3);
     box(this.eventChest, 0xd6b15c, 0, 1.02, 0, 2.05, 0.12, 1.35);
@@ -885,7 +892,7 @@ export class OceanWorld {
     this.yaw += yawDelta;
     if (this.firstPerson && !this.placement)
       this.firstPitch = Math.max(-1.15, Math.min(1.15, (this.firstPitch || 0) + pitchDelta));
-    else this.pitch = Math.max(0.3, Math.min(1.2, this.pitch + pitchDelta));
+    else this.pitch = Math.max(-0.62, Math.min(1.25, this.pitch + pitchDelta));
   }
   toggleView() {
     this.firstPerson = !this.firstPerson;
@@ -1128,9 +1135,8 @@ export class OceanWorld {
     // a dive follows the lakebed down into the sunken city; ashore you stand on the terrain itself
     const ground = s.inCave ? 0 : groundAt(s.player.x, s.player.z),
       onTerrain = foot && !s.player.level && !s.inCave && ground > 0.05;
-    this.diveY = diving
-      ? (this.diveY || 0) + (Math.max(ground + 3, -240) - (this.diveY || 0)) * Math.min(1, dt * 0.6)
-      : 0;
+    // the dive follows the depth the player swims to (game.js clamps it between the lakebed and the surface)
+    this.diveY = diving ? (this.diveY || 0) + ((s.expedition.depth ?? -3) - (this.diveY || 0)) * Math.min(1, dt * 7) : 0;
     this.footLift = onTerrain ? 0 : 0.42;
     this.baseY = diving
       ? this.diveY
@@ -1161,7 +1167,7 @@ export class OceanWorld {
     this.walker.visible = this.onFoot || riding;
     this.walker.position.set(
       helm ? helmPos.x : s.player.x,
-      this.baseY + (riding ? 0.65 : this.footLift),
+      this.baseY + (riding ? 0.65 : this.footLift) + (this.onFoot ? this.jumpY || 0 : 0),
       helm ? helmPos.z : s.player.z
     );
     this.boat.scale.x = 1 + (s.expedition?.boatLevel || 0) * 0.07;
@@ -1305,6 +1311,8 @@ export class OceanWorld {
         m.position.lerp(target, 1 - Math.exp(-dt * 3));
         if (m.position.distanceTo(target) > 15) m.position.copy(target);
         m.rotation.y = s.player.heading;
+        // under water the beast noses down or up with the direction you swim
+        m.rotation.x += ((diving ? -(this.diveDir || 0) * 0.55 : 0) - m.rotation.x) * Math.min(1, dt * 4);
         this.animateCreature(m, t);
         if (m.userData.aura) m.userData.aura.rotation.z = t;
         continue;
@@ -1396,17 +1404,33 @@ export class OceanWorld {
       pitch = this.pitch,
       camDist = dist,
       look = this.look;
-    this.camera.position.set(
-      look.x + Math.sin(yaw) * Math.cos(pitch) * camDist,
-      look.y + Math.sin(pitch) * camDist,
-      look.z + Math.cos(yaw) * Math.cos(pitch) * camDist
-    );
-    // never let the orbit camera sink into a hillside or the lakebed
+    // looking up (0.19): the orbit pivots around a point above the player, so a low camera angle shows the sky
+    // over their head instead of the water around their feet
+    const up = diving ? 0 : Math.max(0, Math.min(1, (0.25 - pitch) / 0.85)),
+      pivotY = look.y + up * up * (3 - 2 * up) * 3.5,
+      place = d =>
+        this.camera.position.set(
+          look.x + Math.sin(yaw) * Math.cos(pitch) * d,
+          pivotY + Math.sin(pitch) * d,
+          look.z + Math.cos(yaw) * Math.cos(pitch) * d
+        );
+    place(camDist);
+    // never let the orbit camera sink into a hillside, the lakebed or (above water) the surface: when the player
+    // looks up, the camera slides in closer along its line of sight instead of being pushed off that line
     if (!s.inCave) {
-      const floor = groundAt(this.camera.position.x, this.camera.position.z) + 1.4;
+      const floorAt = () =>
+        Math.max(
+          groundAt(this.camera.position.x, this.camera.position.z) + 1.4,
+          diving || aboard || helm ? -Infinity : 0.9
+        );
+      let floor = floorAt();
+      if (this.camera.position.y < floor && Math.sin(pitch) < -0.02) {
+        place(Math.max(2.2, (floor - pivotY) / Math.sin(pitch)));
+        floor = floorAt();
+      }
       if (this.camera.position.y < floor) this.camera.position.y = floor;
     }
-    this.camera.lookAt(look);
+    this.camera.lookAt(look.x, pivotY, look.z);
     // the crossing: rise over the ridge on 嘯岳's back and look out at the rift beyond the mountains
     if (this.cinematic) {
       const c = this.cinematic,
@@ -1522,6 +1546,12 @@ export class OceanWorld {
       m.position.set(ev.x, Math.sin(t * 0.9) * 0.18, ev.z);
       m.rotation.set(Math.sin(t * 0.7) * 0.03, t * 0.02, Math.sin(t * 0.8) * 0.04);
       m.userData.flag.rotation.y = Math.sin(t * 2.2) * 0.3;
+    }
+    const mk = s.marker;
+    this.markerBeam.visible = !!mk && !s.inCave;
+    if (mk) {
+      this.markerBeam.position.set(mk.x, Math.max(0, groundAt(mk.x, mk.z)) + 60, mk.z);
+      this.markerBeam.material.opacity = 0.1 + Math.sin(t * 2) * 0.04;
     }
     const cache = here && ev.kind === 'treasure' && !ev.claimed;
     this.eventBeam.visible = this.eventChest.visible = cache;
@@ -1659,7 +1689,7 @@ export class OceanWorld {
         y =
           this.baseY +
           (this.onFoot
-            ? 1.96 + Math.sin(this.walkPhase * 2) * Math.min(0.018, this.moveSpeed * 0.008)
+            ? 1.96 + (this.jumpY || 0) + Math.sin(this.walkPhase * 2) * Math.min(0.018, this.moveSpeed * 0.008)
             : 2.13 + this.boatHeave);
       this.camera.position.set(x, y, z);
       this.camera.lookAt(

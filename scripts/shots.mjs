@@ -58,6 +58,20 @@ const SPOTS = [
   [
     '15-merchant',
     `B.closePanel();s.player.mode='boat';Object.assign(s.player,{x:9,z:12});const q=L.waterNear(30,30,4,200);s.lakeEvent={kind:'merchant',x:q.x,z:q.z,until:s.elapsed+200,id:'ev-shot',offers:[{give:{wood:12},get:{metal:5},done:false}]};w.sync(s);w.distance=34;w.pitch=.35;w.yaw=Math.atan2(q.x-9,q.z-12)+Math.PI;`
+  ],
+  [
+    '16-dive-up',
+    `s.lakeEvent=null;document.querySelector('#tut-skip')?.click();if(!s.tamed.length)s.tamed.push({id:'shot-pet',name:'shot',genome:G.makeGenome(5,1,'sea'),generation:0,parents:[],bond:70,stamina:100,health:100,penId:null});s.expedition.activeId=s.tamed[0].id;const p=L.LANDMARKS.plaza;Object.assign(s.player,{x:p.x+30,z:p.z+30,mode:'boat'});s.expedition.mounted=true;s.expedition.diving=true;s.expedition.depth=-14;s.expedition.oxygen=90;w.distance=14;w.pitch=-0.45;w.yaw=0.8;w.sync(s);`
+  ],
+  [
+    '17-lookup',
+    `s.expedition.diving=false;s.expedition.depth=0;s.expedition.mounted=false;Object.assign(s.player,{x:9,z:12,mode:'boat'});w.distance=36;w.pitch=-0.5;w.yaw=2.4;w.sync(s);`
+  ],
+  ['18-chart', `w.pitch=0.6;const c=L.LAKE_ISLANDS.find(i=>i.id==='crystal');s.marker={x:c.x-40,z:c.z+10};`, 'm'],
+  ['19-menu', `s.marker=null;B.closePanel();document.getElementById('menu-btn').click();`],
+  [
+    '20-settings',
+    `document.getElementById('menu-btn').click();[...document.querySelectorAll('#modal-actions button')].find(b=>b.textContent.includes('設定')).click();`
   ]
 ];
 try {
@@ -91,7 +105,7 @@ try {
   for (const [name, setup, key, click] of SPOTS) {
     if (
       only &&
-      !name.includes(only) &&
+      !only.split(',').some(o => name.includes(o)) &&
       !(only === 'story' && name >= '08' && name < '11') &&
       !(only === 'ui' && name >= '11')
     )

@@ -1973,5 +1973,54 @@ export default {
   馴化全部植生突變: 'Tame every flora mutant',
   馴化全部深淵種: 'Tame every deep-sea species',
   馴化全部淺海種: 'Tame every shallow-sea species',
-  馴化全部陸棲種: 'Tame every land species'
+  馴化全部陸棲種: 'Tame every land species',
+  'HOW TO PLAY · 操作說明': 'HOW TO PLAY',
+  'M 地圖與標記 · 潛水時往哪裡看就往哪裡游，空白鍵上浮、Z 下潛':
+    'M chart & marker · while diving you swim where you look, Space rises, Z sinks',
+  'MENU · 選單': 'MENU',
+  'WASD 移動／駕艇 · Shift 加速 · E 互動 · Q 登岸／登艇 · 空白鍵驅離／跳躍':
+    'WASD move / steer · Shift sprint · E interact · Q land / board · Space repel / jump',
+  上浮: 'Rise',
+  '上船後才能沿路線航行；步行時請看地圖上的直線方向。':
+    'Sail the route from a boat; on foot the chart shows the straight-line direction.',
+  你的木筏: 'Your raft',
+  '先在地圖上點一個標記。': 'Tap the chart to place a marker first.',
+  切換為第一人稱: 'Switch to first person',
+  切換為第三人稱: 'Switch to third person',
+  '已抵達標記地點。': 'You reached the marker.',
+  '已標記。': 'Marker placed.',
+  '已標記，水路約 {0} 公尺。': 'Marker placed; about {0} m by water.',
+  '已清除標記。': 'Marker cleared.',
+  '已規劃水路，按「沿路線航行」自動前往；或自己照虛線開。':
+    'Route planned: press “Sail the route” to go automatically, or follow the dashed line yourself.',
+  手機觸控: 'Phone touch',
+  '找不到通往那裡的水路。': 'No water route leads there.',
+  操作說明: 'How to play',
+  標記: 'Marker',
+  '步行時只顯示直線方向；上船後會規劃水路。':
+    'On foot only the straight direction is shown; a water route is planned once you are aboard.',
+  每一種玩法的按鍵: 'The keys for every way to play',
+  '決定畫面上的按鍵提示與虛擬搖桿：選「電腦」就不會出現觸控搖桿。':
+    'Sets the on-screen key hints and the virtual joystick: choose “PC” and no touch pad appears.',
+  沿路線航行: 'Sail the route',
+  '沿路線航行，約 {0} 公尺。': 'Sailing the route, about {0} m.',
+  清除標記: 'Clear marker',
+  湖域地圖: 'Lake chart',
+  '潛向湖底。往哪裡看就往哪裡游，按住空白鍵上浮；氧氣耗盡會自動浮上。':
+    'Diving. You swim where you look; hold Space to rise. You surface automatically when the air runs out.',
+  研究浮標: 'Research buoy',
+  跳躍: 'Jump',
+  '這裡沒有可通行的水路，換一個地點試試。': 'No navigable water reaches this spot; try another.',
+  遊玩方式: 'Play style',
+  '選單 · Esc': 'Menu · Esc',
+  選單: 'Menu',
+  開啟環境音: 'Ambient sound on',
+  關閉地圖: 'Close chart',
+  關閉環境音: 'Ambient sound off',
+  離開全螢幕: 'Exit full screen',
+  電腦: 'PC',
+  '點地圖放置標記，航線會自動繞開陸地與淺灘。':
+    'Tap the chart to place a marker; the route steers around land and shallows.',
+  '點開地圖 · M': 'Open chart · M',
+  '已抵達離標記最近的水域，剩下的路上岸走。': 'This is the closest water to the marker; go ashore for the rest.'
 };

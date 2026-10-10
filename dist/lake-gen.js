@@ -2,8 +2,8 @@
 // rock, reed and kelp stand — as plain arrays. Runs in a Web Worker (lake-worker.js) so start-up never freezes;
 // falls back to the main thread where workers are unavailable. Same sketch noise and colour rules as before,
 // computed in three.js's linear working colour space so the result matches what the renderer used to build.
-import { HS, ORIGIN, groundAt } from './lake.js?v=0.18.0';
-import { FINE, COARSE, Q } from './lake-data.js?v=0.18.0';
+import { HS, ORIGIN, groundAt } from './lake.js?v=0.19.0';
+import { FINE, COARSE, Q } from './lake-data.js?v=0.19.0';
 
 function hash(x, z) {
   const s = Math.sin(x * 127.1 + z * 311.7) * 43758.5453;
