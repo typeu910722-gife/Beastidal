@@ -1,7 +1,7 @@
 // Local play statistics. Nothing leaves the device: the player can copy the JSON and send it in by hand.
 // Used to tune pacing (how long each milestone takes) without any analytics service.
-import { GUIDE_IDS, guideDone } from './guide.js?v=0.17.0';
-import { dayOf } from './clock.js?v=0.17.0';
+import { GUIDE_IDS, guideDone } from './guide.js?v=0.18.0';
+import { dayOf } from './clock.js?v=0.18.0';
 
 export const MILESTONE_NAMES = {
   salvage: '打撈 3 件物資',
@@ -45,6 +45,13 @@ export function normalizeStats(s) {
   }
   return st;
 }
+// Running counters of things the player does (salvage, harvest, kills, tames …). Commissions read these.
+export function tally(s, key, n = 1) {
+  s.stats ??= {};
+  s.stats.tally ??= {};
+  s.stats.tally[key] = (s.stats.tally[key] || 0) + n;
+}
+export const tallied = (s, key) => s.stats?.tally?.[key] || 0;
 // Called every frame while playing. Returns milestone ids newly reached.
 export function tickStats(s, dt, moved, mode) {
   const st = s.stats;

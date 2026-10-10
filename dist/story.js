@@ -2,10 +2,10 @@
 // 起 a sealed slab under the Great Gate → 承 three keys (tide / stone / bone) → 轉 the ancient sabre-tooth wakes and
 // speaks → 合 three trials and a pact → it carries you over the mountains (the hook for chapter two).
 // Nothing here is required to keep playing; every step is reached only by exploring.
-import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.17.0';
-import { spend } from './bag.js?v=0.17.0';
-import { dayOf } from './clock.js?v=0.17.0';
-import { makeGenome } from './genetics.js?v=0.17.0';
+import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.18.0';
+import { spend } from './bag.js?v=0.18.0';
+import { dayOf } from './clock.js?v=0.18.0';
+import { makeGenome } from './genetics.js?v=0.18.0';
 
 export const PACT_ID = 'ancient-xiaoyue';
 export const PACT_NAME = '嘯岳';

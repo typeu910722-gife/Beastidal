@@ -50,6 +50,14 @@ const SPOTS = [
   [
     '13-locker',
     `B.openPanel('bag');const d=s.buildings.find(b=>b.type==='desk');s.storage.wood=37;s.storage.metal=12;s.storage.crystal=5;s.storage.food=8;Object.assign(s.player,{mode:'foot',level:0,x:d.x*3.6+1.6,z:d.z*3.6});B.openPanel('locker');`
+  ],
+  [
+    '14-rewards',
+    `document.querySelectorAll('#modal-shade').forEach(e=>e.hidden=true);B.openPanel('journal');document.querySelector('[data-journal-tab=rewards]')?.click();`
+  ],
+  [
+    '15-merchant',
+    `B.closePanel();s.player.mode='boat';Object.assign(s.player,{x:9,z:12});const q=L.waterNear(30,30,4,200);s.lakeEvent={kind:'merchant',x:q.x,z:q.z,until:s.elapsed+200,id:'ev-shot',offers:[{give:{wood:12},get:{metal:5},done:false}]};w.sync(s);w.distance=34;w.pitch=.35;w.yaw=Math.atan2(q.x-9,q.z-12)+Math.PI;`
   ]
 ];
 try {

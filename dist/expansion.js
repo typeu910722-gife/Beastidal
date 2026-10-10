@@ -1,14 +1,18 @@
-import { phenotype, clamp } from './genetics.js?v=0.17.0';
-import { NODES, harvest } from './islands.js?v=0.17.0';
-import { restPlace } from './ship.js?v=0.17.0';
-import { dayOf, dayPhase } from './clock.js?v=0.17.0';
-import { remember, rememberFirst } from './memories.js?v=0.17.0';
-import { spend, give, stow } from './bag.js?v=0.17.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.17.0';
-import { islandAt } from './islands.js?v=0.17.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.17.0';
+import { phenotype, clamp } from './genetics.js?v=0.18.0';
+import { NODES, harvest } from './islands.js?v=0.18.0';
+import { restPlace } from './ship.js?v=0.18.0';
+import { dayOf, dayPhase } from './clock.js?v=0.18.0';
+import { remember, rememberFirst } from './memories.js?v=0.18.0';
+import { spend, give, stow } from './bag.js?v=0.18.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.18.0';
+import { islandAt } from './islands.js?v=0.18.0';
+import { hasPerk } from './codex.js?v=0.18.0';
+import { tally } from './stats.js?v=0.18.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.18.0';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
+// the 深淵潛行者 collection perk lengthens every dive
+export const oxygenMax = s => 90 + (hasPerk(s, 'deep') ? 30 : 0);
 const at = (p, o) => landNear(p.x, p.z, o);
 const CACHE = at({ x: LANDMARKS.boathouse.x + 4, z: LANDMARKS.boathouse.z - 24 }, { min: 1, maxSlope: 0.5 }),
   ARCHIVE = at(mapPoint(-10, -17), { min: 2, maxSlope: 0.5 }),
@@ -266,6 +270,7 @@ export function attack(s) {
         text: '我們並肩度過了風浪。守望者留下的契印回應了夥伴的光。'
       });
     } else {
+      tally(s, 'kill');
       s.wild = s.wild.filter(w => w !== target);
       reward(s, { crystal: 1, food: 2 });
       p.bond = Math.min(100, p.bond + 1);
@@ -309,7 +314,7 @@ export function tickExpansion(s, dt, safe = false) {
       e.diving = false;
       events.push('氧氣不足，夥伴已帶你浮上海面。');
     }
-  } else e.oxygen = Math.min(90, e.oxygen + dt * 7);
+  } else e.oxygen = Math.min(oxygenMax(s), e.oxygen + dt * 7);
   if (p) {
     p.stamina = clamp(p.stamina + dt * (e.diving ? -0.36 : e.mounted ? -0.12 : 0.12), 0, 100);
     if (!safe && s.elapsed - e.lastBond >= 60) {

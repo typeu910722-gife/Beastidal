@@ -1,4 +1,6 @@
-import { stow, bagRoom, bagFullError } from './bag.js?v=0.17.0';
+import { stow, bagRoom, bagFullError } from './bag.js?v=0.18.0';
+import { hasPerk } from './codex.js?v=0.18.0';
+import { tally } from './stats.js?v=0.18.0';
 import {
   groundAt,
   slopeAt,
@@ -8,7 +10,7 @@ import {
   islandOf,
   landNear,
   waterNear
-} from './lake.js?v=0.17.0';
+} from './lake.js?v=0.18.0';
 // 0.15: the world is the inland sea of 沉湖遺城. Islands are real terrain now; the old ids stay so saves carry over.
 export const ISLANDS = LAKE_ISLANDS;
 export const MAINLAND = { id: 'mainland', name: '環湖山麓', x: LAKE_CENTER.x, z: LAKE_CENTER.z, rx: 400, rz: 260 };
@@ -102,9 +104,11 @@ export function harvest(s, id) {
   const remaining = (s.harvested[id] ?? -1) - s.elapsed;
   if (remaining > 0) return { ok: false, error: `此處正在恢復，還需 ${Math.ceil(remaining)} 秒。` };
   if (!bagRoom(s)) return { ok: false, error: bagFullError, full: true };
-  stow(s, { [n.kind]: n.yield });
+  const amount = n.yield + (hasPerk(s, 'land') ? 1 : 0);
+  stow(s, { [n.kind]: amount });
   s.harvested[id] = s.elapsed + 120;
-  return { ok: true, node: n };
+  tally(s, 'harvest');
+  return { ok: true, node: { ...n, yield: amount } };
 }
 // Drift items and sea creatures that sit on land or in the shallows move out to open water.
 export function clearLand(s) {

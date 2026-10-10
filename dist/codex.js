@@ -1,6 +1,6 @@
 // Creature codex: every species the player has seen up close, tamed or bred, with a sample genome for the portrait.
-import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.17.0';
-import { dayOf } from './clock.js?v=0.17.0';
+import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.18.0';
+import { dayOf } from './clock.js?v=0.18.0';
 
 export const LORE = {
   'sea-0': '骨質鰭條像刀刃一樣立在背上。成群出現時，會用鰭刃切開浪頭，替後面的同伴減少阻力。',
@@ -71,3 +71,82 @@ export function codexEntries(s) {
     lore: LORE[sp.id]
   }));
 }
+
+// ---------- collection rewards (0.18) ----------
+// Seeing and taming species pays off: supplies at first, then a title and a lasting perk per completed family.
+const familyDone = (s, fam) =>
+  allSpecies()
+    .filter(x => x.family === fam)
+    .every(x => s.codex?.tamed?.[x.id]);
+export const CODEX_REWARDS = [
+  { id: 'seen4', name: '初見', need: '見過 4 種生物', check: s => codexProgress(s).seen >= 4, give: { bait: 10 } },
+  { id: 'seen8', name: '觀察者', need: '見過 8 種生物', check: s => codexProgress(s).seen >= 8, give: { contract: 2 } },
+  {
+    id: 'seen12',
+    name: '湖的筆記',
+    need: '見過 12 種生物',
+    check: s => codexProgress(s).seen >= 12,
+    give: { crystal: 10 }
+  },
+  {
+    id: 'sea',
+    name: '淺海之友',
+    need: '馴化全部淺海種',
+    perk: '投餌時信任多 +5%',
+    check: s => familyDone(s, 'sea'),
+    give: { crystal: 6 }
+  },
+  {
+    id: 'deep',
+    name: '深淵潛行者',
+    need: '馴化全部深淵種',
+    perk: '潛水氧氣上限 +30 秒',
+    check: s => familyDone(s, 'deep'),
+    give: { metal: 12 }
+  },
+  {
+    id: 'land',
+    name: '島嶼牧者',
+    need: '馴化全部陸棲種',
+    perk: '島上採集量 +1',
+    check: s => familyDone(s, 'land'),
+    give: { wood: 20 }
+  },
+  {
+    id: 'flora',
+    name: '綠潮守護者',
+    need: '馴化全部植生突變',
+    perk: '御獸工作產量 +20%',
+    check: s => familyDone(s, 'flora'),
+    give: { fiber: 20 }
+  },
+  {
+    id: 'all',
+    name: '湖的記錄者',
+    need: '見過全部 16 種生物',
+    check: s => codexProgress(s).seen >= codexProgress(s).total,
+    give: { crystal: 20, contract: 3 }
+  }
+];
+export function codexRewards(s) {
+  const c = normalizeCodex(s);
+  c.claimed ??= [];
+  return CODEX_REWARDS.map(r => ({ ...r, done: !!r.check(s), claimed: c.claimed.includes(r.id) }));
+}
+// Claim one: the items go to the bag (contract scrolls to the scroll count). Perks apply from then on.
+export function claimCodex(s, id) {
+  const c = normalizeCodex(s),
+    r = CODEX_REWARDS.find(x => x.id === id);
+  c.claimed ??= [];
+  if (!r) return { ok: false, error: '沒有這項收集獎勵。' };
+  if (c.claimed.includes(id)) return { ok: false, error: '已經領過了。' };
+  if (!r.check(s)) return { ok: false, error: `還沒達成：${r.need}。` };
+  c.claimed.push(id);
+  for (const [k, v] of Object.entries(r.give)) {
+    if (k === 'contract') s.contracts = (s.contracts || 0) + v;
+    else s.resources[k] = (s.resources[k] || 0) + v;
+  }
+  return { ok: true, message: `獲得稱號「${r.name}」${r.perk ? '：' + r.perk : ''}。`, reward: r };
+}
+export const hasPerk = (s, id) => !!s.codex?.claimed?.includes(id) && CODEX_REWARDS.some(r => r.id === id && r.perk);
+export const titles = s => CODEX_REWARDS.filter(r => s.codex?.claimed?.includes(r.id)).map(r => r.name);

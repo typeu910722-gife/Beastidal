@@ -4,11 +4,13 @@
 // you. Contract scrolls, made at the raft's work table and carried in the bag, bind a beast anywhere (success
 // chance = trust %). Forcing a contract below 60 % trust can send the beast into a frenzy: 1.2× speed and attack,
 // chasing you for 6–17 seconds.
-import { phenotype, geneName } from './genetics.js?v=0.17.0';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.17.0';
-import { spend } from './bag.js?v=0.17.0';
-import { remember } from './memories.js?v=0.17.0';
-import { nearFacility } from './fortress.js?v=0.17.0';
+import { phenotype, geneName } from './genetics.js?v=0.18.0';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.18.0';
+import { spend } from './bag.js?v=0.18.0';
+import { remember } from './memories.js?v=0.18.0';
+import { nearFacility } from './fortress.js?v=0.18.0';
+import { hasPerk } from './codex.js?v=0.18.0';
+import { tally } from './stats.js?v=0.18.0';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 6, max: 17, below: 60 };
@@ -55,7 +57,11 @@ export function feed(s, id, rng = Math.random) {
   w.lastFeed = s.elapsed;
   const need = feedsNeeded(w.genome),
     before = w.trust,
-    gain = w.tame ? TRUST_GAIN.tame : TRUST_GAIN.min + Math.floor(rng() * (TRUST_GAIN.max - TRUST_GAIN.min + 1));
+    gain =
+      (w.tame ? TRUST_GAIN.tame : TRUST_GAIN.min + Math.floor(rng() * (TRUST_GAIN.max - TRUST_GAIN.min + 1))) +
+      (hasPerk(s, 'sea') ? 5 : 0) +
+      (w.event ? 10 : 0); // migrating herds are calmer around people
+  tally(s, 'feed');
   w.tame = false; // the bonus is for the first feeding only
   w.trust = w.feeds >= need ? 100 : Math.min(100, w.trust + gain);
   const got = w.trust - before;
@@ -106,6 +112,7 @@ export function contract(s, id, rng = Math.random) {
     remember(s, pet, `締結契約。牠的信任度是 ${chance}%。`);
     s.tamed.push(pet);
     s.wild = s.wild.filter(c => c !== w);
+    tally(s, 'tame');
     return { ok: true, tamed: pet, chance };
   }
   w.follow = false;

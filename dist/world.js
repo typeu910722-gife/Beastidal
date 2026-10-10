@@ -1,27 +1,28 @@
-import { expansionModels } from './expansion-models.js?v=0.17.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.17.0';
-import { normalizeHousing, penId } from './housing.js?v=0.17.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.17.0';
-export { makeCreature } from './creatures.js?v=0.17.0';
-import { makeIslands } from './island-models.js?v=0.17.0';
-import { facilityId } from './facilities.js?v=0.17.0';
+import { expansionModels } from './expansion-models.js?v=0.18.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.18.0';
+import { normalizeHousing, penId } from './housing.js?v=0.18.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.18.0';
+export { makeCreature } from './creatures.js?v=0.18.0';
+import { makeIslands } from './island-models.js?v=0.18.0';
+import { facilityId } from './facilities.js?v=0.18.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.17.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.17.0';
-import { makeLake } from './lake-models.js?v=0.17.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.17.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.17.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.17.0';
-import { PostFX } from './postfx.js?v=0.17.0';
-import { makeHuman, animateHuman } from './human.js?v=0.17.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.17.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.17.0';
-import { buildError } from './rules.js?v=0.17.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.17.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.17.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.17.0';
-import { dayPhase } from './clock.js?v=0.17.0';
+import { phenotype, seeded } from './genetics.js?v=0.18.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.18.0';
+import { makeLake } from './lake-models.js?v=0.18.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.18.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.18.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.18.0';
+import { PostFX } from './postfx.js?v=0.18.0';
+import { makeHuman, animateHuman } from './human.js?v=0.18.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.18.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.18.0';
+import { buildError } from './rules.js?v=0.18.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.18.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.18.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.18.0';
+import { dayPhase } from './clock.js?v=0.18.0';
 const V = T.Vector3;
+const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
 // (land) or a lazy roll (sea). Never a jump-cut, never in the player's face.
 const idSeed = id => [...String(id)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -631,6 +632,30 @@ function lootMesh(kind) {
   }
   return g;
 }
+// The drifting merchant of the lake events: a small cargo sailboat with a striped sail, lanterns and crates.
+function makeMerchant() {
+  const g = new T.Group();
+  piece(g, sphereG, 0x6b4a31, [0, 0.35, 0], [1.6, 0.7, 4.2]);
+  box(g, 0x8a6a45, 0, 0.75, 0, 2.6, 0.15, 6.4);
+  box(g, 0x5a3f27, 0, 1.45, -1.6, 1.8, 1.3, 1.8);
+  box(g, 0x2e7c78, 0, 2.2, -1.6, 2.1, 0.18, 2.1);
+  pole(g, 0x5a3f27, 0, 4.2, 0.6, 0.09, 7);
+  for (let i = 0; i < 4; i++) box(g, i % 2 ? 0xe9dcb4 : 0xb64a3c, 0.08, 3 + i * 0.85, 1.25, 0.04, 0.85, 1.3);
+  for (const [x, z] of [
+    [-0.7, 1.9],
+    [0.6, 2.3],
+    [-0.5, 2.8],
+    [0.7, -0.2]
+  ])
+    box(g, 0x9a7a51, x, 1.15, z, 0.7, 0.6, 0.7);
+  for (const z of [-2.8, 3]) {
+    pole(g, 0x3a2a1c, 0, 1.6, z, 0.04, 1.2);
+    ball(g, 0xffd38c, 0, 2.25, z, 0.16, 0.2, 0.16, { emissive: 0xffbb55, emissiveIntensity: 1.8 });
+    halo(g, 0xffd38c, 0, 2.25, z, 1.6);
+  }
+  g.userData.flag = box(g, 0xecc78e, 0.5, 7.4, 0.6, 0.9, 0.5, 0.04);
+  return g;
+}
 export class OceanWorld {
   constructor(canvas, state) {
     this.canvas = canvas;
@@ -720,6 +745,30 @@ export class OceanWorld {
     );
     this.pactStatue.rotation.y = Math.PI;
     this.scene.add(this.pactStatue);
+    // lake events: the merchant's boat, and a pillar of light over a lakebed cache
+    this.eventMerchant = makeMerchant();
+    this.eventMerchant.visible = false;
+    this.scene.add(this.eventMerchant);
+    this.eventBeam = new T.Mesh(
+      new T.CylinderGeometry(1.6, 3.4, 300, 18, 1, true),
+      new T.MeshBasicMaterial({
+        color: 0xffe3a0,
+        transparent: true,
+        opacity: 0.16,
+        blending: T.AdditiveBlending,
+        depthWrite: false,
+        side: T.DoubleSide,
+        fog: false
+      })
+    );
+    this.eventBeam.visible = false;
+    this.scene.add(this.eventBeam);
+    this.eventChest = new T.Group();
+    box(this.eventChest, 0x7a5534, 0, 0.5, 0, 2, 1, 1.3);
+    box(this.eventChest, 0xd6b15c, 0, 1.02, 0, 2.05, 0.12, 1.35);
+    ball(this.eventChest, 0xffe3a0, 0, 1.3, 0, 0.3, 0.3, 0.3, { emissive: 0xffd27a, emissiveIntensity: 2 });
+    this.eventChest.visible = false;
+    this.scene.add(this.eventChest);
     this.pactBeast = makeSabertooth();
     this.pactBeast.scale.setScalar(1.7);
     this.pactBeast.visible = false;
@@ -1321,6 +1370,7 @@ export class OceanWorld {
     }
 
     this.updatePact(s, t, dt, foot);
+    this.updateEvents(s, t);
     this.motes.children.forEach((m, i) => {
       m.position.y = 0.1 + Math.sin(t + m.userData.phase) * 0.06;
       m.scale.setScalar(0.035 * (0.6 + Math.sin(t * 2 + i) * 0.4)); // twinkling specks, not metre-wide domes
@@ -1462,6 +1512,30 @@ export class OceanWorld {
       this.cannonFx.scale.setScalar(1 + k * 4);
       this.cannonFx.material.opacity = 0.85 * (1 - k);
     } else this.cannonFx.visible = false;
+  }
+  updateEvents(s, t) {
+    const ev = s.lakeEvent,
+      here = !!ev && !s.inCave,
+      m = this.eventMerchant;
+    m.visible = here && ev.kind === 'merchant';
+    if (m.visible) {
+      m.position.set(ev.x, Math.sin(t * 0.9) * 0.18, ev.z);
+      m.rotation.set(Math.sin(t * 0.7) * 0.03, t * 0.02, Math.sin(t * 0.8) * 0.04);
+      m.userData.flag.rotation.y = Math.sin(t * 2.2) * 0.3;
+    }
+    const cache = here && ev.kind === 'treasure' && !ev.claimed;
+    this.eventBeam.visible = this.eventChest.visible = cache;
+    if (cache) {
+      this.eventBeam.position.set(ev.x, ev.ground + 150, ev.z);
+      this.eventBeam.material.opacity = 0.12 + Math.sin(t * 1.5) * 0.05;
+      this.eventChest.position.set(ev.x, ev.ground, ev.z);
+    }
+    if (here && ev.kind === 'tide') {
+      // the crystal tide: the air and the light take on the violet of the rift
+      const k = 0.22 + Math.sin(t * 0.8) * 0.06;
+      this.scene.fog.color.lerp(TIDE_TINT, k);
+      this.ambient.color.lerp(TIDE_TINT, k);
+    }
   }
   startCinematic(s) {
     const az = 2.4, // the rift's bearing in the sky shader
