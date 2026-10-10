@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.21.0';
-import { renderAdventure } from './expansion-ui.js?v=0.21.0';
+} from './expansion.js?v=0.22.0';
+import { renderAdventure } from './expansion-ui.js?v=0.22.0';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.21.0';
-import { monologue, markGuide } from './guide.js?v=0.21.0';
-import { climb, demolish, relocate } from './construction.js?v=0.21.0';
+} from './ship.js?v=0.22.0';
+import { monologue, markGuide } from './guide.js?v=0.22.0';
+import { climb, demolish, relocate } from './construction.js?v=0.22.0';
 import {
   normalizeHousing,
   penId,
@@ -54,7 +54,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.21.0';
+} from './housing.js?v=0.22.0';
 import {
   ISLANDS,
   NODES,
@@ -65,10 +65,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.21.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable } from './lake.js?v=0.21.0';
-import { lakeMinimap } from './lake-map.js?v=0.21.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.21.0';
+} from './islands.js?v=0.22.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable } from './lake.js?v=0.22.0';
+import { lakeMinimap } from './lake-map.js?v=0.22.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.22.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -87,7 +87,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.21.0';
+} from './cabin.js?v=0.22.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -102,20 +102,32 @@ import {
   finishCrossing,
   tickStory,
   duelActive
-} from './story.js?v=0.21.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.21.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.21.0';
-import { QUALITY } from './realism.js?v=0.21.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.21.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.21.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.21.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.21.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.21.0';
-import { CONFIG } from './config.js?v=0.21.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.21.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.21.0';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.21.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.21.0';
+} from './story.js?v=0.22.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.22.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.22.0';
+import { QUALITY } from './realism.js?v=0.22.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.22.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.22.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.22.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.22.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.22.0';
+import { CONFIG } from './config.js?v=0.22.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.22.0';
+import {
+  normalizeCodex,
+  recordCreature,
+  syncOwned,
+  codexProgress,
+  codexEntries,
+  recordGene,
+  recordBeast,
+  geneEntries,
+  beastEntries
+} from './codex.js?v=0.22.0';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.22.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.22.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.22.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.22.0';
 import {
   RARITY,
   FRENZY,
@@ -125,11 +137,15 @@ import {
   normalizeTaming,
   rollTame,
   craftContract,
-  contract
-} from './taming.js?v=0.21.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.21.0';
-import { BeastStage } from './beast-stage.js?v=0.21.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.21.0';
+  contract,
+  evolve,
+  cageCreature,
+  dangerous,
+  CAGE_TRUST
+} from './taming.js?v=0.22.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.22.0';
+import { BeastStage } from './beast-stage.js?v=0.22.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.22.0';
 import {
   funds,
   normalizeBag,
@@ -147,12 +163,12 @@ import {
   stash,
   unstash,
   CARRY
-} from './bag.js?v=0.21.0';
-import { iconFor } from './icons.js?v=0.21.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.21.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.21.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.21.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.21.0';
+} from './bag.js?v=0.22.0';
+import { iconFor } from './icons.js?v=0.22.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.22.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.22.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.22.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.22.0';
 import {
   homePos,
   facilityPos,
@@ -164,10 +180,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.21.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.21.0';
-export const GAME_VERSION = '0.21.0';
-import { CloudSave } from './cloud-save.js?v=0.21.0';
+} from './fortress.js?v=0.22.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.22.0';
+export const GAME_VERSION = '0.22.0';
+import { CloudSave } from './cloud-save.js?v=0.22.0';
 import {
   readLocal,
   writeLocal,
@@ -184,9 +200,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.21.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.21.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.21.0';
+} from './save-store.js?v=0.22.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.22.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.22.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -207,8 +223,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.21.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.21.0';
+} from './rules.js?v=0.22.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.22.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -314,7 +330,8 @@ let world,
   preferParents = ['', ''],
   menuFocus = null;
 let padPrevious = [],
-  padNavCooldown = 0;
+  padNavCooldown = 0,
+  attackHold = 0;
 // Sound cues on the intro film clock (seconds): honks, skid, impact, fading heartbeat.
 const FILM_CUES = [
   [4.9, () => audio.horn(0.32, 0.08)],
@@ -1724,10 +1741,12 @@ function updateNearest() {
                               ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
                               : state.secret
                                 ? frenzied(selected, state.elapsed)
-                                  ? '狂暴中！快拉開距離'
-                                  : selected.follow
-                                    ? '信任 100% · 跟著你 · 帶著契約書按 X 締結'
-                                    : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
+                                  ? '狂暴中！驅離不了，按 F 讓夥伴攻擊'
+                                  : selected.beast
+                                    ? beastText(selected)
+                                    : selected.follow
+                                      ? '信任 100% · 跟著你 · 帶著契約書按 X 締結'
+                                      : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
                                 : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
     $('context-verb').textContent =
@@ -2026,7 +2045,10 @@ function repel() {
   audio.splash(1);
   haptic('repel');
   if (state.stats) state.stats.repels++;
+  if (state.wild.some(w => frenzied(w, state.elapsed) && Math.hypot(w.x - state.player.x, w.z - state.player.z) < 9))
+    toast('狂暴中的東西驅離不了，只能戰鬥！', true);
   for (const w of state.wild) {
+    if (frenzied(w, state.elapsed)) continue;
     const d = Math.hypot(w.x - px, w.z - pz);
     if (d < 12) {
       startFlee(w, px, pz, state.elapsed, 1);
@@ -2132,21 +2154,30 @@ function renderBeastStorage(body) {
   if (p) {
     const ph = phenotype(p.genome),
       active = state.expedition?.activeId === p.id;
-    body.innerHTML = `<button type="button" class="bx-back">‹ 全部御獸</button><div class="bx-detail"><canvas width="320" height="220"></canvas><div class="bx-info"><h3>${esc(p.name)}<small>第 ${p.generation} 代</small></h3><p class="bx-stats"><span>羈絆 <b>${Math.round(p.bond || 0)}</b></span><span>體力 <b>${Math.round(p.health ?? 100)}</b></span><span>精力 <b>${Math.round(p.stamina ?? 100)}</b></span></p><div class="gene-chips">${describeGenes(
+    body.innerHTML = `<button type="button" class="bx-back">‹ 全部御獸</button><div class="bx-detail"><canvas width="320" height="220"></canvas><div class="bx-info"><h3>${esc(p.name)}<small>第 ${p.generation} 代 · ${p.kind === 'creature' ? '生物' : '御獸'}${p.wildBeast ? ' · ' + esc(WILD_BEASTS[p.wildBeast].name) : ''}${p.evolved ? ' · 契闊' : ''}</small></h3><p class="bx-stats"><span>羈絆 <b>${Math.round(p.bond || 0)}</b></span><span>體力 <b>${Math.round(p.health ?? 100)}</b></span><span>精力 <b>${Math.round(p.stamina ?? 100)}</b></span></p><div class="gene-chips">${describeGenes(
       p.genome
     )
       .slice(0, 4)
       .map(t => `<span>${esc(t)}</span>`)
-      .join(
-        ''
-      )}</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small>${
+      .join('')}</div><div class="gene-chips bs">${
+      bsOf(p.genome)
+        .map(
+          id =>
+            `<span class="bs-chip" title="${esc(BS_GENES[id].desc)}">${BS_GENES[id].icon} ${esc(BS_GENES[id].name)}</span>`
+        )
+        .join('') || '<span class="bs-none">尚無比斯基因</span>'
+    }</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small>${
       p.memories?.length
         ? `<ul class="bx-memories">${p.memories
             .slice(0, 3)
             .map(m => `<li><small>第 ${m.day} 日</small> ${esc(m.text)}</li>`)
             .join('')}</ul>`
         : ''
-    }</div></div>${jobRow(p)}<div class="bx-actions"><button type="button" class="primary" data-bx="train">默契訓練 · 口糧 2 / 異晶 1</button><button type="button" data-bx="go">${active ? '讓牠回去休息' : '帶牠出發'}</button><button type="button" data-bx="rename">改名</button></div><form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
+    }</div></div>${jobRow(p)}<div class="bx-actions"><button type="button" class="primary" data-bx="train">默契訓練 · 口糧 2 / 異晶 1</button><button type="button" data-bx="go">${active ? '讓牠回去休息' : '帶牠出發'}</button>${
+      p.kind === 'creature'
+        ? `<button type="button" data-bx="evolve" ${canEvolve(p.genome) && state.contracts > 0 ? '' : 'disabled'}>契闊進化 · 契約書 1（基因 ${bsOf(p.genome).length}/${EVOLVE_GENES}）</button>`
+        : ''
+    }<button type="button" data-bx="rename">改名</button></div><form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
     const done = r => {
       toast(r.ok ? r.message : r.error, !r.ok);
       if (r.ok) {
@@ -2165,6 +2196,18 @@ function renderBeastStorage(body) {
       .querySelectorAll('[data-job]')
       .forEach(b => (b.onclick = () => done(setJob(state, p.id, b.dataset.job || null))));
     body.querySelector('[data-bx=go]').onclick = () => done(commandPet(state, p.id, active ? 'home' : 'follow'));
+    const ev = body.querySelector('[data-bx=evolve]');
+    if (ev)
+      ev.onclick = () => {
+        const r = evolve(state, p.id);
+        if (r.ok) {
+          haptic('discover');
+          audio.note(980, 0.5);
+          log(state, '契闊進化', `${p.name} 身上的突變在契約書的光裡連成了一體。牠成了御獸。`);
+          discover('契闊進化', `${p.name} 成為御獸，可以出戰、騎乘與潛水了。`);
+        }
+        done(r);
+      };
     const form = body.querySelector('.focus-rename');
     body.querySelector('[data-bx=rename]').onclick = () => {
       form.hidden = false;
@@ -2254,9 +2297,9 @@ function handleExploration(id) {
     updateUI();
   }
 }
-function beastAction(action) {
+function beastAction(action, heavy = false) {
   if (!running || paused || panel) return;
-  const r = action === 'ride' ? toggleRide(state) : action === 'dive' ? toggleDive(state) : attack(state);
+  const r = action === 'ride' ? toggleRide(state) : action === 'dive' ? toggleDive(state) : attack(state, heavy);
   toast(r.ok ? r.message : r.error, !r.ok);
   if (r.note) setTimeout(() => toast(r.note), 900);
   if (r.won) playScript('mightWin', openPact);
@@ -2411,22 +2454,33 @@ function openLakeEvent() {
     return;
   }
   const left = Math.max(0, Math.ceil(ev.until - state.elapsed));
-  modal('湖上事件 · 漂流商船', '「什麼都能換，只要你有。」', `<p>商船還會停留 ${left} 秒。每筆交易只能做一次。</p>`, [
-    ...ev.offers.map((o, i) => ({
-      label: `${o.done ? '✓ ' : ''}${offerLabel(o.give)} → ${offerLabel(o.get)}`,
-      action: () => {
-        const r = trade(state, i);
-        toast(r.ok ? r.message : r.error, !r.ok);
-        if (r.ok) {
-          save(true);
-          updateUI();
+  state.flags ??= {};
+  if (!state.flags.sawComputer) {
+    state.flags.sawComputer = true;
+    log(state, '內心獨白', COMPUTER_LINE);
+    showMonologue(COMPUTER_LINE);
+  }
+  modal(
+    '漂流商船 · 船上的電腦',
+    '螢幕上寫著：「什麼都能換，只要你有。」',
+    `<p>一台老電腦擺在艙裡，交易在螢幕上點選。商船還會停留 ${left} 秒，每筆交易只能做一次。小心船邊那隻骷髏御獸。</p>`,
+    [
+      ...ev.offers.map((o, i) => ({
+        label: `${o.done ? '✓ ' : ''}${offerLabel(o.give)} → ${offerLabel(o.get)}`,
+        action: () => {
+          const r = trade(state, i);
+          toast(r.ok ? r.message : r.error, !r.ok);
+          if (r.ok) {
+            save(true);
+            updateUI();
+          }
+          closeModal();
+          openLakeEvent();
         }
-        closeModal();
-        openLakeEvent();
-      }
-    })),
-    { label: '離開', action: closeModal }
-  ]);
+      })),
+      { label: '離開', action: closeModal }
+    ]
+  );
 }
 function crossMountains() {
   const r = canCross(
@@ -2512,6 +2566,42 @@ function routeExplore(id) {
   selectedTarget = site.id;
   toast('探索點已標記，登岸後走近按 E 調查。');
 }
+// what the HUD says about a wild 御獸 in front of you
+function beastText(w) {
+  const b = WILD_BEASTS[w.beast];
+  return b.friendly
+    ? `野生御獸 · ${b.name} · 友善 · 信任 ${Math.round(w.trust)}% · 餵口糧（按 E）· 契約 ${beastChance(w)}%`
+    : `野生御獸 · ${b.name} · 敵對 · 體力 ${Math.ceil(w.hp)} / ${w.maxHp} · 打到牠沒力再契約（${beastChance(w)}%）`;
+}
+// first sightings: a wild 御獸, or a creature carrying 比斯基因, each with the protagonist's reaction the first time
+function checkSightings() {
+  for (const w of state.wild) {
+    const d = Math.hypot(w.x - state.player.x, w.z - state.player.z);
+    if (d > 24) continue;
+    if (w.beast && recordBeast(state, w.beast)) {
+      const first = Object.keys(state.codex.beasts).length === 1;
+      if (first) {
+        log(state, '內心獨白', FIRST_BEAST_LINE);
+        showMonologue(FIRST_BEAST_LINE);
+      }
+      discover(
+        '野生御獸 · ' + WILD_BEASTS[w.beast].name,
+        WILD_BEASTS[w.beast].friendly ? '看起來不兇。試著餵牠口糧。' : '有攻擊性！打到牠沒力氣，再用契約書。'
+      );
+      save(true);
+    }
+    if (d < 16) noteGenes(w.genome);
+  }
+}
+function noteGenes(genome) {
+  const fresh = bsOf(genome).filter(id => recordGene(state, id));
+  if (!fresh.length) return;
+  if (Object.keys(state.codex.genes).length === fresh.length) {
+    log(state, '內心獨白', FIRST_GENE_LINE);
+    showMonologue(FIRST_GENE_LINE);
+  }
+  discover('比斯基因 · ' + fresh.map(id => BS_GENES[id].name).join('、'), '記進基因圖鑑了。三種以上就能契闊進化。');
+}
 function updateBeastHUD() {
   const p = activePet(state),
     e = state.expedition;
@@ -2529,6 +2619,22 @@ function updateBeastHUD() {
   const b = e.boss;
   $('boss-bar').hidden = b.defeated || state.inCave || Math.hypot(b.x - state.player.x, b.z - state.player.z) > 35;
   $('boss-bar').textContent = `深海守望者  ${Math.max(0, Math.ceil(b.hp))} / 480`;
+  if ($('boss-bar').hidden) {
+    // 0.22: the nearest hostile thing's strength while it is on you
+    const foe = state.wild
+      .filter(w => dangerous(w, state.elapsed) && Math.hypot(w.x - state.player.x, w.z - state.player.z) < 18)
+      .sort(
+        (x, y) =>
+          Math.hypot(x.x - state.player.x, x.z - state.player.z) -
+          Math.hypot(y.x - state.player.x, y.z - state.player.z)
+      )[0];
+    if (foe) {
+      $('boss-bar').hidden = false;
+      const name = foe.beast ? WILD_BEASTS[foe.beast].name : geneName(foe.genome);
+      $('boss-bar').textContent =
+        `${name}${frenzied(foe, state.elapsed) ? '（狂暴）' : ''}  ${Math.max(0, Math.ceil(foe.hp ?? 60))} / ${foe.maxHp || 60}`;
+    }
+  }
 }
 function appendConstruction(body, b) {
   body.insertAdjacentHTML(
@@ -3238,33 +3344,79 @@ function tapInFocus(e) {
   }
 }
 // The contract button / X key: the wild beast currently in reach.
+// What X does to the wild thing in front of you (0.22): a contract on a wild 御獸 or a creature with three BS
+// genes, the carry cage on a trusting creature.
+function tameAction(w) {
+  if (!w) return null;
+  if (w.beast) {
+    const b = WILD_BEASTS[w.beast],
+      p = beastChance(w);
+    if (!(state.contracts > 0)) return { kind: 'none', hint: '需要契約書。' };
+    return { kind: 'contract', chance: p, label: `${b.friendly ? '契約' : '強行契約'} ${p}%` };
+  }
+  if (canEvolve(w.genome)) {
+    if (!(state.contracts > 0)) return { kind: 'none', hint: '需要契約書。' };
+    const p = Math.round(w.trust);
+    return { kind: 'contract', chance: p, label: `${p < FRENZY.below ? '強行契約' : '契約'} ${p}%` };
+  }
+  if (w.trust >= CAGE_TRUST) {
+    if (!(state.resources.cage > 0)) return { kind: 'none', hint: '需要外出籠（工作桌製作）。' };
+    return { kind: 'cage', label: `外出籠 · 帶回船上` };
+  }
+  return { kind: 'none', hint: `信任 ${CAGE_TRUST}% 以上才能用外出籠。` };
+}
 function contractTarget() {
-  if (!running || !state.secret || !(state.contracts > 0)) return null;
+  if (!running || !state.secret) return null;
   const t = selectedTarget && state.wild.find(w => w.id === selectedTarget);
   const near = t && Math.hypot(t.x - state.player.x, t.z - state.player.z) <= 12 ? t : null;
   const w =
     near ||
     state.wild
-      .filter(w => w.trust > 0 && Math.hypot(w.x - state.player.x, w.z - state.player.z) <= 12)
+      .filter(
+        w => (w.trust > 0 || (w.beast && w.hostile)) && Math.hypot(w.x - state.player.x, w.z - state.player.z) <= 12
+      )
       .sort((a, b) => b.trust - a.trust)[0];
-  return w && w.trust > 0 && !frenzied(w, state.elapsed) ? w : null;
+  return w && (w.trust > 0 || w.beast) && !frenzied(w, state.elapsed) && tameAction(w)?.kind !== 'none' ? w : null;
 }
 function contractNearest() {
   const w = contractTarget();
-  if (w) performContract(w.id);
-  else if (!(state.contracts > 0)) toast('背包裡沒有契約書。到木筏的工作桌製作。', true);
-  else toast('附近沒有信任你的野生御獸。', true);
+  if (w) {
+    const act = tameAction(w);
+    if (act.kind === 'cage') performCage(w.id);
+    else performContract(w.id);
+    return;
+  }
+  const any = state.wild.find(
+    w => Math.hypot(w.x - state.player.x, w.z - state.player.z) <= 12 && (w.trust > 0 || w.beast)
+  );
+  toast(any ? tameAction(any)?.hint || '附近沒有能收服的對象。' : '附近沒有信任你的野生生物或御獸。', true);
 }
 function updateContractButton() {
   const w = contractTarget(),
     btn = $('contract-btn');
   btn.hidden = !w || !!panel || !!buildType || !!focus;
   if (w) {
-    const p = Math.round(w.trust);
-    btn.classList.toggle('danger', p < FRENZY.below);
+    const act = tameAction(w);
+    btn.classList.toggle('danger', act.kind === 'contract' && act.chance < FRENZY.below);
     btn.querySelector('span').innerHTML =
-      `${p < FRENZY.below ? '強行契約' : '契約'} ${p}%<small> · 剩 ${state.contracts}</small>`;
+      act.kind === 'cage'
+        ? `${act.label}<small> · 剩 ${state.resources.cage}</small>`
+        : `${act.label}<small> · 剩 ${state.contracts}</small>`;
   }
+}
+function performCage(id) {
+  if (!running || paused) return;
+  const r = cageCreature(state, id);
+  toast(r.ok ? `${r.tamed.name} 進了外出籠，跟你回船上了。` : r.error, !r.ok);
+  if (!r.ok) return;
+  selectedTarget = null;
+  haptic('discover');
+  audio.note(760, 0.3);
+  log(state, '外出籠', `${r.tamed.name} 鑽進了籠子。牠現在是船上的一員，還不是御獸。`);
+  discover('帶回船上', `${r.tamed.name} · 生物。到孵化台配種，出現 ${EVOLVE_GENES} 種比斯基因後就能契闊進化。`);
+  world.sync(state);
+  save(true);
+  updateUI();
 }
 // Use a contract scroll from the bag on the wild beast in front of you.
 function performContract(id) {
@@ -3626,7 +3778,15 @@ function renderPanel() {
   } else if (panel === 'journal' && journalTab !== 'log') {
     body.innerHTML =
       journalTabs() +
-      (journalTab === 'codex' ? codexHTML() : journalTab === 'rewards' ? rewardsHTML() : achievementsHTML());
+      (journalTab === 'codex'
+        ? codexHTML()
+        : journalTab === 'rewards'
+          ? rewardsHTML()
+          : journalTab === 'genes'
+            ? genesHTML()
+            : journalTab === 'beasts'
+              ? beastsHTML()
+              : achievementsHTML());
     body.querySelectorAll('[data-claim]').forEach(
       b =>
         (b.onclick = () => {
@@ -4560,6 +4720,8 @@ function journalTabs() {
     ['routes', '航線'],
     ['codex', `圖鑑 ${c.seen}/${c.total}`],
     ['achievements', `成就 ${achievementCount(state)}/${ACHIEVEMENTS.length}`],
+    ['genes', `基因 ${Object.keys(state.codex?.genes || {}).length}/48`],
+    ['beasts', `御獸 ${Object.keys(state.codex?.beasts || {}).length}/${BEAST_IDS.length}`],
     ['rewards', '收集獎勵']
   ]
     .map(
@@ -4633,6 +4795,36 @@ function codexHTML() {
         : `<div class="codex-tile unknown"><b>？</b><span>${esc(e.familyName)}</span></div>`
     )
     .join('')}</div>${page.bar}`;
+}
+// 基因圖鑑 (0.22): the forty-eight BS genes, known ones with their mark and effect.
+function genesHTML() {
+  const page = paged('genes', geneEntries(state), compactPanels() ? 8 : 16),
+    stat = g =>
+      [
+        g.atk && `攻 +${g.atk}`,
+        g.def && `防 +${g.def}`,
+        g.spd && `速 ${g.spd > 0 ? '+' : ''}${g.spd}`,
+        g.hp && `體 +${g.hp}`
+      ]
+        .filter(Boolean)
+        .join(' ');
+  return `<div class="reward-grid gene-grid">${page.items
+    .map(g =>
+      g.seen
+        ? `<div class="reward-tile ready"><b><span class="ico">${g.icon}</span> ${esc(g.name)}</b><small>${esc(g.desc)}</small><span>${esc(stat(g))} · 第 ${g.seen.day} 日</span></div>`
+        : `<div class="reward-tile"><b>？</b><small>尚未發現的比斯基因</small></div>`
+    )
+    .join('')}</div>${page.bar}`;
+}
+// 御獸圖鑑 (0.22): the twelve wild low-tier beasts.
+function beastsHTML() {
+  return `<div class="reward-grid gene-grid">${beastEntries(state)
+    .map(b =>
+      b.seen
+        ? `<div class="reward-tile ready"><b><span class="ico">${b.icon}</span> ${esc(b.name)}</b><small>${esc(b.lore)}</small><span>${b.friendly ? '友善 · 餵口糧' : '敵對 · 戰鬥後契約'} · 上限 Lv${b.cap} · 遇見 ${b.seen.count} 次</span></div>`
+        : `<div class="reward-tile"><b>？</b><small>${b.kind === 'merchant' ? '據說商船上養著什麼' : b.kind === 'sea' ? '湖裡的某種東西' : '岸上的某種東西'}</small></div>`
+    )
+    .join('')}</div>`;
 }
 // Collection rewards: one tile per milestone; done ones can be claimed, claimed ones show their title.
 function rewardsHTML() {
@@ -5333,26 +5525,40 @@ function moveWild(dt) {
     // a frenzied beast (failed forced contract) hunts you anywhere, 1.2x faster and harder-hitting
     if (
       fren ||
-      ((state.player.mode === 'boat' || state.expedition.mounted) &&
-        w.hostile &&
+      ((state.player.mode === 'boat' || state.expedition.mounted || (state.player.mode === 'foot' && ashore(w))) &&
+        dangerous(w, state.elapsed) &&
         d < 16 &&
         (!w.fleeUntil || state.elapsed > w.fleeUntil) &&
         !panel)
     ) {
       tx = state.player.x;
       tz = state.player.z;
-      speed = 2.2 * (fren ? FRENZY.power : 1);
-      if (d < (fren ? 3.2 : 2.2) && attackCooldown <= 0) {
-        const guardians = state.tamed.filter(p => phenotype(p.genome).ability === 1);
-        const defense = guardians.reduce((sum, p) => sum + phenotype(p.genome).armor / 100, 0);
-        const damage = Math.max(1, ((7 * (fren ? FRENZY.power : 1)) / (1 + defense)) * guardFactor(state));
-        state.vitals.health = Math.max(0, state.vitals.health - damage);
-        attackCooldown = 3;
-        $('damage-flash').style.opacity = '.5';
-        if (world.post) world.post.hurt = 1;
-        haptic('hit');
-        setTimeout(() => ($('damage-flash').style.opacity = 0), 180);
-        toast('危險生物靠近！按空白鍵驅離。', true);
+      speed = (w.beast ? 2.6 : 2.2) * (fren ? FRENZY.power : 1);
+      // 0.22: it rears up for a moment before it strikes — step out of reach and the bite misses
+      if (d < (fren ? 3.6 : 2.6) && attackCooldown <= 0 && !w.windup) {
+        w.windup = state.elapsed + 0.7;
+        attackCooldown = w.beast ? 2.6 : 3;
+      }
+      if (w.windup && state.elapsed >= w.windup) {
+        w.windup = 0;
+        w.struckAt = state.elapsed;
+        if (d < 3.8) {
+          const guardians = state.tamed.filter(p => phenotype(p.genome).ability === 1);
+          const defense = guardians.reduce((sum, p) => sum + phenotype(p.genome).armor / 100, 0);
+          const bite = (w.beast ? 11 : 7) * (fren ? FRENZY.power : 1);
+          const damage = Math.max(1, (bite / (1 + defense)) * guardFactor(state));
+          state.vitals.health = Math.max(0, state.vitals.health - damage);
+          $('damage-flash').style.opacity = '.5';
+          if (world.post) world.post.hurt = 1;
+          haptic('hit');
+          setTimeout(() => ($('damage-flash').style.opacity = 0), 180);
+          toast(
+            fren || w.beast
+              ? '被咬了！按 F 讓夥伴反擊（按住 F 重擊），牠抬頭時退開。'
+              : '危險生物靠近！按空白鍵驅離，或按 F 讓夥伴攻擊。',
+            true
+          );
+        } else toast('閃過了！');
       }
     }
     const dx = tx - w.x,
@@ -5591,7 +5797,12 @@ function setupEvents() {
   $('quest-hint').onclick = () => updateMonologue(true);
   $('ride-btn').onclick = () => beastAction('ride');
   $('dive-btn').onclick = () => beastAction('dive');
-  $('beast-attack').onclick = () => beastAction('attack');
+  $('beast-attack').onpointerdown = () => (attackHold = performance.now());
+  $('beast-attack').onpointerup = () => {
+    if (!attackHold) return;
+    beastAction('attack', performance.now() - attackHold > 650);
+    attackHold = 0;
+  };
 
   document.addEventListener('mousemove', e => {
     if (document.pointerLockElement === $('ocean') && world.firstPerson && running && !paused && !panel)
@@ -5732,7 +5943,7 @@ function setupEvents() {
     if (k === 'k') openPanel('adventure');
     if (k === 't') beastAction('ride');
     if (k === 'g') beastAction('dive');
-    if (k === 'f') beastAction('attack');
+    if (k === 'f') attackHold = performance.now();
     if (k === 'e') interact();
     if (k === 'x') contractNearest();
     if (k === ' ') actionKey();
@@ -5745,7 +5956,15 @@ function setupEvents() {
     if (k === 'v') toggleView();
     if (k === 'q') dock();
   });
-  addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+  addEventListener('keyup', e => {
+    const k = e.key.toLowerCase();
+    keys.delete(k);
+    // tap F for a quick strike, hold it for a heavy one
+    if (k === 'f' && attackHold) {
+      beastAction('attack', performance.now() - attackHold > 650);
+      attackHold = 0;
+    }
+  });
   addEventListener('blur', () => {
     keys.clear();
     joystick = { x: 0, y: 0 };
@@ -6164,7 +6383,11 @@ function frame(now) {
     for (const e of events) {
       if (e.type === 'hatch') {
         world.sync(state);
-        discover('新的生命誕生', `${e.pet.name} · 第 ${e.pet.generation} 代 · ${e.pet.mutations} 處突變`);
+        discover(
+          '新的生命誕生',
+          `${e.pet.name} · 第 ${e.pet.generation} 代 · ${e.pet.mutations} 處突變${e.pet.newGenes ? ' · 比斯基因 +' + e.pet.newGenes : ''}`
+        );
+        noteGenes(e.pet.genome);
         if (panel === 'creatures') renderPanel();
         save(true);
       }
@@ -6198,6 +6421,7 @@ function frame(now) {
       uiTimer = 0;
       updateUI();
       updateNearest();
+      checkSightings();
       tickRoute();
       drawMap();
       if (bigMapOpen) drawBigMap();

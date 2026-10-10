@@ -1,28 +1,29 @@
-import { expansionModels } from './expansion-models.js?v=0.21.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.21.0';
-import { normalizeHousing, penId } from './housing.js?v=0.21.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.21.0';
-export { makeCreature } from './creatures.js?v=0.21.0';
-import { makeIslands } from './island-models.js?v=0.21.0';
-import { facilityId } from './facilities.js?v=0.21.0';
+import { expansionModels } from './expansion-models.js?v=0.22.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.22.0';
+import { normalizeHousing, penId } from './housing.js?v=0.22.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.22.0';
+export { makeCreature } from './creatures.js?v=0.22.0';
+import { makeIslands } from './island-models.js?v=0.22.0';
+import { facilityId } from './facilities.js?v=0.22.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.21.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.21.0';
-import { makeLake } from './lake-models.js?v=0.21.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.21.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.21.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.21.0';
-import { PostFX } from './postfx.js?v=0.21.0';
-import { makeHuman, animateHuman } from './human.js?v=0.21.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.21.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.21.0';
-import { buildError } from './rules.js?v=0.21.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.21.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.21.0';
-import { CABIN, FLOORS, POOL_SLOTS, GARDEN_SLOTS } from './cabin.js?v=0.21.0';
-import { makeCabin } from './cabin-models.js?v=0.21.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.21.0';
-import { dayPhase } from './clock.js?v=0.21.0';
+import { phenotype, seeded } from './genetics.js?v=0.22.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.22.0';
+import { makeLake } from './lake-models.js?v=0.22.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.22.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.22.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.22.0';
+import { PostFX } from './postfx.js?v=0.22.0';
+import { makeHuman, animateHuman } from './human.js?v=0.22.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.22.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.22.0';
+import { buildError } from './rules.js?v=0.22.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.22.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.22.0';
+import { CABIN, FLOORS, POOL_SLOTS, GARDEN_SLOTS } from './cabin.js?v=0.22.0';
+import { makeCabin } from './cabin-models.js?v=0.22.0';
+import { applyGeneMarks, beastHalo, animateMarks } from './bs-models.js?v=0.22.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.22.0';
+import { dayPhase } from './clock.js?v=0.22.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -987,9 +988,15 @@ export class OceanWorld {
       m.rotation.y = l.spin;
       return m;
     });
-    syncMap(s.wild, this.wildMeshes, c => makeCreature(c.genome));
+    syncMap(s.wild, this.wildMeshes, c => {
+      const m = makeCreature(c.genome);
+      applyGeneMarks(m, c.genome);
+      if (c.beast) beastHalo(m);
+      return m;
+    });
     syncMap(s.tamed, this.petMeshes, c => {
       const m = makeCreature(c.genome);
+      applyGeneMarks(m, c.genome);
       m.userData.petId = c.id;
       m.scale.multiplyScalar(0.22);
       return m;
@@ -1287,7 +1294,15 @@ export class OceanWorld {
           m.rotation.x = ud.dip * 0.35;
         }
         m.rotation.y = c.heading || 0;
+        // 0.22: a hostile thing rears up before it strikes, then lunges at you
+        if (c.windup && c.windup > s.elapsed) m.rotation.x -= 0.45 * (1 - Math.min(1, (c.windup - s.elapsed) / 0.7));
+        if (c.struckAt !== undefined && s.elapsed - c.struckAt < 0.3) {
+          const k = Math.sin(((s.elapsed - c.struckAt) / 0.3) * Math.PI) * 1.4;
+          m.position.x += Math.sin(c.heading || 0) * k;
+          m.position.z += Math.cos(c.heading || 0) * k;
+        }
         this.animateCreature(m, ud.swim);
+        animateMarks(m, t);
       }
     }
     const pools = new Map(s.buildings.filter(b => b.type === 'pen' && !b.stowed).map(b => [penId(b), b])),
@@ -1325,6 +1340,22 @@ export class OceanWorld {
         m.position.lerp(target, 1 - Math.exp(-dt * 3));
         if (m.position.distanceTo(target) > 15) m.position.copy(target);
         m.rotation.y = s.player.heading;
+        // 0.22: the partner lunges at what it strikes, and the hit sparks
+        const lg = s.expedition.lunge;
+        if (lg && lg.until > s.elapsed && !riding) {
+          const k = Math.sin((1 - (lg.until - s.elapsed) / 0.3) * Math.PI) * (lg.heavy ? 0.7 : 0.45);
+          m.position.x += (lg.x - m.position.x) * k;
+          m.position.z += (lg.z - m.position.z) * k;
+          m.rotation.y = Math.atan2(lg.x - s.player.x, lg.z - s.player.z);
+        }
+        const hit = s.expedition.hitAt;
+        if (!this.hitSpark) this.hitSpark = halo(this.scene, 0xffe08a, 0, 0, 0, 3);
+        this.hitSpark.visible = !!hit && s.elapsed - hit.at < 0.25;
+        if (this.hitSpark.visible) {
+          this.hitSpark.position.set(hit.x, 1.2 + (s.expedition.diving ? this.diveY : 0), hit.z);
+          this.hitSpark.material.opacity = 0.9 * (1 - (s.elapsed - hit.at) / 0.25);
+        }
+        animateMarks(m, t);
         // under water the beast noses down or up with the direction you swim
         m.rotation.x += ((diving ? -(this.diveDir || 0) * 0.55 : 0) - m.rotation.x) * Math.min(1, dt * 4);
         this.animateCreature(m, t);

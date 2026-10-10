@@ -392,3 +392,17 @@
 .decor-grid .reward-tile small {
   color: #8aa39f;
 }
+
+/* 0.22: BS gene chips */
+.gene-chips.bs .bs-chip {
+  background: #2a2140;
+  color: #d9c9ff;
+  border: 1px solid #5a4a8a;
+}
+.gene-chips.bs .bs-none {
+  color: #7f8f8c;
+  font-size: 11px;
+}
+.gene-grid .reward-tile small {
+  color: #9fb7b3;
+}

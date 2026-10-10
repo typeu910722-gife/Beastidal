@@ -115,6 +115,7 @@ test('Hidden branch can tame two founders, breed a hatchling, and breed a next g
     assert.ok(craftContract(s, table).ok);
     s.player.x = w.x;
     s.player.z = w.z;
+    w.genome.bs = ['fire', 'lightning', 'hardbody']; // 0.22: a creature needs three BS genes to be bound
     assert.ok(contract(s, id, () => 0.5).ok);
   }
   assert.equal(s.tamed.length, 2);

@@ -1,16 +1,18 @@
-import { phenotype, clamp } from './genetics.js?v=0.21.0';
-import { NODES, harvest } from './islands.js?v=0.21.0';
-import { restPlace } from './ship.js?v=0.21.0';
-import { dayOf, dayPhase } from './clock.js?v=0.21.0';
-import { remember, rememberFirst } from './memories.js?v=0.21.0';
-import { spend, give, stow } from './bag.js?v=0.21.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.21.0';
-import { islandAt } from './islands.js?v=0.21.0';
-import { hasPerk } from './codex.js?v=0.21.0';
-import { tally } from './stats.js?v=0.21.0';
-import { rollDrops } from './species.js?v=0.21.0';
-import { ITEM_NAMES } from './items.js?v=0.21.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.21.0';
+import { phenotype, clamp } from './genetics.js?v=0.22.0';
+import { NODES, harvest } from './islands.js?v=0.22.0';
+import { restPlace } from './ship.js?v=0.22.0';
+import { dayOf, dayPhase } from './clock.js?v=0.22.0';
+import { remember, rememberFirst } from './memories.js?v=0.22.0';
+import { spend, give, stow } from './bag.js?v=0.22.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.22.0';
+import { islandAt } from './islands.js?v=0.22.0';
+import { hasPerk } from './codex.js?v=0.22.0';
+import { tally } from './stats.js?v=0.22.0';
+import { rollDrops } from './species.js?v=0.22.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.22.0';
+import { WILD_BEASTS } from './beasts.js?v=0.22.0';
+import { ITEM_NAMES } from './items.js?v=0.22.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.22.0';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
 // the 深淵潛行者 collection perk lengthens every dive
@@ -127,6 +129,7 @@ export function commandPet(s, id, order = 'follow') {
     s.expedition.activeId = null;
     return { ok: true, message: '夥伴回去休息了。' };
   }
+  if (p.kind === 'creature') return fail('牠還只是生物，不能出戰。在孵化台配種出 3 種比斯基因，契闊進化後才能帶出去。');
   if (!['follow', 'gather', 'guard'].includes(order)) return fail('未知指令。');
   if (p.bond < (order === 'guard' ? 30 : 15))
     return fail(order === 'guard' ? '羈絆 30 才能協戰。' : '羈絆 15 才願意跟隨與採集。');
@@ -238,13 +241,18 @@ export const dropText = d =>
   Object.entries(d || {})
     .map(([k, v]) => `${ITEM_NAMES[k] || k} +${v}`)
     .join('、');
-export function attack(s) {
+// A thing counts as dangerous when it is hostile or in a frenzy (a failed contract); nothing frenzied can be repelled.
+export const dangerous = (w, elapsed) => !!w.hostile || (w.frenzyUntil || 0) > elapsed;
+// 0.22: a quick strike (tap F) or a heavy one (hold F): more damage, more stamina, a longer recovery.
+export function attack(s, heavy = false) {
   normalizeExpansion(s);
   const e = s.expedition,
     p = activePet(s);
   if (!p || p.bond < 30) return fail('需要羈絆 30 的出戰夥伴。');
-  if (p.health < 15 || p.stamina < 6) return fail('夥伴已疲累，請回池休息。');
-  if (s.elapsed - p.lastAttack < 3) return fail('攻擊恢復中。');
+  if (p.kind === 'creature') return fail('牠還只是生物，還不能出戰。配種出比斯基因後契闊進化，才能戰鬥。');
+  if (p.health < 15 || p.stamina < (heavy ? 12 : 6)) return fail('夥伴已疲累，請回池休息。');
+  if (s.elapsed - p.lastAttack < (p.lastHeavy ? 3.4 : 2)) return fail('攻擊恢復中。');
+  p.lastHeavy = heavy;
   const b = e.boss;
   // the trial of might: while the duel is on, your partner fights 嘯岳
   if (duelActive(s) && nearBeast(s, 17)) {
@@ -258,17 +266,25 @@ export function attack(s) {
     !b.defeated && Math.hypot(s.player.x - b.x, s.player.z - b.z) < 17
       ? b
       : s.wild
-          .filter(w => w.hostile && Math.hypot(w.x - s.player.x, w.z - s.player.z) < 14)
+          .filter(w => dangerous(w, s.elapsed) && Math.hypot(w.x - s.player.x, w.z - s.player.z) < 14)
           .sort(
             (a, b) => Math.hypot(a.x - s.player.x, a.z - s.player.z) - Math.hypot(b.x - s.player.x, b.z - s.player.z)
           )[0];
   if (!target) return fail('附近沒有可攻擊的敵對生物。');
-  p.stamina -= 6;
+  p.stamina -= heavy ? 12 : 6;
   p.lastAttack = s.elapsed;
   const ph = phenotype(p.genome),
-    damage = Math.round(8 + ph.armor * 0.07 + ph.speed * 0.06 + (p.awakened ? 12 : 0) + (p.ancient ? 20 : 0));
+    mine = geneStats(bsOf(p.genome)),
+    theirs = geneStats(bsOf(target.genome));
+  let damage = Math.round(
+    (8 + ph.armor * 0.07 + ph.speed * 0.06 + mine.atk + (p.awakened ? 12 : 0) + (p.ancient ? 20 : 0)) *
+      (heavy ? 1.8 : 1)
+  );
+  damage = Math.max(1, Math.round(damage * Math.max(0.4, 1 - theirs.def / 60)));
   target.hp = (target.hp ?? 60) - damage;
   e.attackFlashUntil = s.elapsed + 0.25;
+  e.lunge = { x: target.x, z: target.z, until: s.elapsed + 0.3, heavy };
+  e.hitAt = { x: target.x, z: target.z, at: s.elapsed };
   if (target.hp <= 0) {
     if (target === b) {
       b.defeated = true;
@@ -282,9 +298,10 @@ export function attack(s) {
         text: '我們並肩度過了風浪。守望者留下的契印回應了夥伴的光。'
       });
     } else {
-      tally(s, 'kill');
+      tally(s, target.beast ? 'beastkill' : 'kill');
       s.wild = s.wild.filter(w => w !== target);
       e.lastDrops = rollDrops(phenotype(target.genome));
+      if (target.beast) e.lastDrops.crystal = (e.lastDrops.crystal || 0) + 3;
       reward(s, e.lastDrops);
       p.bond = Math.min(100, p.bond + 1);
     }
@@ -297,7 +314,10 @@ export function attack(s) {
       note: target === b ? e.boneNote : null
     };
   }
-  return { ok: true, message: `夥伴造成 ${damage} 傷害；敵人體力 ${Math.ceil(target.hp)}。` };
+  return {
+    ok: true,
+    message: `${heavy ? '重擊' : '攻擊'}造成 ${damage} 傷害；${target.beast ? WILD_BEASTS[target.beast].name : '敵人'}體力 ${Math.ceil(target.hp)}${target.maxHp ? ' / ' + target.maxHp : ''}。`
+  };
 }
 export function awaken(s, id) {
   normalizeExpansion(s);

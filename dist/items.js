@@ -54,7 +54,8 @@ export const ITEMS = {
   glass: { name: '玻璃', glyph: '🔲', cat: 'craft', note: '晶粉燒成的透明板。' },
   crystaldust: { name: '晶粉', glyph: '✨', cat: 'craft', note: '異晶磨成的粉，微微發光。' },
   torch: { name: '火把', glyph: '🔥', cat: 'craft', note: '獸脂浸過的木棒。' },
-  lantern: { name: '提燈', glyph: '🏮', cat: 'craft', note: '幽光囊做芯的燈，照亮船艙。' }
+  lantern: { name: '提燈', glyph: '🏮', cat: 'craft', note: '幽光囊做芯的燈，照亮船艙。' },
+  cage: { name: '外出籠', glyph: '🧺', cat: 'craft', note: '帶信任你的野生生物回船上的籠子（信任 50% 以上）。' }
 };
 export const ITEM_KEYS = Object.keys(ITEMS);
 export const BASE_RESOURCES = ['wood', 'metal', 'fiber', 'crystal', 'food', 'water', 'bait'];
@@ -76,7 +77,8 @@ export const CRAFTS = {
   crystaldust: { cost: { crystal: 1 }, n: 3 },
   glass: { cost: { crystaldust: 1, metal: 1 }, n: 1 },
   torch: { cost: { wood: 1, fat: 1 }, n: 2 },
-  lantern: { cost: { glass: 1, metal: 2, glowsac: 1 }, n: 1 }
+  lantern: { cost: { glass: 1, metal: 2, glowsac: 1 }, n: 1 },
+  cage: { cost: { metal: 6, fiber: 4 }, n: 1 }
 };
 export const costLabel = cost =>
   Object.entries(cost)

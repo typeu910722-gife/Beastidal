@@ -2,12 +2,14 @@
 // few rare ones found nowhere else. Creatures spawn where the player is heading, keep a modest density, and
 // drift away again when left far behind. Sea and deep species roam the water; land species and plant mutants
 // live on the islands and along the foot of the mountains.
-import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded, familyOf } from './genetics.js?v=0.21.0';
-import { ISLANDS, onIsland, islandAt } from './islands.js?v=0.21.0';
-import { walkable, landNear, waterNear, groundAt } from './lake.js?v=0.21.0';
-import { stepFlee, turnToward } from './physics.js?v=0.21.0';
-import { ZONES, pickSpecies } from './species.js?v=0.21.0';
-import { rollTame } from './taming.js?v=0.21.0';
+import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded, familyOf } from './genetics.js?v=0.22.0';
+import { ISLANDS, onIsland, islandAt } from './islands.js?v=0.22.0';
+import { walkable, landNear, waterNear, groundAt } from './lake.js?v=0.22.0';
+import { stepFlee, turnToward } from './physics.js?v=0.22.0';
+import { ZONES, pickSpecies } from './species.js?v=0.22.0';
+import { rollTame } from './taming.js?v=0.22.0';
+import { makeWildBeast, beastsFor, BEAST_SPAWN_P } from './beasts.js?v=0.22.0';
+import { addRandomGene } from './bsgenes.js?v=0.22.0';
 
 export const WILD_CAP = 40;
 export const DESPAWN_RANGE = 260;
@@ -24,6 +26,8 @@ export function seaGenome(x, z, r = Math.random) {
 function makeWild(s, zone, sp, x, z, r) {
   const genome = makeGenome(Math.floor(r() * 1e9), sp.form, sp.family, sp.strain),
     deep = sp.family === 'deep';
+  // a rare one sometimes already carries a 比斯基因
+  if (sp.rare && r() < 0.5) addRandomGene(genome, r, sp.family);
   const w = {
     id: `w-${zone.id}-${Math.floor(r() * 1e9).toString(36)}`,
     zone: zone.id,
@@ -94,6 +98,29 @@ export function spawnWild(s, r = Math.random) {
   if (!at) return null;
   // never right under the player's nose
   if (dist(at, s.player) < 14) return null;
+  // 0.22: now and then a zone turns up a wild low-tier 御獸 instead of a creature
+  const kinds = beastsFor(zone.kind);
+  if (kinds.length && r() < BEAST_SPAWN_P && !s.wild.some(w => w.beast && w.zone === zone.id)) {
+    const b = makeWildBeast(kinds[Math.floor(r() * kinds.length)], r),
+      w = {
+        ...b,
+        id: `b-${zone.id}-${Math.floor(r() * 1e9).toString(36)}`,
+        zone: zone.id,
+        x: at.x,
+        z: at.z,
+        homeX: at.x,
+        homeZ: at.z,
+        heading: r() * 6.28,
+        phase: r() * 6,
+        tame: false
+      };
+    if (zone.kind === 'land') {
+      if (zone.island) w.island = zone.island;
+      else w.land = true;
+    }
+    s.wild.push(w);
+    return w;
+  }
   const w = makeWild(s, zone, pickSpecies(zone, r), at.x, at.z, r);
   s.wild.push(w);
   return w;

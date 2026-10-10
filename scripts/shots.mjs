@@ -84,6 +84,14 @@ const SPOTS = [
   [
     '23-codex',
     `document.querySelectorAll('#modal-shade').forEach(e=>e.hidden=true);Object.assign(s.player,{mode:'boat',x:9,z:12});w.firstPerson=false;w.sync(s);s.codex={seen:{},tamed:{},claimed:[]};for(const sp of G.allSpecies().slice(0,20))s.codex.seen[sp.id]={day:1,count:1,genome:G.makeGenome(sp.form*7+sp.strain*3+1,sp.form,sp.family,sp.strain)};B.openPanel('journal');document.querySelector('[data-journal-tab=codex]')?.click();`
+  ],
+  [
+    '24-beast',
+    `B.closePanel();s.lakeEvent=null;Object.assign(s.player,{mode:'boat',x:9,z:12});w.firstPerson=false;const gb=G.makeGenome(77,1,'sea',3);gb.bs=['lightning','bladefin'];gb.temper=[230,230];s.wild.push({id:'shot-beast',beast:'stormray',genome:gb,hp:80,maxHp:80,hostile:true,trust:0,feeds:0,x:14,z:16,homeX:14,homeZ:16,heading:2.2,phase:0});const gc=G.makeGenome(78,0,'sea',1);gc.bs=['fire','hardbody','whiptail'];s.wild.push({id:'shot-gene',genome:gc,hp:60,hostile:false,trust:30,feeds:1,x:5,z:17,homeX:5,homeZ:17,heading:1,phase:1});w.sync(s);w.distance=22;w.pitch=.42;w.yaw=2.6;`
+  ],
+  [
+    '25-genes',
+    `s.wild=s.wild.filter(v=>!String(v.id).startsWith('shot-'));w.sync(s);s.codex.genes={};for(const id of ['fire','lightning','hardbody','whiptail','finclaw','landgill','regen','crystalcore'])s.codex.genes[id]={day:1};s.codex.beasts={stormray:{day:1,count:2},gillskink:{day:1,count:1}};B.openPanel('journal');document.querySelector('[data-journal-tab=genes]')?.click();`
   ]
 ];
 try {

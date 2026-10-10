@@ -1,14 +1,18 @@
 // Creature codex: every species the player has seen up close, tamed or bred, with a sample genome for the portrait.
-import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.21.0';
-import { dayOf } from './clock.js?v=0.21.0';
+import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.22.0';
+import { dayOf } from './clock.js?v=0.22.0';
 
-import { LORE, habitatsOf } from './species.js?v=0.21.0';
+import { LORE, habitatsOf } from './species.js?v=0.22.0';
+import { BS_GENES, BS_IDS } from './bsgenes.js?v=0.22.0';
+import { WILD_BEASTS, BEAST_IDS } from './beasts.js?v=0.22.0';
 export { LORE };
 
 export function normalizeCodex(s) {
   s.codex ??= {};
   s.codex.seen ??= {};
   s.codex.tamed ??= {};
+  s.codex.genes ??= {};
+  s.codex.beasts ??= {};
   // 0.21: species ids gained a strain; old entries were the first strain of their form
   for (const book of [s.codex.seen, s.codex.tamed])
     for (const k of Object.keys(book))
@@ -65,6 +69,24 @@ export function codexEntries(s) {
   }));
 }
 
+// ---------- 比斯基因 and wild 御獸 (0.22) ----------
+export function recordGene(s, id) {
+  const c = normalizeCodex(s);
+  if (!BS_GENES[id] || c.genes[id]) return false;
+  c.genes[id] = { day: dayOf(s) };
+  return true;
+}
+export function recordBeast(s, id) {
+  const c = normalizeCodex(s);
+  if (!WILD_BEASTS[id]) return false;
+  const fresh = !c.beasts[id];
+  c.beasts[id] ??= { day: dayOf(s), count: 0 };
+  c.beasts[id].count++;
+  return fresh;
+}
+export const geneEntries = s => BS_IDS.map(id => ({ id, ...BS_GENES[id], seen: normalizeCodex(s).genes[id] || null }));
+export const beastEntries = s =>
+  BEAST_IDS.map(id => ({ id, ...WILD_BEASTS[id], seen: normalizeCodex(s).beasts[id] || null }));
 // ---------- collection rewards (0.18) ----------
 // Seeing and taming species pays off: supplies at first, then a title and a lasting perk per completed family.
 // a family counts as mastered once eight of its sixteen species are tamed

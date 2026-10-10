@@ -4,10 +4,11 @@
 //   異晶潮   the lake glows: crystal crates surface near you
 //   御獸遷徙 a herd of one species crosses the lake; calmer around people (easier to tame)
 //   湖心寶藏 a light marks a cache on the lakebed; dive to it
-import { waterNear, groundAt } from './lake.js?v=0.21.0';
-import { makeGenome, allSpecies } from './genetics.js?v=0.21.0';
-import { spend } from './bag.js?v=0.21.0';
-import { tally } from './stats.js?v=0.21.0';
+import { waterNear, groundAt } from './lake.js?v=0.22.0';
+import { makeGenome, allSpecies } from './genetics.js?v=0.22.0';
+import { spend } from './bag.js?v=0.22.0';
+import { tally } from './stats.js?v=0.22.0';
+import { makeWildBeast } from './beasts.js?v=0.22.0';
 
 export const EVENTS = {
   merchant: { name: '漂流商船', dur: 210, weight: 3, hint: '開船靠近，看看他帶了什麼。' },
@@ -56,6 +57,22 @@ export function startEvent(s, kind, rng = Math.random) {
       ...pool.splice(Math.floor(rng() * pool.length), 1)[0],
       done: false
     }));
+    // 0.22: the merchant's "watchdog" - a skeleton beast loose beside the boat
+    const b = makeWildBeast('skeleton', rng),
+      bx = at.x + 7,
+      bz = at.z + 5;
+    s.wild.push({
+      ...b,
+      id: ev.id + '-skel',
+      x: bx,
+      z: bz,
+      homeX: bx,
+      homeZ: bz,
+      heading: 0,
+      phase: rng() * 6,
+      event: ev.id,
+      tame: false
+    });
   }
   if (kind === 'tide')
     for (let i = 0; i < 6; i++) {

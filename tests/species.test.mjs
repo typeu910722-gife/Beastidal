@@ -90,9 +90,9 @@ test('Drops: each species leaves its family materials, rares add crystal', () =>
     for (let f = 0; f < 4; f++)
       for (const k of Object.keys(rollDrops(phenotype(makeGenome(1, f, fam, 1)), seq(0.1)))) assert.ok(ITEMS[k], k);
 });
-test('48 items with names and glyphs; the bag holds them all; the work table makes thirteen of them', () => {
-  assert.equal(ITEM_KEYS.length, 48);
-  assert.equal(Object.keys(CRAFTS).length, 13);
+test('49 items with names and glyphs; the bag holds them all; the work table makes thirteen of them', () => {
+  assert.equal(ITEM_KEYS.length, 49);
+  assert.equal(Object.keys(CRAFTS).length, 14);
   for (const k of ITEM_KEYS) assert.ok(RESOURCE_NAMES[k] && ITEMS[k].glyph, k);
   assert.ok(!CARRYABLE.includes('contract'));
   const s = normalizeBag(createState(4));

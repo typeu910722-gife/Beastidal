@@ -72,6 +72,7 @@ test('Taming: feedings cost 1, 3, 5 … bait, add 8–30 % trust, and are certai
   Object.assign(s.player, { mode: 'foot', x: 0.5, z: 0.5, level: 0 });
   assert.ok(placeBuilding(s, 'table', 0, 0).ok);
   const table = s.buildings.find(b => b.type === 'table');
+  w.genome.bs = ['fire', 'lightning', 'hardbody']; // 0.22: three BS genes make it contractable
   assert.equal(contract(s, w.id).ok, false, 'no scroll yet');
   const fiber = s.resources.fiber;
   assert.ok(craftContract(s, table).ok);
@@ -84,9 +85,10 @@ test('Taming: feedings cost 1, 3, 5 … bait, add 8–30 % trust, and are certai
   assert.equal(s.contracts, 0);
   assert.ok(s.tamed.some(p => p.id === w.id) && !s.wild.includes(w));
 });
-test('Forcing a low-trust contract can send the beast into a frenzy for 6–17 s', () => {
+test('Forcing a low-trust contract can send the beast into a frenzy for 10–20 s', () => {
   const s = ready(),
     w = s.wild[1];
+  w.genome.bs = ['fire', 'lightning', 'hardbody'];
   s.player.x = w.x;
   s.player.z = w.z;
   w.tame = false;
@@ -98,13 +100,14 @@ test('Forcing a low-trust contract can send the beast into a frenzy for 6–17 s
   const r = contract(s, w.id, () => rolls.shift());
   assert.equal(r.ok, false);
   assert.equal(s.contracts, 1, 'a failed attempt still uses the scroll');
-  assert.ok(r.frenzy && r.seconds >= 6 && r.seconds <= 17);
-  assert.ok(frenzied(w, s.elapsed) && !frenzied(w, s.elapsed + 18));
+  assert.ok(r.frenzy && r.seconds >= 10 && r.seconds <= 20);
+  assert.ok(frenzied(w, s.elapsed) && !frenzied(w, s.elapsed + 21));
   assert.equal(feed(s, w.id).ok, false, 'no feeding a frenzied beast');
   assert.equal(contract(s, w.id).ok, false, 'no contract with a frenzied beast');
   // above 60 % a failure only costs trust
   const v = s.wild[2];
   v.trust = 70;
+  v.genome.bs = ['fire', 'lightning', 'hardbody'];
   s.player.x = v.x;
   s.player.z = v.z;
   const q = contract(s, v.id, () => 0.99);
