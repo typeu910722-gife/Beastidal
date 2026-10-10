@@ -1,11 +1,12 @@
-import { phenotype, clamp } from './genetics.js?v=0.15.0';
-import { NODES, harvest } from './islands.js?v=0.15.0';
-import { restPlace } from './ship.js?v=0.15.0';
-import { dayOf, dayPhase } from './clock.js?v=0.15.0';
-import { remember, rememberFirst } from './memories.js?v=0.15.0';
-import { spend, give, stow } from './bag.js?v=0.15.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.15.0';
-import { islandAt } from './islands.js?v=0.15.0';
+import { phenotype, clamp } from './genetics.js?v=0.16.0';
+import { NODES, harvest } from './islands.js?v=0.16.0';
+import { restPlace } from './ship.js?v=0.16.0';
+import { dayOf, dayPhase } from './clock.js?v=0.16.0';
+import { remember, rememberFirst } from './memories.js?v=0.16.0';
+import { spend, give, stow } from './bag.js?v=0.16.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.16.0';
+import { islandAt } from './islands.js?v=0.16.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.16.0';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
 const at = (p, o) => landNear(p.x, p.z, o);
@@ -41,7 +42,11 @@ export const EXPLORE = [
     kind: 'deep',
     deep: true,
     rewards: { crystal: 6, metal: 4 }
-  }
+  },
+  // 嘯岳之契 (story.js): the sealed slab, and the two keys you can reach by exploring
+  { id: 'pact-seal', name: '封印石板', x: SEAL_AT.x, z: SEAL_AT.z, kind: 'seal', deep: true, story: true },
+  { id: 'key-tide', name: '潮紋祭台', x: TIDE_AT.x, z: TIDE_AT.z, kind: 'relic', deep: true, story: true },
+  { id: 'key-stone', name: '岩紋石壁', x: CAVE.x - 4, z: CAVE.z - 1, kind: 'relic', cave: true, story: true }
 ];
 export const STAGES = [
   [0, '初識'],
@@ -184,6 +189,7 @@ export function explore(s, id) {
   if (Math.hypot(site.x - s.player.x, site.z - s.player.z) > 4.5) return fail('請靠近探索點至 4 公尺內。');
   if (site.deep && !e.diving) return fail('此遺物沉在湖底遺城，需要騎乘御獸潛水。');
   if (!site.deep && s.player.mode !== 'foot') return fail('請先登岸。');
+  if (site.story) return storyExplore(s, site);
   if (site.kind === 'entrance') {
     s.caveReturn = { x: s.player.x, z: s.player.z };
     s.inCave = true;
@@ -224,6 +230,14 @@ export function attack(s) {
   if (p.health < 15 || p.stamina < 6) return fail('夥伴已疲累，請回池休息。');
   if (s.elapsed - p.lastAttack < 3) return fail('攻擊恢復中。');
   const b = e.boss;
+  // the trial of might: while the duel is on, your partner fights 嘯岳
+  if (duelActive(s) && nearBeast(s, 17)) {
+    p.stamina -= 6;
+    p.lastAttack = s.elapsed;
+    e.attackFlashUntil = s.elapsed + 0.25;
+    const ph = phenotype(p.genome);
+    return hitBeast(s, Math.round(8 + ph.armor * 0.07 + ph.speed * 0.06 + (p.awakened ? 12 : 0)));
+  }
   let target =
     !b.defeated && Math.hypot(s.player.x - b.x, s.player.z - b.z) < 17
       ? b
@@ -236,12 +250,13 @@ export function attack(s) {
   p.stamina -= 6;
   p.lastAttack = s.elapsed;
   const ph = phenotype(p.genome),
-    damage = Math.round(8 + ph.armor * 0.07 + ph.speed * 0.06 + (p.awakened ? 12 : 0));
+    damage = Math.round(8 + ph.armor * 0.07 + ph.speed * 0.06 + (p.awakened ? 12 : 0) + (p.ancient ? 20 : 0));
   target.hp = (target.hp ?? 60) - damage;
   e.attackFlashUntil = s.elapsed + 0.25;
   if (target.hp <= 0) {
     if (target === b) {
       b.defeated = true;
+      e.boneNote = onWatcherDown(s);
       remember(s, p, '並肩擊退了深海守望者。');
       reward(s, { crystal: 12, metal: 15, food: 5 });
       p.bond = Math.min(100, p.bond + 6);
@@ -255,7 +270,11 @@ export function attack(s) {
       reward(s, { crystal: 1, food: 2 });
       p.bond = Math.min(100, p.bond + 1);
     }
-    return { ok: true, message: target === b ? '擊退巨型海怪！異晶 +12、金屬 +15、口糧 +5。' : '擊退敵對生物。' };
+    return {
+      ok: true,
+      message: target === b ? '擊退巨型海怪！異晶 +12、金屬 +15、口糧 +5。' : '擊退敵對生物。',
+      note: target === b ? e.boneNote : null
+    };
   }
   return { ok: true, message: `夥伴造成 ${damage} 傷害；敵人體力 ${Math.ceil(target.hp)}。` };
 }

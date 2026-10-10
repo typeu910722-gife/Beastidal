@@ -2,8 +2,11 @@
 // Ported from the author's map; positions are scaled by HS, structures by their own factors so they read at
 // human scale next to the raft.
 import * as T from './vendor/three.module.min.js';
-import { HS, ORIGIN, groundAt } from './lake.js?v=0.15.0';
-import { FINE, COARSE, Q } from './lake-data.js?v=0.15.0';
+import { HS, ORIGIN, groundAt } from './lake.js?v=0.16.0';
+import { FINE, COARSE, Q } from './lake-data.js?v=0.16.0';
+import { ISLANDS, NODES } from './islands.js?v=0.16.0';
+import { EXPLORE } from './expansion.js?v=0.16.0';
+import { BEAST_HOME } from './story.js?v=0.16.0';
 
 // ---------- the sketch's noise (map units) ----------
 function hash(x, z) {
@@ -344,6 +347,26 @@ export function makeLake() {
   }
   const SX = 240,
     SZ = 150;
+  // open ground around places people walk to: no tree grows through a ruin, a claim stone or a harvest spot
+  const clearings = [
+    ...ISLANDS.map(i => [i.x, i.z, 14]),
+    ...NODES.map(n => [n.x, n.z, 5]),
+    ...EXPLORE.filter(e => !e.cave && !e.deep).map(e => [e.x, e.z, 6]),
+    [BEAST_HOME.x, BEAST_HOME.z, 20],
+    ...[
+      [12, -21],
+      [-7, -19],
+      [-13, -13],
+      [-10, -22],
+      [5, -11],
+      [2, -14],
+      [5, -15],
+      [-3, -25],
+      [16, -13]
+    ].map(([mx, mz]) => [gx(mx), gz(mz), 9]),
+    [gx(-50), gz(-4), 34]
+  ];
+  const cleared = (x, z) => clearings.some(([cx, cz, r]) => (x - cx) ** 2 + (z - cz) ** 2 < r * r);
   for (let k = 0; k < 90000; k++) {
     const mx = (hash(k, 1.3) - 0.5) * SX,
       mz = (hash(k, 7.9) - 0.5) * SZ,
@@ -426,7 +449,7 @@ export function makeLake() {
       );
       continue;
     }
-    if (h < 2.3 || h > 44 || sl > 0.85) continue;
+    if (h < 2.3 || h > 44 || sl > 0.85 || cleared(gx(mx), gz(mz))) continue;
     const density = ss(0.85, 0.3, sl) * (0.25 + 0.9 * cluster) * (h < 30 ? 1 : ss(44, 30, h));
     if (r1 > density * 0.28) continue;
     const tilt = sl * 0.25 * (r2 - 0.5);

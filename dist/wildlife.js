@@ -1,9 +1,9 @@
 // Wild population across the four families (0.10): sea and deep species roam the water, a few land beasts live
 // on the islands, and plant mutants turn up rarely anywhere at sea.
-import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded } from './genetics.js?v=0.15.0';
-import { ISLANDS, onIsland } from './islands.js?v=0.15.0';
-import { walkable, landNear } from './lake.js?v=0.15.0';
-import { stepFlee, turnToward } from './physics.js?v=0.15.0';
+import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded } from './genetics.js?v=0.16.0';
+import { ISLANDS, onIsland } from './islands.js?v=0.16.0';
+import { walkable, landNear } from './lake.js?v=0.16.0';
+import { stepFlee, turnToward } from './physics.js?v=0.16.0';
 
 // Farther from the raft, deeper water: deep species become common past ~60 m.
 export function seaFamily(x, z, r = Math.random) {

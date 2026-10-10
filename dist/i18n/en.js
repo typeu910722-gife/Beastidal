@@ -1737,5 +1737,149 @@ export default {
   船屋與舊船: 'Boathouse and old hull',
   舊水門: 'Old Water Gate',
   珊瑚灘: 'Coral Shoals',
-  中央遺跡: 'Central Ruins'
+  中央遺跡: 'Central Ruins',
+  嘯岳之契: 'The Pact of Xiaoyue',
+  再次越嶺: 'Cross the mountains again',
+  請嘯岳帶你越過群山: 'Ask Xiaoyue to carry you over the mountains',
+  '湖底遺城 · 騎乘潛水': 'Sunken city on the lakebed · ride and dive',
+  封印石板: 'Sealed slab',
+  潮紋祭台: 'Tide-marked altar',
+  岩紋石壁: 'Stone-marked wall',
+  嘯岳: 'Xiaoyue',
+  '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開':
+    'Trial under way · press F to have your partner attack; step back when it winds up',
+  '遠古御獸 · 按 E 交談': 'Ancient beast · press E to talk',
+  交談: 'Talk',
+  繼續: 'Continue',
+  '嘯岳之契 · 封印石板': 'The Pact of Xiaoyue · Sealed slab',
+  '牙之王，眠於此門之下': 'The King of Fangs sleeps beneath this gate',
+  '「牙之王——嘯岳，眠於此門之下。以潮、岩、骨三鑰為鎖，以湖為牢。」':
+    '"The King of Fangs — Xiaoyue — sleeps beneath this gate. Three keys, of tide, stone and bone, are its lock; the lake is its prison."',
+  '「後來者，若你聽得懂野獸的語言，就別讓牠醒來。」':
+    '"You who come after: if you understand the tongue of beasts, do not let it wake."',
+  '最後一句的筆跡，和研究浮標裡的紀錄一模一樣。三個凹槽，靜靜等著。':
+    "The handwriting of that last line is exactly the same as in the research buoy's log. Three sockets wait in silence.",
+  記下石板的內容: 'Note down the inscription',
+  '主線 · 嘯岳之契': 'Main line · The Pact of Xiaoyue',
+  '潮之鑰 · 岩之鑰 · 骨之鑰': 'Tide Key · Stone Key · Bone Key',
+  取得: 'Obtained',
+  潮之鑰: 'Tide Key',
+  岩之鑰: 'Stone Key',
+  鑰匙: 'Key',
+  封印解除: 'The seal breaks',
+  '湖底傳來不屬於你的心跳。中央遺跡島上，有什麼正在醒來。':
+    'A heartbeat that is not yours rises from the lakebed. Something is waking on the Central Ruins Isle.',
+  '走近嘯岳再說話。': 'Walk up to Xiaoyue to speak.',
+  '消耗 1 份契約書與 {0} 異晶。': 'Uses 1 contract scroll and {0} crystal.',
+  '嘯岳 · 遠古御獸': 'Xiaoyue · Ancient beast',
+  '第一頭會說話的御獸，選擇了你。': 'The first beast that can speak has chosen you.',
+  再準備一下: 'Prepare a little more',
+  三個試煉: 'Three trials',
+  '嘯岳盯著你，等你證明自己。': 'Xiaoyue watches you, waiting for you to prove yourself.',
+  並肩: 'Side by side',
+  力量: 'Might',
+  誓言: 'Oath',
+  '你要牠成為你的什麼？': 'What do you want it to be to you?',
+  坐騎: 'A mount',
+  武器: 'A weapon',
+  夥伴: 'A partner',
+  '第一章 完 · 沉湖之誓': 'End of Chapter One · The Oath of the Sunken Lake',
+  '第二章 · 裂縫之外——敬請期待': 'Chapter Two · Beyond the Rift — coming soon',
+  '遠古御獸無法配對。': 'Ancient beasts cannot be bred.',
+  沉沒神殿的潮紋祭台: 'the tide-marked altar in the Sunken Temple',
+  異晶洞窟深處的岩紋石壁: 'the stone-marked wall deep in the crystal cave',
+  骨之鑰: 'Bone Key',
+  深海守望者的體內: 'inside the Deep Watcher',
+  '帶著一隻羈絆 60 以上的出戰夥伴站到嘯岳面前。': 'Stand before Xiaoyue with a deployed partner at bond 60 or more.',
+  '與夥伴一起和嘯岳交手，讓牠退後。牠蓄力時快退開。':
+    'Fight Xiaoyue together with your partner until it backs off. Step away when it winds up.',
+  '回答牠的問題：你要牠成為你的什麼？': 'Answer its question: what do you want it to be to you?',
+  '石板上刻著一頭長牙的巨獸。裝置翻譯了一部分：「牙之王——嘯岳，眠於此門之下。以潮、岩、骨三鑰為鎖，以湖為牢。後來者，若你聽得懂野獸的語言，就別讓牠醒來。」最後一句的筆跡，和研究浮標裡的紀錄一模一樣。':
+    'A long-fanged giant beast is carved into the slab. The device translates part of it: "The King of Fangs — Xiaoyue — sleeps beneath this gate. Three keys, of tide, stone and bone, are its lock; the lake is its prison. You who come after: if you understand the tongue of beasts, do not let it wake." The handwriting of that last line is exactly the same as in the research buoy\'s log.',
+  '石板上有三個凹槽……還有一段眼熟的筆跡。': 'Three sockets in the slab… and a familiar hand.',
+  '凹槽還空著：{0}。': 'Sockets still empty: {0}.',
+  '三枚鑰匙沒入凹槽。湖底傳來不屬於我的心跳。一道金光沿著湖底竄向中央遺跡島。':
+    'The three keys sink into their sockets. A heartbeat that is not mine rises from the lakebed. A golden light races along the bottom toward the Central Ruins Isle.',
+  '三枚鑰匙沒入凹槽——湖底傳來低沉的心跳。':
+    'The three keys sink into their sockets — a deep heartbeat rises from the lakebed.',
+  '封印已經解開了。': 'The seal is already broken.',
+  '這裡的鑰匙已經取走了。': 'The key here has already been taken.',
+  '祭台上有一個發光的凹槽形狀……你還不明白它的意思。':
+    'A glowing socket-shaped mark on the altar… you do not understand it yet.',
+  '觸碰潮之鑰的瞬間，眼前閃過一段不屬於你的記憶：人們在湖邊搬運巨石，一座座山在他們身後升起。——這些山，是人造的。':
+    'The moment you touch the Tide Key, a memory that is not yours flashes past: people hauling great stones by the lake, mountain after mountain rising behind them. — These mountains were made.',
+  '岩之鑰的記憶湧入：築山的人望著山外漆黑的天空，那裡有一道紫色的裂縫。「把湖圍起來，牠才能睡得安穩，裂縫也進不來。」':
+    'The Stone Key\'s memory floods in: the mountain-builders look out at a black sky beyond the peaks, split by a violet rift. "Wall the lake in, and it can sleep in peace — and the rift cannot get in."',
+  '取得{0}。{1}': 'Obtained {0}. {1}',
+  '什麼也沒有發生。': 'Nothing happens.',
+  '守望者沉下前，吐出一枚刻著獸牙的骨鑰。牠不是在守護寶藏——牠在守護某個存在的沉睡。':
+    "Before it sinks, the Watcher coughs up a bone key carved with a fang. It was not guarding treasure — it was guarding something's sleep.",
+  '守望者沉下前，吐出一枚刻著獸牙的骨片。這紋路……好像在湖底見過。':
+    'Before it sinks, the Watcher coughs up a shard of bone carved with a fang. That pattern… you may have seen it on the lakebed.',
+  '……又一個從裂縫那頭掉下來的人類。': '…Another human fallen through from the far side of the rift.',
+  '上一個也是。他叫自己「研究員」，帶著會發光的盒子，想用一張紙把我綁住。':
+    "So was the last one. He called himself 'the researcher', carried a glowing box, and tried to bind me with a sheet of paper.",
+  '他失敗了。湖替我收下了他。': 'He failed. The lake took him for me.',
+  你: 'You',
+  '……你知道我是怎麼來的？': '…You know how I got here?',
+  '你以為那頭巨大的鐵獸撞上你，是意外？裂縫在挑選聽得懂野獸的人。你們每一個，都是被選中的。':
+    'You think the great iron beast that struck you was an accident? The rift chooses those who can understand beasts. Every one of you was chosen.',
+  '我不服從弱者。想要我的牙，就證明三件事：並肩、力量、誓言。':
+    'I do not serve the weak. If you want my fangs, prove three things: side by side, might, and an oath.',
+  '你身邊那個小傢伙，眼神很穩。牠信你，比你信自己還多。——並肩，算你過了。':
+    'That little one at your side has steady eyes. It trusts you more than you trust yourself. — Side by side: you pass.',
+  '你一個人來？在這片湖上，一個人走不遠。帶著真正信任你的夥伴再來。':
+    'You come alone? No one gets far alone on this lake. Come back with a partner who truly trusts you.',
+  '讓我後退。牠壓低身子的時候，記得躲開。':
+    'Make me give ground. When it crouches low, remember to get out of the way.',
+  '……夠了。很久沒有誰能讓我後退一步。': '…Enough. It has been a long time since anyone made me take a step back.',
+  '還不夠。回去喘口氣，再來。': 'Not enough. Go catch your breath, then come again.',
+  '最後一個問題。告訴我，你要我成為你的什麼？': 'One last question. Tell me — what do you want me to be to you?',
+  '我不是你的船。': 'I am not your boat.',
+  '我的牙，不為別人的仇恨而長。': "My fangs did not grow for someone else's hatred.",
+  '……夥伴。很久沒有人這樣說了。': '…A partner. No one has said that in a long time.',
+  '好。拿出你的契約。這一次，不是綁住我——是我選擇你。':
+    'Good. Bring out your contract. This time it does not bind me — I choose you.',
+  '這座湖是牢，也是盾。山外沒有路……但我能越過去。':
+    'This lake is a prison, and a shield. There is no road beyond the mountains… but I can cross them.',
+  '等你準備好，帶我到湖岸的山腳下。我會讓你看看，那些人到底在擋什麼。':
+    'When you are ready, take me to the foot of the mountains on the shore. I will show you what those people were holding back.',
+  '嘯岳背起你，躍上山脊。風很冷，冷得像那天早上的雨。':
+    'Xiaoyue takes you on its back and leaps onto the ridge. The wind is cold, cold as the rain that morning.',
+  '山的另一側沒有海。只有一片被撕開的天空，紫色的裂縫從地平線一直延伸到頭頂。':
+    'There is no sea on the other side. Only a torn sky, the violet rift running from the horizon to straight overhead.',
+  '看清楚了嗎？築山的人不是要困住我們——是要把那東西擋在外面。':
+    'Do you see it now? The builders did not mean to trap us — they meant to keep that thing out.',
+  '研究員想要的不是我。他想要的是一條路。': 'The researcher never wanted me. He wanted a way through.',
+  '還不是時候。等你準備好了，我們再出發。': 'Not yet. When you are ready, we will set out.',
+  '力量的試煉已經通過了。': 'The trial of might is already passed.',
+  '需要一隻羈絆 30 以上的出戰夥伴一起應戰。': 'You need a deployed partner at bond 30 or more to fight alongside you.',
+  '嘯岳收起爪子，後退了一步。': 'Xiaoyue sheathes its claws and takes a step back.',
+  '命中嘯岳！還差 {0} 才能讓牠退後。': 'Hit Xiaoyue! {0} more to make it give ground.',
+  '嘯岳別過頭去。等 {0} 秒再問牠。': 'Xiaoyue turns its head away. Ask again in {0} s.',
+  '嘯岳已經與你締約了。': 'Xiaoyue is already bound to you.',
+  '三個試煉還沒全部通過。': 'Not all three trials are passed yet.',
+  '需要一份契約書。到工作桌製作。': 'You need a contract scroll. Make one at the work table.',
+  '締約需要 20 異晶，讓契約能承受遠古的力量。': 'The pact needs 20 crystal so the contract can bear an ancient power.',
+  '這一次，不是綁住牠。是牠選擇了我。牠是第一頭會說話的御獸。':
+    'This time it was not bound. It chose me. It is the first beast that can speak.',
+  '嘯岳成為你的御獸！': 'Xiaoyue is now your beast!',
+  '還沒有能越過群山的夥伴。': 'You have no partner that can cross the mountains yet.',
+  '先派出嘯岳。': 'Deploy Xiaoyue first.',
+  '帶嘯岳登上環湖的山腳（不是島嶼）。': 'Take Xiaoyue onto the foothills around the lake (not an island).',
+  '山外沒有海，只有被撕開的天空。築山的人不是要困住我們，而是要把裂縫擋在外面。第二章 · 裂縫之外——敬請期待。':
+    'Beyond the mountains there is no sea, only a torn sky. The builders did not mean to trap us, but to keep the rift out. Chapter Two · Beyond the Rift — coming soon.',
+  '（大拱門前……那塊石板在發光？）': '(In front of the Great Gate… is that slab glowing?)',
+  '你離開了戰場。嘯岳收起架勢。': 'You left the fight. Xiaoyue lowers its guard.',
+  '嘯岳壓低身子——快退開！': 'Xiaoyue crouches low — get back!',
+  '嘯岳的爪擊掃過！': "Xiaoyue's claws sweep through!",
+  '閃開了！': 'Dodged!',
+  '一枚刻著獸牙的骨片……湖底大拱門附近，好像有同樣的紋路。':
+    'A shard of bone carved with a fang… the same pattern seems to be near the Great Gate on the lakebed.',
+  解讀湖底大拱門前的封印石板: 'Read the sealed slab before the Great Gate on the lakebed',
+  把三枚鑰匙放回封印石板: 'Return the three keys to the sealed slab',
+  喚醒嘯岳: 'Wake Xiaoyue',
+  '試煉 · {0}：{1}': 'Trial · {0}: {1}',
+  '以契約書與 20 異晶締結契約': 'Seal the pact with a contract scroll and 20 crystal',
+  '帶嘯岳到環湖的山腳，越過群山': 'Take Xiaoyue to the foothills and cross the mountains'
 };

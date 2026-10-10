@@ -1,8 +1,8 @@
 import * as T from './vendor/three.module.min.js';
-import { EXPLORE, CAVE } from './expansion.js?v=0.15.0';
-import { makeCreature } from './creatures.js?v=0.15.0';
-import { makeGenome } from './genetics.js?v=0.15.0';
-import { groundAt } from './lake.js?v=0.15.0';
+import { EXPLORE, CAVE } from './expansion.js?v=0.16.0';
+import { makeCreature } from './creatures.js?v=0.16.0';
+import { makeGenome } from './genetics.js?v=0.16.0';
+import { groundAt } from './lake.js?v=0.16.0';
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.65, ...extra });
 function m(g, geo, c, x, y, z, s = [1, 1, 1], extra = {}) {
   const mesh = new T.Mesh(geo, mat(c, extra));
@@ -33,6 +33,36 @@ export function expansionModels(scene) {
         emissive: 0x174451,
         emissiveIntensity: 0.6
       });
+    } else if (p.kind === 'seal') {
+      // a broad slab carved with a long-toothed beast and three sockets
+      m(g, new T.BoxGeometry(5.5, 0.6, 3.2), 0x4c6e6a, 0, 0.3, 0);
+      m(g, new T.BoxGeometry(4.6, 3.2, 0.6), 0x5d7c79, 0, 2, -1);
+      for (let n = 0; n < 3; n++)
+        m(g, new T.TorusGeometry(0.38, 0.09, 8, 24), 0x9effe6, -1.4 + n * 1.4, 2.4, -0.68, [1, 1, 1], {
+          emissive: 0x4fd6b4,
+          emissiveIntensity: 1.3
+        });
+      for (let n = 0; n < 5; n++)
+        m(g, new T.BoxGeometry(3.4 - n * 0.4, 0.05, 0.05), 0xcfeee4, 0, 1 + n * 0.22, -0.68, [1, 1, 1], {
+          emissive: 0x7fbfae,
+          emissiveIntensity: 0.6
+        });
+    } else if (p.kind === 'relic') {
+      m(g, new T.CylinderGeometry(0.9, 1.1, 1.1, 8), 0x5a6f6c, 0, 0.55, 0);
+      const key = m(
+        g,
+        new T.TorusKnotGeometry(0.22, 0.06, 48, 8),
+        p.cave ? 0xb9a7ff : 0x8ff0ff,
+        0,
+        1.75,
+        0,
+        [1, 1, 1],
+        {
+          emissive: p.cave ? 0x7a62e0 : 0x3fc6d8,
+          emissiveIntensity: 1.5
+        }
+      );
+      key.userData.spin = true;
     } else if (p.kind === 'ruin') {
       m(g, new T.BoxGeometry(1.3, 2.5, 0.4), 0x5d7c79, 0, 1.25, 0);
       for (let n = 0; n < 6; n++)

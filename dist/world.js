@@ -1,24 +1,26 @@
-import { expansionModels } from './expansion-models.js?v=0.15.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.15.0';
-import { normalizeHousing, penId } from './housing.js?v=0.15.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.15.0';
-export { makeCreature } from './creatures.js?v=0.15.0';
-import { makeIslands } from './island-models.js?v=0.15.0';
-import { facilityId } from './facilities.js?v=0.15.0';
+import { expansionModels } from './expansion-models.js?v=0.16.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.16.0';
+import { normalizeHousing, penId } from './housing.js?v=0.16.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.16.0';
+export { makeCreature } from './creatures.js?v=0.16.0';
+import { makeIslands } from './island-models.js?v=0.16.0';
+import { facilityId } from './facilities.js?v=0.16.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.15.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.15.0';
-import { makeLake } from './lake-models.js?v=0.15.0';
-import { groundAt } from './lake.js?v=0.15.0';
-import { PostFX } from './postfx.js?v=0.15.0';
-import { makeHuman, animateHuman } from './human.js?v=0.15.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.15.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.15.0';
-import { buildError } from './rules.js?v=0.15.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.15.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.15.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.15.0';
-import { dayPhase } from './clock.js?v=0.15.0';
+import { phenotype, seeded } from './genetics.js?v=0.16.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.16.0';
+import { makeLake } from './lake-models.js?v=0.16.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.16.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.16.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.16.0';
+import { PostFX } from './postfx.js?v=0.16.0';
+import { makeHuman, animateHuman } from './human.js?v=0.16.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.16.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.16.0';
+import { buildError } from './rules.js?v=0.16.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.16.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.16.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.16.0';
+import { dayPhase } from './clock.js?v=0.16.0';
 const V = T.Vector3;
 const colors = {
   wood: 0x7a6049,
@@ -682,6 +684,20 @@ export class OceanWorld {
     this.makeSpray();
     this.lake = makeLake();
     this.scene.add(this.lake.group);
+    // 嘯岳: a stone statue sleeping on the Great Gate's sill, and the living beast once it wakes
+    this.pactStatue = makeSabertooth({ stone: true });
+    this.pactStatue.scale.setScalar(2.6);
+    this.pactStatue.position.set(
+      LANDMARKS.greatGate.x,
+      groundAt(LANDMARKS.greatGate.x, LANDMARKS.greatGate.z) + 1.2,
+      LANDMARKS.greatGate.z
+    );
+    this.pactStatue.rotation.y = Math.PI;
+    this.scene.add(this.pactStatue);
+    this.pactBeast = makeSabertooth();
+    this.pactBeast.scale.setScalar(1.7);
+    this.pactBeast.visible = false;
+    this.scene.add(this.pactBeast);
     this.islandModels = makeIslands();
     this.scene.add(this.islandModels.group);
     this.home = new T.Group();
@@ -1275,6 +1291,7 @@ export class OceanWorld {
       i++;
     }
 
+    this.updatePact(s, t, dt, foot);
     this.motes.children.forEach((m, i) => {
       m.position.y = 0.1 + Math.sin(t + m.userData.phase) * 0.06;
       m.scale.setScalar(0.035 * (0.6 + Math.sin(t * 2 + i) * 0.4)); // twinkling specks, not metre-wide domes
@@ -1311,6 +1328,14 @@ export class OceanWorld {
       if (this.camera.position.y < floor) this.camera.position.y = floor;
     }
     this.camera.lookAt(look);
+    // the crossing: rise over the ridge on 嘯岳's back and look out at the rift beyond the mountains
+    if (this.cinematic) {
+      const c = this.cinematic,
+        k = Math.min(1, (this.time - c.t0) / c.dur),
+        e = k * k * (3 - 2 * k);
+      this.camera.position.lerpVectors(c.from, c.to, e);
+      this.camera.lookAt(c.lookFrom.clone().lerp(c.look, e));
+    }
     this.water.material.uniforms.uCamera.value.copy(this.camera.position);
     if (this.placement) this.updateGhost(s);
     if (this.target) {
@@ -1408,6 +1433,69 @@ export class OceanWorld {
       this.cannonFx.scale.setScalar(1 + k * 4);
       this.cannonFx.material.opacity = 0.85 * (1 - k);
     } else this.cannonFx.visible = false;
+  }
+  startCinematic(s) {
+    const az = 2.4, // the rift's bearing in the sky shader
+      from = this.camera.position.clone(),
+      to = new V(s.player.x, Math.max(groundAt(s.player.x, s.player.z), 0) + 190, s.player.z);
+    this.cinematic = {
+      t0: this.time,
+      dur: 9,
+      from,
+      to,
+      lookFrom: this.look.clone(),
+      look: new V(to.x + Math.sin(az) * 600, to.y + 40, to.z + Math.cos(az) * 600)
+    };
+  }
+  updatePact(s, t, dt, foot) {
+    const st = s.story || {},
+      beast = this.pactBeast,
+      pet = s.tamed.find(p => p.id === PACT_ID);
+    this.pactStatue.visible = !s.inCave && (st.stage || 0) < 3;
+    for (const g of this.extra.sites.values()) for (const c of g.children) if (c.userData.spin) c.rotation.y = t * 1.4;
+    const petMesh = this.petMeshes.get(PACT_ID);
+    if (petMesh) petMesh.visible = false; // drawn as the sabre-tooth below, not as a generic creature
+    let at = null,
+      look = 0,
+      gait = 0,
+      roar = 0;
+    if (st.beast && st.stage >= 3 && st.stage < 5) at = { x: st.beast.x, z: st.beast.z };
+    else if (pet) {
+      if (s.expedition?.activeId === PACT_ID && !s.inCave) {
+        // pads along a few metres behind you, ashore or swimming beside the boat
+        const h = s.player.heading || 0;
+        at = { x: s.player.x - Math.sin(h) * 4 + Math.cos(h) * 2, z: s.player.z - Math.cos(h) * 4 - Math.sin(h) * 2 };
+      } else if (!s.inCave) at = { x: BEAST_HOME.x, z: BEAST_HOME.z };
+    }
+    beast.visible = !!at;
+    if (!at) return;
+    const ground = groundAt(at.x, at.z),
+      y = Math.max(ground, foot ? ground : -0.9);
+    const prev = beast.position.clone();
+    if (beast.userData.placed) beast.position.lerp(new V(at.x, y, at.z), 1 - Math.exp(-dt * 3));
+    else beast.position.set(at.x, y, at.z);
+    beast.userData.placed = true;
+    if (beast.position.distanceTo(new V(at.x, y, at.z)) > 30) beast.position.set(at.x, y, at.z);
+    const moved = dt ? prev.distanceTo(beast.position) / dt : 0;
+    gait = Math.min(1, moved / 3);
+    const dx = s.player.x - beast.position.x,
+      dz = s.player.z - beast.position.z,
+      near = Math.hypot(dx, dz) < 35;
+    const face =
+      gait > 0.2
+        ? Math.atan2(beast.position.x - prev.x, beast.position.z - prev.z)
+        : near
+          ? Math.atan2(dx, dz)
+          : beast.rotation.y;
+    beast.rotation.y +=
+      Math.atan2(Math.sin(face - beast.rotation.y), Math.cos(face - beast.rotation.y)) * Math.min(1, dt * 2.5);
+    look = near
+      ? Math.atan2(Math.sin(Math.atan2(dx, dz) - beast.rotation.y), Math.cos(Math.atan2(dx, dz) - beast.rotation.y))
+      : 0;
+    if (st.duel?.windupAt) roar = 1;
+    if (this.pactTalk) roar = Math.max(roar, 0.35 + 0.25 * Math.sin(t * 9));
+    beast.userData.rig.position.y = st.duel?.windupAt ? -0.25 : 0;
+    animateSabertooth(beast, t, { look, gait, roar });
   }
   animateCreature(m, t) {
     animateCreature(m, t);

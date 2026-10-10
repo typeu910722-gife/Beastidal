@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.15.0';
-import { renderAdventure } from './expansion-ui.js?v=0.15.0';
+} from './expansion.js?v=0.16.0';
+import { renderAdventure } from './expansion-ui.js?v=0.16.0';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.15.0';
-import { monologue, markGuide } from './guide.js?v=0.15.0';
-import { climb, demolish, relocate } from './construction.js?v=0.15.0';
+} from './ship.js?v=0.16.0';
+import { monologue, markGuide } from './guide.js?v=0.16.0';
+import { climb, demolish, relocate } from './construction.js?v=0.16.0';
 import {
   normalizeHousing,
   penId,
@@ -54,7 +54,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.15.0';
+} from './housing.js?v=0.16.0';
 import {
   ISLANDS,
   NODES,
@@ -65,21 +65,36 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.15.0';
-import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.15.0';
-import { lakeMinimap } from './lake-map.js?v=0.15.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.15.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.15.0';
-import { QUALITY } from './realism.js?v=0.15.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.15.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.15.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.15.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.15.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.15.0';
-import { CONFIG } from './config.js?v=0.15.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.15.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.15.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.15.0';
+} from './islands.js?v=0.16.0';
+import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.16.0';
+import { lakeMinimap } from './lake-map.js?v=0.16.0';
+import {
+  normalizeStory,
+  SCRIPT,
+  PACT_COST,
+  nearBeast,
+  trySide,
+  startDuel,
+  answerOath,
+  trialsDone,
+  sealPact,
+  canCross,
+  finishCrossing,
+  tickStory,
+  duelActive
+} from './story.js?v=0.16.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.16.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.16.0';
+import { QUALITY } from './realism.js?v=0.16.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.16.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.16.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.16.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.16.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.16.0';
+import { CONFIG } from './config.js?v=0.16.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.16.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.16.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.16.0';
 import {
   RARITY,
   FRENZY,
@@ -90,10 +105,10 @@ import {
   rollTame,
   craftContract,
   contract
-} from './taming.js?v=0.15.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.15.0';
-import { BeastStage } from './beast-stage.js?v=0.15.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.15.0';
+} from './taming.js?v=0.16.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.16.0';
+import { BeastStage } from './beast-stage.js?v=0.16.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.16.0';
 import {
   funds,
   normalizeBag,
@@ -108,7 +123,7 @@ import {
   upgradeBag,
   nextBag,
   atHome
-} from './bag.js?v=0.15.0';
+} from './bag.js?v=0.16.0';
 import {
   homePos,
   facilityPos,
@@ -120,10 +135,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.15.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.15.0';
-export const GAME_VERSION = '0.15.0';
-import { CloudSave } from './cloud-save.js?v=0.15.0';
+} from './fortress.js?v=0.16.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.16.0';
+export const GAME_VERSION = '0.16.0';
+import { CloudSave } from './cloud-save.js?v=0.16.0';
 import {
   readLocal,
   writeLocal,
@@ -140,9 +155,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.15.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.15.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.15.0';
+} from './save-store.js?v=0.16.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.16.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.16.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -162,8 +177,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.15.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.15.0';
+} from './rules.js?v=0.16.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.16.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -1545,6 +1560,9 @@ function getAllTargets() {
     });
   for (const site of EXPLORE)
     if (!!site.cave === !!state.inCave && (!site.deep || state.expedition.diving)) arr.push({ ...site, type: 'site' });
+  const pact = state.story;
+  if (pact?.beast && pact.stage >= 3 && pact.stage < 5 && !state.inCave && state.player.mode === 'foot')
+    arr.push({ id: 'pact-beast', type: 'pact', x: pact.beast.x, z: pact.beast.z, name: '嘯岳' });
   return state.inCave
     ? arr.filter(t => t.type === 'site')
     : state.expedition.diving
@@ -1578,31 +1596,35 @@ function updateNearest() {
           ? (state.occupied || []).includes(selected.claimId)
             ? '你的領地 · 御獸在此休息'
             : '派出羈絆 30 的夥伴 · 按 E 插旗占領'
-          : selected.type === 'site'
-            ? '探索點 · 靠近按 E 調查'
-            : selected.type === 'facility'
-              ? '點擊建築或按 E 開啟設施'
-              : selected.type === 'node'
-                ? (state.harvested?.[selected.id] || 0) > state.elapsed
-                  ? '資源恢復中 · 兩分鐘再生'
-                  : '登島後走近 4 公尺內採集'
-                : selected.type === 'loot'
-                  ? `${Math.round(d(selected))}m · 可打撈物資`
-                  : selected.type === 'buoy'
-                    ? '訊號微弱 · 有人留下了紀錄'
-                    : selected.rescue === 'tangled'
-                      ? '被漂流漁網纏住了 · 按 E 解開'
-                      : selected.rescue === 'freed'
-                        ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
-                        : selected.rescue === 'friend' && !state.secret
-                          ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
-                          : state.secret
-                            ? frenzied(selected, state.elapsed)
-                              ? '狂暴中！快拉開距離'
-                              : selected.follow
-                                ? '信任 100% · 跟著你 · 帶著契約書按 X 締結'
-                                : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
-                            : '未知生命 · 調查浮標，或按空白鍵驅離'
+          : selected.type === 'pact'
+            ? duelActive(state)
+              ? '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開'
+              : '遠古御獸 · 按 E 交談'
+            : selected.type === 'site'
+              ? '探索點 · 靠近按 E 調查'
+              : selected.type === 'facility'
+                ? '點擊建築或按 E 開啟設施'
+                : selected.type === 'node'
+                  ? (state.harvested?.[selected.id] || 0) > state.elapsed
+                    ? '資源恢復中 · 兩分鐘再生'
+                    : '登島後走近 4 公尺內採集'
+                  : selected.type === 'loot'
+                    ? `${Math.round(d(selected))}m · 可打撈物資`
+                    : selected.type === 'buoy'
+                      ? '訊號微弱 · 有人留下了紀錄'
+                      : selected.rescue === 'tangled'
+                        ? '被漂流漁網纏住了 · 按 E 解開'
+                        : selected.rescue === 'freed'
+                          ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
+                          : selected.rescue === 'friend' && !state.secret
+                            ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
+                            : state.secret
+                              ? frenzied(selected, state.elapsed)
+                                ? '狂暴中！快拉開距離'
+                                : selected.follow
+                                  ? '信任 100% · 跟著你 · 帶著契約書按 X 締結'
+                                  : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
+                              : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
     $('context-verb').textContent =
       selected.type === 'shippoint'
@@ -1611,23 +1633,25 @@ function updateNearest() {
           ? (state.occupied || []).includes(selected.claimId)
             ? '查看'
             : '占領'
-          : selected.type === 'site'
-            ? '調查'
-            : selected.type === 'facility'
-              ? '操作'
-              : selected.type === 'node'
-                ? '採集'
-                : selected.type === 'loot'
-                  ? '打撈'
-                  : selected.type === 'buoy'
-                    ? '調查'
-                    : selected.rescue === 'tangled'
-                      ? '解開'
-                      : selected.rescue === 'freed'
-                        ? '餵食'
-                        : state.secret
-                          ? '投餌'
-                          : '觀察';
+          : selected.type === 'pact'
+            ? '交談'
+            : selected.type === 'site'
+              ? '調查'
+              : selected.type === 'facility'
+                ? '操作'
+                : selected.type === 'node'
+                  ? '採集'
+                  : selected.type === 'loot'
+                    ? '打撈'
+                    : selected.type === 'buoy'
+                      ? '調查'
+                      : selected.rescue === 'tangled'
+                        ? '解開'
+                        : selected.rescue === 'freed'
+                          ? '餵食'
+                          : state.secret
+                            ? '投餌'
+                            : '觀察';
   }
   $('target-card').hidden = !selected || inRange || !!panel || !!buildType;
   if (selected && !inRange && !panel) {
@@ -1661,6 +1685,10 @@ function interact() {
   }
   if (t.type === 'site') {
     handleExploration(t.id);
+    return;
+  }
+  if (t.type === 'pact') {
+    openPact();
     return;
   }
   if (t.type === 'facility') {
@@ -2049,6 +2077,15 @@ function deviceAppFor() {
 }
 function handleExploration(id) {
   const r = explore(state, id);
+  if (r.ok && r.story) {
+    storyResult(r);
+    destination = null;
+    selectedTarget = null;
+    world.sync(state);
+    save(true);
+    updateUI();
+    return;
+  }
   toast(r.ok ? r.message : r.error, !r.ok);
   if (r.ok) {
     destination = null;
@@ -2062,10 +2099,181 @@ function beastAction(action) {
   if (!running || paused || panel) return;
   const r = action === 'ride' ? toggleRide(state) : action === 'dive' ? toggleDive(state) : attack(state);
   toast(r.ok ? r.message : r.error, !r.ok);
+  if (r.note) setTimeout(() => toast(r.note), 900);
+  if (r.won) playScript('mightWin', openPact);
   if (r.ok) {
     world.sync(state);
     save(true);
     updateUI();
+  }
+}
+// ---------- 嘯岳之契: dialogue cards, trials, pact and the crossing ----------
+function playScript(name, then) {
+  const lines = SCRIPT[name] || [];
+  let i = 0;
+  world.pactTalk = true;
+  const next = () => {
+    if (i >= lines.length) {
+      world.pactTalk = false;
+      closeModal();
+      then?.();
+      return;
+    }
+    const [who, line] = lines[i++];
+    modal('嘯岳之契', who || '……', `<p class="pact-line">${esc(line)}</p>`, [
+      { label: i < lines.length ? '繼續' : '……', primary: true, action: next }
+    ]);
+  };
+  next();
+}
+function storyResult(r) {
+  if (r.story === 'seal')
+    modal(
+      '嘯岳之契 · 封印石板',
+      '牙之王，眠於此門之下',
+      '<p class="pact-line">「牙之王——嘯岳，眠於此門之下。以潮、岩、骨三鑰為鎖，以湖為牢。」</p><p class="pact-line">「後來者，若你聽得懂野獸的語言，就別讓牠醒來。」</p><p>最後一句的筆跡，和研究浮標裡的紀錄一模一樣。三個凹槽，靜靜等著。</p>',
+      [
+        {
+          label: '記下石板的內容',
+          primary: true,
+          action: () => (closeModal(), discover('主線 · 嘯岳之契', '潮之鑰 · 岩之鑰 · 骨之鑰'))
+        }
+      ]
+    );
+  else if (r.story === 'key') discover('取得' + ({ tide: '潮之鑰', stone: '岩之鑰' }[r.key] || '鑰匙'), r.message);
+  else if (r.story === 'awaken') {
+    if (world.post) world.post.hurt = 0.6;
+    haptic('hit');
+    discover('封印解除', '湖底傳來不屬於你的心跳。中央遺跡島上，有什麼正在醒來。');
+  }
+}
+function openPact() {
+  normalizeStory(state);
+  const st = state.story;
+  if (!nearBeast(state)) {
+    toast('走近嘯岳再說話。');
+    return;
+  }
+  if (!st.seen.includes('wake')) {
+    st.seen.push('wake');
+    save(true);
+    playScript('wake', openPact);
+    return;
+  }
+  if (trialsDone(state)) {
+    playScript('ready', () =>
+      modal('嘯岳之契', '締結契約', `<p>消耗 1 份契約書與 ${PACT_COST.crystal} 異晶。</p>`, [
+        {
+          label: '締結契約',
+          primary: true,
+          action: () => {
+            closeModal();
+            const r = sealPact(state);
+            if (!r.ok) {
+              toast(r.error, true);
+              return;
+            }
+            world.sync(state);
+            save(true);
+            updateUI();
+            playScript('joined', () => discover('嘯岳 · 遠古御獸', '第一頭會說話的御獸，選擇了你。'));
+          }
+        },
+        { label: '再準備一下', action: closeModal }
+      ])
+    );
+    return;
+  }
+  const done = id => st.trials.includes(id);
+  modal('嘯岳之契', '三個試煉', '<p>嘯岳盯著你，等你證明自己。</p>', [
+    {
+      label: (done('side') ? '✓ ' : '') + '並肩',
+      action: () => {
+        closeModal();
+        const r = trySide(state, activePet(state));
+        save(true);
+        playScript(r.script, openPact);
+      }
+    },
+    {
+      label: (done('might') ? '✓ ' : '') + '力量',
+      action: () => {
+        closeModal();
+        const r = startDuel(state, activePet(state));
+        if (!r.ok) {
+          toast(r.error, true);
+          return;
+        }
+        playScript(r.script);
+      }
+    },
+    {
+      label: (done('oath') ? '✓ ' : '') + '誓言',
+      action: () => {
+        closeModal();
+        playScript('oathAsk', () =>
+          modal('嘯岳之契', '你要牠成為你的什麼？', '', [
+            ...[
+              ['坐騎', 'mount'],
+              ['武器', 'weapon'],
+              ['夥伴', 'friend']
+            ].map(([label, choice]) => ({
+              label,
+              action: () => {
+                closeModal();
+                const r = answerOath(state, choice);
+                save(true);
+                if (r.script) playScript(r.script, openPact);
+                else toast(r.error, true);
+              }
+            }))
+          ])
+        );
+      }
+    },
+    { label: '離開', action: closeModal }
+  ]);
+}
+function crossMountains() {
+  const r = canCross(
+    state,
+    activePet(state),
+    onLand(state.player.x, state.player.z) && !onIsland(state.player.x, state.player.z)
+  );
+  if (!r.ok) {
+    toast(r.error, true);
+    return;
+  }
+  closePanel();
+  world.startCinematic(state);
+  setTimeout(
+    () =>
+      playScript('cross', () => {
+        finishCrossing(state);
+        world.cinematic = null;
+        save(true);
+        updateUI();
+        discover('第一章 完 · 沉湖之誓', '第二章 · 裂縫之外——敬請期待');
+      }),
+    2600
+  );
+}
+function storyEvents(dt) {
+  for (const ev of tickStory(state, dt, { diving: !!state.expedition.diving, active: activePet(state) })) {
+    if (ev.type === 'hint') toast(ev.text);
+    else if (ev.type === 'windup') {
+      toast(ev.text, true);
+      haptic('tap');
+    } else if (ev.type === 'swipe') {
+      toast(ev.text, ev.hit);
+      if (ev.hit) {
+        $('damage-flash').style.opacity = '.5';
+        if (world.post) world.post.hurt = 1;
+        haptic('hit');
+        setTimeout(() => ($('damage-flash').style.opacity = 0), 180);
+      }
+    } else if (ev.type === 'duel-off') toast(ev.text);
+    else if (ev.type === 'duel-lost') playScript(ev.script);
   }
 }
 function routeExplore(id) {
@@ -3019,7 +3227,8 @@ function renderPanel() {
       sync: () => world.sync(state),
       close: closePanel,
       refresh: renderPanel,
-      route: routeExplore
+      route: routeExplore,
+      cross: crossMountains
     });
     return;
   }
@@ -5053,6 +5262,7 @@ function frame(now) {
     updateCodex(dt);
     const events = tickSystems(state, dt, !!panel || !!buildType);
     for (const message of tickExpansion(state, dt, !!panel || !!buildType)) toast(message);
+    if (!panel && !buildType) storyEvents(dt);
     for (const ev of tickShip(state))
       if (ev === 'fusion') {
         world.sync(state);

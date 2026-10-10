@@ -1,4 +1,5 @@
-import { EXPLORE, STAGES, normalizeExpansion, commandPet, upgradeBoat, awaken } from './expansion.js?v=0.15.0';
+import { EXPLORE, STAGES, normalizeExpansion, commandPet, upgradeBoat, awaken } from './expansion.js?v=0.16.0';
+import { objectives, normalizeStory } from './story.js?v=0.16.0';
 let tab = 'beasts',
   page = 0;
 const esc = s =>
@@ -6,7 +7,10 @@ const esc = s =>
 export function renderAdventure(body, s, ctx) {
   normalizeExpansion(s);
   const e = s.expedition;
-  body.innerHTML = `<div class="tabs"><button data-exp-tab="beasts" class="${tab === 'beasts' ? 'active' : ''}">御獸夥伴</button><button data-exp-tab="voyage" class="${tab === 'voyage' ? 'active' : ''}">航務與遺跡</button></div>`;
+  normalizeStory(s);
+  const story = objectives(s);
+  if (tab === 'pact' && !story.length) tab = 'beasts';
+  body.innerHTML = `<div class="tabs"><button data-exp-tab="beasts" class="${tab === 'beasts' ? 'active' : ''}">御獸夥伴</button><button data-exp-tab="voyage" class="${tab === 'voyage' ? 'active' : ''}">航務與遺跡</button>${story.length ? `<button data-exp-tab="pact" class="${tab === 'pact' ? 'active' : ''}">嘯岳之契</button>` : ''}</div>`;
   const run = (r, close = false) => {
     ctx.toast(r.ok ? r.message : r.error, !r.ok);
     ctx.save();
@@ -26,13 +30,19 @@ export function renderAdventure(body, s, ctx) {
     }
     if (pages > 1)
       body.innerHTML += `<div class="bx-pager"><button type="button" data-exp-page="-1" ${page ? '' : 'disabled'}>‹</button><span>${page + 1} / ${pages}</span><button type="button" data-exp-page="1" ${page < pages - 1 ? '' : 'disabled'}>›</button></div>`;
+  } else if (tab === 'pact') {
+    body.innerHTML += `<ul class="pact-list">${story.map(([text, done]) => `<li class="${done ? 'done' : ''}">${done ? '✓' : '○'} ${esc(text)}</li>`).join('')}</ul>`;
+    if (s.story.stage >= 5)
+      body.innerHTML += `<button type="button" id="pact-cross" class="primary full-button">${s.story.stage >= 6 ? '再次越嶺' : '請嘯岳帶你越過群山'}</button>`;
   } else {
     body.innerHTML += s.ship
       ? '<p class="dv-note">⚓ 比斯泰德號 · 掌舵時按空白鍵開砲（每發 1 廢金屬）</p>'
       : `<div class="boat-row"><span>小艇 LV ${e.boatLevel} / 3</span>${e.boatLevel < 3 ? `<button id="upgrade-boat">升級 · 木 ${12 + e.boatLevel * 8} / 金 ${8 + e.boatLevel * 6} / 晶 ${2 + e.boatLevel * 2}</button>` : ''}</div>`;
     const site = v =>
-      `<button type="button" class="site-tile${e.collected.includes(v.id) ? ' done' : ''}" data-route="${v.id}" title="${v.deep ? '海底 8 公尺 · 騎乘潛水' : v.cave ? '異晶洞窟內' : v.kind === 'entrance' ? '異晶礁島 · 登岸進入' : v.kind === 'ruin' ? '沉城遺島' : '棕櫚環礁'}">${e.collected.includes(v.id) ? '✓' : '◇'} ${v.name}</button>`;
-    body.innerHTML += `<div class="site-grid">${EXPLORE.filter(v => v.kind !== 'exit')
+      `<button type="button" class="site-tile${e.collected.includes(v.id) ? ' done' : ''}" data-route="${v.id}" title="${v.deep ? '湖底遺城 · 騎乘潛水' : v.cave ? '異晶洞窟內' : v.kind === 'entrance' ? '異晶礁島 · 登岸進入' : v.kind === 'ruin' ? '沉城遺島' : '棕櫚環礁'}">${e.collected.includes(v.id) ? '✓' : '◇'} ${v.name}</button>`;
+    body.innerHTML += `<div class="site-grid">${EXPLORE.filter(
+      v => v.kind !== 'exit' && (!v.story || s.story.stage >= 1)
+    )
       .map(site)
       .join(
         ''
@@ -56,6 +66,7 @@ export function renderAdventure(body, s, ctx) {
     .querySelectorAll('[data-pet]')
     .forEach(b => (b.onclick = () => run(commandPet(s, b.dataset.pet, b.dataset.order), true)));
   body.querySelectorAll('[data-awaken]').forEach(b => (b.onclick = () => run(awaken(s, b.dataset.awaken))));
+  if (document.getElementById('pact-cross')) document.getElementById('pact-cross').onclick = () => ctx.cross();
   if (document.getElementById('upgrade-boat'))
     document.getElementById('upgrade-boat').onclick = () => run(upgradeBoat(s));
   body.querySelectorAll('[data-route]').forEach(b => (b.onclick = () => ctx.route(b.dataset.route)));

@@ -1,11 +1,12 @@
 // Visual check: boots the game headless and photographs named spots of the lake map.
-// Usage: node scripts/shots.mjs [quality]   -> shots/*.png
+// Usage: node scripts/shots.mjs [quality] [name-filter | story]   -> shots/*.png
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const PORT = 8091,
-  quality = process.argv[2] || 'high';
+  quality = process.argv[2] || 'high',
+  only = process.argv[3] || '';
 mkdirSync('shots', { recursive: true });
 const server = spawn(process.execPath, ['server.mjs'], {
   env: { ...process.env, PORT: String(PORT) },
@@ -13,7 +14,7 @@ const server = spawn(process.execPath, ['server.mjs'], {
 });
 const errors = [];
 let browser;
-// [name, setup run in the page with B = window.__beastidal]
+// [name, setup run in the page (B = window.__beastidal, s = state, w = world, I/L/G/S = modules), key to press]
 const SPOTS = [
   ['01-raft', `s.player.mode='boat';Object.assign(s.player,{x:9,z:12});w.distance=40;w.pitch=.42;w.yaw=2.4;`],
   ['02-overview', `s.player.mode='boat';Object.assign(s.player,{x:60,z:20});w.distance=75;w.pitch=1.0;w.yaw=3.0;`],
@@ -26,17 +27,18 @@ const SPOTS = [
     `const d=I.islandDocks().find(k=>k.island==='palm');Object.assign(s.player,d.foot,{mode:'foot'});w.distance=36;w.pitch=.4;w.yaw=d.boat.heading+.6;`
   ],
   [
-    '05-peninsula',
-    `const d=I.islandDocks().find(k=>k.island==='crystal');Object.assign(s.player,d.boat,{mode:'boat'});w.distance=60;w.pitch=.3;w.yaw=d.boat.heading;`
-  ],
-  [
     '06-dive-city',
-    `const p=L.LANDMARKS.plaza;Object.assign(s.player,{x:p.x+40,z:p.z+40,mode:'boat'});const pet={id:'shot-pet',name:'shot',genome:G.makeGenome(5,1,'sea'),generation:0,parents:[],bond:70,stamina:100,health:100,penId:null};s.tamed.push(pet);s.expedition.activeId=pet.id;s.expedition.mounted=true;s.expedition.diving=true;s.expedition.oxygen=90;w.distance=30;w.pitch=.3;w.yaw=.8;`
+    `const p=L.LANDMARKS.plaza;Object.assign(s.player,{x:p.x+40,z:p.z+40,mode:'boat'});s.tamed.push({id:'shot-pet',name:'shot',genome:G.makeGenome(5,1,'sea'),generation:0,parents:[],bond:70,stamina:100,health:100,penId:null});s.expedition.activeId='shot-pet';s.expedition.mounted=true;s.expedition.diving=true;s.expedition.oxygen=90;w.distance=30;w.pitch=.3;w.yaw=.8;`
   ],
   [
-    '07-coral',
-    `const c=L.LANDMARKS.coral;Object.assign(s.player,{x:c.x-60,z:c.z+40,mode:'boat'});s.expedition.mounted=false;s.expedition.diving=false;w.distance=55;w.pitch=.45;w.yaw=2.2;`
-  ]
+    '08-statue',
+    `if(!s.tamed.length)s.tamed.push({id:'shot-pet',name:'shot',genome:G.makeGenome(5,1,'sea'),generation:0,parents:[],bond:70,stamina:100,health:100,penId:null});s.expedition.activeId=s.tamed[0].id;const g=L.LANDMARKS.greatGate;Object.assign(s.player,{x:g.x+12,z:g.z-40,mode:'boat'});s.expedition.mounted=true;s.expedition.diving=true;s.expedition.oxygen=90;w.distance=34;w.pitch=.22;w.yaw=3.4;`
+  ],
+  [
+    '09-beast',
+    `s.expedition.diving=false;s.expedition.mounted=false;S.normalizeStory(s);Object.assign(s.story,{stage:3,keys:['tide','stone','bone'],beast:{x:S.BEAST_HOME.x,z:S.BEAST_HOME.z,hp:900,maxHp:900}});Object.assign(s.player,{x:S.BEAST_HOME.x+7,z:S.BEAST_HOME.z+5,mode:'foot'});w.distance=24;w.pitch=.32;w.yaw=.6;`
+  ],
+  ['10-dialogue', `B.keys.clear();`, 'e']
 ];
 try {
   await new Promise(r => setTimeout(r, 700));
@@ -52,7 +54,10 @@ try {
   const page = await ctx.newPage();
   page.setDefaultTimeout(240000);
   page.on('pageerror', e => errors.push(String(e)));
-  page.on('console', m => m.type() === 'error' && errors.push('console: ' + m.text()));
+  page.on(
+    'console',
+    m => m.type() === 'error' && !/AudioContext/.test(m.text()) && errors.push('console: ' + m.text())
+  );
   await page.goto(`http://localhost:${PORT}/?debug`);
   await page.waitForFunction(() => window.tidalReady, null, { timeout: 120000 });
   await page.click('#start-btn');
@@ -63,18 +68,27 @@ try {
   await page.waitForFunction(() => window.__beastidal && !document.getElementById('hud').hidden, null, {
     timeout: 60000
   });
-  for (const [name, setup] of SPOTS) {
+  for (const [name, setup, key] of SPOTS) {
+    if (only && !name.includes(only) && !(only === 'story' && name >= '08')) continue;
     await page.evaluate(async code => {
       const B = window.__beastidal,
         s = B.state,
         w = B.world;
-      const I = await import('/islands.js?v=0.15.0'),
-        L = await import('/lake.js?v=0.15.0'),
-        G = await import('/genetics.js?v=0.15.0');
+      const v = '?v=0.16.0',
+        I = await import('/islands.js' + v),
+        L = await import('/lake.js' + v),
+        G = await import('/genetics.js' + v),
+        S = await import('/story.js' + v);
       document.querySelectorAll('#monologue,#discovery,.toast').forEach(e => (e.hidden = true));
-      new Function('B', 's', 'w', 'I', 'L', 'G', code)(B, s, w, I, L, G);
-      B.step(1 / 30, 240);
+      const AsyncFn = Object.getPrototypeOf(async function () {}).constructor;
+      await new AsyncFn('B', 's', 'w', 'I', 'L', 'G', 'S', code)(B, s, w, I, L, G, S);
+      B.step(1 / 30, 150);
     }, setup);
+    if (key) {
+      await page.keyboard.press(key);
+      await page.waitForTimeout(800);
+      await page.evaluate(() => window.__beastidal.step(1 / 30, 20));
+    }
     await page.screenshot({ path: `shots/${name}.png` });
     console.log('shot', name);
   }

@@ -1,11 +1,11 @@
 {
   "name": "beastidal",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "private": true,
   "type": "module",
   "scripts": {
     "check": "node tests/syntax.mjs",
-    "test": "node tests/rules.test.mjs && node tests/expansion.test.mjs && node tests/ship.test.mjs && node tests/cloud.test.mjs && node tests/physics.test.mjs && node tests/ux.test.mjs && node tests/progress.test.mjs && node tests/i18n.test.mjs",
+    "test": "node tests/rules.test.mjs && node tests/expansion.test.mjs && node tests/ship.test.mjs && node tests/cloud.test.mjs && node tests/physics.test.mjs && node tests/ux.test.mjs && node tests/progress.test.mjs && node tests/i18n.test.mjs && node tests/story.test.mjs",
     "start": "node server.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",

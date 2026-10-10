@@ -1,6 +1,6 @@
-import { CAVE } from './expansion.js?v=0.15.0';
-import { moveAboard, moveShip } from './ship.js?v=0.15.0';
-import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.15.0';
+import { CAVE } from './expansion.js?v=0.16.0';
+import { moveAboard, moveShip } from './ship.js?v=0.16.0';
+import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.16.0';
 // All travel modes share world coordinates. The boat stays moored while walking.
 export const TILE_SIZE = 3.6;
 const SIDES = [
