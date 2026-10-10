@@ -1,7 +1,8 @@
 // Local play statistics. Nothing leaves the device: the player can copy the JSON and send it in by hand.
 // Used to tune pacing (how long each milestone takes) without any analytics service.
-import { GUIDE_IDS, guideDone } from './guide.js?v=0.22.0';
-import { dayOf } from './clock.js?v=0.22.0';
+import { GUIDE_IDS, guideDone } from './guide.js?v=0.23.0';
+import { dayOf } from './clock.js?v=0.23.0';
+import { learnFrom } from './skills.js?v=0.23.0';
 
 export const MILESTONE_NAMES = {
   salvage: '打撈 3 件物資',
@@ -50,6 +51,7 @@ export function tally(s, key, n = 1) {
   s.stats ??= {};
   s.stats.tally ??= {};
   s.stats.tally[key] = (s.stats.tally[key] || 0) + n;
+  learnFrom(s, key, n); // 0.23: doing teaches
 }
 export const tallied = (s, key) => s.stats?.tally?.[key] || 0;
 // Called every frame while playing. Returns milestone ids newly reached.
@@ -57,7 +59,14 @@ export function tickStats(s, dt, moved, mode) {
   const st = s.stats;
   st.playSeconds += dt;
   if (mode === 'foot' || mode === 'aboard') st.walked += moved;
-  else st.sailed += moved;
+  else {
+    st.sailed += moved;
+    st.sailAcc = (st.sailAcc || 0) + moved;
+    while (st.sailAcc >= 50) {
+      st.sailAcc -= 50;
+      tally(s, 'sail');
+    }
+  }
   const fresh = [];
   for (const id of guideDone(s))
     if (!st.milestones[id]) {

@@ -2,7 +2,7 @@
 // mouth for fire or frost, spikes along the back for lightning, plates for a hardened body, a long whip tail,
 // claws, gill slits, bone wings, a crystal horn, or a soft aura. Wild 御獸 also get a violet halo.
 import * as T from './vendor/three.module.min.js';
-import { BS_GENES, bsOf } from './bsgenes.js?v=0.22.0';
+import { BS_GENES, bsOf } from './bsgenes.js?v=0.23.0';
 
 const geo = {
   orb: new T.SphereGeometry(0.09, 10, 8),

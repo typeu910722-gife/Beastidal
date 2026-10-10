@@ -1,15 +1,17 @@
-import { limitError } from './ship.js?v=0.22.0';
-import { dayOf } from './clock.js?v=0.22.0';
-import { normalizeExpansion } from './expansion.js?v=0.22.0';
-import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.22.0';
-import { dockingSpots } from './navigation.js?v=0.22.0';
-import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.22.0';
-import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome, give } from './bag.js?v=0.22.0';
-import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.22.0';
-import { remember } from './memories.js?v=0.22.0';
+import { limitError } from './ship.js?v=0.23.0';
+import { dayOf } from './clock.js?v=0.23.0';
+import { normalizeExpansion } from './expansion.js?v=0.23.0';
+import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.23.0';
+import { dockingSpots } from './navigation.js?v=0.23.0';
+import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.23.0';
+import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome, give } from './bag.js?v=0.23.0';
+import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.23.0';
+import { remember } from './memories.js?v=0.23.0';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
-import { ITEM_NAMES, ITEM_GLYPHS, BASE_RESOURCES, CRAFTS } from './items.js?v=0.22.0';
-import { inheritGenes, addRandomGene } from './bsgenes.js?v=0.22.0';
+import { ITEM_NAMES, ITEM_GLYPHS, BASE_RESOURCES, CRAFTS } from './items.js?v=0.23.0';
+import { inheritGenes, addRandomGene } from './bsgenes.js?v=0.23.0';
+import { normalizeGear } from './gear.js?v=0.23.0';
+import { tally } from './stats.js?v=0.23.0';
 export const RESOURCE_NAMES = ITEM_NAMES;
 export const RESOURCE_ICONS = ITEM_GLYPHS;
 export const RECIPES = {
@@ -273,6 +275,11 @@ export function buildError(s, type, x, z, level = 0) {
   return null;
 }
 export function placeBuilding(s, type, x, z, rot = 0, level = 0) {
+  const r = placeBuildingRaw(s, type, x, z, rot, level);
+  if (r.ok) tally(s, 'build');
+  return r;
+}
+function placeBuildingRaw(s, type, x, z, rot = 0, level = 0) {
   if (RECIPES[type]?.fixed) return { ok: false, error: '這件物品無法建造。' };
   if (type === 'upperfloor') level = 1;
   const error = buildError(s, type, x, z, level);
@@ -308,6 +315,15 @@ export function placeOnShip(s, type) {
 export function craftItem(s, key) {
   const c = CRAFTS[key];
   if (!c) return { ok: false, error: '沒有這種配方。' };
+  // 0.23: gear is made once and kept
+  if (c.gear) {
+    normalizeGear(s);
+    if (s.gear[key]) return { ok: false, error: '已經有了。' };
+    if (!spend(s, c.cost)) return { ok: false, error: '材料不夠。' };
+    s.gear[key] = true;
+    tally(s, 'craft');
+    return { ok: true, message: `${RESOURCE_NAMES[key]}做好了，隨身帶著。`, gear: key };
+  }
   if (!spend(s, c.cost)) return { ok: false, error: '材料不夠。' };
   give(s, { [key]: c.n });
   return { ok: true, message: `${RESOURCE_NAMES[key]} +${c.n}` };
@@ -319,7 +335,7 @@ export function craftBait(s) {
   return { ok: true };
 }
 // Feeding and contracts live in taming.js (0.12).
-export { feed } from './taming.js?v=0.22.0';
+export { feed } from './taming.js?v=0.23.0';
 export function breed(s, aId, bId, rng = Math.random) {
   if ([aId, bId].some(id => s.tamed.find(p => p.id === id)?.ancient)) return { ok: false, error: '遠古御獸無法配對。' };
   normalizeHousing(s);

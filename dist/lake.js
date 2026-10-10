@@ -1,6 +1,6 @@
 // The inland sea of 沉湖遺城: baked terrain lookups shared by rules, navigation and rendering.
 // Game coordinates are metres with the raft at (0,0); map coordinates are the sketch's units.
-import { HS, Q, ORIGIN, LAIR, FINE, COARSE } from './lake-data.js?v=0.22.0';
+import { HS, Q, ORIGIN, LAIR, FINE, COARSE } from './lake-data.js?v=0.23.0';
 export { HS, ORIGIN };
 
 function decode(g) {
@@ -42,9 +42,12 @@ export function slopeAt(x, z, e = 1.5) {
 }
 export const isLand = (x, z, above = 0.4) => groundAt(x, z) > above;
 // Walkable ground: dry, not a sheer cliff, and below the snowline ridges that wall the basin in.
+let climbing = false;
+// 0.23: with the climbing hook steeper slopes and higher ground open up
+export const setClimbing = v => (climbing = !!v);
 export const walkable = (x, z) => {
   const h = groundAt(x, z);
-  return h > 0.35 && h < 90 && slopeAt(x, z) < 1.6;
+  return h > 0.35 && h < (climbing ? 140 : 90) && slopeAt(x, z) < (climbing ? 2.4 : 1.6);
 };
 
 // The three claimable islands keep their old ids so saves (claims, harvests, visits) carry over.

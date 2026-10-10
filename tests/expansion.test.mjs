@@ -65,6 +65,7 @@ test('Taming: feedings cost 1, 3, 5 … bait, add 8–30 % trust, and are certai
   s.player.x = t.x;
   s.player.z = t.z;
   t.tame = true;
+  s.skills = {}; // 0.23: the taming skill would add to the gain
   assert.equal(feed(s, t.id, () => 0).gain, 90);
   assert.ok(feed(s, t.id, () => 0.99).follow, 'a second feeding finishes it');
   assert.ok(rollTame(() => 0.0089) && !rollTame(() => 0.009));

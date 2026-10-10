@@ -55,12 +55,20 @@ export const ITEMS = {
   crystaldust: { name: '晶粉', glyph: '✨', cat: 'craft', note: '異晶磨成的粉，微微發光。' },
   torch: { name: '火把', glyph: '🔥', cat: 'craft', note: '獸脂浸過的木棒。' },
   lantern: { name: '提燈', glyph: '🏮', cat: 'craft', note: '幽光囊做芯的燈，照亮船艙。' },
-  cage: { name: '外出籠', glyph: '🧺', cat: 'craft', note: '帶信任你的野生生物回船上的籠子（信任 50% 以上）。' }
+  cage: { name: '外出籠', glyph: '🧺', cat: 'craft', note: '帶信任你的野生生物回船上的籠子（信任 50% 以上）。' },
+  // 0.23: catches and gear (gear is kept, not carried)
+  fish: { name: '湖魚', glyph: '🐟', cat: 'catch', note: '剛釣上來的湖魚，比口糧頂飽。' },
+  bigfish: { name: '大湖魚', glyph: '🐡', cat: 'catch', note: '深水才釣得到的大魚。' },
+  pearl: { name: '湖珍珠', glyph: '⚪', cat: 'catch', note: '湖底的珍珠，商人最愛。' },
+  rod: { name: '魚竿', glyph: '🎣', cat: 'gear', note: '在船上或岸邊垂釣：按 E 拋竿，上鉤再按一次。' },
+  mask: { name: '潛水面罩', glyph: '🤿', cat: 'gear', note: '潛水氧氣上限 +40 秒。' },
+  hook: { name: '攀爬鉤', glyph: '🪝', cat: 'gear', note: '能爬上更陡的岸壁與更高的山麓。' },
+  saddle: { name: '鞍具', glyph: '🐎', cat: 'gear', note: '騎乘速度 +30%，騎乘時耐力消耗減半。' }
 };
 export const ITEM_KEYS = Object.keys(ITEMS);
 export const BASE_RESOURCES = ['wood', 'metal', 'fiber', 'crystal', 'food', 'water', 'bait'];
 // everything that rides in the bag (the contract scroll has its own count)
-export const CARRYABLE = ITEM_KEYS.filter(k => k !== 'contract');
+export const CARRYABLE = ITEM_KEYS.filter(k => k !== 'contract' && ITEMS[k].cat !== 'gear');
 export const ITEM_NAMES = Object.fromEntries(ITEM_KEYS.map(k => [k, ITEMS[k].name]));
 export const ITEM_GLYPHS = Object.fromEntries(ITEM_KEYS.map(k => [k, ITEMS[k].glyph]));
 // what the work table makes: cost → gives n
@@ -78,7 +86,11 @@ export const CRAFTS = {
   glass: { cost: { crystaldust: 1, metal: 1 }, n: 1 },
   torch: { cost: { wood: 1, fat: 1 }, n: 2 },
   lantern: { cost: { glass: 1, metal: 2, glowsac: 1 }, n: 1 },
-  cage: { cost: { metal: 6, fiber: 4 }, n: 1 }
+  cage: { cost: { metal: 6, fiber: 4 }, n: 1 },
+  rod: { cost: { wood: 6, fiber: 6, nails: 2 }, n: 1, gear: true },
+  mask: { cost: { glass: 1, leather: 1, rope: 1 }, n: 1, gear: true },
+  hook: { cost: { metal: 5, rope: 2 }, n: 1, gear: true },
+  saddle: { cost: { leather: 2, cloth: 1, nails: 2 }, n: 1, gear: true }
 };
 export const costLabel = cost =>
   Object.entries(cost)

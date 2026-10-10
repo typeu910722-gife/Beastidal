@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.22.0';
-import { renderAdventure } from './expansion-ui.js?v=0.22.0';
+} from './expansion.js?v=0.23.0';
+import { renderAdventure } from './expansion-ui.js?v=0.23.0';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.22.0';
-import { monologue, markGuide } from './guide.js?v=0.22.0';
-import { climb, demolish, relocate } from './construction.js?v=0.22.0';
+} from './ship.js?v=0.23.0';
+import { monologue, markGuide } from './guide.js?v=0.23.0';
+import { climb, demolish, relocate } from './construction.js?v=0.23.0';
 import {
   normalizeHousing,
   penId,
@@ -54,7 +54,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.22.0';
+} from './housing.js?v=0.23.0';
 import {
   ISLANDS,
   NODES,
@@ -65,10 +65,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.22.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable } from './lake.js?v=0.22.0';
-import { lakeMinimap } from './lake-map.js?v=0.22.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.22.0';
+} from './islands.js?v=0.23.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable } from './lake.js?v=0.23.0';
+import { lakeMinimap } from './lake-map.js?v=0.23.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.23.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -87,7 +87,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.22.0';
+} from './cabin.js?v=0.23.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -102,17 +102,17 @@ import {
   finishCrossing,
   tickStory,
   duelActive
-} from './story.js?v=0.22.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.22.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.22.0';
-import { QUALITY } from './realism.js?v=0.22.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.22.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.22.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.22.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.22.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.22.0';
-import { CONFIG } from './config.js?v=0.22.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.22.0';
+} from './story.js?v=0.23.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.23.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.23.0';
+import { QUALITY } from './realism.js?v=0.23.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.23.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.23.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.23.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.23.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.23.0';
+import { CONFIG } from './config.js?v=0.23.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.23.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -123,11 +123,34 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.22.0';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.22.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.22.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.22.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.22.0';
+} from './codex.js?v=0.23.0';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.23.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.23.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.23.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.23.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.23.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.23.0';
+import {
+  startFishing,
+  tickFishing,
+  reel,
+  cancelFishing,
+  canFishHere,
+  BITE_WINDOW,
+  CATCHES
+} from './fishing.js?v=0.23.0';
+import {
+  LAND_BUILDS,
+  normalizePlots,
+  plotTargets,
+  startClearing,
+  tickPlots,
+  buildOnPlot,
+  removeLandBuild,
+  clearDuration
+} from './reclaim.js?v=0.23.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.23.0';
+import { setClimbing } from './lake.js?v=0.23.0';
 import {
   RARITY,
   FRENZY,
@@ -142,10 +165,10 @@ import {
   cageCreature,
   dangerous,
   CAGE_TRUST
-} from './taming.js?v=0.22.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.22.0';
-import { BeastStage } from './beast-stage.js?v=0.22.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.22.0';
+} from './taming.js?v=0.23.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.23.0';
+import { BeastStage } from './beast-stage.js?v=0.23.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.23.0';
 import {
   funds,
   normalizeBag,
@@ -163,12 +186,12 @@ import {
   stash,
   unstash,
   CARRY
-} from './bag.js?v=0.22.0';
-import { iconFor } from './icons.js?v=0.22.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.22.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.22.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.22.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.22.0';
+} from './bag.js?v=0.23.0';
+import { iconFor } from './icons.js?v=0.23.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.23.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.23.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.23.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.23.0';
 import {
   homePos,
   facilityPos,
@@ -180,10 +203,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.22.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.22.0';
-export const GAME_VERSION = '0.22.0';
-import { CloudSave } from './cloud-save.js?v=0.22.0';
+} from './fortress.js?v=0.23.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.23.0';
+export const GAME_VERSION = '0.23.0';
+import { CloudSave } from './cloud-save.js?v=0.23.0';
 import {
   readLocal,
   writeLocal,
@@ -200,9 +223,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.22.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.22.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.22.0';
+} from './save-store.js?v=0.23.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.23.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.23.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -223,8 +246,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.22.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.22.0';
+} from './rules.js?v=0.23.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.23.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -270,6 +293,11 @@ normalizeHousing(state);
 normalizeShip(state);
 normalizeJobs(state);
 normalizeEvents(state);
+normalizeWildlife(state); // genomes from older saves gain the loci added since (strain, 0.21) before anything draws them
+normalizeGear(state);
+normalizeSkills(state);
+normalizePlots(state);
+setClimbing(hasGear(state, 'hook'));
 state.marker ??= null;
 let orientationBlocked = false,
   activeFacility = null,
@@ -1497,6 +1525,11 @@ function beginGame(fresh = false) {
   normalizeShip(state);
   normalizeJobs(state);
   normalizeEvents(state);
+  normalizeGear(state);
+  normalizeSkills(state);
+  normalizePlots(state);
+  setClimbing(hasGear(state, 'hook'));
+  state.fishing = null;
   state.marker ??= null;
   route = null;
   sailing = false;
@@ -1666,6 +1699,7 @@ function getAllTargets() {
       z: i.z,
       name: (state.occupied || []).includes(i.id) ? '領地 · ' + i.name : '無主石碑 · ' + i.name
     });
+  if (state.player.mode === 'foot' && !state.inCave) arr.push(...plotTargets(state));
   for (const site of EXPLORE)
     if (!!site.cave === !!state.inCave && (!site.deep || state.expedition.diving)) arr.push({ ...site, type: 'site' });
   const lev = state.lakeEvent;
@@ -1709,76 +1743,84 @@ function updateNearest() {
         ? (state.player.mode === 'cabin' ? FLOORS[state.player.floor | 0] : DECKS[state.player.deck] || DECKS[3]).name +
             ' · 按 E ' +
             selected.verb
-        : selected.type === 'claim'
-          ? (state.occupied || []).includes(selected.claimId)
-            ? '你的領地 · 御獸在此休息'
-            : '派出羈絆 30 的夥伴 · 按 E 插旗占領'
-          : selected.type === 'event'
-            ? state.lakeEvent?.kind === 'merchant'
-              ? '湖上事件 · 開船靠近按 E 交易'
-              : '湖上事件 · 潛到光柱下按 E 打開'
-            : selected.type === 'pact'
-              ? duelActive(state)
-                ? '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開'
-                : '遠古御獸 · 按 E 交談'
-              : selected.type === 'site'
-                ? '探索點 · 靠近按 E 調查'
-                : selected.type === 'facility'
-                  ? '點擊建築或按 E 開啟設施'
-                  : selected.type === 'node'
-                    ? (state.harvested?.[selected.id] || 0) > state.elapsed
-                      ? '資源恢復中 · 兩分鐘再生'
-                      : '登島後走近 4 公尺內採集'
-                    : selected.type === 'loot'
-                      ? `${Math.round(d(selected))}m · 可打撈物資`
-                      : selected.type === 'buoy'
-                        ? '訊號微弱 · 有人留下了紀錄'
-                        : selected.rescue === 'tangled'
-                          ? '被漂流漁網纏住了 · 按 E 解開'
-                          : selected.rescue === 'freed'
-                            ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
-                            : selected.rescue === 'friend' && !state.secret
-                              ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
-                              : state.secret
-                                ? frenzied(selected, state.elapsed)
-                                  ? '狂暴中！驅離不了，按 F 讓夥伴攻擊'
-                                  : selected.beast
-                                    ? beastText(selected)
-                                    : selected.follow
-                                      ? '信任 100% · 跟著你 · 帶著契約書按 X 締結'
-                                      : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
-                                : '未知生命 · 調查浮標，或按空白鍵驅離'
+        : selected.type === 'plot'
+          ? plotText(selected)
+          : selected.type === 'claim'
+            ? (state.occupied || []).includes(selected.claimId)
+              ? '你的領地 · 御獸在此休息'
+              : '派出羈絆 30 的夥伴 · 按 E 插旗占領'
+            : selected.type === 'event'
+              ? state.lakeEvent?.kind === 'merchant'
+                ? '湖上事件 · 開船靠近按 E 交易'
+                : '湖上事件 · 潛到光柱下按 E 打開'
+              : selected.type === 'pact'
+                ? duelActive(state)
+                  ? '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開'
+                  : '遠古御獸 · 按 E 交談'
+                : selected.type === 'site'
+                  ? '探索點 · 靠近按 E 調查'
+                  : selected.type === 'facility'
+                    ? '點擊建築或按 E 開啟設施'
+                    : selected.type === 'node'
+                      ? (state.harvested?.[selected.id] || 0) > state.elapsed
+                        ? '資源恢復中 · 兩分鐘再生'
+                        : '登島後走近 4 公尺內採集'
+                      : selected.type === 'loot'
+                        ? `${Math.round(d(selected))}m · 可打撈物資`
+                        : selected.type === 'buoy'
+                          ? '訊號微弱 · 有人留下了紀錄'
+                          : selected.rescue === 'tangled'
+                            ? '被漂流漁網纏住了 · 按 E 解開'
+                            : selected.rescue === 'freed'
+                              ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
+                              : selected.rescue === 'friend' && !state.secret
+                                ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
+                                : state.secret
+                                  ? frenzied(selected, state.elapsed)
+                                    ? '狂暴中！驅離不了，按 F 讓夥伴攻擊'
+                                    : selected.beast
+                                      ? beastText(selected)
+                                      : selected.follow
+                                        ? '信任 100% · 跟著你 · 帶著契約書按 X 締結'
+                                        : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
+                                  : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
     $('context-verb').textContent =
       selected.type === 'shippoint'
         ? selected.verb
-        : selected.type === 'claim'
-          ? (state.occupied || []).includes(selected.claimId)
-            ? '查看'
-            : '占領'
-          : selected.type === 'event'
-            ? state.lakeEvent?.kind === 'merchant'
-              ? '交易'
-              : '打開'
-            : selected.type === 'pact'
-              ? '交談'
-              : selected.type === 'site'
-                ? '調查'
-                : selected.type === 'facility'
-                  ? '操作'
-                  : selected.type === 'node'
-                    ? '採集'
-                    : selected.type === 'loot'
-                      ? '打撈'
-                      : selected.type === 'buoy'
-                        ? '調查'
-                        : selected.rescue === 'tangled'
-                          ? '解開'
-                          : selected.rescue === 'freed'
-                            ? '餵食'
-                            : state.secret
-                              ? '投餌'
-                              : '觀察';
+        : selected.type === 'plot'
+          ? selected.state === 'wild'
+            ? '開墾'
+            : selected.state === 'cleared'
+              ? '建造'
+              : '查看'
+          : selected.type === 'claim'
+            ? (state.occupied || []).includes(selected.claimId)
+              ? '查看'
+              : '占領'
+            : selected.type === 'event'
+              ? state.lakeEvent?.kind === 'merchant'
+                ? '交易'
+                : '打開'
+              : selected.type === 'pact'
+                ? '交談'
+                : selected.type === 'site'
+                  ? '調查'
+                  : selected.type === 'facility'
+                    ? '操作'
+                    : selected.type === 'node'
+                      ? '採集'
+                      : selected.type === 'loot'
+                        ? '打撈'
+                        : selected.type === 'buoy'
+                          ? '調查'
+                          : selected.rescue === 'tangled'
+                            ? '解開'
+                            : selected.rescue === 'freed'
+                              ? '餵食'
+                              : state.secret
+                                ? '投餌'
+                                : '觀察';
   }
   $('target-card').hidden = !selected || inRange || !!panel || !!buildType;
   if (selected && !inRange && !panel) {
@@ -1788,6 +1830,10 @@ function updateNearest() {
 }
 function interact() {
   if (!running || paused || panel || buildType || salvaging) return;
+  if (state.fishing) {
+    castOrReel();
+    return;
+  }
   if (cabinPlace) {
     confirmPlace();
     return;
@@ -1795,6 +1841,10 @@ function interact() {
   if (!nearest) {
     if (state.ship ? shipDockOption(state)?.near : dockOption(state)?.near) {
       dock();
+      return;
+    }
+    if (hasGear(state, 'rod')) {
+      castOrReel();
       return;
     }
     toast('靠近漂流物打撈，或靠近木筏登岸。');
@@ -1808,6 +1858,10 @@ function interact() {
   const t = nearest;
   if (t.type === 'shippoint') {
     shipPoint(t.point);
+    return;
+  }
+  if (t.type === 'plot') {
+    openPlot(t);
     return;
   }
   if (t.type === 'claim') {
@@ -3782,11 +3836,15 @@ function renderPanel() {
         ? codexHTML()
         : journalTab === 'rewards'
           ? rewardsHTML()
-          : journalTab === 'genes'
-            ? genesHTML()
-            : journalTab === 'beasts'
-              ? beastsHTML()
-              : achievementsHTML());
+          : journalTab === 'skills'
+            ? skillsHTML()
+            : journalTab === 'base'
+              ? baseHTML()
+              : journalTab === 'genes'
+                ? genesHTML()
+                : journalTab === 'beasts'
+                  ? beastsHTML()
+                  : achievementsHTML());
     body.querySelectorAll('[data-claim]').forEach(
       b =>
         (b.onclick = () => {
@@ -4207,7 +4265,7 @@ function renderCraft(body) {
     `<div class="reward-grid decor-grid">${Object.entries(CRAFTS)
       .map(
         ([k, c]) =>
-          `<button type="button" class="reward-tile${canPay(state, c.cost) ? ' ready' : ''}" data-craft="${k}"><b><span class="ico">${ITEMS[k].glyph}</span> ${esc(ITEMS[k].name)} ×${c.n}</b><small>${esc(ITEMS[k].note || '')}</small><span>${esc(itemCost(c.cost))}</span></button>`
+          `<button type="button" class="reward-tile${c.gear && hasGear(state, k) ? ' claimed' : canPay(state, c.cost) ? ' ready' : ''}" data-craft="${k}" ${c.gear && hasGear(state, k) ? 'disabled' : ''}><b><span class="ico">${ITEMS[k].glyph}</span> ${esc(ITEMS[k].name)}${c.gear ? (hasGear(state, k) ? ' · 已擁有' : '') : ' ×' + c.n}</b><small>${esc(ITEMS[k].note || '')}</small><span>${esc(itemCost(c.cost))}</span></button>`
       )
       .join('')}</div>`;
   body.querySelectorAll('[data-craft]').forEach(
@@ -4216,6 +4274,10 @@ function renderCraft(body) {
         const r = craftItem(state, b.dataset.craft);
         toast(r.ok ? r.message : r.error, !r.ok);
         if (r.ok) {
+          if (r.gear) {
+            setClimbing(hasGear(state, 'hook'));
+            discover('裝備 · ' + GEAR[r.gear].name, GEAR[r.gear].desc);
+          }
           audio.note(600, 0.1);
           save(true);
           updateUI();
@@ -4720,6 +4782,8 @@ function journalTabs() {
     ['routes', '航線'],
     ['codex', `圖鑑 ${c.seen}/${c.total}`],
     ['achievements', `成就 ${achievementCount(state)}/${ACHIEVEMENTS.length}`],
+    ['skills', '技能'],
+    ['base', `據點 ${ratingStars(state)}`],
     ['genes', `基因 ${Object.keys(state.codex?.genes || {}).length}/48`],
     ['beasts', `御獸 ${Object.keys(state.codex?.beasts || {}).length}/${BEAST_IDS.length}`],
     ['rewards', '收集獎勵']
@@ -4795,6 +4859,134 @@ function codexHTML() {
         : `<div class="codex-tile unknown"><b>？</b><span>${esc(e.familyName)}</span></div>`
     )
     .join('')}</div>${page.bar}`;
+}
+// ---------- 0.23: fishing, plots, skills and the base rating ----------
+const rewardText = give =>
+  Object.entries(give)
+    .map(([k, v]) => `${k === 'contract' ? '契約書' : RESOURCE_NAMES[k]} ${v}`)
+    .join('、') || '—';
+function castOrReel() {
+  if (!running || paused) return;
+  if (state.fishing) {
+    const r = reel(state);
+    toast(r.ok ? r.message : r.error, !r.ok);
+    $('salvage-progress').hidden = true;
+    if (r.ok) {
+      flyResources({ [r.key]: r.n }, state.player.x, 1, state.player.z);
+      haptic('pickup');
+      audio.note(860, 0.2);
+      save(true);
+      updateUI();
+    }
+    return;
+  }
+  const r = startFishing(state);
+  toast(r.ok ? r.message : r.error, !r.ok);
+  if (r.ok) {
+    audio.splash(0.3, true);
+    world.splash(
+      state.player.x + Math.sin(state.player.heading || 0) * 7,
+      state.player.z + Math.cos(state.player.heading || 0) * 7,
+      0.25
+    );
+    updateFishingHUD();
+  }
+}
+function updateFishingHUD() {
+  const f = state.fishing,
+    el = $('salvage-progress');
+  if (!f) return;
+  el.hidden = false;
+  el.querySelector('span').textContent = f.bit ? '上鉤了！按 E 收竿' : '垂釣中…';
+  const k = f.bit
+    ? 1 - Math.min(1, (state.elapsed - f.biteAt) / BITE_WINDOW)
+    : Math.min(1, (state.elapsed - f.at) / (f.biteAt - f.at));
+  el.querySelector('i').style.transform = `scaleX(${k})`;
+}
+function plotText(t) {
+  if (t.state === 'wild')
+    return `荒地 · 按 E 開墾（約 ${Math.ceil(clearDuration(state))} 秒，伐木／採集中的御獸會幫忙）`;
+  if (t.state === 'clearing')
+    return `開墾中 · 還要 ${Math.max(0, Math.ceil((state.plots[t.island][t.index].doneAt || 0) - state.elapsed))} 秒`;
+  if (t.state === 'built') return `${LAND_BUILDS[t.build].name} · ${LAND_BUILDS[t.build].desc}`;
+  return '已開墾 · 按 E 選擇要蓋的建築';
+}
+function openPlot(t) {
+  const st = state.plots[t.island][t.index],
+    after = r => {
+      toast(r.ok ? r.message : r.error, !r.ok);
+      if (r.ok) {
+        audio.note(600, 0.15);
+        world.sync(state);
+        save(true);
+        updateUI();
+        updateNearest();
+      }
+      closeModal();
+    };
+  if (st.state === 'wild') {
+    modal(
+      'RECLAIM · 開墾',
+      '把荒地變成能用的地',
+      `<p>清掉這塊地的雜木與石頭，約 ${Math.ceil(clearDuration(state))} 秒；正在伐木或採集的御獸會一起幫忙（最多兩隻，各加快一半）。完成後會收到砍下的漂流木與纖維。</p>`,
+      [
+        { label: '開始開墾', primary: true, action: () => after(startClearing(state, t.island, t.index)) },
+        { label: '先不要', action: closeModal }
+      ]
+    );
+    return;
+  }
+  if (st.state === 'clearing') {
+    toast(plotText(t));
+    return;
+  }
+  if (st.state === 'built') {
+    const d = LAND_BUILDS[st.build];
+    modal(d.icon + ' ' + d.name, '島上的建築', `<p>${esc(d.desc)}</p>`, [
+      { label: '拆除（材料全退）', action: () => after(removeLandBuild(state, t.island, t.index)) },
+      { label: '關閉', primary: true, action: closeModal }
+    ]);
+    return;
+  }
+  modal(
+    'BUILD · 陸地建造',
+    '在這塊地上蓋什麼？',
+    `<div class="reward-grid decor-grid">${Object.entries(LAND_BUILDS)
+      .map(
+        ([k, d]) =>
+          `<button type="button" class="reward-tile${canPay(state, d.cost) ? ' ready' : ''}" data-land="${k}" ${canPay(state, d.cost) ? '' : 'disabled'}><b><span class="ico">${d.icon}</span> ${esc(d.name)}</b><small>${esc(d.desc)}</small><span>${esc(itemCost(d.cost))}</span></button>`
+      )
+      .join('')}</div>`,
+    [{ label: '關閉', action: closeModal }]
+  );
+  $('modal-body')
+    .querySelectorAll('[data-land]')
+    .forEach(b => (b.onclick = () => after(buildOnPlot(state, t.island, t.index, b.dataset.land))));
+}
+function skillsHTML() {
+  return `<div class="skill-list">${skillRows(state)
+    .map(
+      r =>
+        `<div class="skill-row"><span class="ico">${r.icon}</span><div><b>${esc(r.name)} <em>Lv${r.level}</em></b><small>${esc(r.perk)} · ${esc(r.per)}</small><i><span style="transform:scaleX(${r.progress.toFixed(3)})"></span></i></div><small class="xp">${r.level >= 10 ? 'MAX' : `${r.xp} / ${r.next}`}</small></div>`
+    )
+    .join('')}</div><p class="dv-note">釣魚、採集、航行、投餌、戰鬥、建造，做什麼就長什麼。</p>`;
+}
+function baseHTML() {
+  const t = ratingTier(state),
+    n = nextTier(state),
+    gear = Object.entries(GEAR)
+      .map(
+        ([k, g]) =>
+          `<span class="gear-chip${hasGear(state, k) ? ' owned' : ''}">${g.icon} ${esc(g.name)}${hasGear(state, k) ? '' : '（未製作）'}</span>`
+      )
+      .join('');
+  return `<div class="base-head"><b>${esc(t.name)}</b><span>${ratingStars(state)}</span><small>${ratingScore(state)} 分${n ? ` · 下一級「${esc(n.name)}」${n.at} 分` : ' · 已是最高評價'}</small></div><div class="stats-grid">${ratingParts(
+    state
+  )
+    .map(p => `<span>${esc(p.name)}</span><b>${p.value}</b>`)
+    .join(
+      ''
+    )}</div><h3 class="dv-sub">裝備</h3><div class="gene-chips">${gear}</div><p class="dv-note">設施、戰艦與擺設、領地與陸地建築、御獸與圖鑑都會算進評價；每升一級有獎勵。</p>`;
 }
 // 基因圖鑑 (0.22): the forty-eight BS genes, known ones with their mark and effect.
 function genesHTML() {
@@ -5361,6 +5553,11 @@ function movePlayer(dt, analog) {
   if (m > 0.06) {
     destination = null;
     sailing = false;
+    if (state.fishing) {
+      cancelFishing(state);
+      $('salvage-progress').hidden = true;
+      toast('收竿了。');
+    }
     if (m > 1) {
       sx /= m;
       sy /= m;
@@ -5386,14 +5583,16 @@ function movePlayer(dt, analog) {
         ? 4.2
         : 3
       : shipDrive
-        ? (sprint ? 10 : 7.6) * (stormAt(state) ? 0.85 : 1)
+        ? (sprint ? 10 : 7.6) * (stormAt(state) ? 0.85 : 1) * sailBonus(state)
         : foot
           ? sprint
             ? 4.4
             : 3
           : mounted
-            ? (state.expedition.diving ? 4 : 6 + phenotype(activePet(state).genome).speed / 55) * (sprint ? 1.3 : 1)
-            : ((sprint ? 7 : 5.3) + state.expedition.boatLevel * 0.7) * (stormAt(state) ? 0.72 : 1);
+            ? (state.expedition.diving ? 4 : 6 + phenotype(activePet(state).genome).speed / 55) *
+              (sprint ? 1.3 : 1) *
+              (hasGear(state, 'saddle') ? SADDLE_SPEED : 1)
+            : ((sprint ? 7 : 5.3) + state.expedition.boatLevel * 0.7) * (stormAt(state) ? 0.72 : 1) * sailBonus(state);
   const oldx = state.player.x,
     oldz = state.player.z;
   let dx, dz;
@@ -6344,6 +6543,33 @@ function frame(now) {
     moveWild(dt);
     updateStats(dt);
     updateCodex(dt);
+    const bite = tickFishing(state);
+    if (bite === 'bite') {
+      toast('上鉤了！快按 E 收竿！');
+      haptic('hit');
+      audio.note(900, 0.15);
+      world.splash(
+        state.player.x + Math.sin(state.player.heading || 0) * 7,
+        state.player.z + Math.cos(state.player.heading || 0) * 7,
+        0.4
+      );
+    } else if (bite === 'lost') {
+      toast('牠跑了。再拋一次。', true);
+      $('salvage-progress').hidden = true;
+    }
+    for (const pe of tickPlots(state)) {
+      if (pe.type === 'cleared') {
+        toast(
+          '開墾完成，收到 ' +
+            Object.entries(pe.got)
+              .map(([k, v]) => `${RESOURCE_NAMES[k]} ${v}`)
+              .join('、') +
+            '。'
+        );
+        world.sync(state);
+      } else if (pe.type === 'produce')
+        toast(`${LAND_BUILDS[state.plots[pe.island][pe.i].build].name}的產出送到了儲物箱。`);
+    }
     const events = tickSystems(state, dt, !!panel || !!buildType);
     for (const message of tickExpansion(state, dt, !!panel || !!buildType)) toast(message);
     if (!panel && !buildType) storyEvents(dt);
@@ -6422,6 +6648,17 @@ function frame(now) {
       updateUI();
       updateNearest();
       checkSightings();
+      updateFishingHUD();
+      for (const t of tickRating(state)) {
+        discover('據點評價 · ' + t.name, `${ratingStars(state)} · 獎勵：${rewardText(t.give || {})}`);
+        log(state, '據點評價：' + t.name, '這裡越來越像一個家了。');
+        save(true);
+      }
+      while (state.skillUps?.length) {
+        const u = state.skillUps.shift();
+        toast(`${SKILLS[u.k].icon} ${SKILLS[u.k].name} Lv${u.level}：${SKILLS[u.k].perk}`);
+        audio.note(780, 0.2);
+      }
       tickRoute();
       drawMap();
       if (bigMapOpen) drawBigMap();

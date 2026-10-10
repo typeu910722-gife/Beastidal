@@ -212,7 +212,8 @@ export function dnaCode(g) {
   let a = 2166136261;
   for (const k of LOCI) {
     // Keep pre-0.10 codes stable: a missing or classic [0,0] lineage does not enter the hash.
-    if (k === 'lineage' && (!g[k] || (g[k][0] === 0 && g[k][1] === 0))) continue;
+    // (and the same for the 0.21 strain locus, so older saves keep their codes and never crash on a missing one)
+    if ((k === 'lineage' || k === 'strain') && (!g[k] || (g[k][0] === 0 && g[k][1] === 0))) continue;
     for (const v of g[k]) {
       a ^= v;
       a = Math.imul(a, 16777619);

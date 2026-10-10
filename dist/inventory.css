@@ -406,3 +406,75 @@
 .gene-grid .reward-tile small {
   color: #9fb7b3;
 }
+
+/* 0.23: skills and the base rating */
+.skill-list {
+  display: grid;
+  gap: 8px;
+}
+.skill-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 4px;
+  background: #1b3138;
+  box-shadow:
+    inset 2px 2px 0 #0a171b,
+    inset -2px -2px 0 #2f5560;
+}
+.skill-row .ico {
+  font-size: 20px;
+  text-align: center;
+}
+.skill-row b em {
+  font-style: normal;
+  color: var(--gold);
+  margin-left: 4px;
+}
+.skill-row small {
+  display: block;
+  color: #9fb7b3;
+  font-size: 11px;
+}
+.skill-row i {
+  display: block;
+  height: 6px;
+  margin-top: 5px;
+  background: #0a171b;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.skill-row i span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #5fe2bd, #ecc78e);
+  transform-origin: left;
+}
+.skill-row .xp {
+  color: #c9e9dd;
+}
+.base-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.base-head b {
+  font-size: 18px;
+}
+.base-head span {
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+.base-head small {
+  color: #9fb7b3;
+}
+.gear-chip {
+  opacity: 0.55;
+}
+.gear-chip.owned {
+  opacity: 1;
+  border-color: var(--gold);
+}

@@ -3,7 +3,7 @@
 // crystal cave does, and is walked in first person: the beast lounge with a dry side and a pool, a stair up to the
 // bridge, a ladder down to the hold with the cargo stations, and furniture you place freely, ARK-style, with
 // collisions. Pure state logic; cabin-models.js draws it.
-import { spend, give } from './bag.js?v=0.22.0';
+import { spend, give } from './bag.js?v=0.23.0';
 
 export const CABIN = { x: -3000, z: 3000 };
 export const FLOORS = [
