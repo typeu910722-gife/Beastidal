@@ -57,7 +57,7 @@ test('lineage: old genomes stay classic sea species with unchanged DNA codes', (
 });
 test('every family/form maps to its species', () => {
   for (const fam of Object.keys(SPECIES))
-    for (let f = 0; f < 4; f++) assert.equal(phenotype(makeGenome(f, f, fam)).species, `${fam}-${f}`);
+    for (let f = 0; f < 4; f++) assert.ok(phenotype(makeGenome(f, f, fam)).species.startsWith(`${fam}-${f}-`));
   assert.equal(phenotype(makeGenome(1, 0, 'land')).habitat, 'land');
   assert.equal(phenotype(makeGenome(1, 0, 'flora')).flora, 1);
 });
@@ -87,13 +87,13 @@ test('far water favours deep species; old wild creatures get a stable family', (
 });
 test('codex records seen and tamed species once each', () => {
   const s = createState(1);
-  assert.equal(recordCreature(s, makeGenome(1, 0, 'deep')), true);
-  assert.equal(recordCreature(s, makeGenome(2, 0, 'deep')), false);
+  assert.equal(recordCreature(s, makeGenome(1, 0, 'deep', 0)), true);
+  assert.equal(recordCreature(s, makeGenome(2, 0, 'deep', 0)), false);
   s.tamed.push({ id: 'p', genome: makeGenome(3, 2, 'land'), generation: 0, bond: 10 });
-  assert.deepEqual(syncOwned(s), ['land-2']);
-  assert.deepEqual(codexProgress(s), { seen: 2, tamed: 1, total: 16 });
-  assert.equal(codexEntries(s).length, 16);
-  assert.ok(Object.keys(LORE).length === 16);
+  assert.deepEqual(syncOwned(s), [phenotype(s.tamed[0].genome).species]);
+  assert.deepEqual(codexProgress(s), { seen: 2, tamed: 1, total: 64 });
+  assert.equal(codexEntries(s).length, 64);
+  assert.ok(Object.keys(LORE).length === 64);
 });
 test('achievements unlock from save state only once, with Steam ids', () => {
   const s = createState(2);

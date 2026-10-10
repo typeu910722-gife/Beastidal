@@ -1,14 +1,16 @@
-import { phenotype, clamp } from './genetics.js?v=0.20.0';
-import { NODES, harvest } from './islands.js?v=0.20.0';
-import { restPlace } from './ship.js?v=0.20.0';
-import { dayOf, dayPhase } from './clock.js?v=0.20.0';
-import { remember, rememberFirst } from './memories.js?v=0.20.0';
-import { spend, give, stow } from './bag.js?v=0.20.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.20.0';
-import { islandAt } from './islands.js?v=0.20.0';
-import { hasPerk } from './codex.js?v=0.20.0';
-import { tally } from './stats.js?v=0.20.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.20.0';
+import { phenotype, clamp } from './genetics.js?v=0.21.0';
+import { NODES, harvest } from './islands.js?v=0.21.0';
+import { restPlace } from './ship.js?v=0.21.0';
+import { dayOf, dayPhase } from './clock.js?v=0.21.0';
+import { remember, rememberFirst } from './memories.js?v=0.21.0';
+import { spend, give, stow } from './bag.js?v=0.21.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.21.0';
+import { islandAt } from './islands.js?v=0.21.0';
+import { hasPerk } from './codex.js?v=0.21.0';
+import { tally } from './stats.js?v=0.21.0';
+import { rollDrops } from './species.js?v=0.21.0';
+import { ITEM_NAMES } from './items.js?v=0.21.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.21.0';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
 // the 深淵潛行者 collection perk lengthens every dive
@@ -232,6 +234,10 @@ export function explore(s, id) {
   }
   return { ok: true, message: texts[id] + (p ? ` ${p.name} 的羈絆 +3。` : '') };
 }
+export const dropText = d =>
+  Object.entries(d || {})
+    .map(([k, v]) => `${ITEM_NAMES[k] || k} +${v}`)
+    .join('、');
 export function attack(s) {
   normalizeExpansion(s);
   const e = s.expedition,
@@ -278,12 +284,16 @@ export function attack(s) {
     } else {
       tally(s, 'kill');
       s.wild = s.wild.filter(w => w !== target);
-      reward(s, { crystal: 1, food: 2 });
+      e.lastDrops = rollDrops(phenotype(target.genome));
+      reward(s, e.lastDrops);
       p.bond = Math.min(100, p.bond + 1);
     }
     return {
       ok: true,
-      message: target === b ? '擊退巨型海怪！異晶 +12、金屬 +15、口糧 +5。' : '擊退敵對生物。',
+      message:
+        target === b
+          ? '擊退巨型海怪！異晶 +12、金屬 +15、口糧 +5。'
+          : '擊退敵對生物，掉落 ' + dropText(e.lastDrops) + '。',
       note: target === b ? e.boneNote : null
     };
   }

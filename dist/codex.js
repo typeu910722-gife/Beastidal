@@ -1,30 +1,21 @@
 // Creature codex: every species the player has seen up close, tamed or bred, with a sample genome for the portrait.
-import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.20.0';
-import { dayOf } from './clock.js?v=0.20.0';
+import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.21.0';
+import { dayOf } from './clock.js?v=0.21.0';
 
-export const LORE = {
-  'sea-0': '骨質鰭條像刀刃一樣立在背上。成群出現時，會用鰭刃切開浪頭，替後面的同伴減少阻力。',
-  'sea-1': '展翼時寬度可達三公尺。翼尖的裂口能分開水流，讓牠在浪下幾乎不發出聲音地滑行。',
-  'sea-2': '傘緣的光點其實是眼睛。夜裡牠們會浮上海面，用整片傘蓋接收星光。',
-  'sea-3': '甲殼上的異晶會吸收月光，再在黎明時慢慢釋放。漂流者常把牠當作夜裡的燈塔。',
-  'deep-0': '只在離岸很遠的深水出沒。轉身時整條身體像一道暗色的浪，鬚鬚能感覺到幾公尺外的心跳。',
-  'deep-1': '十條腕足各自有獨立的神經。牠能一邊觀察你，一邊用其中兩條腕把漂流物偷偷拖走。',
-  'deep-2': '鉗子能夾碎廢金屬。殼上的棘刺越多，代表牠在深海越老、越不好惹。',
-  'deep-3': '螺殼的每一圈都是一年的紀錄。牠會調整殼內的氣體，在不同深度之間緩慢升降。',
-  'land-0': '海底隆起後第一批爬上礁島的生物。頸部的皮褶張開時，代表牠正在曬太陽，而不是生氣。',
-  'land-1': '角尖凝結的異晶在夜裡會發光。據說只要跟著牠走，就能找到島上的淡水。',
-  'land-2': '在風暴來臨前會成群飛向陸地。看到牠們往島上飛，最好也跟著上岸。',
-  'land-3': '甲片之間長滿苔蘚。受驚時會縮成一顆布滿青苔的球，看起來就像一塊石頭。',
-  'flora-0': '異晶讓海藻在牠的鰭上生根。牠游過的地方，常會留下一串會發芽的種子。',
-  'flora-1': '翼面的紋路和葉脈一模一樣，白天會浮在水面上曬太陽，像一片巨大的葉子。',
-  'flora-2': '傘頂開著會發光的花。花粉落進海裡，能讓周圍的水母一起亮起來。',
-  'flora-3': '背上長出了一整片小森林。年紀越大，樹就越高；據說最老的一隻背著一座島。'
-};
+import { LORE, habitatsOf } from './species.js?v=0.21.0';
+export { LORE };
 
 export function normalizeCodex(s) {
   s.codex ??= {};
   s.codex.seen ??= {};
   s.codex.tamed ??= {};
+  // 0.21: species ids gained a strain; old entries were the first strain of their form
+  for (const book of [s.codex.seen, s.codex.tamed])
+    for (const k of Object.keys(book))
+      if (/^(sea|deep|land|flora)-\d$/.test(k)) {
+        book[k + '-0'] ??= book[k];
+        delete book[k];
+      }
   return s.codex;
 }
 // Record a creature: kind = 'seen' | 'tamed'. Returns true when this is a new codex entry.
@@ -68,30 +59,36 @@ export function codexEntries(s) {
     familyName: FAMILY_NAMES[sp.family],
     seen: c.seen[sp.id] || null,
     tamed: c.tamed[sp.id] || null,
-    lore: LORE[sp.id]
+    lore: LORE[sp.id],
+    rare: sp.strain === 3,
+    habitats: habitatsOf(sp.id)
   }));
 }
 
 // ---------- collection rewards (0.18) ----------
 // Seeing and taming species pays off: supplies at first, then a title and a lasting perk per completed family.
-const familyDone = (s, fam) =>
-  allSpecies()
-    .filter(x => x.family === fam)
-    .every(x => s.codex?.tamed?.[x.id]);
+// a family counts as mastered once eight of its sixteen species are tamed
+const familyDone = (s, fam) => allSpecies().filter(x => x.family === fam && s.codex?.tamed?.[x.id]).length >= 8;
 export const CODEX_REWARDS = [
-  { id: 'seen4', name: '初見', need: '見過 4 種生物', check: s => codexProgress(s).seen >= 4, give: { bait: 10 } },
-  { id: 'seen8', name: '觀察者', need: '見過 8 種生物', check: s => codexProgress(s).seen >= 8, give: { contract: 2 } },
+  { id: 'seen4', name: '初見', need: '見過 6 種生物', check: s => codexProgress(s).seen >= 6, give: { bait: 10 } },
+  {
+    id: 'seen8',
+    name: '觀察者',
+    need: '見過 16 種生物',
+    check: s => codexProgress(s).seen >= 16,
+    give: { contract: 2 }
+  },
   {
     id: 'seen12',
     name: '湖的筆記',
-    need: '見過 12 種生物',
-    check: s => codexProgress(s).seen >= 12,
+    need: '見過 32 種生物',
+    check: s => codexProgress(s).seen >= 32,
     give: { crystal: 10 }
   },
   {
     id: 'sea',
     name: '淺海之友',
-    need: '馴化全部淺海種',
+    need: '馴化 8 種淺海種',
     perk: '投餌時信任多 +5%',
     check: s => familyDone(s, 'sea'),
     give: { crystal: 6 }
@@ -99,7 +96,7 @@ export const CODEX_REWARDS = [
   {
     id: 'deep',
     name: '深淵潛行者',
-    need: '馴化全部深淵種',
+    need: '馴化 8 種深淵種',
     perk: '潛水氧氣上限 +30 秒',
     check: s => familyDone(s, 'deep'),
     give: { metal: 12 }
@@ -107,7 +104,7 @@ export const CODEX_REWARDS = [
   {
     id: 'land',
     name: '島嶼牧者',
-    need: '馴化全部陸棲種',
+    need: '馴化 8 種陸棲種',
     perk: '島上採集量 +1',
     check: s => familyDone(s, 'land'),
     give: { wood: 20 }
@@ -115,7 +112,7 @@ export const CODEX_REWARDS = [
   {
     id: 'flora',
     name: '綠潮守護者',
-    need: '馴化全部植生突變',
+    need: '馴化 8 種植生突變',
     perk: '御獸工作產量 +20%',
     check: s => familyDone(s, 'flora'),
     give: { fiber: 20 }
@@ -123,7 +120,7 @@ export const CODEX_REWARDS = [
   {
     id: 'all',
     name: '湖的記錄者',
-    need: '見過全部 16 種生物',
+    need: '見過全部 64 種生物',
     check: s => codexProgress(s).seen >= codexProgress(s).total,
     give: { crystal: 20, contract: 3 }
   }

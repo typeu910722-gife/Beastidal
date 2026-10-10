@@ -134,7 +134,7 @@ test('Codex rewards: milestones unlock in order, pay once, and family sets grant
   normalizeCodex(s);
   assert.ok(codexRewards(s).every(r => !r.done));
   const sp = allSpecies();
-  for (const x of sp.slice(0, 4)) s.codex.seen[x.id] = { day: 1, count: 1 };
+  for (const x of sp.slice(0, 6)) s.codex.seen[x.id] = { day: 1, count: 1 };
   assert.ok(claimCodex(s, 'seen4').ok);
   assert.equal(claimCodex(s, 'seen4').ok, false);
   assert.equal(claimCodex(s, 'seen8').ok, false);

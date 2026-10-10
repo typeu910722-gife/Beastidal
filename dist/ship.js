@@ -1,12 +1,15 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.20.0';
-import { waterNear, groundAt } from './lake.js?v=0.20.0';
-import { onWatcherDown } from './story.js?v=0.20.0';
-import { dayOf } from './clock.js?v=0.20.0';
-import { spend, give, bagRoom } from './bag.js?v=0.20.0';
-import { pens, penId } from './housing.js?v=0.20.0';
-import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.20.0';
-import { normalizeCabin, syncCabin } from './cabin.js?v=0.20.0';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.21.0';
+import { waterNear, groundAt } from './lake.js?v=0.21.0';
+import { onWatcherDown } from './story.js?v=0.21.0';
+import { dayOf } from './clock.js?v=0.21.0';
+import { spend, give, bagRoom } from './bag.js?v=0.21.0';
+import { pens, penId } from './housing.js?v=0.21.0';
+import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.21.0';
+import { normalizeCabin, syncCabin } from './cabin.js?v=0.21.0';
+import { rollDrops } from './species.js?v=0.21.0';
+import { phenotype } from './genetics.js?v=0.21.0';
+import { ITEM_NAMES } from './items.js?v=0.21.0';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
@@ -472,8 +475,17 @@ export function fireCannon(s) {
       return { ok: true, message: '艦砲擊退深海守望者！異晶 +12、金屬 +15、口糧 +5。' };
     }
     s.wild = s.wild.filter(w => w !== target);
-    give(s, { crystal: 1, food: 2 });
-    return { ok: true, message: '艦砲擊退敵對生物。' };
+    const drops = rollDrops(phenotype(target.genome));
+    give(s, drops);
+    return {
+      ok: true,
+      message:
+        '艦砲擊退敵對生物，掉落 ' +
+        Object.entries(drops)
+          .map(([k, v]) => `${ITEM_NAMES[k]} +${v}`)
+          .join('、') +
+        '。'
+    };
   }
   return { ok: true, message: '命中！造成 ' + CANNON.damage + ' 傷害，敵人剩餘 ' + Math.ceil(target.hp) + '。' };
 }

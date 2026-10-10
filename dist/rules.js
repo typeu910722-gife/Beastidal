@@ -1,23 +1,16 @@
-import { limitError } from './ship.js?v=0.20.0';
-import { dayOf } from './clock.js?v=0.20.0';
-import { normalizeExpansion } from './expansion.js?v=0.20.0';
-import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.20.0';
-import { dockingSpots } from './navigation.js?v=0.20.0';
-import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.20.0';
-import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome } from './bag.js?v=0.20.0';
-import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.20.0';
-import { remember } from './memories.js?v=0.20.0';
+import { limitError } from './ship.js?v=0.21.0';
+import { dayOf } from './clock.js?v=0.21.0';
+import { normalizeExpansion } from './expansion.js?v=0.21.0';
+import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.21.0';
+import { dockingSpots } from './navigation.js?v=0.21.0';
+import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.21.0';
+import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome, give } from './bag.js?v=0.21.0';
+import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.21.0';
+import { remember } from './memories.js?v=0.21.0';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
-export const RESOURCE_NAMES = {
-  wood: '漂流木',
-  metal: '廢金屬',
-  fiber: '纖維',
-  crystal: '異晶',
-  food: '口糧',
-  water: '淡水',
-  bait: '誘餌'
-};
-export const RESOURCE_ICONS = { wood: '▱', metal: '⬡', fiber: '⌁', crystal: '◇', food: '◒', water: '♧', bait: '◉' };
+import { ITEM_NAMES, ITEM_GLYPHS, BASE_RESOURCES, CRAFTS } from './items.js?v=0.21.0';
+export const RESOURCE_NAMES = ITEM_NAMES;
+export const RESOURCE_ICONS = ITEM_GLYPHS;
 export const RECIPES = {
   floor: {
     name: '浮動地基',
@@ -310,6 +303,14 @@ export function placeOnShip(s, type) {
   log(s, '建造：' + recipe.name, recipe.desc);
   return { ok: true, message: `${recipe.name} 安置在甲板上。` };
 }
+// The work table (0.21): thirteen things made from materials and what creatures leave behind.
+export function craftItem(s, key) {
+  const c = CRAFTS[key];
+  if (!c) return { ok: false, error: '沒有這種配方。' };
+  if (!spend(s, c.cost)) return { ok: false, error: '材料不夠。' };
+  give(s, { [key]: c.n });
+  return { ok: true, message: `${RESOURCE_NAMES[key]} +${c.n}` };
+}
 export function craftBait(s) {
   if (!s.secret) return { ok: false, error: '先調查研究浮標。' };
   if (!pay(s, { food: 1, fiber: 1 })) return { ok: false, error: '需要 1 口糧與 1 纖維。' };
@@ -317,7 +318,7 @@ export function craftBait(s) {
   return { ok: true };
 }
 // Feeding and contracts live in taming.js (0.12).
-export { feed } from './taming.js?v=0.20.0';
+export { feed } from './taming.js?v=0.21.0';
 export function breed(s, aId, bId, rng = Math.random) {
   if ([aId, bId].some(id => s.tamed.find(p => p.id === id)?.ancient)) return { ok: false, error: '遠古御獸無法配對。' };
   normalizeHousing(s);
@@ -423,7 +424,7 @@ export function validateSave(s) {
   if (!s || s.version !== 1 || !s.player || !s.resources || !s.vitals) return false;
   if (!Number.isFinite(s.elapsed) || s.elapsed < 0) return false;
   if (!Number.isFinite(s.player.x) || !Number.isFinite(s.player.z)) return false;
-  if (!Object.keys(RESOURCE_NAMES).every(k => Number.isFinite(s.resources[k]) && s.resources[k] >= 0)) return false;
+  if (!BASE_RESOURCES.every(k => Number.isFinite(s.resources[k]) && s.resources[k] >= 0)) return false;
   if (!['health', 'food', 'water'].every(k => Number.isFinite(s.vitals[k]) && s.vitals[k] >= 0 && s.vitals[k] <= 100))
     return false;
   // a raft needs its floors; once the base is the fortress, its facilities sit on deck slots or wait aboard

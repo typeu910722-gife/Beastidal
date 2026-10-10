@@ -80,6 +80,10 @@ const SPOTS = [
   [
     '22-cabin-hold',
     `Object.assign(s.player,{mode:'cabin',floor:0,cx:2,cz:6});w.firstPerson=true;w.firstPitch=0.08;w.yaw=-0.3;w.sync(s);`
+  ],
+  [
+    '23-codex',
+    `document.querySelectorAll('#modal-shade').forEach(e=>e.hidden=true);Object.assign(s.player,{mode:'boat',x:9,z:12});w.firstPerson=false;w.sync(s);s.codex={seen:{},tamed:{},claimed:[]};for(const sp of G.allSpecies().slice(0,20))s.codex.seen[sp.id]={day:1,count:1,genome:G.makeGenome(sp.form*7+sp.strain*3+1,sp.form,sp.family,sp.strain)};B.openPanel('journal');document.querySelector('[data-journal-tab=codex]')?.click();`
   ]
 ];
 try {

@@ -197,7 +197,7 @@ test('Mutation always changes the affected allele and keeps genes and phenotypes
   }
   assert.ok(seen.size > 590);
   const all = crossGenome(a, b, seeded(33), 1);
-  assert.equal(all.mutations, 34); // 17 loci × 2 alleles (lineage added in 0.10)
+  assert.equal(all.mutations, 36); // 18 loci × 2 alleles (lineage added in 0.10, strain in 0.21)
   assert.ok(genomeValid(all.genome));
 });
 test('Supplies restore vitals without spending supplies at full health', () => {

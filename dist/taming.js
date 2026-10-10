@@ -4,13 +4,13 @@
 // you. Contract scrolls, made at the raft's work table and carried in the bag, bind a beast anywhere (success
 // chance = trust %). Forcing a contract below 60 % trust can send the beast into a frenzy: 1.2× speed and attack,
 // chasing you for 6–17 seconds.
-import { phenotype, geneName } from './genetics.js?v=0.20.0';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.20.0';
-import { spend } from './bag.js?v=0.20.0';
-import { remember } from './memories.js?v=0.20.0';
-import { nearFacility } from './fortress.js?v=0.20.0';
-import { hasPerk } from './codex.js?v=0.20.0';
-import { tally } from './stats.js?v=0.20.0';
+import { phenotype, geneName } from './genetics.js?v=0.21.0';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.21.0';
+import { spend } from './bag.js?v=0.21.0';
+import { remember } from './memories.js?v=0.21.0';
+import { nearFacility } from './fortress.js?v=0.21.0';
+import { hasPerk } from './codex.js?v=0.21.0';
+import { tally } from './stats.js?v=0.21.0';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 6, max: 17, below: 60 };
@@ -23,7 +23,13 @@ export const rollTame = (rng = Math.random) => rng() < TRUST_GAIN.tameChance;
 export function rarityOf(genome) {
   const p = phenotype(genome),
     base = { sea: 0, land: 1, deep: 2, flora: 3 }[p.family] ?? 0;
-  return Math.min(4, base + (p.glow > 0.85 ? 1 : 0) + (p.fusion || p.family !== p.secondFamily ? 1 : 0));
+  return Math.min(
+    4,
+    base +
+      (p.strain === 3 ? 2 : p.strain === 2 ? 1 : 0) +
+      (p.glow > 0.85 ? 1 : 0) +
+      (p.fusion || p.family !== p.secondFamily ? 1 : 0)
+  );
 }
 export const feedsNeeded = genome => 6 + rarityOf(genome);
 // bait for the next feeding: 1, 3, 5, 7 …

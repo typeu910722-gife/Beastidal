@@ -4,10 +4,10 @@
 //   異晶潮   the lake glows: crystal crates surface near you
 //   御獸遷徙 a herd of one species crosses the lake; calmer around people (easier to tame)
 //   湖心寶藏 a light marks a cache on the lakebed; dive to it
-import { waterNear, groundAt } from './lake.js?v=0.20.0';
-import { makeGenome, allSpecies } from './genetics.js?v=0.20.0';
-import { spend } from './bag.js?v=0.20.0';
-import { tally } from './stats.js?v=0.20.0';
+import { waterNear, groundAt } from './lake.js?v=0.21.0';
+import { makeGenome, allSpecies } from './genetics.js?v=0.21.0';
+import { spend } from './bag.js?v=0.21.0';
+import { tally } from './stats.js?v=0.21.0';
 
 export const EVENTS = {
   merchant: { name: '漂流商船', dur: 210, weight: 3, hint: '開船靠近，看看他帶了什麼。' },
@@ -63,7 +63,7 @@ export function startEvent(s, kind, rng = Math.random) {
       s.loot.push({ id: `${ev.id}-c${i}`, x: p.x, z: p.z, kind: 3, spin: rng() * 6, event: ev.id });
     }
   if (kind === 'migration') {
-    const kinds = allSpecies().filter(x => x.family !== 'land'),
+    const kinds = allSpecies().filter(x => x.family === 'sea' || x.family === 'deep'),
       sp = kinds[Math.floor(rng() * kinds.length)],
       a = rng() * Math.PI * 2;
     ev.species = sp.name;
@@ -83,7 +83,7 @@ export function startEvent(s, kind, rng = Math.random) {
         ox,
         oz,
         phase: rng() * 6,
-        genome: makeGenome(Math.floor(rng() * 1e9), sp.form, sp.family),
+        genome: makeGenome(Math.floor(rng() * 1e9), sp.form, sp.family, sp.strain),
         trust: 0,
         hostile: false,
         event: ev.id

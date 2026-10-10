@@ -2085,5 +2085,251 @@ export default {
   '那是御獸的水池。': "That is the beasts' pool.",
   '重疊了。': '.',
   黃銅箱櫃: 'Brass chest',
-  黃銅邊圓桌: 'Brass-rimmed round table'
+  黃銅邊圓桌: 'Brass-rimmed round table',
+  '· ✦ 稀有': '· ✦ Rare',
+  '保存很久的甜醬。': 'A sweet preserve that keeps for ages.',
+  '傘下掛著一圈會響的囊，在霧裡發出像鈴一樣的聲音，替同伴指路。':
+    'A ring of sacs under its bell chimes in fog, guiding its companions.',
+  '傘底滴著甜甜的蜜露，蜂群跟著牠到處走。極為罕見。':
+    'Sweet dew drips from its bell; swarms of bees follow it everywhere. Extremely rare.',
+  '傘頂噴出的孢子像一朵雲，吸進去會打噴嚏，但很香。':
+    'Its bell puffs spores like a cloud — sneezy to breathe, but fragrant.',
+  '傘頂開著會發光的花。花粉落進湖裡，能讓周圍的水母一起亮起來。':
+    'A glowing flower blooms on its bell; its pollen lights up the jellyfish around it.',
+  '傘體透明得像琉璃，能看見裡面流動的光。珊瑚灘上常有牠們聚集。':
+    'Its bell is clear as glass, with light flowing inside. They gather on the coral shoals.',
+  '入秋後翼面會轉成楓紅，是半島上最漂亮的景色。':
+    'In autumn its wings turn maple red — the prettiest sight on the peninsula.',
+  '全身爬滿帶刺的藤，靠近時要小心。山麓深處才有。':
+    'Thorny vines cover it; mind yourself up close. Found only deep in the foothills.',
+  '全身覆著細密的銀鱗，陽光下像一枚梭子射過水面。湖邊的孩子說牠能追上任何小艇。':
+    'Fine silver scales flash like a shuttle across the water. Lakeside children swear it can catch any skiff.',
+  冥火海龍: 'Hellfire Sea Dragon',
+  '出沒：{0}': 'Found: {0}',
+  初醒淺灘: 'Waking Shallows',
+  '受驚時噴出整片墨霧，能讓方圓十公尺的水全暗下來。': 'When startled it clouds ten metres of water with ink.',
+  古木樹龜: 'Ancient-Wood Tree Turtle',
+  '喉部一圈雪白的羽毛，叫聲清亮，能傳過半個湖。':
+    'A snow-white ring of feathers at its throat; its clear call carries half the lake.',
+  墨囊: 'Ink sac',
+  墨霧觸獸: 'Inkmist Tentacle Beast',
+  夜哨鷗獸: 'Night-Sentry Gull Beast',
+  夜燈觸母: 'Nightlamp Jelly Mother',
+  '夜裡在遺跡的高處站崗，眼睛反射著異晶的光。極少見。':
+    'It stands watch on the ruins at night, eyes reflecting crystal light. Very rare.',
+  '夜裡整隻亮起暖黃色的光，像一盞沉在水裡的燈。見過的人屈指可數。':
+    'At night it glows a warm yellow, like a lamp sunk in the water. Few have ever seen one.',
+  '夜裡會發出低低的歌聲，整座沉城都聽得見。沒有人知道牠在唱什麼。':
+    'At night it sings low; the whole sunken city hears it. Nobody knows what it sings about.',
+  孢子: 'Spores',
+  孢雲燈母: 'Sporecloud Jelly Mother',
+  寒淵觸獸: 'Coldabyss Tentacle Beast',
+  岩甲犰獸: 'Rockshell Armadillo Beast',
+  工作桌製作: 'Work table crafting',
+  布料: 'Cloth',
+  '帶著微光的黏液，乾了會變成膠。': 'Faintly glowing slime that dries into glue.',
+  幽光囊: 'Glow sac',
+  '幽光囊做芯的燈，照亮船艙。': 'A lamp with a glow sac for a wick; it lights the cabin.',
+  幽光蟹獸: 'Ghostlight Crab Beast',
+  '廢金屬敲成的釘子。': 'Nails hammered from scrap metal.',
+  急救藥膏: 'First-aid salve',
+  '悶燒的漂流木，火力穩定。': 'Slow-burnt driftwood with a steady heat.',
+  提燈: 'Lantern',
+  '擊退敵對生物，掉落': 'Hostile creature driven off; it dropped ',
+  '整對角都是透明的異晶，走動時叮噹作響。半島的傳說。':
+    'Both antlers are clear crystal and chime as it walks. A legend of the peninsula.',
+  晶粉: 'Crystal dust',
+  '晶粉燒成的透明板。': 'A clear pane fired from crystal dust.',
+  晶角靈鹿: 'Crystal-Antler Spirit Deer',
+  暴羽鷗獸: 'Stormfeather Gull Beast',
+  曜晶犰獸: 'Obsidian Armadillo Beast',
+  月影魔魟: 'Moonshadow Demon Ray',
+  木炭: 'Charcoal',
+  東神殿外海: 'East Temple waters',
+  林影靈鹿: 'Woodshade Spirit Deer',
+  果實: 'Fruit',
+  果實樹龜: 'Fruiting Tree Turtle',
+  果實醬: 'Fruit jam',
+  枯葉葉魟: 'Deadleaf Leaf Ray',
+  根鬚樹龜: 'Rootbeard Tree Turtle',
+  棘王蟹獸: 'Spine-King Crab Beast',
+  棘藤花獸: 'Thornvine Flower Beast',
+  '植生突變身上的藤，比繩子還韌。': 'Vine from a plant mutant, tougher than rope.',
+  楓紅葉魟: 'Maple Leaf Ray',
+  樹根: 'Tree root',
+  '樹龜背上的根，燒起來很久。': "Root from a tree turtle's back; it burns for a long time.",
+  '樹龜背上結的果，又甜又多汁。': "Fruit from a tree turtle's back, sweet and juicy.",
+  '殼上結滿了異晶的稜面，光打上去會散成一片碎彩。':
+    'Its shell is faceted with crystal; light breaks on it into shards of colour.',
+  '殼上長滿苔蘚，浮在水面時像一塊漂流的草皮。性情最溫和的淺海種。':
+    'Moss covers its shell; afloat it looks like drifting turf. The gentlest of the shallow-sea kinds.',
+  '殼像剛從熔爐裡撈出來一樣泛著暗紅，摸起來竟然是溫的。':
+    'Its shell glows dull red as if fresh from a furnace — and it is warm to the touch.',
+  '殼撞上石頭時會發出鐘一樣的低鳴。沉城的住民據說以此報時。':
+    "Its shell tolls like a bell against stone. The sunken city's people kept time by it, they say.",
+  '殼的棱線鍍著一層金色的異晶，陽光下耀眼得睜不開眼。珊瑚灘的傳說。':
+    'Its shell ridges are plated in golden crystal, blinding in sunlight. A legend of the coral shoals.',
+  '殼紋記錄著潮汐的起落。老漁人靠牠殼上的紋路判斷下一次大潮。':
+    'Its shell lines record the tides; old fishers read the next spring tide from them.',
+  '殼縫裡透出幽綠的光，在黑暗裡像一盞走動的燈。極為罕見。':
+    'A ghostly green light leaks from its shell seams, a walking lamp in the dark. Extremely rare.',
+  '比口糧更頂飽。': 'More filling than rations.',
+  '毛色像林蔭一樣斑駁，在樹影裡幾乎看不見。': 'Its dappled coat vanishes in the shade of the trees.',
+  沉城水域: 'Sunken City waters',
+  沉鐘螺獸: 'Sunken-Bell Snail Beast',
+  '沒有這種配方。': 'No such recipe.',
+  沙丘蜥獸: 'Dune Lizard Beast',
+  '海龍的牙，能當鑽頭用。': "A sea dragon's tooth; it works as a drill bit.",
+  深歌螺獸: 'Deepsong Snail Beast',
+  深海牙: 'Deep-sea fang',
+  '深海種的發光囊，能亮好幾天。': 'A deep-sea glow sac that shines for days.',
+  '深淵種的厚鱗，比鐵還硬。': 'Thick abyssal scale, harder than iron.',
+  淵鱗: 'Abyss scale',
+  '淺海種的鱗片，月光下像銀幣。': 'A shallow-sea scale, like a silver coin by moonlight.',
+  湖心深水: 'Lake-heart deeps',
+  潮紋靈龜: 'Tidemark Spirit Turtle',
+  火把: 'Torch',
+  烤魚: 'Grilled fish',
+  焰緣魔魟: 'Flame-Edge Demon Ray',
+  熔殼蟹獸: 'Furnace-Shell Crab Beast',
+  '熱呼呼的一鍋，連御獸都想喝。': 'A piping hot pot; even the beasts want some.',
+  '燈母的孢子，潮濕處會發芽。': 'Jelly-mother spores; they sprout anywhere damp.',
+  燉肉湯: 'Meat stew',
+  '犰獸的背甲，又輕又硬。': "An armadillo beast's back plate, light and hard.",
+  獸皮: 'Hide',
+  獸脂: 'Tallow',
+  '獸脂浸過的木棒。': 'A stick soaked in tallow.',
+  獸骨: 'Bone',
+  玻璃: 'Glass',
+  '珊瑚灘的碎珊瑚，磨成粉能染色。': 'Coral from the shoals; ground up, it makes a dye.',
+  珊瑚碎片: 'Coral chip',
+  琉璃觸母: 'Glass Jelly Mother',
+  '甜得發膩，御獸最愛。': 'Cloyingly sweet; the beasts love it.',
+  '用材料和生物掉落物製作。點一格做一批；成品進背包，背包滿了會送到儲物箱。':
+    'Made from materials and creature drops. Tap a tile to make one batch; it goes to the bag, or to the storage box when the bag is full.',
+  甲片: 'Armour plate',
+  '甲片像岩石一樣粗糙，滾下坡時能撞斷小樹。': 'Plates rough as rock; rolling downhill it snaps saplings.',
+  '異晶磨成的粉，微微發光。': 'Crystal ground to powder, faintly glowing.',
+  '異晶讓海藻在牠的鰭上生根。牠走過的岸邊，常會留下一串會發芽的種子。':
+    'Crystal let seaweed take root on its fins. Where it walks the shore, sprouting seeds are left behind.',
+  皮革: 'Leather',
+  砂紋魔魟: 'Sandmark Demon Ray',
+  稜晶螺獸: 'Facet-Crystal Snail Beast',
+  繩索: 'Rope',
+  '纖維和葉片織成的布。': 'Cloth woven from fibre and leaves.',
+  '纖維搓成的粗繩。': 'Coarse rope twisted from fibre.',
+  羽毛: 'Feather',
+  '羽毛能擋住最猛的暴雨，常在風暴中迎風站著。': 'Its feathers shed the fiercest rain; it stands facing the storm.',
+  '翼上的砂色斑紋能完全融入淺灘的湖底。常常是你踩到了才發現牠。':
+    'Sand-coloured markings hide it on the shallow lakebed. Usually you find it by stepping on it.',
+  '翼緣像被火燒過一樣泛著橘光。只有舊水門附近的深槽裡才偶爾見到。':
+    'Its wing edges glow orange as if scorched. Seen only now and then in the deep channel by the old water gate.',
+  '翼緣長滿荊棘，連野獸都不敢碰。半島深處的稀客。':
+    'Thorns line its wings; even beasts leave it alone. A rare visitor deep in the peninsula.',
+  '翼面有一層淡淡的月白色，只在夜裡浮上來。據說牠跟著月亮的倒影遷徙。':
+    "A faint moon-white sheen on its wings; it surfaces only at night, following the moon's reflection, they say.",
+  '翼面枯黃，像秋天的落葉，趴在落葉堆裡誰也認不出來。':
+    'Its wings are withered yellow like autumn leaves; in a leaf pile nobody can pick it out.',
+  '翼面的紋路和葉脈一模一樣，白天會攤在岸上曬太陽，像一片巨大的葉子。':
+    "Its wing veins match a leaf's exactly; by day it spreads on the shore to sun like one giant leaf.",
+  '背上有赤色的斑點，越老越紅。右岸半島的岩縫是牠的家。':
+    'Red spots on its back deepen with age. The rock clefts of the east peninsula are its home.',
+  '背上的根鬚垂到地面，走到哪裡就扎根到哪裡，一動不動時像一棵老樹。':
+    'Roots trail from its back to the ground, taking hold wherever it stops; still, it looks like an old tree.',
+  '背上的棘刺長得像一頂王冠，東神殿的石階是牠的地盤。':
+    'Its spines grow like a crown; the steps of the East Temple are its territory.',
+  '背上的樹會結果，果實成熟時整座山麓的鳥都會飛來。':
+    'The tree on its back bears fruit; when it ripens every bird on the foothills comes.',
+  '背上的樹比牠自己還老。山裡的人說，牠是這片湖最早的住民。':
+    "The tree on its back is older than it is. Mountain folk say it was the lake's first inhabitant.",
+  '背甲帶著鐵的光澤，連廢金屬都啃得動。': 'Its shell has an iron sheen; it chews through scrap metal.',
+  '背甲鑲著黑色的曜晶，在月光下閃著暗紫色。中央遺跡島上的傳說。':
+    'Black obsidian studs its shell, glinting purple in moonlight. A legend of the central ruins.',
+  '背鬃是赤紅色的，受驚時會整排豎起。漁人把牠當作風暴前的警訊。':
+    'Its crimson crest stands up when startled. Fishers take it as a warning of storms.',
+  '能止血的青苔。': 'Moss that stops bleeding.',
+  '能磨成針、也能熬湯。': 'Can be ground into needles or boiled for broth.',
+  '能點燈，也能做藥膏。': 'Lights lamps and makes salve.',
+  '腕足上流著七色的光，像一道沉在水底的彩虹。沉城廣場的夜裡偶爾可見。':
+    'Seven colours flow along its arms like a rainbow sunk underwater. Seen on some nights over the sunken plaza.',
+  '腕足冰冷，被纏住的地方會結上一層薄霜。只在最深的寒水裡出現。':
+    'Its arms are ice-cold; whatever they grip frosts over. Found only in the deepest cold water.',
+  腕足吸盤: 'Tentacle sucker',
+  船屋灣: 'Boathouse Bay',
+  '艦砲擊退敵對生物，掉落': 'The cannon drove off a hostile creature; it dropped ',
+  '花蕊夜裡會發出螢光，一群聚在一起像一片會動的星空。':
+    'Its stamens glow at night; a swarm looks like a moving starfield.',
+  花蜜: 'Nectar',
+  苔背靈龜: 'Mossback Spirit Turtle',
+  苔蘚: 'Moss',
+  '苔蘚和花蜜熬的藥，抹上就不痛。': 'A salve of moss and nectar; the pain stops on contact.',
+  荊棘葉魟: 'Bramble Leaf Ray',
+  葉片: 'Leaf',
+  '葉魟的大葉，可以織布。': "A leaf ray's broad leaf; it can be woven.",
+  蓮冠花獸: 'Lotus-Crown Flower Beast',
+  蕨鰭花獸: 'Fernfin Flower Beast',
+  藤蔓: 'Vine',
+  虹腕觸獸: 'Rainbow-Arm Tentacle Beast',
+  蜜露燈母: 'Honeydew Jelly Mother',
+  '蜥獸的鱗，拼起來像一件鎧甲。': 'Lizard beast scales; pieced together they make armour.',
+  蜥鱗: 'Lizard scale',
+  螢蕊燈母: 'Glowstamen Jelly Mother',
+  螺殼: 'Spiral shell',
+  '螺獸的殼，每一圈都是一年。': "A snail beast's shell; every whorl is a year.",
+  '蟹獸的鉗，能夾碎廢金屬。': "A crab beast's claw; it crushes scrap metal.",
+  蟹鉗: 'Crab claw',
+  '製作物品 · 13 種配方': 'Craft items · 13 recipes',
+  '見過 16 種生物': 'Seen 16 species',
+  '見過 32 種生物': 'Seen 32 species',
+  '見過 6 種生物': 'Seen 6 species',
+  '見過全部 64 種生物': 'Seen all 64 species',
+  '角上結著一層白霜，連夏天也不化。只在最高的山麓上出現。':
+    'Frost coats its antlers and never melts, even in summer. Found only on the highest foothills.',
+  觸母黏液: 'Jelly slime',
+  '觸獸的吸盤，黏在船底也拔不下來。': "A tentacle beast's sucker; stuck to a hull it will not come off.",
+  '觸獸的墨，寫在紙上永不褪色。': 'Tentacle beast ink; on paper it never fades.',
+  赤斑蜥獸: 'Redspot Lizard Beast',
+  赤鬃鰭獸: 'Crimson-Crest Fin Beast',
+  '通體墨黑，跟著湖心的黑潮巡游。船底掠過時只看得到一道更暗的影子。':
+    "Ink-black all over, it patrols the dark current at the lake's heart; under a hull it is only a darker shadow.",
+  金棱靈龜: 'Gold-Ridge Spirit Turtle',
+  銀梭鰭獸: 'Silver-Shuttle Fin Beast',
+  銀鱗: 'Silver scale',
+  鐵背犰獸: 'Ironback Armadillo Beast',
+  鐵釘: 'Nails',
+  '陸棲種的皮，鞣過就是皮革。': 'Hide from a land beast; tanned, it is leather.',
+  雪喉鷗獸: 'Snowthroat Gull Beast',
+  雷紋鰭獸: 'Thundermark Fin Beast',
+  雷鱗蜥獸: 'Thunderscale Lizard Beast',
+  霜角靈鹿: 'Frost-Antler Spirit Deer',
+  霧鈴觸母: 'Mistbell Jelly Mother',
+  '靈鹿的角，角尖結著異晶。': "A spirit deer's antler, crystal at the tip.",
+  '靈龜脫落的甲片，含有異晶。': 'A shed turtle plate, laced with crystal.',
+  '鞣過的獸皮，做鞍具的材料。': 'Tanned hide, the stuff of saddles.',
+  '頭頂開著一朵蓮，花開時表示牠正在休息。': 'A lotus blooms on its head; open, it means the beast is resting.',
+  '頭骨外露成冠，是深淵的王。沉城的石碑上刻著牠的樣子。':
+    "Its bare skull forms a crown: the king of the abyss. The sunken city's steles bear its likeness.",
+  '顏色和沙灘一樣，趴著不動就找不到。喜歡在正午的沙丘上打盹。':
+    'Sand-coloured and invisible when still; it naps on the dunes at noon.',
+  '馴化 8 種植生突變': 'Tame 8 plant-mutant species',
+  '馴化 8 種深淵種': 'Tame 8 deep-sea species',
+  '馴化 8 種淺海種': 'Tame 8 shallow-sea species',
+  '馴化 8 種陸棲種': 'Tame 8 land species',
+  骨冠海龍: 'Bonecrown Sea Dragon',
+  '骨刃鰭獸背上的骨鰭，鋒利得能削木。': "A fin beast's bone fin, sharp enough to whittle wood.",
+  '魔魟翼緣的薄膜，又輕又韌。': "Membrane from a demon ray's wing edge, light and tough.",
+  魟翼膜: 'Ray-wing membrane',
+  '鰓縫會透出暗紅的光，像在水裡燒著一團冥火。深淵最兇的獵手之一。':
+    "Dull red light leaks from its gills like hellfire burning underwater. One of the abyss's fiercest hunters.",
+  鰭刃: 'Fin blade',
+  '鰭刃之間流動著細小的電光，深夜能在水下照出一條短短的路。極少見。':
+    'Tiny lightning runs between its fin blades, lighting a short path underwater at night. Very rare.',
+  '鰭變成了蕨葉，走動時沙沙作響。喜歡潮濕的岸邊石縫。':
+    'Its fins became fern fronds that rustle as it walks. It likes damp crevices by the shore.',
+  '鱗片之間會閃出細小的電弧，雨天時整隻像在發光。船屋島的稀客。':
+    'Tiny arcs flicker between its scales; in rain the whole beast seems to glow. A rare visitor to Boathouse Island.',
+  '鷗獸的羽，擋得住暴雨。': "A gull beast's feather; it sheds the rain.",
+  鹿角: 'Antler',
+  黑潮海龍: 'Blacktide Sea Dragon',
+  龜甲片: 'Turtle plate'
 };

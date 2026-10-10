@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.20.0';
-import { renderAdventure } from './expansion-ui.js?v=0.20.0';
+} from './expansion.js?v=0.21.0';
+import { renderAdventure } from './expansion-ui.js?v=0.21.0';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.20.0';
-import { monologue, markGuide } from './guide.js?v=0.20.0';
-import { climb, demolish, relocate } from './construction.js?v=0.20.0';
+} from './ship.js?v=0.21.0';
+import { monologue, markGuide } from './guide.js?v=0.21.0';
+import { climb, demolish, relocate } from './construction.js?v=0.21.0';
 import {
   normalizeHousing,
   penId,
@@ -54,7 +54,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.20.0';
+} from './housing.js?v=0.21.0';
 import {
   ISLANDS,
   NODES,
@@ -65,10 +65,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.20.0';
-import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.20.0';
-import { lakeMinimap } from './lake-map.js?v=0.20.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.20.0';
+} from './islands.js?v=0.21.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable } from './lake.js?v=0.21.0';
+import { lakeMinimap } from './lake-map.js?v=0.21.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.21.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -87,7 +87,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.20.0';
+} from './cabin.js?v=0.21.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -102,19 +102,20 @@ import {
   finishCrossing,
   tickStory,
   duelActive
-} from './story.js?v=0.20.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.20.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.20.0';
-import { QUALITY } from './realism.js?v=0.20.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.20.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.20.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.20.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.20.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.20.0';
-import { CONFIG } from './config.js?v=0.20.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.20.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.20.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.20.0';
+} from './story.js?v=0.21.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.21.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.21.0';
+import { QUALITY } from './realism.js?v=0.21.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.21.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.21.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.21.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.21.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.21.0';
+import { CONFIG } from './config.js?v=0.21.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.21.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.21.0';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.21.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.21.0';
 import {
   RARITY,
   FRENZY,
@@ -125,10 +126,10 @@ import {
   rollTame,
   craftContract,
   contract
-} from './taming.js?v=0.20.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.20.0';
-import { BeastStage } from './beast-stage.js?v=0.20.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.20.0';
+} from './taming.js?v=0.21.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.21.0';
+import { BeastStage } from './beast-stage.js?v=0.21.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.21.0';
 import {
   funds,
   normalizeBag,
@@ -146,12 +147,12 @@ import {
   stash,
   unstash,
   CARRY
-} from './bag.js?v=0.20.0';
-import { iconFor } from './icons.js?v=0.20.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.20.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.20.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.20.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.20.0';
+} from './bag.js?v=0.21.0';
+import { iconFor } from './icons.js?v=0.21.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.21.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.21.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.21.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.21.0';
 import {
   homePos,
   facilityPos,
@@ -163,10 +164,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.20.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.20.0';
-export const GAME_VERSION = '0.20.0';
-import { CloudSave } from './cloud-save.js?v=0.20.0';
+} from './fortress.js?v=0.21.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.21.0';
+export const GAME_VERSION = '0.21.0';
+import { CloudSave } from './cloud-save.js?v=0.21.0';
 import {
   readLocal,
   writeLocal,
@@ -183,9 +184,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.20.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.20.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.20.0';
+} from './save-store.js?v=0.21.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.21.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.21.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -198,6 +199,7 @@ import {
   placeBuilding,
   placeOnShip,
   craftBait,
+  craftItem,
   feed,
   breed,
   useSupply,
@@ -205,8 +207,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.20.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.20.0';
+} from './rules.js?v=0.21.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.21.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -2718,7 +2720,7 @@ function renderCargo(body) {
       rows: 1
     }) +
     amountBar() +
-    invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), { cols: 9, rows: 1 }) +
+    invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), { cols: 9, rows: 2 }) +
     '<p class="inv-hint">點貨艙的物品取出，點背包的物品存入。失去意識時，貨艙物資不會遺失。</p>';
   bindInv(body, {
     refresh: renderPanel,
@@ -2733,9 +2735,9 @@ function renderLocker(body) {
   normalizeBag(state);
   const stored = Object.values(state.storage).reduce((a, b) => a + b, 0);
   body.innerHTML =
-    invBox('box', '儲物箱', `${stored} 件`, slotItems(CARRY, state.storage), { cols: 9, rows: 1 }) +
+    invBox('box', '儲物箱', `${stored} 件`, slotItems(CARRY, state.storage), { cols: 9, rows: 2 }) +
     amountBar() +
-    invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), { cols: 9, rows: 1 }) +
+    invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), { cols: 9, rows: 2 }) +
     `<div class="inv-actions"><button type="button" id="lk-all">材料全部存入</button><button type="button" id="lk-supply">取出補給</button></div><p class="inv-hint">點儲物箱的物品取出，點背包的物品存入。在家時，建造會一併使用儲物箱裡的材料。</p>`;
   bindInv(body, {
     refresh: renderPanel,
@@ -3073,6 +3075,7 @@ function focusCard(b, item, near) {
       },
       { disabled: !state.secret }
     );
+    act('製作物品 · 13 種配方', () => openPanel('craft'), { disabled: !near });
   } else if (item.key === 'laptop') {
     card.eyebrow = '破舊筆電';
     card.title = '系統修復模式';
@@ -3458,7 +3461,8 @@ function renderPanel() {
     device: ['HANDHELD', '隨身裝置'],
     beasts: ['BEASTS', '御獸倉庫'],
     locker: ['STORAGE', '書桌儲物箱'],
-    decor: ['INTERIOR', '船艙擺設']
+    decor: ['INTERIOR', '船艙擺設'],
+    craft: ['WORKBENCH', '工作桌製作']
   };
   $('drawer-eyebrow').textContent = settings[panel][0];
   $('drawer-title').textContent = settings[panel][1];
@@ -3490,6 +3494,10 @@ function renderPanel() {
   }
   if (panel === 'facility') {
     renderFacility(body);
+    return;
+  }
+  if (panel === 'craft') {
+    renderCraft(body);
     return;
   }
   if (panel === 'decor') {
@@ -3599,7 +3607,7 @@ function renderPanel() {
       refresh: renderPanel,
       onSlot: (grid, key) => {
         if (key === 'food' || key === 'water') consume(key);
-        else toast(RESOURCE_NAMES[key] || '契約書');
+        else toast((ITEMS[key]?.name || '契約書') + (ITEMS[key]?.note ? '：' + ITEMS[key].note : ''));
       }
     });
     if ($('craft-bait'))
@@ -4031,6 +4039,30 @@ function cancelPlace() {
   world?.cabin?.setGhost(null);
   $('build-banner').hidden = true;
   $('build-banner').querySelector('span').textContent = '點擊綠色格子放置 · R 旋轉 · Esc 結束';
+}
+// The work table's recipes (0.21): one tile per thing it makes; tap to craft one batch.
+function renderCraft(body) {
+  body.innerHTML =
+    '<p class="dv-note">用材料和生物掉落物製作。點一格做一批；成品進背包，背包滿了會送到儲物箱。</p>' +
+    `<div class="reward-grid decor-grid">${Object.entries(CRAFTS)
+      .map(
+        ([k, c]) =>
+          `<button type="button" class="reward-tile${canPay(state, c.cost) ? ' ready' : ''}" data-craft="${k}"><b><span class="ico">${ITEMS[k].glyph}</span> ${esc(ITEMS[k].name)} ×${c.n}</b><small>${esc(ITEMS[k].note || '')}</small><span>${esc(itemCost(c.cost))}</span></button>`
+      )
+      .join('')}</div>`;
+  body.querySelectorAll('[data-craft]').forEach(
+    b =>
+      (b.onclick = () => {
+        const r = craftItem(state, b.dataset.craft);
+        toast(r.ok ? r.message : r.error, !r.ok);
+        if (r.ok) {
+          audio.note(600, 0.1);
+          save(true);
+          updateUI();
+        }
+        renderPanel();
+      })
+  );
 }
 function renderDecor(body) {
   if (state.player.mode !== 'cabin') {
@@ -4592,7 +4624,7 @@ function codexHTML() {
     entries = codexEntries(state),
     pick = entries.find(e => e.id === codexPick && e.seen);
   if (pick)
-    return `<button type="button" class="bx-back" data-codex-back>‹ 圖鑑</button><article class="codex-page ${pick.tamed ? 'tamed' : ''}"><img alt="${esc(pick.name)}" src="${world.thumbnail(pick.seen.genome, 'codex-' + pick.id)}"><div><small>${esc(pick.familyName)}${pick.tamed ? ' · 🎖 已馴化' : ''}</small><h3>${esc(pick.name)}</h3><p>${esc(pick.lore)}</p><small>第 ${pick.seen.day} 日首次記錄 · 遇見 ${pick.seen.count} 次</small></div></article>`;
+    return `<button type="button" class="bx-back" data-codex-back>‹ 圖鑑</button><article class="codex-page ${pick.tamed ? 'tamed' : ''}"><img alt="${esc(pick.name)}" src="${world.thumbnail(pick.seen.genome, 'codex-' + pick.id)}"><div><small>${esc(pick.familyName)}${pick.rare ? ' · ✦ 稀有' : ''}${pick.tamed ? ' · 🎖 已馴化' : ''}</small><h3>${esc(pick.name)}</h3><p>${esc(pick.lore)}</p><small>出沒：${esc(pick.habitats.join('、') || '未知')}</small><br><small>第 ${pick.seen.day} 日首次記錄 · 遇見 ${pick.seen.count} 次</small></div></article>`;
   const page = paged('codex', entries, compactPanels() ? 4 : 12);
   return `<p class="codex-count">已記錄 ${c.seen} / ${c.total} · 馴化 ${c.tamed}</p><div class="codex-tiles">${page.items
     .map(e =>
@@ -5240,7 +5272,7 @@ function movePlayer(dt, analog) {
 // A beast that fully trusts you follows a few metres behind; land beasts hop into the boat when you put to sea.
 function followPlayer(w, dt) {
   const p = state.player;
-  if (w.island && p.mode !== 'foot') {
+  if (ashore(w) && p.mode !== 'foot') {
     w.riding = true;
     w.x = state.boat.x;
     w.z = state.boat.z;
@@ -5262,7 +5294,7 @@ function followPlayer(w, dt) {
   const v = Math.min(9, 2.5 + d * 1.2),
     nx = w.x + (dx / d) * v * dt,
     nz = w.z + (dz / d) * v * dt;
-  if (w.island || !islandAt(nx, nz, 2)) {
+  if (ashore(w) || !islandAt(nx, nz, 2)) {
     w.x = nx;
     w.z = nz;
   }
@@ -5281,7 +5313,7 @@ function moveWild(dt) {
       followPlayer(w, dt);
       continue;
     }
-    if (w.island && !fren) {
+    if (ashore(w) && !fren) {
       stepLandBeast(w, dt, state.elapsed);
       continue;
     }
@@ -5330,7 +5362,7 @@ function moveWild(dt) {
       const nx = w.x + (dx / len) * speed * dt,
         nz = w.z + (dz / len) * speed * dt;
       // sea beasts stay off the islands; a frenzied land beast stays on its island
-      if (w.island ? islandAt(nx, nz, -1) : !islandAt(nx, nz, 2)) {
+      if (ashore(w) ? walkable(nx, nz) : !islandAt(nx, nz, 2)) {
         w.x = nx;
         w.z = nz;
       }
@@ -6153,25 +6185,8 @@ function frame(now) {
       ensureLandBeasts(state);
       clearLand(state);
       world.sync(state);
-      const nearby = state.wild.filter(w => Math.hypot(w.x - state.player.x, w.z - state.player.z) < 65);
-      if (nearby.length < 4 && state.wild.length < 26) {
-        const a = Math.random() * Math.PI * 2,
-          x = state.player.x + Math.sin(a) * 35,
-          z = state.player.z + Math.cos(a) * 35;
-        state.wild.push({
-          id: uid('wild'),
-          x,
-          z,
-          homeX: x,
-          homeZ: z,
-          phase: Math.random() * 6,
-          genome: seaGenome(x, z),
-          trust: 0,
-          tame: rollTame(),
-          hostile: Math.hypot(x, z) > 90 && Math.random() < 0.3
-        });
-        world.sync(state);
-      }
+      // 0.21: zone-based spawns — each part of the lake has its own species, a few rare ones only there
+      if (spawnWild(state)) world.sync(state);
     }
     if (discoveryTimer > 0) {
       discoveryTimer -= dt;
