@@ -1,7 +1,7 @@
 // The backpack holds a limited number of things in all. What does not fit waits in the storage of the raft's
 // desk: deposit there when the bag is full, and enlarge the bag at the desk with materials. While you are home,
 // building and crafting can draw on the desk's storage as well as the bag.
-import { homePos, nearFacility } from './fortress.js?v=0.16.0';
+import { homePos, nearFacility } from './fortress.js?v=0.17.0';
 export const CARRY = ['wood', 'metal', 'fiber', 'crystal', 'food', 'water', 'bait'];
 // supplies you keep on you when depositing
 export const KEEP = ['food', 'water', 'bait'];
@@ -110,6 +110,26 @@ export function takeSupplies(s) {
     n += v;
   }
   return { ok: true, message: `取出 ${n} 份補給。背包 ${bagUsed(s)} / ${bagCap(s)}` };
+}
+// At the desk's storage box: move any amount of one item between the bag and the box (the grid inventory).
+export function stash(s, k, n = Infinity) {
+  normalizeBag(s);
+  if (!nearDesk(s)) return { ok: false, error: '請走到書桌旁的儲物箱。' };
+  const m = Math.min(n, s.resources[k] || 0);
+  if (m <= 0) return { ok: false, error: '背包裡沒有這項物品。' };
+  s.resources[k] -= m;
+  s.storage[k] += m;
+  return { ok: true, moved: m };
+}
+export function unstash(s, k, n = Infinity) {
+  normalizeBag(s);
+  if (!nearDesk(s)) return { ok: false, error: '請走到書桌旁的儲物箱。' };
+  const m = Math.min(n, s.storage[k] || 0, bagRoom(s));
+  if (!(s.storage[k] > 0)) return { ok: false, error: '儲物箱裡沒有這項物品。' };
+  if (m <= 0) return { ok: false, error: '背包已經滿了。' };
+  s.storage[k] -= m;
+  s.resources[k] = (s.resources[k] || 0) + m;
+  return { ok: true, moved: m };
 }
 export const nextBag = s => BAG_LEVELS[(s.bagLevel || 0) + 1] || null;
 export function upgradeBag(s) {

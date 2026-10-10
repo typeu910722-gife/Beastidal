@@ -1,7 +1,9 @@
-import { EXPLORE, STAGES, normalizeExpansion, commandPet, upgradeBoat, awaken } from './expansion.js?v=0.16.0';
-import { objectives, normalizeStory } from './story.js?v=0.16.0';
+import { EXPLORE, STAGES, normalizeExpansion, commandPet, upgradeBoat, awaken } from './expansion.js?v=0.17.0';
+import { objectives, normalizeStory } from './story.js?v=0.17.0';
 let tab = 'beasts',
-  page = 0;
+  page = 0,
+  pick = null,
+  turn = '';
 const esc = s =>
   String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 export function renderAdventure(body, s, ctx) {
@@ -19,17 +21,27 @@ export function renderAdventure(body, s, ctx) {
     else ctx.refresh();
   };
   if (tab === 'beasts') {
-    // three companions per page: name, bond stage, bond bar and the orders; training lives in the beast storage
-    const per = innerHeight < 520 ? 2 : 4,
+    // a grid of partner tiles (name, stage, bond bar); tap one and its orders appear below — no scrolling list
+    const per = innerHeight < 520 ? 6 : 9,
       pages = Math.max(1, Math.ceil(s.tamed.length / per));
     page = Math.min(Math.max(0, page), pages - 1);
+    if (!s.tamed.some(p => p.id === pick)) pick = e.activeId || s.tamed[0]?.id || null;
     if (!s.tamed.length) body.innerHTML += '<p class="dv-note">還沒有御獸夥伴。</p>';
-    for (const pet of s.tamed.slice(page * per, page * per + per)) {
-      const out = e.activeId === pet.id;
-      body.innerHTML += `<article class="beast-row"><div class="beast-row-head"><b>${esc(pet.name)}</b><span>${pet.awakened ? '契印覺醒' : esc(STAGES.filter(([n]) => pet.bond >= n).at(-1)[1])} · 羈絆 ${Math.floor(pet.bond)}${out ? ' · 出戰中' : ''}</span></div><div class="bond-meter"><i style="width:${pet.bond}%"></i></div><div class="beast-row-actions"><button data-pet="${pet.id}" data-order="follow">跟隨</button><button data-pet="${pet.id}" data-order="gather">協採</button><button data-pet="${pet.id}" data-order="guard">協戰</button>${out ? `<button data-pet="${pet.id}" data-order="home">回池</button>` : ''}${pet.bond >= 85 && !pet.awakened ? `<button data-awaken="${pet.id}">喚醒契印</button>` : ''}</div></article>`;
+    else {
+      const shown = s.tamed.slice(page * per, page * per + per);
+      body.innerHTML += `<div class="pet-grid${turn ? ' turn-' + turn : ''}">${Array.from({ length: per }, (_, i) => {
+        const pet = shown[i];
+        if (!pet) return '<span class="pet-tile empty"></span>';
+        const out = e.activeId === pet.id;
+        return `<button type="button" class="pet-tile${pet.id === pick ? ' active' : ''}${out ? ' out' : ''}" data-pick="${esc(pet.id)}"><b>${esc(pet.name)}</b><small>${pet.awakened ? '契印覺醒' : esc(STAGES.filter(([n]) => pet.bond >= n).at(-1)[1])} · ${Math.floor(pet.bond)}</small><i style="width:${pet.bond}%"></i>${out ? '<em>出戰</em>' : ''}</button>`;
+      }).join('')}</div>`;
+      turn = '';
+      if (pages > 1)
+        body.innerHTML += `<div class="inv-pager"><button type="button" data-exp-page="-1" ${page ? '' : 'disabled'}>‹</button><span>${page + 1} / ${pages}</span><button type="button" data-exp-page="1" ${page < pages - 1 ? '' : 'disabled'}>›</button></div>`;
+      const pet = s.tamed.find(p => p.id === pick),
+        out = e.activeId === pet.id;
+      body.innerHTML += `<div class="pet-orders"><span>${esc(pet.name)}</span><button data-pet="${pet.id}" data-order="follow">跟隨</button><button data-pet="${pet.id}" data-order="gather">協採</button><button data-pet="${pet.id}" data-order="guard">協戰</button>${out ? `<button data-pet="${pet.id}" data-order="home">回去休息</button>` : ''}${pet.bond >= 85 && !pet.awakened ? `<button data-awaken="${pet.id}">喚醒契印</button>` : ''}</div>`;
     }
-    if (pages > 1)
-      body.innerHTML += `<div class="bx-pager"><button type="button" data-exp-page="-1" ${page ? '' : 'disabled'}>‹</button><span>${page + 1} / ${pages}</span><button type="button" data-exp-page="1" ${page < pages - 1 ? '' : 'disabled'}>›</button></div>`;
   } else if (tab === 'pact') {
     body.innerHTML += `<ul class="pact-list">${story.map(([text, done]) => `<li class="${done ? 'done' : ''}">${done ? '✓' : '○'} ${esc(text)}</li>`).join('')}</ul>`;
     if (s.story.stage >= 5)
@@ -52,6 +64,14 @@ export function renderAdventure(body, s, ctx) {
     b =>
       (b.onclick = () => {
         page += Number(b.dataset.expPage);
+        turn = Number(b.dataset.expPage) > 0 ? 'next' : 'prev';
+        ctx.refresh();
+      })
+  );
+  body.querySelectorAll('[data-pick]').forEach(
+    b =>
+      (b.onclick = () => {
+        pick = b.dataset.pick;
         ctx.refresh();
       })
   );

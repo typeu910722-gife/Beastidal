@@ -8,8 +8,8 @@
 //   4. splitting at separators (·, ：, ，, 、, ／ …) and translating each piece.
 // localize(root) / watch() apply tr() to DOM text and to title / aria-label / alt / placeholder attributes,
 // so every panel, toast and label is covered without touching the code that builds them.
-import EN from './i18n/en.js?v=0.16.0';
-import { SPECIES, FAMILIES } from './genetics.js?v=0.16.0';
+import EN from './i18n/en.js?v=0.17.0';
+import { SPECIES, FAMILIES } from './genetics.js?v=0.17.0';
 
 const KEY = 'beastidal-lang';
 const CJK = /[\u3400-\u9fff\uff00-\uffef\u3000-\u303f]/;

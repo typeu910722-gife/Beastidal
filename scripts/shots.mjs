@@ -38,7 +38,19 @@ const SPOTS = [
     '09-beast',
     `s.expedition.diving=false;s.expedition.mounted=false;S.normalizeStory(s);Object.assign(s.story,{stage:3,keys:['tide','stone','bone'],beast:{x:S.BEAST_HOME.x,z:S.BEAST_HOME.z,hp:900,maxHp:900}});Object.assign(s.player,{x:S.BEAST_HOME.x+7,z:S.BEAST_HOME.z+5,mode:'foot'});w.distance=24;w.pitch=.32;w.yaw=.6;`
   ],
-  ['10-dialogue', `B.keys.clear();`, 'e']
+  ['10-dialogue', `B.keys.clear();`, 'e'],
+  [
+    '11-hud',
+    `document.querySelectorAll('#modal-shade').forEach(e=>e.hidden=true);s.player.mode='boat';Object.assign(s.player,{x:9,z:12});s.expedition.diving=false;s.expedition.mounted=false;w.distance=40;w.pitch=.5;w.yaw=2.4;`
+  ],
+  [
+    '12-bag',
+    `s.device&&(s.device.owned=true);s.resources.wood=23;s.resources.food=4;s.contracts=2;B.openPanel('bag');`
+  ],
+  [
+    '13-locker',
+    `B.openPanel('bag');const d=s.buildings.find(b=>b.type==='desk');s.storage.wood=37;s.storage.metal=12;s.storage.crystal=5;s.storage.food=8;Object.assign(s.player,{mode:'foot',level:0,x:d.x*3.6+1.6,z:d.z*3.6});B.openPanel('locker');`
+  ]
 ];
 try {
   await new Promise(r => setTimeout(r, 700));
@@ -68,13 +80,19 @@ try {
   await page.waitForFunction(() => window.__beastidal && !document.getElementById('hud').hidden, null, {
     timeout: 60000
   });
-  for (const [name, setup, key] of SPOTS) {
-    if (only && !name.includes(only) && !(only === 'story' && name >= '08')) continue;
+  for (const [name, setup, key, click] of SPOTS) {
+    if (
+      only &&
+      !name.includes(only) &&
+      !(only === 'story' && name >= '08' && name < '11') &&
+      !(only === 'ui' && name >= '11')
+    )
+      continue;
     await page.evaluate(async code => {
       const B = window.__beastidal,
         s = B.state,
         w = B.world;
-      const v = '?v=0.16.0',
+      const v = '?v=0.17.0',
         I = await import('/islands.js' + v),
         L = await import('/lake.js' + v),
         G = await import('/genetics.js' + v),
@@ -88,6 +106,10 @@ try {
       await page.keyboard.press(key);
       await page.waitForTimeout(800);
       await page.evaluate(() => window.__beastidal.step(1 / 30, 20));
+    }
+    if (click) {
+      await page.click(`text=${click}`);
+      await page.waitForTimeout(600);
     }
     await page.screenshot({ path: `shots/${name}.png` });
     console.log('shot', name);

@@ -1,7 +1,7 @@
 // The first companion (the first ten minutes): a small beast is caught in a drifting net near the raft. You can
 // free it and share a little food long before you know how to tame anything; it swims along with you for a
 // while, then waits near the raft (already half-trusting) until you can make a contract with it.
-import { makeGenome } from './genetics.js?v=0.16.0';
+import { makeGenome } from './genetics.js?v=0.17.0';
 
 export const RESCUE_ID = 'wild-rescue';
 export const RESCUE_AT = { x: 15, z: 17 };

@@ -5,7 +5,7 @@
 //                   └ hip L/R 0.91 ─ knee 0.49 ─ ankle 0.07 ─ foot
 // animateHuman() drives walk / run / idle / sit / ride poses procedurally, with breathing and blinking.
 import * as T from './vendor/three.module.min.js';
-import { animateModel } from './protagonist.js?v=0.16.0';
+import { animateModel } from './protagonist.js?v=0.17.0';
 
 const V = T.Vector3;
 const smooth = (a, b, x) => {

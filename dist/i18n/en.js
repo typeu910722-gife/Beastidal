@@ -1881,5 +1881,26 @@ export default {
   喚醒嘯岳: 'Wake Xiaoyue',
   '試煉 · {0}：{1}': 'Trial · {0}: {1}',
   '以契約書與 20 異晶締結契約': 'Seal the pact with a contract scroll and 20 crystal',
-  '帶嘯岳到環湖的山腳，越過群山': 'Take Xiaoyue to the foothills and cross the mountains'
+  '帶嘯岳到環湖的山腳，越過群山': 'Take Xiaoyue to the foothills and cross the mountains',
+  '請走到書桌旁的儲物箱。': 'Walk to the storage box by the desk.',
+  '背包裡沒有這項物品。': 'You have none of that in your bag.',
+  '儲物箱裡沒有這項物品。': 'There is none of that in the storage box.',
+  '點貨艙的物品取出，點背包的物品存入。失去意識時，貨艙物資不會遺失。':
+    'Tap an item in the hold to take it out, or in your bag to store it. Cargo is never lost if you pass out.',
+  '{0} 件': '{0} items',
+  材料全部存入: 'Store all materials',
+  取出補給: 'Take supplies',
+  '點儲物箱的物品取出，點背包的物品存入。在家時，建造會一併使用儲物箱裡的材料。':
+    'Tap an item in the box to take it out, or in your bag to store it. At home, building also draws on the box.',
+  '{0} · 休息中': '{0} · resting',
+  '點御獸讓牠上船或回領地休息。': 'Tap a beast to bring it aboard or send it back to rest on your land.',
+  '停靠在占領島嶼或避難所附近，夥伴才能上下船。':
+    'Moor near a claimed island or the shelter so partners can board or go ashore.',
+  打開儲物箱: 'Open the storage box',
+  書桌儲物箱: 'Desk storage box',
+  '點口糧進食、點淡水喝水。{0}': 'Tap rations to eat, fresh water to drink.{0}',
+  全部: 'All',
+  每次移動: 'Move per tap',
+  出戰: 'Out',
+  回去休息: 'Send back to rest'
 };

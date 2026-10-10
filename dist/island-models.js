@@ -1,6 +1,6 @@
 import * as T from './vendor/three.module.min.js';
-import { ISLANDS, NODES } from './islands.js?v=0.16.0';
-import { groundAt, slopeAt } from './lake.js?v=0.16.0';
+import { ISLANDS, NODES } from './islands.js?v=0.17.0';
+import { groundAt, slopeAt } from './lake.js?v=0.17.0';
 const material = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.85, ...extra });
 const trunk = material(0x8e7952),
   leaf = material(0x4c8263, { side: T.DoubleSide }),

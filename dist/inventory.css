@@ -1,0 +1,287 @@
+/* 0.17 grid inventories (inv.js): Minecraft-style slots, page turns, and panels that fit their content. */
+#drawer {
+  bottom: auto;
+  max-height: calc(var(--game-height, 100vh) - 104px);
+}
+.landscape-play #drawer {
+  bottom: auto;
+  max-height: calc(var(--game-height, 100vh) - 66px);
+}
+.inv-box {
+  margin: 0 0 12px;
+}
+.inv-box > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 2px 6px;
+  font-size: 13px;
+  color: #cfe0d8;
+  letter-spacing: 0.06em;
+}
+.inv-box > header span {
+  font-size: 12px;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.inv-grid {
+  --slot: 52px;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--slot));
+  gap: 4px;
+  justify-content: center;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 6px;
+  border-radius: 6px;
+  background: #0a1c22;
+  box-shadow:
+    inset 2px 2px 0 #050f12,
+    inset -2px -2px 0 #1d3b44;
+  perspective: 700px;
+}
+.inv-slot {
+  position: relative;
+  width: var(--slot);
+  height: var(--slot);
+  min-height: 0;
+  padding: 7px;
+  border: 0;
+  border-radius: 3px;
+  background: #1b3138;
+  box-shadow:
+    inset 2px 2px 0 #0a171b,
+    inset -2px -2px 0 #2f5560;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    transform 0.08s;
+}
+.inv-slot svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(1px 1px 0 #0008);
+}
+.inv-slot b {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 0 0 #0008;
+  font-variant-numeric: tabular-nums;
+}
+.inv-slot:hover:not(:disabled),
+.inv-slot:focus-visible {
+  background: #2a4a54;
+}
+.inv-slot:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.inv-slot.zero svg {
+  opacity: 0.28;
+  filter: grayscale(1);
+}
+.inv-slot.zero b {
+  color: #9fb7b3;
+}
+.inv-slot.empty {
+  cursor: default;
+}
+.inv-slot:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+/* page turn: the new page swings in from the side it was turned toward */
+.inv-grid.turn-next {
+  animation: page-next 0.32s ease-out;
+  transform-origin: left center;
+}
+.inv-grid.turn-prev {
+  animation: page-prev 0.32s ease-out;
+  transform-origin: right center;
+}
+@keyframes page-next {
+  from {
+    transform: rotateY(-70deg);
+    opacity: 0.2;
+  }
+}
+@keyframes page-prev {
+  from {
+    transform: rotateY(70deg);
+    opacity: 0.2;
+  }
+}
+.inv-pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #cfe0d8;
+}
+.inv-pager button {
+  min-height: 30px;
+  width: 38px;
+  padding: 0;
+  font-size: 18px;
+}
+.inv-amount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 2px 0 12px;
+  font-size: 12px;
+  color: #9fb7b3;
+}
+.inv-amount button {
+  min-height: 28px;
+  padding: 2px 12px;
+  font-size: 12px;
+  border-radius: 999px;
+}
+.inv-amount button.active {
+  border-color: var(--mint);
+  color: var(--mint);
+  background: #2c564966;
+}
+.inv-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 4px 0 6px;
+}
+.inv-actions button {
+  min-height: 32px;
+  font-size: 13px;
+}
+.inv-hint {
+  margin: 4px 0 8px;
+  text-align: center;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  color: #9fb7b3;
+}
+.bx-grid.lounge {
+  grid-template-columns: repeat(6, 1fr);
+}
+.bx-grid.lounge .bx-cell:disabled {
+  opacity: 0.55;
+}
+/* phones in landscape and the handheld device: smaller slots, same nine columns */
+.landscape-play .inv-grid,
+#drawer.device .inv-grid {
+  --slot: 36px;
+  gap: 3px;
+  padding: 4px;
+}
+.landscape-play .inv-slot,
+#drawer.device .inv-slot {
+  padding: 4px;
+}
+.landscape-play .inv-slot b,
+#drawer.device .inv-slot b {
+  font-size: 11px;
+  right: 2px;
+  bottom: 0;
+}
+.landscape-play .bx-grid.lounge,
+#drawer.device .bx-grid.lounge {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 520px) {
+  .inv-grid {
+    --slot: calc((100vw - 120px) / 9);
+  }
+}
+/* 御獸遠航: partner tiles with a bond bar; the selected partner's orders sit below the grid */
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  perspective: 700px;
+}
+.pet-grid.turn-next {
+  animation: page-next 0.32s ease-out;
+  transform-origin: left center;
+}
+.pet-grid.turn-prev {
+  animation: page-prev 0.32s ease-out;
+  transform-origin: right center;
+}
+.pet-tile {
+  position: relative;
+  min-height: 58px;
+  padding: 8px 10px 12px;
+  border-radius: 4px;
+  text-align: left;
+  background: #1b3138;
+  box-shadow:
+    inset 2px 2px 0 #0a171b,
+    inset -2px -2px 0 #2f5560;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pet-tile b {
+  font-size: 13px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.pet-tile small {
+  font-size: 11px;
+  color: #9fb7b3;
+}
+.pet-tile i {
+  position: absolute;
+  left: 8px;
+  bottom: 5px;
+  height: 3px;
+  max-width: calc(100% - 16px);
+  border-radius: 3px;
+  background: linear-gradient(90deg, #84cabb, #e9cd91);
+}
+.pet-tile em {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 10px;
+  font-style: normal;
+  color: var(--gold);
+}
+.pet-tile.active {
+  outline: 2px solid var(--mint);
+  background: #24434b;
+}
+.pet-tile.empty {
+  min-height: 58px;
+  border-radius: 4px;
+  background: #0f2329;
+}
+.pet-orders {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+.pet-orders span {
+  font-size: 13px;
+  color: var(--gold);
+  margin-right: 4px;
+}
+.pet-orders button {
+  min-height: 32px;
+  padding: 4px 12px;
+  font-size: 13px;
+}

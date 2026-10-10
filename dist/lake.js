@@ -1,6 +1,6 @@
 // The inland sea of 沉湖遺城: baked terrain lookups shared by rules, navigation and rendering.
 // Game coordinates are metres with the raft at (0,0); map coordinates are the sketch's units.
-import { HS, Q, ORIGIN, LAIR, FINE, COARSE } from './lake-data.js?v=0.16.0';
+import { HS, Q, ORIGIN, LAIR, FINE, COARSE } from './lake-data.js?v=0.17.0';
 export { HS, ORIGIN };
 
 function decode(g) {

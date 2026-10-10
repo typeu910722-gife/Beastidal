@@ -1,27 +1,50 @@
-import { expansionModels } from './expansion-models.js?v=0.16.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.16.0';
-import { normalizeHousing, penId } from './housing.js?v=0.16.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.16.0';
-export { makeCreature } from './creatures.js?v=0.16.0';
-import { makeIslands } from './island-models.js?v=0.16.0';
-import { facilityId } from './facilities.js?v=0.16.0';
+import { expansionModels } from './expansion-models.js?v=0.17.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.17.0';
+import { normalizeHousing, penId } from './housing.js?v=0.17.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.17.0';
+export { makeCreature } from './creatures.js?v=0.17.0';
+import { makeIslands } from './island-models.js?v=0.17.0';
+import { facilityId } from './facilities.js?v=0.17.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.16.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.16.0';
-import { makeLake } from './lake-models.js?v=0.16.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.16.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.16.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.16.0';
-import { PostFX } from './postfx.js?v=0.16.0';
-import { makeHuman, animateHuman } from './human.js?v=0.16.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.16.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.16.0';
-import { buildError } from './rules.js?v=0.16.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.16.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.16.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.16.0';
-import { dayPhase } from './clock.js?v=0.16.0';
+import { phenotype, seeded } from './genetics.js?v=0.17.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.17.0';
+import { makeLake } from './lake-models.js?v=0.17.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.17.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.17.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.17.0';
+import { PostFX } from './postfx.js?v=0.17.0';
+import { makeHuman, animateHuman } from './human.js?v=0.17.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.17.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.17.0';
+import { buildError } from './rules.js?v=0.17.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.17.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.17.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.17.0';
+import { dayPhase } from './clock.js?v=0.17.0';
 const V = T.Vector3;
+// Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
+// (land) or a lazy roll (sea). Never a jump-cut, never in the player's face.
+const idSeed = id => [...String(id)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+function idleBeat(t, seed) {
+  const period = 7 + (seed % 5),
+    tt = t + (seed % 97) * 0.37,
+    phase = tt % period,
+    kind = (Math.floor(tt / period) + seed) % 3,
+    k = phase < 2.4 ? Math.sin((phase / 2.4) * Math.PI) : 0;
+  return {
+    look: kind === 0 ? k * Math.sin(phase * 1.6) * 0.7 : 0,
+    stretch: kind === 1 ? k : 0,
+    hop: kind === 2 ? k : 0
+  };
+}
+function applyIdle(m, t, id, land, size) {
+  const b = idleBeat(t, idSeed(id));
+  m.rotation.y += b.look;
+  m.scale.y *= 1 + b.stretch * 0.12;
+  m.scale.z *= 1 + b.stretch * 0.07;
+  if (land) m.position.y += b.hop * b.hop * 0.45 * size;
+  else m.rotation.z += b.hop * 0.45;
+}
 const colors = {
   wood: 0x7a6049,
   plank: 0x9a8a71,
@@ -615,7 +638,10 @@ export class OceanWorld {
     this.scene.background = new T.Color(0x6b9ba8);
     this.scene.fog = new T.FogExp2(0x6b9ba8, 0.0045);
     this.renderer = new T.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
-    this.mobile = !!(navigator.maxTouchPoints > 0 || window.matchMedia?.('(pointer:coarse)').matches);
+    this.mobile = !!(
+      window.matchMedia?.('(pointer:coarse)').matches ||
+      (navigator.maxTouchPoints > 0 && !window.matchMedia?.('(hover:hover)').matches)
+    );
     this.settings = loadSettings(this.mobile);
     this.quality = QUALITY[this.settings.quality];
     setCreatureDetail(this.settings.quality);
@@ -1244,6 +1270,7 @@ export class OceanWorld {
         m.position.set(w.x, DECKS[2].y + 0.55 + Math.sin(t * 1.5 + k) * 0.05, w.z);
         m.rotation.y = s.ship.heading + Math.sin(t * 0.3 + k) * 0.4;
         this.animateCreature(m, t * 0.4 + k);
+        applyIdle(m, t, c.id, landPet, m.scale.x);
         continue;
       }
       if (rest === 'island') {
@@ -1256,6 +1283,7 @@ export class OceanWorld {
         m.position.set(rx, groundAt(rx, rz) + (landPet ? 0 : 0.33 + Math.sin(t * 1.2 + i) * 0.08), rz);
         m.rotation.y = a + Math.PI / 2;
         this.animateCreature(m, t * 0.5 + i);
+        applyIdle(m, t, c.id, landPet, m.scale.x);
         i++;
         continue;
       }
@@ -1288,6 +1316,7 @@ export class OceanWorld {
       );
       m.rotation.y = Math.sin(a) * 0.3;
       this.animateCreature(m, t + i);
+      applyIdle(m, t, c.id, landPet, m.scale.x);
       i++;
     }
 

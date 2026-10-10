@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.16.0';
-import { renderAdventure } from './expansion-ui.js?v=0.16.0';
+} from './expansion.js?v=0.17.0';
+import { renderAdventure } from './expansion-ui.js?v=0.17.0';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.16.0';
-import { monologue, markGuide } from './guide.js?v=0.16.0';
-import { climb, demolish, relocate } from './construction.js?v=0.16.0';
+} from './ship.js?v=0.17.0';
+import { monologue, markGuide } from './guide.js?v=0.17.0';
+import { climb, demolish, relocate } from './construction.js?v=0.17.0';
 import {
   normalizeHousing,
   penId,
@@ -54,7 +54,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.16.0';
+} from './housing.js?v=0.17.0';
 import {
   ISLANDS,
   NODES,
@@ -65,9 +65,9 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.16.0';
-import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.16.0';
-import { lakeMinimap } from './lake-map.js?v=0.16.0';
+} from './islands.js?v=0.17.0';
+import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.17.0';
+import { lakeMinimap } from './lake-map.js?v=0.17.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -82,19 +82,19 @@ import {
   finishCrossing,
   tickStory,
   duelActive
-} from './story.js?v=0.16.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.16.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.16.0';
-import { QUALITY } from './realism.js?v=0.16.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.16.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.16.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.16.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.16.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.16.0';
-import { CONFIG } from './config.js?v=0.16.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.16.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.16.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.16.0';
+} from './story.js?v=0.17.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.17.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.17.0';
+import { QUALITY } from './realism.js?v=0.17.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.17.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.17.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.17.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.17.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.17.0';
+import { CONFIG } from './config.js?v=0.17.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.17.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.17.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.17.0';
 import {
   RARITY,
   FRENZY,
@@ -105,10 +105,10 @@ import {
   rollTame,
   craftContract,
   contract
-} from './taming.js?v=0.16.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.16.0';
-import { BeastStage } from './beast-stage.js?v=0.16.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.16.0';
+} from './taming.js?v=0.17.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.17.0';
+import { BeastStage } from './beast-stage.js?v=0.17.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.17.0';
 import {
   funds,
   normalizeBag,
@@ -122,8 +122,13 @@ import {
   takeSupplies,
   upgradeBag,
   nextBag,
-  atHome
-} from './bag.js?v=0.16.0';
+  atHome,
+  stash,
+  unstash,
+  CARRY
+} from './bag.js?v=0.17.0';
+import { iconFor } from './icons.js?v=0.17.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.17.0';
 import {
   homePos,
   facilityPos,
@@ -135,10 +140,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.16.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.16.0';
-export const GAME_VERSION = '0.16.0';
-import { CloudSave } from './cloud-save.js?v=0.16.0';
+} from './fortress.js?v=0.17.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.17.0';
+export const GAME_VERSION = '0.17.0';
+import { CloudSave } from './cloud-save.js?v=0.17.0';
 import {
   readLocal,
   writeLocal,
@@ -155,9 +160,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.16.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.16.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.16.0';
+} from './save-store.js?v=0.17.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.17.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.17.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -177,8 +182,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.16.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.16.0';
+} from './rules.js?v=0.17.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.17.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -237,7 +242,13 @@ function lockMouse() {
     toast('可按住滑鼠右鍵拖曳環視。');
   }
 }
-const touchDevice = () => !!(navigator.maxTouchPoints > 0 || window.matchMedia?.('(pointer:coarse)').matches);
+// Touch layout only when touch is the primary input. Touchscreen laptops report touch points but keep a fine,
+// hovering pointer: they get the desktop layout (otherwise the touch pad lands on top of the HUD).
+const touchDevice = () =>
+  !!(
+    window.matchMedia?.('(pointer:coarse)').matches ||
+    (navigator.maxTouchPoints > 0 && !window.matchMedia?.('(hover:hover)').matches)
+  );
 let world,
   running = false,
   panel = null,
@@ -1516,7 +1527,8 @@ function initialize() {
         world.render();
       },
       repel,
-      openSettings
+      openSettings,
+      openPanel
     };
   $('load-screen').hidden = true;
   $('title-screen').hidden = false;
@@ -2470,53 +2482,89 @@ function claim(id) {
     updateUI();
   }
 }
+// Grid items for a set of resource kinds read from one container.
+function slotItems(kinds, from, note) {
+  return kinds.map(k => ({
+    key: k,
+    icon: iconFor(k, RESOURCE_ICONS[k]),
+    count: from[k] || 0,
+    name: RESOURCE_NAMES[k],
+    note
+  }));
+}
+const bagItems = () => slotItems(CARRY, state.resources);
+const contractItem = () => ({
+  key: 'contract',
+  icon: iconFor('contract'),
+  count: state.contracts || 0,
+  name: '契約書'
+});
+function moved(r) {
+  if (!r.ok) toast(r.error, true);
+  save(true);
+  updateUI();
+  renderPanel();
+}
 function renderCargo(body) {
   const deck = DECKS[state.player.deck];
   if (!state.ship || state.player.mode !== 'aboard' || !deck.cargo) {
-    body.innerHTML = '<p>請到戰艦下層的物資艙操作貨櫃。</p>';
+    body.innerHTML = '<p class="dv-note">請到戰艦下層的物資艙操作貨櫃。</p>';
     return;
   }
   $('drawer-title').textContent = deck.name;
   body.innerHTML =
-    `<div class="info-strip">貨艙總量 ${cargoTotal(state)} / ${CARGO_CAPACITY} · 本層存放：${deck.cargo.map(k => RESOURCE_NAMES[k]).join('、')}</div>` +
-    deck.cargo
-      .map(
-        k =>
-          `<div class="cargo-row"><div><span>${RESOURCE_ICONS[k]} ${RESOURCE_NAMES[k]}</span><small>背包 ${state.resources[k]} · 貨艙 ${state.ship.cargo[k]}</small></div><div class="button-row"><button data-cargo="${k}" data-n="10">存 10</button><button data-cargo="${k}" data-n="99999">全存</button><button data-cargo="${k}" data-n="-10">取 10</button><button data-cargo="${k}" data-n="-99999">全取</button></div></div>`
-      )
-      .join('') +
-    '<p>建造與融合只使用背包物資。遠航前把多餘材料存進貨艙；失去意識時，貨艙物資不會遺失。</p>';
-  body.querySelectorAll('[data-cargo]').forEach(
-    b =>
-      (b.onclick = () => {
-        const r = transferCargo(state, b.dataset.cargo, Number(b.dataset.n));
-        toast(r.ok ? r.message : r.error, !r.ok);
-        if (r.ok) {
-          save(true);
-          updateUI();
-          renderPanel();
-        }
-      })
-  );
+    invBox('hold', deck.name, `${cargoTotal(state)} / ${CARGO_CAPACITY}`, slotItems(deck.cargo, state.ship.cargo), {
+      cols: 9,
+      rows: 1
+    }) +
+    amountBar() +
+    invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), { cols: 9, rows: 1 }) +
+    '<p class="inv-hint">點貨艙的物品取出，點背包的物品存入。失去意識時，貨艙物資不會遺失。</p>';
+  bindInv(body, {
+    refresh: renderPanel,
+    onSlot: (grid, key) => {
+      if (grid === 'bag' && !deck.cargo.includes(key)) return toast('這項物資存放在另一層貨艙。', true);
+      const n = Math.min(moveAmount(), 99999);
+      moved(transferCargo(state, key, grid === 'hold' ? -n : n));
+    }
+  });
+}
+// The desk's storage box: everything you own, box above and bag below.
+function renderLocker(body) {
+  normalizeBag(state);
+  const stored = Object.values(state.storage).reduce((a, b) => a + b, 0);
+  body.innerHTML =
+    invBox('box', '儲物箱', `${stored} 件`, slotItems(CARRY, state.storage), { cols: 9, rows: 1 }) +
+    amountBar() +
+    invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), { cols: 9, rows: 1 }) +
+    `<div class="inv-actions"><button type="button" id="lk-all">材料全部存入</button><button type="button" id="lk-supply">取出補給</button></div><p class="inv-hint">點儲物箱的物品取出，點背包的物品存入。在家時，建造會一併使用儲物箱裡的材料。</p>`;
+  bindInv(body, {
+    refresh: renderPanel,
+    onSlot: (grid, key) => moved(grid === 'box' ? unstash(state, key, moveAmount()) : stash(state, key, moveAmount()))
+  });
+  $('lk-all').onclick = () => moved(deposit(state));
+  $('lk-supply').onclick = () => moved(takeSupplies(state));
 }
 function renderLounge(body) {
   if (!state.ship) {
-    body.innerHTML = '<p>尚未擁有戰艦。</p>';
+    body.innerHTML = '<p class="dv-note">尚未擁有戰艦。</p>';
     return;
   }
   const L = state.ship.lounge,
     home = nearBeastHome(state),
-    isl = restIsland(state);
+    isl = restIsland(state),
+    aboard = state.tamed.filter(p => L.includes(p.id)),
+    ashore = state.tamed.filter(p => !L.includes(p.id));
+  const cells = (list, n) =>
+    Array.from({ length: n }, (_, i) =>
+      list[i]
+        ? `<button type="button" class="bx-cell" data-lounge="${esc(list[i].id)}" ${home ? '' : 'disabled'}><canvas width="160" height="160"></canvas><span>${esc(list[i].name)}</span></button>`
+        : '<div class="bx-cell empty"></div>'
+    ).join('');
   body.innerHTML =
-    `<div class="info-strip">休息室 ${L.length} / ${LOUNGE_CAPACITY} · ${home ? '已停靠領地附近，可讓夥伴上下船' : '需停靠在占領島嶼或避難所附近，夥伴才能上下船'}<br>平時御獸在${isl ? esc(isl.name) : '展示池'}休息（恢復 ×1.6）；休息室內恢復 ×1.3，遠航時可隨時派出。</div>` +
-    (state.tamed.length
-      ? state.tamed
-          .map(p => {
-            const on = L.includes(p.id);
-            return `<article class="beast-card"><div class="beast-heading"><h3>${esc(p.name)}</h3><span>${on ? '戰艦休息室' : isl ? esc(isl.name) : '展示池'}</span></div><div class="beast-stats">羈絆 ${p.bond.toFixed(1)} · 耐力 ${Math.ceil(p.stamina)} · 體力 ${Math.ceil(p.health)}</div><button class="full-button" data-lounge="${esc(p.id)}" ${home ? '' : 'disabled'}>${on ? '送回領地休息' : '登船，進入休息室'}</button></article>`;
-          })
-          .join('')
-      : '<p>還沒有御獸夥伴。</p>');
+    `<section class="inv-box"><header><b>戰艦休息室</b><span>${L.length} / ${LOUNGE_CAPACITY}</span></header><div class="bx-grid lounge">${cells(aboard, LOUNGE_CAPACITY)}</div></section>` +
+    `<section class="inv-box"><header><b>${isl ? esc(isl.name) : '領地'} · 休息中</b><span>${ashore.length}</span></header><div class="bx-grid lounge">${cells(ashore.slice(0, 6), 6)}</div></section>` +
+    `<p class="inv-hint">${home ? '點御獸讓牠上船或回領地休息。' : '停靠在占領島嶼或避難所附近，夥伴才能上下船。'}</p>`;
   body.querySelectorAll('[data-lounge]').forEach(
     b =>
       (b.onclick = () => {
@@ -2528,6 +2576,12 @@ function renderLounge(body) {
           renderPanel();
         }
       })
+  );
+  beastStage.show(
+    [...body.querySelectorAll('[data-lounge]')].map(b => {
+      const pet = state.tamed.find(x => x.id === b.dataset.lounge);
+      return { canvas: b.querySelector('canvas'), key: pet.id, genome: pet.genome };
+    })
   );
 }
 function warshipCard() {
@@ -2838,7 +2892,8 @@ function focusCard(b, item, near) {
       next = nextBag(state);
     card.eyebrow = '漂流書桌 · 儲物箱';
     card.info = `背包 ${bagUsed(state)} / ${bagCap(state)} · 書桌存放 ${stored} 件。在家時，建造會一併使用書桌上的材料。`;
-    act('存入材料', () => focusDone(deposit(state)), { primary: true, disabled: !near });
+    act('打開儲物箱', () => openPanel('locker'), { primary: true, disabled: !near });
+    act('材料全部存入', () => focusDone(deposit(state)), { disabled: !near });
     act('取出補給（口糧、淡水、誘餌）', () => focusDone(takeSupplies(state)), { disabled: !near });
     if (next)
       act(`加大背包 → ${next.cap} 件 · ${costLabel(next.cost)}`, () => focusDone(upgradeBag(state)), {
@@ -3202,7 +3257,8 @@ function renderPanel() {
     cargo: ['CARGO HOLD', '物資艙'],
     lounge: ['BEAST LOUNGE', '御獸休息室'],
     device: ['HANDHELD', '隨身裝置'],
-    beasts: ['BEASTS', '御獸倉庫']
+    beasts: ['BEASTS', '御獸倉庫'],
+    locker: ['STORAGE', '書桌儲物箱']
   };
   $('drawer-eyebrow').textContent = settings[panel][0];
   $('drawer-title').textContent = settings[panel][1];
@@ -3238,6 +3294,10 @@ function renderPanel() {
   }
   if (panel === 'cargo') {
     renderCargo(body);
+    return;
+  }
+  if (panel === 'locker') {
+    renderLocker(body);
     return;
   }
   if (panel === 'lounge') {
@@ -3326,19 +3386,18 @@ function renderPanel() {
     const used = bagUsed(state),
       cap = bagCap(state);
     body.innerHTML =
-      `<div class="bag-meter${used >= cap ? ' full' : ''}"><span>背包 ${used} / ${cap}</span><i><b style="width:${Math.min(100, (used / cap) * 100)}%"></b></i></div>` +
-      `<div class="bag-grid">${Object.keys(RESOURCE_NAMES)
-        .map(
-          k =>
-            `<div class="bag-slot"><span>${RESOURCE_ICONS[k]}</span><b>${state.resources[k]}</b><small>${RESOURCE_NAMES[k]}${state.storage[k] ? ` · 書桌 ${state.storage[k]}` : ''}</small></div>`
-        )
-        .join(
-          ''
-        )}<div class="bag-slot"><span>📜</span><b>${state.contracts || 0}</b><small>契約書</small></div></div>` +
-      (used >= cap ? `<p class="dv-note">${bagFullError}</p>` : '') +
+      invBox('bag', '背包', `${used} / ${cap}`, [...bagItems(), contractItem()], { cols: 9, rows: 2 }) +
+      `<p class="inv-hint">點口糧進食、點淡水喝水。${used >= cap ? ' ' + bagFullError : ''}</p>` +
       (state.secret
         ? `<button class="full-button" id="craft-bait" ${canPay(state, { food: 1, fiber: 1 }) ? '' : 'disabled'}>製作誘餌 · 口糧 1 + 纖維 1 → 3 份</button>`
         : '');
+    bindInv(body, {
+      refresh: renderPanel,
+      onSlot: (grid, key) => {
+        if (key === 'food' || key === 'water') consume(key);
+        else toast(RESOURCE_NAMES[key] || '契約書');
+      }
+    });
     if ($('craft-bait'))
       $('craft-bait').onclick = () => {
         const r = craftBait(state);

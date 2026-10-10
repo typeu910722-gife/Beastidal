@@ -6,7 +6,7 @@
 // materials, iris-textured eyes and ray-veined fin membranes. Swimming is done on the GPU: the body and its baked-on
 // parts share one wave deformation, so tails, crests and ribbons ripple together.
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded, dnaCode } from './genetics.js?v=0.16.0';
+import { phenotype, seeded, dnaCode } from './genetics.js?v=0.17.0';
 
 const V = T.Vector3;
 let detail = 'high';

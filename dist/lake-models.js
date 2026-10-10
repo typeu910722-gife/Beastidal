@@ -2,111 +2,22 @@
 // Ported from the author's map; positions are scaled by HS, structures by their own factors so they read at
 // human scale next to the raft.
 import * as T from './vendor/three.module.min.js';
-import { HS, ORIGIN, groundAt } from './lake.js?v=0.16.0';
-import { FINE, COARSE, Q } from './lake-data.js?v=0.16.0';
-import { ISLANDS, NODES } from './islands.js?v=0.16.0';
-import { EXPLORE } from './expansion.js?v=0.16.0';
-import { BEAST_HOME } from './story.js?v=0.16.0';
+import { HS, ORIGIN, groundAt } from './lake.js?v=0.17.0';
+import { FINE, COARSE, Q } from './lake-data.js?v=0.17.0';
+import { ISLANDS, NODES } from './islands.js?v=0.17.0';
+import { EXPLORE } from './expansion.js?v=0.17.0';
+import { BEAST_HOME } from './story.js?v=0.17.0';
+import { generateLake, VEG, STRIDE } from './lake-gen.js?v=0.17.0';
 
 // ---------- the sketch's noise (map units) ----------
 function hash(x, z) {
   const s = Math.sin(x * 127.1 + z * 311.7) * 43758.5453;
   return s - Math.floor(s);
 }
-function vn(x, z) {
-  const ix = Math.floor(x),
-    iz = Math.floor(z),
-    fx = x - ix,
-    fz = z - iz,
-    ux = fx * fx * (3 - 2 * fx),
-    uz = fz * fz * (3 - 2 * fz);
-  const a = hash(ix, iz),
-    b = hash(ix + 1, iz),
-    c = hash(ix, iz + 1),
-    d = hash(ix + 1, iz + 1);
-  return a + (b - a) * ux + (c - a) * uz + (a - b - c + d) * ux * uz;
-}
-function fbm(x, z, o = 6) {
-  let s = 0,
-    a = 0.5,
-    f = 1;
-  for (let i = 0; i < o; i++) {
-    s += a * vn(x * f, z * f);
-    f *= 2.03;
-    a *= 0.5;
-  }
-  return s;
-}
-const ss = (a, b, x) => {
-  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
-// map-unit height and slope from the baked grid
 const Hm = (mx, mz) => groundAt((mx - ORIGIN.x) * HS, (mz - ORIGIN.z) * HS) / HS;
-const slopeM = (mx, mz) => {
-  const e = 0.7;
-  return Math.hypot(Hm(mx + e, mz) - Hm(mx - e, mz), Hm(mx, mz + e) - Hm(mx, mz - e)) / (2 * e);
-};
 const gx = mx => (mx - ORIGIN.x) * HS,
   gz = mz => (mz - ORIGIN.z) * HS;
 
-function noiseTex(size, fn) {
-  const d = new Uint8Array(size * size * 4);
-  for (let y = 0; y < size; y++)
-    for (let x = 0; x < size; x++) {
-      const i = (y * size + x) * 4,
-        v = fn(x / size, y / size);
-      d[i] = d[i + 1] = d[i + 2] = Math.max(0, Math.min(255, v));
-      d[i + 3] = 255;
-    }
-  const t = new T.DataTexture(d, size, size, T.RGBAFormat);
-  t.wrapS = t.wrapT = T.RepeatWrapping;
-  t.magFilter = T.LinearFilter;
-  t.minFilter = T.LinearMipmapLinearFilter;
-  t.generateMipmaps = true;
-  t.colorSpace = T.SRGBColorSpace;
-  t.needsUpdate = true;
-  return t;
-}
-
-const C = h => new T.Color(h);
-const cSand = C(0xc9b58d),
-  cWet = C(0x8d7d5c),
-  cPebble = C(0x9a9484),
-  cMud = C(0x2f3d3a),
-  cSilt = C(0x7f7c60),
-  cGrass = C(0x6a9140),
-  cMeadow = C(0x98a548),
-  cForest = C(0x2d552a),
-  cRock = C(0x7a7268),
-  cCliff = C(0x5a5450),
-  cScree = C(0x9a948a),
-  cSnow = C(0xf2f5f7),
-  cMoss = C(0x4e6a30);
-// Colour rule from the sketch, in map units (h) with slope = 1 - normal.y.
-function terrainColor(c, mx, mz, h, slope) {
-  const n = fbm(mx * 0.3, mz * 0.3, 4) - 0.5,
-    moist = fbm(mx * 0.04 + 11, mz * 0.04, 3);
-  if (h < -1.2)
-    c.copy(cSilt)
-      .lerp(cMud, ss(-3, -32, h))
-      .lerp(cRock, ss(0.3, 0.5, slope) * 0.7);
-  else if (h < 1.0) c.copy(cWet).lerp(cPebble, ss(0.3, 0.9, hash(mx * 3, mz * 3)));
-  else if (h < 2.1) c.copy(cSand).lerp(cPebble, ss(0.2, 0.6, n + 0.5));
-  else {
-    c.copy(cGrass)
-      .lerp(cMeadow, ss(0.6, 0.35, moist) * ss(8, 2, h))
-      .lerp(cForest, ss(4, 20, h) + n * 0.5)
-      .lerp(cMoss, ss(0.55, 0.7, moist) * 0.4);
-    const rock = Math.min(1, ss(0.26, 0.42, slope) + ss(32, 42, h));
-    c.lerp(cRock, rock);
-    c.lerp(cCliff, ss(0.42, 0.6, slope));
-    c.lerp(cScree, rock * ss(0.2, 0.0, slope) * ss(28, 40, h) * 0.6);
-    if (h > 50) c.lerp(cSnow, ss(50, 60, h) * (1 - ss(0.45, 0.7, slope)));
-  }
-  c.offsetHSL(0, 0, n * 0.14);
-  return c;
-}
 function gridMesh(g, material, sink) {
   const decode = () => {
     if (g.data) return g.data;
@@ -146,21 +57,14 @@ function gridMesh(g, material, sink) {
   geo.setAttribute('position', new T.BufferAttribute(pos, 3));
   geo.setIndex(new T.BufferAttribute(idx, 1));
   geo.computeVertexNormals();
-  const nrm = geo.attributes.normal,
-    col = new Float32Array(nx * nz * 3),
-    uv = new Float32Array(nx * nz * 2),
-    c = new T.Color();
+  // a muted earth tone until the worker's colours arrive (a fraction of a second on most devices)
+  const col = new Float32Array(nx * nz * 3).fill(0.1),
+    uv = new Float32Array(nx * nz * 2);
   for (let j = 0; j < nz; j++)
     for (let i = 0; i < nx; i++) {
-      const v = j * nx + i,
-        mx = g.x0 + i * g.step,
-        mz = g.z0 + j * g.step;
-      terrainColor(c, mx, mz, data[v] / Q / HS, 1 - nrm.getY(v));
-      col[v * 3] = c.r;
-      col[v * 3 + 1] = c.g;
-      col[v * 3 + 2] = c.b;
-      uv[v * 2] = (mx + 120) / 4; // the sketch's grain repeat: 60 x 38 over 240 x 150 units
-      uv[v * 2 + 1] = (mz + 75) / 4;
+      const v = j * nx + i;
+      uv[v * 2] = (g.x0 + i * g.step + 120) / 4; // the sketch's grain repeat: 60 x 38 over 240 x 150 units
+      uv[v * 2 + 1] = (g.z0 + j * g.step + 75) / 4;
     }
   geo.setAttribute('color', new T.BufferAttribute(col, 3));
   geo.setAttribute('uv', new T.BufferAttribute(uv, 2));
@@ -280,27 +184,20 @@ function kelpGeo() {
 
 // Size of things relative to the sketch's units: trees and rocks read as old-growth at this scale,
 // sunken monuments as colossal, lake-side buildings as halls a person can walk around.
-const TREE = 2.6,
-  STONE = 3,
-  REED = 1.4,
-  KELP = 3,
-  SUNK = 2.4,
+const SUNK = 2.4,
   BUILD = 1.6;
 
 export function makeLake() {
   const group = new T.Group();
   group.name = 'lake';
-  const grain = noiseTex(512, (u, v) => {
-    let s = 0,
-      a = 0.5,
-      f = 8;
-    for (let i = 0; i < 5; i++) {
-      s += a * vn(u * f + i * 3, v * f + i * 7);
-      f *= 2;
-      a *= 0.5;
-    }
-    return 150 + 120 * (s - 0.5) * 1.5;
-  });
+  const grainData = new Uint8Array(512 * 512 * 4).fill(200),
+    grain = new T.DataTexture(grainData, 512, 512, T.RGBAFormat);
+  grain.wrapS = grain.wrapT = T.RepeatWrapping;
+  grain.magFilter = T.LinearFilter;
+  grain.minFilter = T.LinearMipmapLinearFilter;
+  grain.generateMipmaps = true;
+  grain.colorSpace = T.SRGBColorSpace;
+  grain.needsUpdate = true;
   grain.anisotropy = 8;
   const terrainMat = new T.MeshStandardMaterial({ vertexColors: true, map: grain, roughness: 0.96, metalness: 0 });
   const fineMesh = gridMesh(FINE, terrainMat);
@@ -327,26 +224,13 @@ export function makeLake() {
       group.add(m);
       return m;
     });
-  const conifers = makeInst([conifer(0), conifer(1), conifer(2)], 3000),
-    leafs = makeInst([broadleaf(0), broadleaf(1), broadleaf(2)], 2000),
-    deads = makeInst([deadTree(0), deadTree(1)], 300);
-  const rocks = makeInst([rockGeo(1), rockGeo(2), rockGeo(3), rockGeo(4)], 900),
-    reeds = makeInst([reedGeo()], 1500),
-    kelps = makeInst([kelpGeo()], 500);
-  const tmpC = new T.Color();
-  function addInst(list, mx, h, mz, k, sx, sy, sz, ry, tiltX, tiltZ, color) {
-    const m = list[Math.floor(hash(mx * 1.7, mz * 2.3) * list.length)];
-    if (m.count >= m.instanceMatrix.count) return;
-    dm.position.set(gx(mx), h * HS, gz(mz));
-    dm.scale.set(sx * k, sy * k, sz * k);
-    dm.rotation.set(tiltX, ry, tiltZ);
-    dm.updateMatrix();
-    m.setMatrixAt(m.count, dm.matrix);
-    m.setColorAt(m.count, color);
-    m.count++;
-  }
-  const SX = 240,
-    SZ = 150;
+  const conifers = makeInst([conifer(0), conifer(1), conifer(2)], VEG.conifers.cap),
+    leafs = makeInst([broadleaf(0), broadleaf(1), broadleaf(2)], VEG.leafs.cap),
+    deads = makeInst([deadTree(0), deadTree(1)], VEG.deads.cap);
+  const rocks = makeInst([rockGeo(1), rockGeo(2), rockGeo(3), rockGeo(4)], VEG.rocks.cap),
+    reeds = makeInst([reedGeo()], VEG.reeds.cap),
+    kelps = makeInst([kelpGeo()], VEG.kelps.cap);
+  const families = { conifers, leafs, deads, rocks, reeds, kelps };
   // open ground around places people walk to: no tree grows through a ruin, a claim stone or a harvest spot
   const clearings = [
     ...ISLANDS.map(i => [i.x, i.z, 14]),
@@ -366,151 +250,58 @@ export function makeLake() {
     ].map(([mx, mz]) => [gx(mx), gz(mz), 9]),
     [gx(-50), gz(-4), 34]
   ];
-  const cleared = (x, z) => clearings.some(([cx, cz, r]) => (x - cx) ** 2 + (z - cz) ** 2 < r * r);
-  for (let k = 0; k < 90000; k++) {
-    const mx = (hash(k, 1.3) - 0.5) * SX,
-      mz = (hash(k, 7.9) - 0.5) * SZ,
-      h = Hm(mx, mz);
-    const r1 = hash(k, 3.1),
-      r2 = hash(k, 5.5),
-      r3 = hash(k, 9.2);
-    const sl = slopeM(mx, mz),
-      moist = fbm(mx * 0.04 + 11, mz * 0.04, 3),
-      cluster = fbm(mx * 0.07 + 4, mz * 0.07 + 1, 3);
-    if (h < -3) {
-      if (h < -10 && r1 < 0.012 && sl < 0.6) {
-        addInst(
-          kelps,
-          mx,
-          h - 0.3 / HS,
-          mz,
-          KELP,
-          0.8 + r2 * 0.6,
-          0.7 + r3 * 0.8,
-          0.8 + r2 * 0.6,
-          r3 * 6.28,
-          (r1 - 0.5) * 0.3,
-          (r2 - 0.5) * 0.3,
-          tmpC.setHSL(0.33 + r2 * 0.06, 0.35, 0.14 + r3 * 0.08)
-        );
-        continue;
+  const tmpC = new T.Color();
+  function apply(data) {
+    fineMesh.geometry.attributes.color.array.set(data.fineColors);
+    fineMesh.geometry.attributes.color.needsUpdate = true;
+    ranges.geometry.attributes.color.array.set(data.coarseColors);
+    ranges.geometry.attributes.color.needsUpdate = true;
+    for (let i = 0, n = 512 * 512; i < n; i++)
+      grainData[i * 4] = grainData[i * 4 + 1] = grainData[i * 4 + 2] = data.grain[i];
+    grain.needsUpdate = true;
+    for (const [fam, list] of Object.entries(data.veg)) {
+      const meshes = families[fam];
+      for (let i = 0; i < list.length; i += STRIDE) {
+        const m = meshes[list[i]];
+        if (m.count >= m.instanceMatrix.count) continue;
+        dm.position.set(list[i + 1], list[i + 2], list[i + 3]);
+        dm.scale.set(list[i + 4], list[i + 5], list[i + 6]);
+        dm.rotation.set(list[i + 7], list[i + 8], list[i + 9]);
+        dm.updateMatrix();
+        m.setMatrixAt(m.count, dm.matrix);
+        m.setColorAt(m.count, tmpC.setRGB(list[i + 10], list[i + 11], list[i + 12]));
+        m.count++;
       }
-      if (r1 < 0.004) {
-        const s = 0.6 + r2 * 2.2;
-        addInst(
-          rocks,
-          mx,
-          h - (s * 0.3 * STONE) / HS,
-          mz,
-          STONE,
-          s * (0.7 + r3 * 0.6),
-          s * (0.5 + r1 * 0.8),
-          s,
-          r3 * 6.28,
-          0,
-          0,
-          tmpC.setHSL(0.45, 0.12, 0.18 + r2 * 0.1)
-        );
+      for (const m of meshes) {
+        m.instanceMatrix.needsUpdate = true;
+        if (m.instanceColor) m.instanceColor.needsUpdate = true;
+        m.computeBoundingSphere();
       }
-      continue;
-    }
-    if (h > 0.6 && h < 2.0 && sl < 0.35 && r1 < 0.09) {
-      addInst(
-        reeds,
-        mx,
-        h - 0.1 / HS,
-        mz,
-        REED,
-        0.7 + r2 * 0.5,
-        0.8 + r3 * 0.6,
-        0.7 + r2 * 0.5,
-        r3 * 6.28,
-        0,
-        0,
-        tmpC.setHSL(0.2 + r2 * 0.05, 0.45, 0.28 + r3 * 0.1)
-      );
-      continue;
-    }
-    if (h > -1 && (sl > 0.55 || (h > 28 && r2 < 0.5) || (h < 2.4 && r2 < 0.25)) && r1 < 0.02) {
-      const s = 0.4 + r3 * r3 * 2.6;
-      addInst(
-        rocks,
-        mx,
-        h - (s * 0.25 * STONE) / HS,
-        mz,
-        STONE,
-        s * (0.7 + r2 * 0.7),
-        s * (0.5 + r1 * 0.9),
-        s * (0.7 + r3 * 0.7),
-        r3 * 6.28,
-        (r1 - 0.5) * 0.4,
-        (r2 - 0.5) * 0.4,
-        tmpC.setHSL(0.08, 0.05 + r2 * 0.06, 0.3 + r3 * 0.18).lerp(cMoss, moist > 0.55 && h < 25 ? 0.35 : 0)
-      );
-      continue;
-    }
-    if (h < 2.3 || h > 44 || sl > 0.85 || cleared(gx(mx), gz(mz))) continue;
-    const density = ss(0.85, 0.3, sl) * (0.25 + 0.9 * cluster) * (h < 30 ? 1 : ss(44, 30, h));
-    if (r1 > density * 0.28) continue;
-    const tilt = sl * 0.25 * (r2 - 0.5);
-    if (h > 36 || (h > 26 && r3 < 0.2 && sl > 0.5)) {
-      if (r2 < 0.5)
-        addInst(
-          deads,
-          mx,
-          h - 0.1 / HS,
-          mz,
-          TREE,
-          0.8 + r3 * 0.6,
-          0.7 + r2 * 0.9,
-          0.8 + r3 * 0.6,
-          r3 * 6.28,
-          tilt,
-          tilt * 0.7,
-          tmpC.setHSL(0.08, 0.1, 0.3 + r3 * 0.15)
-        );
-      continue;
-    }
-    const broad = (moist > 0.5 && h < 14 && r3 < 0.75) || (h < 6 && r3 < 0.55);
-    if (broad) {
-      const s = 0.7 + r2 * r2 * 1.3;
-      addInst(
-        leafs,
-        mx,
-        h - 0.15 / HS,
-        mz,
-        TREE,
-        s * (0.85 + r3 * 0.3),
-        s * (0.8 + r1 * 0.5),
-        s * (0.85 + r2 * 0.3),
-        r3 * 6.28,
-        tilt,
-        tilt,
-        tmpC.setHSL(0.22 + r2 * 0.09, 0.45 + r3 * 0.2, 0.22 + r1 * 0.14)
-      );
-    } else {
-      const s = 0.55 + r2 * r2 * 1.6;
-      addInst(
-        conifers,
-        mx,
-        h - 0.15 / HS,
-        mz,
-        TREE,
-        s * (0.8 + r3 * 0.4),
-        s * (0.9 + r1 * 0.7),
-        s * (0.8 + r3 * 0.4),
-        r3 * 6.28,
-        tilt,
-        tilt,
-        tmpC.setHSL(0.3 + r2 * 0.1, 0.32 + r3 * 0.2, 0.14 + r1 * 0.1)
-      );
     }
   }
-  for (const m of [...conifers, ...leafs, ...deads, ...rocks, ...reeds, ...kelps]) {
-    m.instanceMatrix.needsUpdate = true;
-    if (m.instanceColor) m.instanceColor.needsUpdate = true;
-    m.computeBoundingSphere();
-  }
+  // the heavy part runs in a worker; without one (tests, very old browsers) it runs right here
+  const ready = new Promise(resolve => {
+    const local = () => {
+      apply(generateLake(clearings));
+      resolve();
+    };
+    if (typeof Worker === 'undefined' || typeof window === 'undefined') return local();
+    try {
+      const worker = new Worker(new URL('./lake-worker.js?v=0.17.0', import.meta.url), { type: 'module' });
+      worker.onmessage = e => {
+        apply(e.data);
+        worker.terminate();
+        resolve();
+      };
+      worker.onerror = () => {
+        worker.terminate();
+        local();
+      };
+      worker.postMessage({ clearings });
+    } catch {
+      local();
+    }
+  });
 
   // ---------- monuments ----------
   const std = (c, r = 0.9) => new T.MeshStandardMaterial({ color: c, roughness: r, map: grain });
@@ -799,6 +590,7 @@ export function makeLake() {
   }
   return {
     group,
+    ready,
     shafts,
     gate,
     update(t, diving) {
