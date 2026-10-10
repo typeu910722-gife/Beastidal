@@ -1,34 +1,48 @@
-import { phenotype, clamp } from './genetics.js?v=0.14.0';
-import { NODES, harvest } from './islands.js?v=0.14.0';
-import { restPlace } from './ship.js?v=0.14.0';
-import { dayOf, dayPhase } from './clock.js?v=0.14.0';
-import { remember, rememberFirst } from './memories.js?v=0.14.0';
-import { spend, give, stow } from './bag.js?v=0.14.0';
+import { phenotype, clamp } from './genetics.js?v=0.15.0';
+import { NODES, harvest } from './islands.js?v=0.15.0';
+import { restPlace } from './ship.js?v=0.15.0';
+import { dayOf, dayPhase } from './clock.js?v=0.15.0';
+import { remember, rememberFirst } from './memories.js?v=0.15.0';
+import { spend, give, stow } from './bag.js?v=0.15.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.15.0';
+import { islandAt } from './islands.js?v=0.15.0';
+// The crystal cave is its own pocket of the world, far outside the basin.
+export const CAVE = { x: 2600, z: -2600, r: 6 };
+const at = (p, o) => landNear(p.x, p.z, o);
+const CACHE = at({ x: LANDMARKS.boathouse.x + 4, z: LANDMARKS.boathouse.z - 24 }, { min: 1, maxSlope: 0.5 }),
+  ARCHIVE = at(mapPoint(-10, -17), { min: 2, maxSlope: 0.5 }),
+  CAVE_DOOR = at(mapPoint(67, 0), { min: 6, max: 60, maxSlope: 1.1 });
 export const EXPLORE = [
-  { id: 'palm-cache', name: '漂流者寶箱', x: 57, z: 33, kind: 'chest', rewards: { wood: 8, food: 5, metal: 3 } },
-  { id: 'archive', name: '御獸文明石碑', x: 34, z: -81, kind: 'ruin', rewards: { crystal: 3 } },
-  { id: 'cave-door', name: '晶窟入口', x: -66, z: -37, kind: 'entrance' },
-  { id: 'cave-exit', name: '返回晶礁海岸', x: 120, z: -106, kind: 'exit', cave: true },
+  {
+    id: 'palm-cache',
+    name: '漂流者寶箱',
+    x: CACHE.x,
+    z: CACHE.z,
+    kind: 'chest',
+    rewards: { wood: 8, food: 5, metal: 3 }
+  },
+  { id: 'archive', name: '御獸文明石碑', x: ARCHIVE.x, z: ARCHIVE.z, kind: 'ruin', rewards: { crystal: 3 } },
+  { id: 'cave-door', name: '晶窟入口', x: CAVE_DOOR.x, z: CAVE_DOOR.z, kind: 'entrance' },
+  { id: 'cave-exit', name: '返回右岸半島', x: CAVE.x, z: CAVE.z + 4, kind: 'exit', cave: true },
   {
     id: 'cave-heart',
     name: '晶窟封印寶箱',
-    x: 120,
-    z: -112,
+    x: CAVE.x,
+    z: CAVE.z - 2,
     kind: 'chest',
     cave: true,
     rewards: { crystal: 8, metal: 6 }
   },
   {
     id: 'deep-memory',
-    name: '深海記憶核心',
-    x: 22,
-    z: -34,
+    name: '湖底記憶核心',
+    x: LANDMARKS.plaza.x,
+    z: LANDMARKS.plaza.z,
     kind: 'deep',
     deep: true,
     rewards: { crystal: 6, metal: 4 }
   }
 ];
-export const CAVE = { x: 120, z: -110, r: 6 };
 export const STAGES = [
   [0, '初識'],
   [15, '同行'],
@@ -45,7 +59,13 @@ export function normalizeExpansion(s) {
   e.order ??= 'follow';
   e.oxygen ??= 90;
   e.collected ??= [];
-  e.boss ??= { x: 100, z: 40, hp: 480, maxHp: 480, defeated: false, lastAttack: -999 };
+  e.boss ??= { x: BOSS_HOME.x, z: BOSS_HOME.z, hp: 480, maxHp: 480, defeated: false, lastAttack: -999 };
+  // 0.15 moved the world into the basin: re-home anything left on the new land or in the old cave pocket
+  if (!e.boss.defeated && islandAt(e.boss.x, e.boss.z, 3)) Object.assign(e.boss, { x: BOSS_HOME.x, z: BOSS_HOME.z });
+  if (s.inCave && Math.hypot(s.player.x - CAVE.x, s.player.z - CAVE.z) > CAVE.r + 3) {
+    s.player.x = CAVE.x;
+    s.player.z = CAVE.z + 3;
+  }
   e.lastStorm ??= s.elapsed;
   e.lastGather ??= s.elapsed;
   e.lastBond ??= s.elapsed;
@@ -137,7 +157,7 @@ export function toggleDive(s) {
   if (e.oxygen < 25 || p.stamina < 20) return fail('先浮上水面補充氧氣與耐力。');
   e.diving = true;
   rememberFirst(s, p, 'dive', '第一次帶你潛進深海。');
-  return { ok: true, message: '潛入 8 公尺深處。氧氣耗尽會自動浮上；尋找深海記憶核心。' };
+  return { ok: true, message: '潛向湖底。氧氣耗盡會自動浮上；沉城廣場的湖底記憶核心在等你。' };
 }
 export function upgradeBoat(s) {
   normalizeExpansion(s);
@@ -162,7 +182,7 @@ export function explore(s, id) {
   if (!site) return fail('找不到探索點。');
   if (!!site.cave !== !!s.inCave) return fail('探索點不在目前區域。');
   if (Math.hypot(site.x - s.player.x, site.z - s.player.z) > 4.5) return fail('請靠近探索點至 4 公尺內。');
-  if (site.deep && !e.diving) return fail('此遺物在海面下 8 公尺，需要騎乘潛水。');
+  if (site.deep && !e.diving) return fail('此遺物沉在湖底遺城，需要騎乘御獸潛水。');
   if (!site.deep && s.player.mode !== 'foot') return fail('請先登岸。');
   if (site.kind === 'entrance') {
     s.caveReturn = { x: s.player.x, z: s.player.z };
@@ -174,7 +194,7 @@ export function explore(s, id) {
   }
   if (site.kind === 'exit') {
     s.inCave = false;
-    Object.assign(s.player, s.caveReturn || { x: -66, z: -37 });
+    Object.assign(s.player, s.caveReturn || { x: CAVE_DOOR.x, z: CAVE_DOOR.z });
     return { ok: true, message: '已返回海岸。' };
   }
   if (e.collected.includes(id)) return fail('這裡的遺物已經回收。');
@@ -184,7 +204,7 @@ export function explore(s, id) {
   const texts = {
     archive: '石碑：御獸不是支配。與生命同行、共戰、深入海淵，才能獲得契印。',
     'cave-heart': '晶窟記錄：雙親的形態基因可以共存，混種生命並非錯誤。',
-    'deep-memory': '深海記憶：擊退深海守望者後，羈絆 85 的夥伴可喚醒契印。',
+    'deep-memory': '湖底記憶：擊退深海守望者後，羈絆 85 的夥伴可喚醒契印。',
     'palm-cache': '補給箱中找到漂流者留下的食物與材料。'
   };
   s.log.unshift({ day: dayOf(s), title: site.name, text: texts[id] });
@@ -333,8 +353,8 @@ export function tickExpansion(s, dt, safe = false) {
       events.push('深海守望者撞擊！命令夥伴攻擊，或立刻撤離。');
     }
   } else if (d > 45 && !b.defeated) {
-    b.x += (100 - b.x) * Math.min(1, dt * 0.25);
-    b.z += (40 - b.z) * Math.min(1, dt * 0.25);
+    b.x += (BOSS_HOME.x - b.x) * Math.min(1, dt * 0.25);
+    b.z += (BOSS_HOME.z - b.z) * Math.min(1, dt * 0.25);
   }
   return events;
 }

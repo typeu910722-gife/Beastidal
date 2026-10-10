@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.14.0';
-import { renderAdventure } from './expansion-ui.js?v=0.14.0';
+} from './expansion.js?v=0.15.0';
+import { renderAdventure } from './expansion-ui.js?v=0.15.0';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.14.0';
-import { monologue, markGuide } from './guide.js?v=0.14.0';
-import { climb, demolish, relocate } from './construction.js?v=0.14.0';
+} from './ship.js?v=0.15.0';
+import { monologue, markGuide } from './guide.js?v=0.15.0';
+import { climb, demolish, relocate } from './construction.js?v=0.15.0';
 import {
   normalizeHousing,
   penId,
@@ -54,20 +54,32 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.14.0';
-import { ISLANDS, NODES, onIsland, islandAt, islandDocks, harvest, clearLand } from './islands.js?v=0.14.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.14.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.14.0';
-import { QUALITY } from './realism.js?v=0.14.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.14.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.14.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.14.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.14.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.14.0';
-import { CONFIG } from './config.js?v=0.14.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.14.0';
-import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.14.0';
-import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.14.0';
+} from './housing.js?v=0.15.0';
+import {
+  ISLANDS,
+  NODES,
+  onIsland,
+  onLand,
+  islandOf,
+  islandAt,
+  islandDocks,
+  harvest,
+  clearLand
+} from './islands.js?v=0.15.0';
+import { BOSS_HOME, LANDMARKS, groundAt } from './lake.js?v=0.15.0';
+import { lakeMinimap } from './lake-map.js?v=0.15.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.15.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.15.0';
+import { QUALITY } from './realism.js?v=0.15.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.15.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.15.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.15.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.15.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.15.0';
+import { CONFIG } from './config.js?v=0.15.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.15.0';
+import { normalizeCodex, recordCreature, syncOwned, codexProgress, codexEntries } from './codex.js?v=0.15.0';
+import { seaGenome, ensureLandBeasts, normalizeWildlife, stepLandBeast } from './wildlife.js?v=0.15.0';
 import {
   RARITY,
   FRENZY,
@@ -78,10 +90,10 @@ import {
   rollTame,
   craftContract,
   contract
-} from './taming.js?v=0.14.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.14.0';
-import { BeastStage } from './beast-stage.js?v=0.14.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.14.0';
+} from './taming.js?v=0.15.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.15.0';
+import { BeastStage } from './beast-stage.js?v=0.15.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.15.0';
 import {
   funds,
   normalizeBag,
@@ -96,7 +108,7 @@ import {
   upgradeBag,
   nextBag,
   atHome
-} from './bag.js?v=0.14.0';
+} from './bag.js?v=0.15.0';
 import {
   homePos,
   facilityPos,
@@ -108,10 +120,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.14.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.14.0';
-export const GAME_VERSION = '0.14.0';
-import { CloudSave } from './cloud-save.js?v=0.14.0';
+} from './fortress.js?v=0.15.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.15.0';
+export const GAME_VERSION = '0.15.0';
+import { CloudSave } from './cloud-save.js?v=0.15.0';
 import {
   readLocal,
   writeLocal,
@@ -128,9 +140,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.14.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.14.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.14.0';
+} from './save-store.js?v=0.15.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.15.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.15.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -150,8 +162,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.14.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.14.0';
+} from './rules.js?v=0.15.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.15.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -511,7 +523,8 @@ function updateDock() {
         ? '比斯泰德號 · ' + DECKS[state.player.deck].name
         : m === 'ship'
           ? '掌舵航行 · 駕駛室'
-          : onIsland(state.player.x, state.player.z)?.name || '避難所步行';
+          : onIsland(state.player.x, state.player.z)?.name ||
+            (onLand(state.player.x, state.player.z) ? '環湖山麓' : '避難所步行');
     $('travel-tip').textContent = P(
       m === 'aboard'
         ? state.player.deck === 4
@@ -535,7 +548,10 @@ function updateDock() {
       : '登上避難所';
   $('dock-detail').textContent = foot ? '取回停泊的小艇' : spot?.island ? '下船，探索島嶼' : '下船，踏上木筏';
   $('dock-btn').querySelector('kbd').textContent = gamepadActive ? 'LT' : 'Q';
-  $('travel-mode').textContent = foot ? onIsland(state.player.x, state.player.z)?.name || '避難所步行' : '海上航行';
+  $('travel-mode').textContent = foot
+    ? onIsland(state.player.x, state.player.z)?.name ||
+      (onLand(state.player.x, state.player.z) ? '環湖山麓' : '避難所步行')
+    : '湖上航行';
   $('travel-tip').textContent = foot ? '走近採集點或建築，按 E 互動' : '靠近木筏或島嶼可登岸';
   $('joystick').setAttribute('aria-label', foot ? '拖曳移動角色' : '拖曳駕艇');
 }
@@ -2059,7 +2075,7 @@ function routeExplore(id) {
       return;
     }
     closePanel();
-    destination = { x: 82, z: 40 };
+    destination = { x: BOSS_HOME.x - 18, z: BOSS_HOME.z };
     toast('已標記守望者海域；接近前準備夥伴。');
     return;
   }
@@ -2079,7 +2095,7 @@ function routeExplore(id) {
   } else if (site.deep) {
     destination = { x: site.x, z: site.z };
   } else {
-    const island = ISLANDS.find(i => Math.hypot(site.x - i.x, site.z - i.z) < 18);
+    const island = islandOf(site.x, site.z) || { id: 'mainland' };
     const spots = islandDocks()
       .filter(d => d.island === island?.id)
       .sort(
@@ -3948,7 +3964,7 @@ function drawMap() {
   const ctx = $('minimap').getContext('2d'),
     w = 190,
     c = 95,
-    range = 70,
+    range = 150,
     scale = 80 / range;
   ctx.clearRect(0, 0, w, w);
   ctx.save();
@@ -3976,12 +3992,10 @@ function drawMap() {
     ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
     ctx.fill();
   };
-  for (const i of ISLANDS) {
-    const p = pt(i.x, i.z);
-    ctx.fillStyle = '#829c70';
-    ctx.beginPath();
-    ctx.ellipse(p.x, p.y, i.rx * scale, i.rz * scale, 0, 0, Math.PI * 2);
-    ctx.fill();
+  const lm = lakeMinimap();
+  if (lm) {
+    const o = pt(lm.x0, lm.z0);
+    ctx.drawImage(lm.canvas, o.x, o.y, lm.w * scale, lm.h * scale);
   }
   if (state.islandsRevealed) for (const n of NODES) dot(n.x, n.z, n.kind === 'crystal' ? '#c1b2ee' : '#ead594', 1.6);
   for (const l of state.loot) dot(l.x, l.z, '#dabd80', 2);
@@ -4065,14 +4079,27 @@ function drawMap() {
 }
 function worldLabels() {
   let labels = ISLANDS.filter(
-    i => state.islandsRevealed || Math.hypot(i.x - state.player.x, i.z - state.player.z) < 65
+    i => state.islandsRevealed || Math.hypot(i.x - state.player.x, i.z - state.player.z) < 200
   ).map(i => ({
     x: i.x,
-    y: 5,
+    y: groundAt(i.x, i.z) + 9,
     z: i.z,
     text: ((state.occupied || []).includes(i.id) ? '⚑ 領地 · ' : '△ ') + i.name,
     className: 'gold'
   }));
+  const diving = !!state.expedition?.diving;
+  for (const lmk of Object.values(LANDMARKS)) {
+    if (!!lmk.under !== diving || Math.hypot(lmk.x - state.player.x, lmk.z - state.player.z) > (diving ? 90 : 220))
+      continue;
+    const gy = groundAt(lmk.x, lmk.z);
+    labels.push({
+      x: lmk.x,
+      y: Math.max(gy, diving ? gy : 0) + (lmk.under ? 18 : 12),
+      z: lmk.z,
+      text: '◈ ' + lmk.name,
+      className: lmk.under ? 'mint' : ''
+    });
+  }
   if (!state.buoyFound) labels.push({ x: 17, y: 3, z: -13, text: '◇ 研究浮標', className: '' });
   // once the base has gone to sea, the warship is home
   if (!state.ship)

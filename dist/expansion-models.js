@@ -1,7 +1,8 @@
 import * as T from './vendor/three.module.min.js';
-import { EXPLORE, CAVE } from './expansion.js?v=0.14.0';
-import { makeCreature } from './creatures.js?v=0.14.0';
-import { makeGenome } from './genetics.js?v=0.14.0';
+import { EXPLORE, CAVE } from './expansion.js?v=0.15.0';
+import { makeCreature } from './creatures.js?v=0.15.0';
+import { makeGenome } from './genetics.js?v=0.15.0';
+import { groundAt } from './lake.js?v=0.15.0';
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.65, ...extra });
 function m(g, geo, c, x, y, z, s = [1, 1, 1], extra = {}) {
   const mesh = new T.Mesh(geo, mat(c, extra));
@@ -18,7 +19,7 @@ export function expansionModels(scene) {
   scene.add(group);
   for (const p of EXPLORE) {
     const g = new T.Group();
-    g.position.set(p.x, p.deep ? -8 : 0.42, p.z);
+    g.position.set(p.x, p.cave ? 0.42 : groundAt(p.x, p.z) + (p.deep ? 0.3 : 0.05), p.z);
     g.userData.siteId = p.id;
     group.add(g);
     sites.set(p.id, g);
@@ -65,18 +66,9 @@ export function expansionModels(scene) {
   const light = new T.PointLight(0x76bfd6, 40, 22);
   light.position.set(0, 3, 0);
   cave.add(light);
+  // 0.15: the lake terrain is the seabed now; this stays as an empty group for older callers.
   const seabed = new T.Group();
   scene.add(seabed);
-  m(seabed, new T.PlaneGeometry(800, 800), 0x16445a, 0, -12, 0).rotation.x = -Math.PI / 2;
-  for (let i = 0; i < 35; i++) {
-    const x = Math.sin(i * 42) * 85,
-      z = Math.cos(i * 17) * 85;
-    m(seabed, new T.DodecahedronGeometry(1, 0), 0x315365, x, -11.5, z, [1.5, 1 + (i % 3), 2]);
-    m(seabed, new T.ConeGeometry(0.15, 2, 5), 0x4bbaa6, x + 0.7, -10, z, [1, 1, 1], {
-      emissive: 0x27685d,
-      emissiveIntensity: 0.4
-    });
-  }
   // The deep-sea guardian: an abyssal sea serpent with a turtle's armour and maximum horns.
   const genome = makeGenome(8924, 0, 'deep');
   genome.body = [20, 210];

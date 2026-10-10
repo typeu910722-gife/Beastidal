@@ -172,9 +172,11 @@ test('The expedition visits ruins, cave and underwater relic once without reward
   Object.assign(s.player, { x: site.x, z: site.z });
   assert.ok(explore(s, site.id).ok);
   assert.ok(canWalk(s, s.player.x, s.player.z));
-  Object.assign(s.player, { x: 120, z: -112 });
+  const heart = EXPLORE.find(p => p.id === 'cave-heart'),
+    exit = EXPLORE.find(p => p.id === 'cave-exit');
+  Object.assign(s.player, { x: heart.x, z: heart.z });
   assert.ok(explore(s, 'cave-heart').ok);
-  Object.assign(s.player, { x: 120, z: -106 });
+  Object.assign(s.player, { x: exit.x, z: exit.z });
   assert.ok(explore(s, 'cave-exit').ok);
   assert.equal(s.inCave, false);
   site = EXPLORE.find(p => p.id === 'deep-memory');
@@ -199,8 +201,8 @@ test('Boat upgrades reduce storm damage; boss rewards and awakening are one-time
   assert.equal(s.vitals.health, health - 3.5);
   p.bond = 90;
   assert.ok(commandPet(s, p.id, 'guard').ok);
-  s.player.x = 100;
-  s.player.z = 40;
+  s.player.x = s.expedition.boss.x;
+  s.player.z = s.expedition.boss.z;
   let hit = 0;
   while (!s.expedition.boss.defeated && hit++ < 50) {
     s.elapsed += 4;

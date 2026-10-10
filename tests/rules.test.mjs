@@ -1,6 +1,6 @@
 import { normalizeHousing, penId, pens, used, movePet, BEAST_CAPACITY } from '../dist/housing.js';
 import { facilityId, useFacility } from '../dist/facilities.js';
-import { ISLANDS, NODES, islandDocks, islandAt, harvest } from '../dist/islands.js';
+import { groundAt, ISLANDS, NODES, islandDocks, islandAt, harvest } from '../dist/islands.js';
 import assert from 'node:assert/strict';
 import { contract, craftContract } from '../dist/taming.js';
 import { normalizeBag, bagCap, bagUsed, bagRoom, deposit, upgradeBag, give } from '../dist/bag.js';
@@ -356,11 +356,15 @@ test('All islands support landing, walking, saving, harvesting and boarding', ()
 });
 test('Boats cannot sail through land and remote harvesting cannot award resources', () => {
   const s = normalizeTravel(createState(91));
-  const i = ISLANDS[0];
-  s.player.x = i.x;
-  s.player.z = i.z + i.rz + 5;
-  moveTravel(s, 0, -30);
-  assert.ok(s.player.z > i.z + i.rz);
+  // 0.15: islands are terrain. Sail from a landing spot straight at the island: the hull stops in the shallows.
+  const i = ISLANDS[0],
+    d = islandDocks().find(k => k.island === i.id);
+  Object.assign(s.player, d.boat, { mode: 'boat' });
+  const dx = i.x - d.boat.x,
+    dz = i.z - d.boat.z,
+    L = Math.hypot(dx, dz);
+  moveTravel(s, (dx / L) * 30, (dz / L) * 30);
+  assert.ok(groundAt(s.player.x, s.player.z) < -0.79);
   assert.equal(harvest(s, NODES[0].id).ok, false);
 });
 test('Facilities enforce proximity, costs, reservoir capacity and old-save defaults', () => {

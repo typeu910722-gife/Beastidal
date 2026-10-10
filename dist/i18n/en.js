@@ -817,7 +817,7 @@ export default {
   材料艙: 'Materials hold',
   材料貨櫃: 'Material crate',
   '東北方那座浮標，好像在呼喚你。': 'That buoy to the north-east seems to be calling you.',
-  '東方海域 (100, 40) · 巨型敵對生物': 'Eastern waters (100, 40) · giant hostile creature',
+  '湖心東側深水 · 巨型敵對生物': 'Deep water east of the lake centre · giant hostile creature',
   查看: 'View',
   棕櫚環礁: 'Palm Atoll',
   '棕櫚環礁 · 一次性物資補給': 'Palm Atoll · one-time supply cache',
@@ -1497,8 +1497,8 @@ export default {
     '(The raft is too small to even turn around. Press B to build and attach floating floors on the green cells — expand by 2 first.)',
   '（東北方那個一閃一閃的光點……是人造的浮標？駕艇過去按 E 調查看看。）':
     '(That blinking light to the north-east… a man-made buoy? Sail over and press E to investigate.)',
-  '（東方 (100, 40) 的海怪……有艦砲和夥伴，或許能贏。掌舵時按空白鍵發射艦砲。）':
-    '(The sea monster at (100, 40) in the east… with the cannon and my partners, maybe we can win. Press Space at the helm to fire.)',
+  '（湖心東側最深的水域，有東西在沉城上方游動……有艦砲和夥伴，或許能贏。掌舵時按空白鍵發射艦砲。）':
+    '(In the deepest water east of the lake centre, something circles above the sunken city… with the cannon and my partners, maybe we can win. Press Space at the helm to fire.)',
   '（牠還不完全信任我。按 K 打開御獸遠航：訓練、帶牠一起出海採集，羈絆到 30 就能並肩作戰。）':
     "(It doesn't fully trust me yet. Press K for Expedition: train it, take it gathering at sea; at bond 30 we can fight side by side.)",
   '（甲板下第三層是御獸休息室。停在領地附近時，到管理台讓夥伴登船，牠們會陪我遠航。）':
@@ -1716,5 +1716,26 @@ export default {
     '(Something is struggling in that drifting net… a tiny creature. Sail over and press E to free it.)',
   '（那隻被我救下的小傢伙一直待在木筏邊。蓋一座海洋展示池，給牠一個能回來的家。）':
     '(The little one I rescued keeps waiting by the raft. Build an ocean pen and give it a home to come back to.)',
-  '，靠一起冒險慢慢加深。': ', deepened little by little through adventures together.'
+  '，靠一起冒險慢慢加深。': ', deepened little by little through adventures together.',
+  返回右岸半島: 'Back to the East Peninsula',
+  湖底記憶核心: 'Lakebed memory core',
+  '潛向湖底。氧氣耗盡會自動浮上；沉城廣場的湖底記憶核心在等你。':
+    'Diving to the lakebed. You surface automatically when oxygen runs out; the memory core waits in the sunken plaza.',
+  '此遺物沉在湖底遺城，需要騎乘御獸潛水。': 'This relic lies in the sunken city on the lakebed. Ride a beast and dive.',
+  '湖底記憶：擊退深海守望者後，羈絆 85 的夥伴可喚醒契印。':
+    'Lakebed memory: once the Deep Watcher is driven off, a partner at bond 85 can awaken the pact seal.',
+  環湖山麓: 'Lakeside foothills',
+  湖上航行: 'Sailing the lake',
+  船屋島: 'Boathouse Isle',
+  右岸半島: 'East Peninsula',
+  中央遺跡島: 'Central Ruins Isle',
+  沉沒神殿: 'Sunken Temple',
+  東神殿: 'East Temple',
+  大拱門: 'Great Gate',
+  水道拱橋: 'Aqueduct',
+  沉城廣場: 'Sunken Plaza',
+  船屋與舊船: 'Boathouse and old hull',
+  舊水門: 'Old Water Gate',
+  珊瑚灘: 'Coral Shoals',
+  中央遺跡: 'Central Ruins'
 };

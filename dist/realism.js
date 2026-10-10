@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { ISLANDS } from './islands.js?v=0.14.0';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.14.0';
+import { groundTexture } from './lake-models.js?v=0.15.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.15.0';
 export const TRAIL = 40,
   SPLASHES = 4;
 
@@ -208,16 +208,16 @@ const int NW=${WAVE_SET.length};
 vec4 W[NW];
 void setupWaves(){${WAVE_SET.map((w, i) => `W[${i}]=vec4(${w.map(v => v.toFixed(4)).join(',')});`).join('')}}
 `;
-const waterVertex = `uniform float uTime;uniform float uStorm;uniform vec4 uHome;varying vec3 vWorld;varying vec3 vNormalW;varying float vCrest;
+const waterVertex = `uniform float uTime;uniform float uStorm;uniform vec4 uHome;uniform sampler2D uGround;uniform vec4 uGroundBox;varying vec3 vWorld;varying vec3 vNormalW;varying float vCrest;
 ${WAVES}
 void main(){setupWaves();vec3 p=(modelMatrix*vec4(position,1.)).xyz;vec2 g=p.xz;
  vec2 hd=abs(g-uHome.xy)-uHome.zw;float calm=mix(.45,1.,smoothstep(0.,14.,length(max(hd,0.))));
- float amp=calm*(1.+uStorm*1.6);vec3 t=vec3(1.,0.,0.),b=vec3(0.,0.,1.);vec3 off=vec3(0.);float crest=0.;
+ float gh=texture2D(uGround,(g-uGroundBox.xy)*uGroundBox.zw).r;calm*=mix(.18,1.,smoothstep(-.3,-7.,gh));float amp=calm*(1.+uStorm*1.6);vec3 t=vec3(1.,0.,0.),b=vec3(0.,0.,1.);vec3 off=vec3(0.);float crest=0.;
  for(int i=0;i<NW;i++){vec4 w=W[i];float k=6.28318/w.w,c=sqrt(9.8/k);vec2 d=normalize(w.xy);float f=k*(dot(d,g)-c*uTime*${WAVE_TIME.toFixed(4)});float st=w.z*amp,a=st/k;float sf=sin(f),cf=cos(f);
   off+=vec3(d.x*a*cf,a*sf,d.y*a*cf);t+=vec3(-d.x*d.x*st*sf,d.x*st*cf,-d.x*d.y*st*sf);b+=vec3(-d.x*d.y*st*sf,d.y*st*cf,-d.y*d.y*st*sf);crest+=sf*st;}
  float fade=1.-smoothstep(160.,520.,length(p.xz-cameraPosition.xz));p+=off*fade;vWorld=p;vNormalW=normalize(cross(b,t));vCrest=crest/(amp*.215)*fade;
  gl_Position=projectionMatrix*viewMatrix*vec4(p,1.);}`;
-const waterFrag = `uniform float uTime;uniform float uNight;uniform vec3 uBoat;uniform float uHeading;uniform float uSpeed;uniform vec4 uHome;uniform vec3 uFog;uniform float uFogDensity;uniform vec4 uIslands[${ISLANDS.length}];uniform float uSunPower;uniform vec4 uTrail[${TRAIL}];uniform vec4 uSplash[${SPLASHES}];uniform vec2 uHull;
+const waterFrag = `uniform float uTime;uniform float uNight;uniform vec3 uBoat;uniform float uHeading;uniform float uSpeed;uniform vec4 uHome;uniform vec3 uFog;uniform float uFogDensity;uniform sampler2D uGround;uniform vec4 uGroundBox;uniform float uSunPower;uniform vec4 uTrail[${TRAIL}];uniform vec4 uSplash[${SPLASHES}];uniform vec2 uHull;
 varying vec3 vWorld;varying vec3 vNormalW;varying float vCrest;
 ${SKY_GLSL}${NOISE_GLSL}
 float rh(vec2 p,float t){return fbm(p*.55+vec2(t*.21,t*.13))*.6+noise(p*1.9-vec2(t*.33,-t*.27))*.4;}
@@ -247,7 +247,7 @@ void main(){
  float NdV=max(dot(n,V),0.);float F=.02+.98*pow(1.-NdV,5.);
  vec3 R=reflect(-V,n);R.y=max(R.y,.015);vec3 refl=skyRadiance(normalize(R));
  float day=smoothstep(-.18,.12,uSunDir.y);vec3 deep=vec3(.001,.009,.014),shallow=vec3(.012,.10,.092);
- float sh=0.;for(int i=0;i<${ISLANDS.length};i++){vec4 isl=uIslands[i];float e=length((p-isl.xy)/isl.zw);sh=max(sh,1.-smoothstep(1.,1.9,e));}
+ float gh=texture2D(uGround,(p-uGroundBox.xy)*uGroundBox.zw).r;float sh=1.-smoothstep(.3,16.,-gh);
  vec2 hd=abs(p-uHome.xy)-uHome.zw;float homeD=length(max(hd,0.));sh=max(sh,(1.-smoothstep(0.,6.,homeD))*.35);
  vec3 L=normalize(uSunDir.y>-.05?uSunDir:-uSunDir);float sunlit=max(L.y,0.)*mix(.08,1.,day);
  vec3 body=mix(deep,shallow,sh)*(.25+.75*sunlit)+vec3(.004,.014,.022)*(1.-day);
@@ -257,7 +257,7 @@ void main(){
  vec3 sunCol=mix(vec3(.25,.32,.5)*.12,mix(vec3(1.,.55,.3),vec3(1.,.93,.82),smoothstep(.0,.35,uSunDir.y)),day);
  col+=sunCol*min(ggx,400.)*F*uSunPower*max(dot(n,L),0.)*.35*(1.-uStorm*.8);
  float foam=smoothstep(.6,.9,vCrest)*smoothstep(.5,.8,noise(p*2.3+uTime*.5))*(.25+uStorm);
- for(int i=0;i<${ISLANDS.length};i++){vec4 isl=uIslands[i];float e=length((p-isl.xy)/isl.zw);foam+=(1.-smoothstep(.0,.12,abs(e-1.08-.03*sin(uTime*1.3+p.x))))*(.45+.55*noise(p*3.+uTime));}
+ float surf=-gh-.25-.35*sin(uTime*1.3+p.x*.4+p.y*.3);foam+=(1.-smoothstep(0.,1.2,abs(surf)))*step(gh,.6)*(.45+.55*noise(p*3.+uTime));
  foam+=(1.-smoothstep(.08,.7,homeD))*step(0.,max(hd.x,hd.y))*(.35+.4*noise(p*4.+uTime*.8));
  foam+=wake*(.55+.45*noise(p*3.1+uTime*.7));
  foam=clamp(foam,0.,1.)*detail;col=mix(col,vec3(.6,.64,.6)*(.08+.92*sunlit)+refl*.15,foam*.8);
@@ -268,11 +268,14 @@ void main(){
  col+=vec3(.1,.55,.5)*vein*(.035+.5*(1.-day))*detail*(1.-uStorm*.7);
  float glint=step(.9965,hash(floor(p*2.2+floor(uTime*.4))))*(1.-day)*detail*(1.-uStorm);col+=vec3(.15,.85,.75)*glint*.6;
  float fog=1.-exp(-dist*uFogDensity);col=mix(col,uFog,fog);
- gl_FragColor=vec4(col,mix(.86,1.,F));
+ // shallows stay clear enough to see the sand; deep water closes over the lakebed
+ float clarity=mix(.6,.985,smoothstep(1.5,22.,-gh));gl_FragColor=vec4(col,mix(clarity,1.,F));
  #include <tonemapping_fragment>
  #include <colorspace_fragment>
 }`;
+let GROUND;
 export function makeWater(quality) {
+  GROUND ??= groundTexture();
   const m = new T.Mesh(
     oceanGeometry(quality.rings, quality.segments),
     new T.ShaderMaterial({
@@ -292,7 +295,8 @@ export function makeWater(quality) {
         uFog: { value: new T.Color() },
         uFogDensity: { value: 0.0055 },
         uSunPower: { value: 1 },
-        uIslands: { value: ISLANDS.map(i => new T.Vector4(i.x, i.z, i.rx, i.rz)) },
+        uGround: { value: GROUND.texture },
+        uGroundBox: { value: GROUND.box },
         uTrail: { value: new Float32Array(TRAIL * 4) },
         uSplash: { value: new Float32Array(SPLASHES * 4) },
         uHull: { value: new T.Vector2(1.9, 0.9) }

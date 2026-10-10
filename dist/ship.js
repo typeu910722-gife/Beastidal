@@ -1,9 +1,10 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.14.0';
-import { dayOf } from './clock.js?v=0.14.0';
-import { spend, give, bagRoom } from './bag.js?v=0.14.0';
-import { pens, penId } from './housing.js?v=0.14.0';
-import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.14.0';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.15.0';
+import { waterNear, groundAt } from './lake.js?v=0.15.0';
+import { dayOf } from './clock.js?v=0.15.0';
+import { spend, give, bagRoom } from './bag.js?v=0.15.0';
+import { pens, penId } from './housing.js?v=0.15.0';
+import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.15.0';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
@@ -89,6 +90,8 @@ export function normalizeShip(s) {
       p.cargo[k] = Math.max(0, Math.floor(p.cargo[k] || 0));
     p.lounge = (p.lounge || []).filter(id => s.tamed.some(t => t.id === id)).slice(0, LOUNGE_CAPACITY);
     p.lastCannon ??= -999;
+    // saves from before the basin map may have the hull sitting on what is now land
+    if (groundAt(p.x, p.z) > -0.8) Object.assign(p, waterNear(p.x, p.z, 8));
     // the base goes to sea with the ship (also settles saves made before it did)
     moveBaseAboard(s);
     s.skiff = !!s.skiff;

@@ -1,5 +1,5 @@
-import { bagRoom, bagFullError } from './bag.js?v=0.14.0';
-import { nearFacility } from './fortress.js?v=0.14.0';
+import { bagRoom, bagFullError } from './bag.js?v=0.15.0';
+import { nearFacility } from './fortress.js?v=0.15.0';
 export const facilityId = b => `facility:${b.type}:${b.x}:${b.z}${b.level ? ':1' : ''}`;
 export const findFacility = (s, id) => s.buildings.find(b => facilityId(b) === id);
 export function useFacility(s, id, action) {

@@ -1,24 +1,25 @@
-import { expansionModels } from './expansion-models.js?v=0.14.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.14.0';
-import { normalizeHousing, penId } from './housing.js?v=0.14.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.14.0';
-export { makeCreature } from './creatures.js?v=0.14.0';
-import { makeIslands } from './island-models.js?v=0.14.0';
-import { facilityId } from './facilities.js?v=0.14.0';
+import { expansionModels } from './expansion-models.js?v=0.15.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.15.0';
+import { normalizeHousing, penId } from './housing.js?v=0.15.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.15.0';
+export { makeCreature } from './creatures.js?v=0.15.0';
+import { makeIslands } from './island-models.js?v=0.15.0';
+import { facilityId } from './facilities.js?v=0.15.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.14.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.14.0';
-import { PostFX } from './postfx.js?v=0.14.0';
-import { makeHuman, animateHuman } from './human.js?v=0.14.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.14.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.14.0';
-import { buildError } from './rules.js?v=0.14.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.14.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.14.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.14.0';
-import { dayPhase } from './clock.js?v=0.14.0';
+import { phenotype, seeded } from './genetics.js?v=0.15.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.15.0';
+import { makeLake } from './lake-models.js?v=0.15.0';
+import { groundAt } from './lake.js?v=0.15.0';
+import { PostFX } from './postfx.js?v=0.15.0';
+import { makeHuman, animateHuman } from './human.js?v=0.15.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.15.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.15.0';
+import { buildError } from './rules.js?v=0.15.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.15.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.15.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.15.0';
+import { dayPhase } from './clock.js?v=0.15.0';
 const V = T.Vector3;
-const ISLAND_GROUND = 0.42; // top of the island terrain where land beasts stand
 const colors = {
   wood: 0x7a6049,
   plank: 0x9a8a71,
@@ -679,6 +680,8 @@ export class OceanWorld {
     this.lastHull = null;
     this.boatHeave = 0;
     this.makeSpray();
+    this.lake = makeLake();
+    this.scene.add(this.lake.group);
     this.islandModels = makeIslands();
     this.scene.add(this.islandModels.group);
     this.home = new T.Group();
@@ -1031,14 +1034,23 @@ export class OceanWorld {
       helm = s.player.mode === 'ship' && !riding,
       boat = foot || riding || aboard ? s.boat : s.player;
     this.onRiding = riding;
+    // a dive follows the lakebed down into the sunken city; ashore you stand on the terrain itself
+    const ground = s.inCave ? 0 : groundAt(s.player.x, s.player.z),
+      onTerrain = foot && !s.player.level && !s.inCave && ground > 0.05;
+    this.diveY = diving
+      ? (this.diveY || 0) + (Math.max(ground + 3, -240) - (this.diveY || 0)) * Math.min(1, dt * 0.6)
+      : 0;
+    this.footLift = onTerrain ? 0 : 0.42;
     this.baseY = diving
-      ? -8
+      ? this.diveY
       : aboard
         ? DECKS[s.player.deck].y
         : helm
           ? DECKS[4].y
           : foot
-            ? (s.player.level || 0) * 3.3
+            ? onTerrain
+              ? ground
+              : (s.player.level || 0) * 3.3
             : riding
               ? 0.7
               : 0;
@@ -1058,7 +1070,7 @@ export class OceanWorld {
     this.walker.visible = this.onFoot || riding;
     this.walker.position.set(
       helm ? helmPos.x : s.player.x,
-      this.baseY + (riding ? 0.65 : 0.42),
+      this.baseY + (riding ? 0.65 : this.footLift),
       helm ? helmPos.z : s.player.z
     );
     this.boat.scale.x = 1 + (s.expedition?.boatLevel || 0) * 0.07;
@@ -1157,7 +1169,7 @@ export class OceanWorld {
         if (m.scale.x !== ud.phenotype.size) m.scale.setScalar(ud.phenotype.size);
         if (ud.phenotype.habitat === 'land') {
           // land beasts walk on the island surface (and on the raft when they follow you home)
-          m.position.set(c.x, ISLAND_GROUND, c.z);
+          m.position.set(c.x, groundAt(c.x, c.z), c.z);
           m.rotation.x = 0;
         } else {
           m.position.set(c.x, 0.03 + waveHeight(c.x, c.z, t, storm, home) - ud.dip * 1.1, c.z);
@@ -1196,7 +1208,7 @@ export class OceanWorld {
         m.scale.setScalar(phenotype(c.genome).size * (riding ? 1 : 0.75));
         const target = new V(
           s.player.x + (riding ? 0 : Math.cos(t * 0.4) * 2.5),
-          this.baseY + (foot ? (landPet ? 0.42 : 0.8) : 0),
+          this.baseY + (foot ? (landPet ? this.footLift : 0.8) : 0),
           s.player.z + (riding ? 0 : Math.sin(t * 0.4) * 2.5)
         );
         m.position.lerp(target, 1 - Math.exp(-dt * 3));
@@ -1223,11 +1235,9 @@ export class OceanWorld {
           a = i * 2.1 + t * 0.05,
           r = 3.6 + (i % 3) * 1.4;
         m.scale.setScalar(phenotype(c.genome).size * 0.5);
-        m.position.set(
-          isl.x + Math.sin(a) * r,
-          landPet ? ISLAND_GROUND : 0.75 + Math.sin(t * 1.2 + i) * 0.08,
-          isl.z + Math.cos(a) * r * 0.8
-        );
+        const rx = isl.x + Math.sin(a) * r,
+          rz = isl.z + Math.cos(a) * r * 0.8;
+        m.position.set(rx, groundAt(rx, rz) + (landPet ? 0 : 0.33 + Math.sin(t * 1.2 + i) * 0.08), rz);
         m.rotation.y = a + Math.PI / 2;
         this.animateCreature(m, t * 0.5 + i);
         i++;
@@ -1295,18 +1305,31 @@ export class OceanWorld {
       look.y + Math.sin(pitch) * camDist,
       look.z + Math.cos(yaw) * Math.cos(pitch) * camDist
     );
+    // never let the orbit camera sink into a hillside or the lakebed
+    if (!s.inCave) {
+      const floor = groundAt(this.camera.position.x, this.camera.position.z) + 1.4;
+      if (this.camera.position.y < floor) this.camera.position.y = floor;
+    }
     this.camera.lookAt(look);
     this.water.material.uniforms.uCamera.value.copy(this.camera.position);
     if (this.placement) this.updateGhost(s);
     if (this.target) {
       this.targetRing.visible = true;
-      this.targetRing.position.set(this.target.x, this.baseY + 0.43, this.target.z);
+      this.targetRing.position.set(
+        this.target.x,
+        Math.max(this.baseY, s.inCave ? this.baseY : groundAt(this.target.x, this.target.z)) + 0.43,
+        this.target.z
+      );
       this.targetRing.scale.setScalar(this.target.type === 'wild' ? 1.7 : 1);
       this.targetRing.material.opacity = 0.55 + Math.sin(t * 3) * 0.2;
     } else this.targetRing.visible = false;
     if (opts.destination) {
       this.navMarker.visible = true;
-      this.navMarker.position.set(opts.destination.x, this.baseY + 0.38, opts.destination.z);
+      this.navMarker.position.set(
+        opts.destination.x,
+        Math.max(this.baseY, s.inCave ? this.baseY : groundAt(opts.destination.x, opts.destination.z)) + 0.38,
+        opts.destination.z
+      );
       this.navMarker.scale.setScalar(1 + Math.sin(t * 4) * 0.15);
     } else this.navMarker.visible = false;
     this.extra.cave.visible = !!s.inCave;
@@ -1314,6 +1337,8 @@ export class OceanWorld {
     this.sky.visible = !diving && !s.inCave;
     this.water.visible = !diving && !s.inCave;
     this.islandModels.group.visible = !s.inCave;
+    this.lake.group.visible = !s.inCave;
+    this.lake.update(t, diving);
     for (const site of EXPLORE) {
       const m = this.extra.sites.get(site.id);
       m.visible = !!site.cave === !!s.inCave && (!site.deep || diving);
@@ -1331,7 +1356,7 @@ export class OceanWorld {
       rain.setY(i, (rain.getY(i) - dt * 20 + 20) % 20);
     }
     rain.needsUpdate = true;
-    this.scene.fog.density = diving ? 0.035 : s.inCave ? 0.045 : 0.0036 + storm * 0.007;
+    this.scene.fog.density = diving ? 0.035 : s.inCave ? 0.045 : 0.0013 + storm * 0.006;
     if (diving || s.inCave) {
       this.scene.background.set(diving ? 0x062738 : 0x081720);
       this.scene.fog.color.copy(this.scene.background);
