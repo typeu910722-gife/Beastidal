@@ -2546,3 +2546,21 @@ body.focus-on .contract-btn {
   grid-column: 1 / -1;
   border-color: #e98d7a66;
 }
+
+/* fortress: facilities waiting for a deck slot */
+.pending-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.pending-row > span {
+  color: #e8c27a;
+}
+.pending-row button {
+  min-height: 30px;
+  padding: 3px 10px;
+  font-size: 12px;
+}

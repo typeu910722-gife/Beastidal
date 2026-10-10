@@ -1,4 +1,4 @@
-import { normalizeHousing, penId, pens, used, movePet } from '../dist/housing.js';
+import { normalizeHousing, penId, pens, used, movePet, BEAST_CAPACITY } from '../dist/housing.js';
 import { facilityId, useFacility } from '../dist/facilities.js';
 import { ISLANDS, NODES, islandDocks, islandAt, harvest } from '../dist/islands.js';
 import assert from 'node:assert/strict';
@@ -135,22 +135,40 @@ test('Hidden branch can tame two founders, breed a hatchling, and breed a next g
   assert.equal(breed(s, s.tamed[2].id, s.tamed[0].id, seeded(512)).egg.generation, 2);
   assert.ok(validateSave(JSON.parse(JSON.stringify(s))));
 });
-test('Pool and hatchery capacity include unborn creatures and cannot overspend', () => {
+test('Full pens never stop breeding; the hatchery and the beast storage do, and nothing is overspent', () => {
   const s = createState(15);
   s.secret = true;
   Object.keys(s.resources).forEach(k => (s.resources[k] = 100));
   placeBuilding(s, 'pen', -1, 0);
   placeBuilding(s, 'hatchery', 0, 0);
-  s.tamed = Array.from({ length: 2 }, (_, i) => ({
+  s.tamed = Array.from({ length: 3 }, (_, i) => ({
     id: 'c' + i,
     genome: makeGenome(i),
     generation: 0,
     bond: 35,
     name: 'test'
   }));
+  // the one pen (3 places) is full, yet both hatchery places can be used
   assert.ok(breed(s, 'c0', 'c1').ok);
-  assert.equal(breed(s, 'c0', 'c1').ok, false);
-  assert.equal(s.eggs.length, 1);
+  assert.ok(breed(s, 'c0', 'c1').ok);
+  assert.equal(breed(s, 'c0', 'c1').ok, false, 'a hatchery holds 2 eggs');
+  assert.equal(s.eggs.length, 2);
+  assert.ok(
+    s.eggs.every(e => e.penId === null),
+    'eggs wait in the beast storage'
+  );
+  s.eggs = [];
+  s.tamed.push(
+    ...Array.from({ length: BEAST_CAPACITY - 3 }, (_, i) => ({
+      id: 'x' + i,
+      genome: makeGenome(i + 9),
+      generation: 0,
+      bond: 0,
+      name: 'x'
+    }))
+  );
+  assert.equal(breed(s, 'c0', 'c1').ok, false, 'the beast storage is full');
+  s.tamed.length = 3;
   s.resources.food = 0;
   assert.equal(breed(s, 'c0', 'c1').ok, false);
   assert.equal(s.resources.food, 0);

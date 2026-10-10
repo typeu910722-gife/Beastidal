@@ -1,6 +1,6 @@
 import { phenotype, clamp } from './genetics.js?v=0.13.0';
 import { NODES, harvest } from './islands.js?v=0.13.0';
-import { restPlace, canDeploy } from './ship.js?v=0.13.0';
+import { restPlace } from './ship.js?v=0.13.0';
 import { dayOf, dayPhase } from './clock.js?v=0.13.0';
 import { spend, give, stow } from './bag.js?v=0.13.0';
 export const EXPLORE = [
@@ -89,14 +89,9 @@ export function commandPet(s, id, order = 'follow') {
   if (s.expedition.mounted) return fail('請先回到小艇解除騎乘。');
   if (order === 'home') {
     s.expedition.activeId = null;
-    return { ok: true, message: '夥伴已返回原展示池。' };
+    return { ok: true, message: '夥伴回去休息了。' };
   }
   if (!['follow', 'gather', 'guard'].includes(order)) return fail('未知指令。');
-  if (!p.penId) return fail('請先替牠安排展示池。');
-  {
-    const away = canDeploy(s, p);
-    if (away) return fail(away);
-  }
   if (p.bond < (order === 'guard' ? 30 : 15))
     return fail(order === 'guard' ? '羈絆 30 才能協戰。' : '羈絆 15 才願意跟隨與採集。');
   if (p.health < 15 || p.stamina < 10) return fail('夥伴需要回池休息或訓練照護。');
@@ -253,7 +248,7 @@ export function tickExpansion(s, dt, safe = false) {
     events = [];
   for (const pet of s.tamed) {
     if (pet !== p) {
-      const k = { island: 1.6, lounge: 1.3, pen: 1 }[restPlace(s, pet)];
+      const k = { island: 1.6, lounge: 1.3, pen: 1, storage: 1 }[restPlace(s, pet)];
       pet.stamina = Math.min(100, pet.stamina + dt * 0.7 * k);
       pet.health = Math.min(100, pet.health + dt * 0.45 * k);
     }

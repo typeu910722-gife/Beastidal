@@ -2,6 +2,7 @@ import { RECIPES, buildError } from './rules.js?v=0.13.0';
 import { findFacility } from './facilities.js?v=0.13.0';
 import { penId, used } from './housing.js?v=0.13.0';
 import { give } from './bag.js?v=0.13.0';
+import { atHome } from './bag.js?v=0.13.0';
 const fail = error => ({ ok: false, error });
 export function climb(s, b) {
   if (
@@ -59,7 +60,7 @@ function removable(s, b) {
 export function demolish(s, id) {
   const b = findFacility(s, id);
   if (!b) return fail('找不到建築。');
-  if (Math.hypot(s.player.x - 1.8, s.player.z - 1.8) > 27) return fail('請返回避難所管理建築。');
+  if (!atHome(s)) return fail('請返回避難所管理建築。');
   const error = removable(s, b);
   if (error) return fail(error);
   s.buildings = s.buildings.filter(v => v !== b);
@@ -70,6 +71,7 @@ export function relocate(s, id, x, z, level = 0) {
   const b = findFacility(s, id);
   if (!b) return fail('找不到建築。');
   if (['floor', 'upperfloor', 'stairs'].includes(b.type)) return fail('地板與樓梯請用拆除、重建調整。');
+  if (b.ship || b.stowed) return fail('戰艦上的設施使用固定艙位；可以收進待安置，再放到空出的艙位。');
   if (!Number.isInteger(x) || !Number.isInteger(z) || ![0, 1].includes(level)) return fail('請輸入整數格位與樓層。');
   if (b.type === 'pen' && level !== 0) return fail('展示池需設在海面。');
   const old = penId(b),

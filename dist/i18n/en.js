@@ -1628,5 +1628,43 @@ export default {
   '避難所與 LV3 小艇融合成五層甲板的戰艦；小艇仍可放下單獨探索。':
     'Fuse the shelter and a LV3 boat into a five-deck warship; the skiff can still be lowered to explore alone.',
   '還沒有紀錄。': 'No entries yet.',
-  背包容量: 'Bag capacity'
+  背包容量: 'Bag capacity',
+  '{0} · 安置': '{0} · install',
+  '{0} · 格位 ({1}, {2})': '{0} · cell ({1}, {2})',
+  '{0} 安置在甲板上。': '{0} is set up on deck.',
+  '{0} 成為你的御獸，收進御獸倉庫（展示池都滿了，隨時可以從裝置帶牠出來）。':
+    '{0} is now your beast, kept in the beast storage (the pens are full; you can call it out from the device any time).',
+  '⌂ 回到戰艦': '⌂ Back to the warship',
+  '⌂ 比斯泰德號 · 家': '⌂ Beastidal · home',
+  '你就在家裡：比斯泰德號上。': 'You are home: aboard the Beastidal.',
+  '只有戰艦上的設施可以收起。': 'Only facilities aboard the warship can be stowed.',
+  '夥伴回去休息了。': 'Your companion went back to rest.',
+  '展示池 · 每池陳列 3 隻': 'Pens · 3 on show in each',
+  '已標記戰艦，走到岸邊後按 Q 登船。': 'Warship marked. Walk to the shore and press Q to board.',
+  '已標記戰艦，開到旁邊按 Q 收回小艇。': 'Warship marked. Pull alongside and press Q to haul in the skiff.',
+  '御獸倉庫 {0} 隻（不佔展示池，可隨時帶出）': 'Beast storage {0} (no pen place needed, call them out any time)',
+  '御獸倉庫已滿（{0} 隻）。': 'The beast storage is full ({0}).',
+  '戰艦上的設施使用固定艙位；可以收進待安置，再放到空出的艙位。':
+    'Facilities aboard use fixed slots; stow one, then install it in a free slot.',
+  '戰艦上的設施會放進甲板空位，請從建造選單選擇。':
+    'Aboard, facilities go into free deck slots; pick one from the build menu.',
+  '收進待安置（空出艙位）': 'Stow (free the slot)',
+  '整個基地都搬上了甲板：書桌、床、集水器、展示池跟著你出航。走近戰艦按 Q 登船。':
+    'The whole base moved aboard: desk, bed, water collector and pens sail with you. Walk up to the warship and press Q to board.',
+  '書桌連著儲物箱，不能收起。': 'The desk holds the storage chest and cannot be stowed.',
+  '比斯泰德號甲板 · 已用 {0} / {1} 個艙位。點設施就會放進空位。':
+    'Beastidal deck · {0} / {1} slots used. Tap a facility to place it in a free slot.',
+  '比斯泰德號甲板 · 艙位 {0}': 'Beastidal deck · slot {0}',
+  '甲板已經沒有空位。先把一座設施收進待安置。': 'No free slot on deck. Stow a facility first.',
+  '甲板沒有空位了。可以把一座設施收進待安置。': 'The deck is full. You can stow a facility.',
+  '設施已安置到甲板上。': 'Facility installed on deck.',
+  '設施已收進待安置清單。': 'Facility stowed.',
+  '請回到戰艦上再建造。': 'Go back aboard the warship to build.',
+  '這座設施不在待安置清單上。': 'That facility is not waiting to be installed.',
+  '這座設施還在待安置清單上。': 'That facility is still stowed.',
+  '這是木筏的結構，戰艦上用不到。': "That is part of the raft's structure; the warship does not need it.",
+  '避難所與 LV3 小艇融合成五層甲板的移動堡壘：基地設施全部搬上甲板繼續運作；小艇仍可放下單獨探索。':
+    'Fuse the shelter and a LV3 boat into a five-deck mobile fortress: every base facility moves aboard and keeps working; the skiff can still explore alone.',
+  '還沒有解鎖這項建造。': 'Not unlocked yet.',
+  '離開休息室，回到原本的住處。': 'left the lounge and went back to where it lives.'
 };

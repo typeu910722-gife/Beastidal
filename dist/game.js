@@ -39,8 +39,7 @@ import {
   CARGO_CAPACITY,
   cargoTotal,
   nearBeastHome,
-  restIsland,
-  dockMoor
+  restIsland
 } from './ship.js?v=0.13.0';
 import { monologue, markGuide } from './guide.js?v=0.13.0';
 import { climb, demolish, relocate } from './construction.js?v=0.13.0';
@@ -94,8 +93,21 @@ import {
   deposit,
   takeSupplies,
   upgradeBag,
-  nextBag
+  nextBag,
+  atHome
 } from './bag.js?v=0.13.0';
+import {
+  homePos,
+  facilityPos,
+  nearFacility,
+  pendingFacilities,
+  usedSlots,
+  installFacility,
+  stowFacility,
+  SHIP_SLOTS,
+  FORTRESS_DECK,
+  isStructure
+} from './fortress.js?v=0.13.0';
 import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.13.0';
 export const GAME_VERSION = '0.13.0';
 import { CloudSave } from './cloud-save.js?v=0.13.0';
@@ -128,6 +140,7 @@ import {
   canPay,
   salvage,
   placeBuilding,
+  placeOnShip,
   craftBait,
   feed,
   breed,
@@ -1486,17 +1499,18 @@ function getAllTargets() {
   const arr = state.loot.map(l => ({ ...l, type: 'loot', name: lootNames[l.kind] }));
   for (const w of state.wild) arr.push({ ...w, type: 'wild', name: geneName(w.genome) });
   if (!state.buoyFound) arr.push({ id: 'buoy', x: 17, z: -13, type: 'buoy', name: '失落研究浮標' });
+  const onDeck = state.player.mode === 'aboard' && state.player.deck === FORTRESS_DECK;
   for (const b of state.buildings)
     if (
+      !b.stowed &&
       b.type !== 'floor' &&
       b.type !== 'upperfloor' &&
-      ((b.level || 0) === (state.player.level || 0) || b.type === 'stairs')
+      (b.ship ? onDeck : (b.level || 0) === (state.player.level || 0) || b.type === 'stairs')
     )
       arr.push({
         id: facilityId(b),
         type: 'facility',
-        x: b.x * 3.6,
-        z: b.z * 3.6,
+        ...facilityPos(state, b),
         name: b.type === 'pen' ? penLabel(state, penId(b)) : RECIPES[b.type].name
       });
   // a spot that is still regrowing is just scenery until it is ready again
@@ -2067,9 +2081,20 @@ function updateBeastHUD() {
 function appendConstruction(body, b) {
   body.insertAdjacentHTML(
     'beforeend',
-    `<section class="building-tools"><p class="dv-note">${b.level ? '二樓' : '一樓'} · 格位 (${b.x}, ${b.z})${b.type === 'pen' ? ' · 住民會一起搬家' : ''}</p>${!['floor', 'upperfloor', 'stairs'].includes(b.type) ? '<button id="move-building" class="full-button">拖動搬移</button>' : ''}<button id="remove-building" class="full-button">拆除 · 回收約半數材料</button></section>`
+    `<section class="building-tools"><p class="dv-note">${b.ship ? `比斯泰德號甲板 · 艙位 ${b.ship.slot + 1}` : `${b.level ? '二樓' : '一樓'} · 格位 (${b.x}, ${b.z})`}${b.type === 'pen' ? ' · 住民會一起搬家' : ''}</p>${b.ship ? '<button id="stow-building" class="full-button">收進待安置（空出艙位）</button>' : !['floor', 'upperfloor', 'stairs'].includes(b.type) ? '<button id="move-building" class="full-button">拖動搬移</button>' : ''}<button id="remove-building" class="full-button">拆除 · 回收約半數材料</button></section>`
   );
   if ($('move-building')) $('move-building').onclick = () => startMove(activeFacility);
+  if ($('stow-building'))
+    $('stow-building').onclick = () => {
+      const r = stowFacility(state, activeFacility, findFacility);
+      toast(r.ok ? r.message : r.error, !r.ok);
+      if (r.ok) {
+        normalizeHousing(state);
+        world.sync(state);
+        save(true);
+        closePanel();
+      }
+    };
   let confirmed = false;
   $('remove-building').onclick = () => {
     if (!confirmed) {
@@ -2092,7 +2117,7 @@ function housingMarkup(pets, scope = null) {
     shownPools = scope ? pools.filter(b => penId(b) === scope) : pools,
     waiting = scope ? 0 : state.tamed.filter(p => !p.penId).length;
   return (
-    `<section class="housing"><p class="section-label">生物住處 · 每池最多 3 隻</p><div class="info-strip">${shownPools.map(b => `${esc(penLabel(state, penId(b)))}：${occupants(state, penId(b)).length} 隻 + ${reserved(state, penId(b)).length} 預留`).join('<br>') || '尚未建造展示池'}${waiting ? `<br>待安置 ${waiting} 隻：生物已保留，增建展示池即可入住。` : ''}</div>` +
+    `<section class="housing"><p class="section-label">展示池 · 每池陳列 3 隻</p><div class="info-strip">${shownPools.map(b => `${esc(penLabel(state, penId(b)))}：${occupants(state, penId(b)).length} 隻 + ${reserved(state, penId(b)).length} 預留`).join('<br>') || '尚未建造展示池'}${waiting ? `<br>御獸倉庫 ${waiting} 隻（不佔展示池，可隨時帶出）` : ''}</div>` +
     pets
       .map(
         p =>
@@ -2253,7 +2278,7 @@ function warshipCard() {
   const checks = fusionChecks(state),
     f = state.shipFusion,
     ready = checks.every(([, ok]) => ok);
-  return `<article class="warship-card"><div class="warship-head"><span>⚓</span><div><small>HIDDEN BLUEPRINT · 隱藏藍圖</small><h3>戰艦 · 比斯泰德號</h3></div></div><p>避難所與 LV3 小艇融合成五層甲板的戰艦；小艇仍可放下單獨探索。</p>${
+  return `<article class="warship-card"><div class="warship-head"><span>⚓</span><div><small>HIDDEN BLUEPRINT · 隱藏藍圖</small><h3>戰艦 · 比斯泰德號</h3></div></div><p>避難所與 LV3 小艇融合成五層甲板的移動堡壘：基地設施全部搬上甲板繼續運作；小艇仍可放下單獨探索。</p>${
     state.ship
       ? '<div class="info-strip">✓ 戰艦已完成，停泊於停靠站外海。</div>'
       : f
@@ -2353,9 +2378,7 @@ const FOCUS_ITEMS = {
   pen: [], // the beasts themselves, see focusItems()
   dock: []
 };
-const nearBuilding = b =>
-  (state.player.mode === 'foot' || state.player.mode === 'aboard') &&
-  Math.hypot(state.player.x - b.x * 3.6, state.player.z - b.z * 3.6) <= 5.5;
+const nearBuilding = b => nearFacility(state, b);
 // The usable things in the focused building, each with its position in the world right now.
 function focusItems(b) {
   if (b.type === 'pen')
@@ -2406,7 +2429,7 @@ function enterFocus(id) {
   destination = null;
   focus = { id, type: b.type, item: null };
   // step in through the tent flap, facing the bed
-  if (b.type === 'shelter' && nearBuilding(b) && state.player.mode === 'foot') {
+  if (b.type === 'shelter' && !b.ship && nearBuilding(b) && state.player.mode === 'foot') {
     const spot = world.facilityPoint(b, [0, 0, 0.85]),
       bed = world.facilityPoint(b, [0, 0, -0.3]);
     if (spot && bed) {
@@ -2737,7 +2760,12 @@ function performContract(id) {
     haptic('discover');
     audio.note(940, 0.5);
     log(state, '御獸契約', `在工作桌前，${r.tamed.name} 把頭靠了過來。契約成立。`);
-    discover('契約成立', `${r.tamed.name} 成為你的御獸，已入住${penLabel(state, r.tamed.penId)}。`);
+    discover(
+      '契約成立',
+      r.tamed.penId
+        ? `${r.tamed.name} 成為你的御獸，已入住${penLabel(state, r.tamed.penId)}。`
+        : `${r.tamed.name} 成為你的御獸，收進御獸倉庫（展示池都滿了，隨時可以從裝置帶牠出來）。`
+    );
     world.sync(state);
     save(true);
     updateUI();
@@ -2960,9 +2988,23 @@ function renderPanel() {
   if (panel === 'build') {
     // a compact grid: icon, name and cost on each tile (the description as its tooltip); tap a tile to place it.
     // Existing buildings are managed by tapping them in the world (管理), not from a list here.
-    const upper = count(state, 'upperfloor') > 0;
+    const upper = !state.ship && count(state, 'upperfloor') > 0,
+      fortress = !!state.ship,
+      waiting = pendingFacilities(state);
     if (!upper) buildLevel = 0;
     body.innerHTML =
+      (fortress
+        ? `<p class="dv-note">比斯泰德號甲板 · 已用 ${usedSlots(state).size} / ${SHIP_SLOTS.length} 個艙位。點設施就會放進空位。</p>${
+            waiting.length
+              ? `<div class="pending-row"><span>待安置</span>${waiting
+                  .map(
+                    b =>
+                      `<button type="button" data-install="${facilityId(b)}">${esc(b.type === 'pen' ? penLabel(state, penId(b)) : RECIPES[b.type].name)} · 安置</button>`
+                  )
+                  .join('')}</div>`
+              : ''
+          }`
+        : '') +
       (upper
         ? `<div class="build-floors"><span>施工樓層</span><span class="seg">${[
             [0, '一樓'],
@@ -2975,13 +3017,29 @@ function renderPanel() {
             .join('')}</span></div>`
         : '') +
       `<div class="build-grid">${Object.entries(RECIPES)
-        .filter(([, r]) => !r.fixed && (!r.hidden || state.secret) && (!r.unlock || r.unlock(state)))
+        .filter(
+          ([k, r]) =>
+            !r.fixed && (!r.hidden || state.secret) && (!r.unlock || r.unlock(state)) && !(fortress && isStructure(k))
+        )
         .map(([k, r]) => {
           const full = LIMITS[k] && count(state, k) >= LIMITS[k];
           return `<button type="button" class="build-tile" data-build="${k}" title="${esc(r.desc)}" ${full || !canPay(state, r.cost) ? 'disabled' : ''}><span>${r.icon}</span><b>${r.name}</b><small>${full ? `已達上限 ${LIMITS[k]}` : costLabel(r.cost)}</small></button>`;
         })
         .join('')}</div>` +
       (warshipRevealed(state) && !state.ship ? warshipCard() : '');
+    body.querySelectorAll('[data-install]').forEach(
+      b =>
+        (b.onclick = () => {
+          const r = installFacility(state, b.dataset.install, findFacility);
+          toast(r.ok ? r.message : r.error, !r.ok);
+          if (r.ok) {
+            normalizeHousing(state);
+            world.sync(state);
+            save(true);
+            renderPanel();
+          }
+        })
+    );
     body.querySelectorAll('[data-level]').forEach(
       b =>
         (b.onclick = () => {
@@ -3174,8 +3232,21 @@ function consume(type) {
   save(true);
 }
 function startBuild(type) {
-  if (Math.hypot(state.player.x - 1.8, state.player.z - 1.8) > 27) {
-    toast('請先回到避難所附近，按 H 返航。', true);
+  if (!atHome(state)) {
+    toast(state.ship ? '請回到戰艦上再建造。' : '請先回到避難所附近，按 H 返航。', true);
+    return;
+  }
+  // aboard the fortress a facility simply takes the next free deck slot
+  if (state.ship) {
+    const r = placeOnShip(state, type);
+    toast(r.ok ? r.message : r.error, !r.ok);
+    if (r.ok) {
+      audio.note(450, 0.2);
+      world.sync(state);
+      save(true);
+      updateUI();
+      renderPanel();
+    }
     return;
   }
   if (type === 'hatchery' && !count(state, 'pen')) {
@@ -3229,7 +3300,7 @@ function startMove(id) {
   const b = findFacility(state, id);
   if (!b) return;
   if (['floor', 'upperfloor', 'stairs'].includes(b.type)) return toast('地板與樓梯請用拆除、重建調整。', true);
-  if (Math.hypot(state.player.x - 1.8, state.player.z - 1.8) > 27) return toast('請返回避難所管理建築。', true);
+  if (!atHome(state)) return toast('請返回避難所管理建築。', true);
   closePanel();
   exitFocus();
   cancelBuild();
@@ -3340,16 +3411,17 @@ function returnHome() {
     toast('已標記小艇，靠近後按 T 解除騎乘。');
     return;
   }
-  if (state.ship && state.player.mode !== 'foot') {
+  // with the fortress, home is wherever the warship is: on board you are already home; ashore or in the skiff,
+  // head back to it
+  if (state.ship) {
     closePanel();
-    if (state.player.mode === 'aboard') {
-      toast('先到駕駛室掌舵，才能駕駛戰艦返航。');
+    selectedTarget = null;
+    if (state.player.mode === 'aboard' || state.player.mode === 'ship') {
+      toast('你就在家裡：比斯泰德號上。');
       return;
     }
-    const m = dockMoor(state);
-    destination = m ? { x: m.x, z: m.z } : { x: 20, z: 20 };
-    selectedTarget = null;
-    toast('已設定返航航線：避難所停靠站。');
+    destination = { x: state.ship.x, z: state.ship.z };
+    toast(state.player.mode === 'foot' ? '已標記戰艦，走到岸邊後按 Q 登船。' : '已標記戰艦，開到旁邊按 Q 收回小艇。');
     return;
   }
   closePanel();
@@ -3473,7 +3545,8 @@ function updateUI() {
   }
   // the bottom bar follows where you are: on the raft, build and the device; at sea, the device and expeditions
   const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard';
-  $('build-tool').hidden = !onFoot || Math.hypot(state.player.x - 1.8, state.player.z - 1.8) > 27;
+  $('build-tool').hidden = !onFoot || !atHome(state);
+  $('home-btn').firstChild.textContent = state.ship ? '⌂ 回到戰艦 ' : '⌂ 導航回避難所 ';
   $('adventure-btn').hidden = onFoot;
   $('drink-count').textContent = state.resources.water || 0;
   $('eat-count').textContent = state.resources.food || 0;
@@ -3503,7 +3576,8 @@ function nearestShelter() {
   const px = state.player.x,
     pz = state.player.z,
     d = (x, z) => Math.hypot(x - px, z - pz);
-  const best = [{ name: '海上避難所', x: 1.8, z: 1.8, home: true }];
+  const h = homePos(state),
+    best = [{ name: state.ship ? '比斯泰德號' : '海上避難所', x: h.x, z: h.z, home: true }];
   for (const i of ISLANDS) {
     const dock = islandDocks()
       .filter(k => k.island === i.id)
@@ -3878,7 +3952,9 @@ function drawMap() {
   if (state.islandsRevealed) for (const n of NODES) dot(n.x, n.z, n.kind === 'crystal' ? '#c1b2ee' : '#ead594', 1.6);
   for (const l of state.loot) dot(l.x, l.z, '#dabd80', 2);
   for (const b of state.buildings) {
-    const p = pt(b.x * 3.6, b.z * 3.6);
+    if (b.stowed) continue;
+    const at = facilityPos(state, b),
+      p = pt(at.x, at.z);
     ctx.fillStyle = b.type === 'pen' ? '#b1c8ee' : '#bce5bc';
     ctx.fillRect(p.x - 2.5, p.y - 2.5, 5, 5);
   }
@@ -3964,16 +4040,18 @@ function worldLabels() {
     className: 'gold'
   }));
   if (!state.buoyFound) labels.push({ x: 17, y: 3, z: -13, text: '◇ 研究浮標', className: '' });
-  labels.push({
-    x: 1.8,
-    y: 3.5,
-    z: 1.8,
-    text: count(state, 'shelter') ? '⌂ 海上避難所' : '⌂ 你的木筏',
-    className: 'gold'
-  });
+  // once the base has gone to sea, the warship is home
+  if (!state.ship)
+    labels.push({
+      x: 1.8,
+      y: 3.5,
+      z: 1.8,
+      text: count(state, 'shelter') ? '⌂ 海上避難所' : '⌂ 你的木筏',
+      className: 'gold'
+    });
   if (state.ship) {
-    if (state.player.mode === 'foot')
-      labels.push({ x: state.ship.x, y: 24, z: state.ship.z, text: '⚓ 比斯泰德號', className: 'mint' });
+    if (state.player.mode === 'foot' || state.player.mode === 'boat')
+      labels.push({ x: state.ship.x, y: 24, z: state.ship.z, text: '⌂ 比斯泰德號 · 家', className: 'mint' });
   } else if (state.player.mode === 'foot')
     labels.push({ x: state.boat.x, y: 2.7, z: state.boat.z, text: '⛵ 停泊的小艇', className: 'mint' });
   if (nearest) labels = labels.filter(l => !(nearest.type === 'buoy' && l.x === 17));
@@ -4215,9 +4293,9 @@ function handleCollapse() {
   state.player.z = 10;
   state.player.mode = 'boat';
   state.boat = { x: 7, z: 10, heading: 0 };
+  // you wake up at home: on the fortress, wherever it is anchored
   if (state.ship) {
-    const m = dockMoor(state);
-    if (m) Object.assign(state.ship, { x: m.x, z: m.z, heading: m.heading });
+    state.skiff = false;
     Object.assign(state.player, { mode: 'aboard', deck: 3, lx: 2.6, lz: 1 });
     normalizeShip(state);
   }
@@ -4915,7 +4993,7 @@ function frame(now) {
     for (const ev of tickShip(state))
       if (ev === 'fusion') {
         world.sync(state);
-        discover('比斯泰德號 · 誕生', '走近戰艦按 Q 登船；駕駛室在船尾最上層。');
+        discover('比斯泰德號 · 誕生', '整個基地都搬上了甲板：書桌、床、集水器、展示池跟著你出航。走近戰艦按 Q 登船。');
         log(state, '比斯泰德號', '木筏上的避難所與陪我漂流的小艇，融合成了一艘戰艦。這一次，我要主動出航。');
         save(true);
         updateUI();

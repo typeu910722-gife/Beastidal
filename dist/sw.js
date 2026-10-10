@@ -46,6 +46,7 @@ const FILES = [
   './device.js?v=0.13.0',
   './beast-stage.js?v=0.13.0',
   './bag.js?v=0.13.0',
+  './fortress.js?v=0.13.0',
   './human.js?v=0.13.0',
   './taming.js?v=0.13.0',
   './protagonist.js?v=0.13.0',

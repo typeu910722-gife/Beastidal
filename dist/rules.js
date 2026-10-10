@@ -1,10 +1,11 @@
 import { limitError } from './ship.js?v=0.13.0';
 import { dayOf } from './clock.js?v=0.13.0';
 import { normalizeExpansion } from './expansion.js?v=0.13.0';
-import { normalizeHousing, freePen } from './housing.js?v=0.13.0';
+import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.13.0';
 import { dockingSpots } from './navigation.js?v=0.13.0';
 import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.13.0';
-import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag } from './bag.js?v=0.13.0';
+import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome } from './bag.js?v=0.13.0';
+import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.13.0';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
 export const RESOURCE_NAMES = {
   wood: '漂流木',
@@ -243,7 +244,8 @@ export function buildError(s, type, x, z, level = 0) {
     if (lim) return lim;
   }
   if (!canPay(s, recipe.cost)) return '物資不足，先打撈更多材料。';
-  if (Math.hypot(s.player.x - 1.8, s.player.z - 1.8) > 27) return '請先回到避難所附近建造。';
+  if (s.ship) return '戰艦上的設施會放進甲板空位，請從建造選單選擇。';
+  if (!atHome(s)) return '請先回到避難所附近建造。';
   if (![0, 1].includes(level)) return '只有一樓與二樓。';
   if ((type === 'pen' || type === 'floor' || type === 'stairs') && level !== 0) return '此設施只能建在一樓。';
   if (type === 'upperfloor') {
@@ -287,6 +289,26 @@ export function placeBuilding(s, type, x, z, rot = 0, level = 0) {
   log(s, '建造：' + RECIPES[type].name, RECIPES[type].desc);
   return { ok: true };
 }
+// Aboard the fortress there is no grid: a new facility takes the next free deck slot (see fortress.js).
+export function placeOnShip(s, type) {
+  const recipe = RECIPES[type];
+  if (!s.ship) return { ok: false, error: '尚未擁有戰艦。' };
+  if (!recipe || recipe.fixed || isStructure(type)) return { ok: false, error: '這是木筏的結構，戰艦上用不到。' };
+  if ((recipe.hidden && !s.secret) || (recipe.unlock && !recipe.unlock(s)))
+    return { ok: false, error: '還沒有解鎖這項建造。' };
+  if (!atHome(s)) return { ok: false, error: '請回到戰艦上再建造。' };
+  const limit = limitError(s, type);
+  if (limit) return { ok: false, error: limit };
+  const slot = freeSlot(s);
+  if (slot === null) return { ok: false, error: '甲板沒有空位了。可以把一座設施收進待安置。' };
+  if (!pay(s, recipe.cost)) return { ok: false, error: '物資不足，先打撈更多材料。' };
+  // a fresh id that can never clash with a raft cell
+  s.fortressSeq = (s.fortressSeq || 0) + 1;
+  s.buildings.push({ type, x: 100 + s.fortressSeq, z: 0, rot: 0, level: 0, ship: { slot } });
+  if (type === 'pen') normalizeHousing(s);
+  log(s, '建造：' + recipe.name, recipe.desc);
+  return { ok: true, message: `${recipe.name} 安置在甲板上。` };
+}
 export function craftBait(s) {
   if (!s.secret) return { ok: false, error: '先調查研究浮標。' };
   if (!pay(s, { food: 1, fiber: 1 })) return { ok: false, error: '需要 1 口糧與 1 纖維。' };
@@ -298,16 +320,15 @@ export { feed } from './taming.js?v=0.13.0';
 export function breed(s, aId, bId, rng = Math.random) {
   normalizeHousing(s);
   normalizeExpansion(s);
-  if (!s.secret || !count(s, 'hatchery')) return { ok: false, error: '需要基因孵化台。' };
+  const hatcheries = s.buildings.filter(b => b.type === 'hatchery' && !b.stowed).length;
+  if (!s.secret || !hatcheries) return { ok: false, error: '需要基因孵化台。' };
   if (aId === bId) return { ok: false, error: '請選擇兩隻不同的親代。' };
   const a = s.tamed.find(x => x.id === aId),
     b = s.tamed.find(x => x.id === bId);
   if (!a || !b) return { ok: false, error: '請選擇已馴化的親代。' };
   if (a.bond < 35 || b.bond < 35) return { ok: false, error: '兩隻親代都需要羈絆 35，才能安心配對。' };
-  if (s.eggs.length >= count(s, 'hatchery') * 2)
-    return { ok: false, error: '孵化台正在使用中。每台可同時孵育 2 顆卵。' };
-  if (s.tamed.length + s.eggs.length >= count(s, 'pen') * 3)
-    return { ok: false, error: '展示池沒有幼體空間。請增建展示池。' };
+  if (s.eggs.length >= hatcheries * 2) return { ok: false, error: '孵化台正在使用中。每台可同時孵育 2 顆卵。' };
+  if (!beastRoom(s)) return { ok: false, error: `御獸倉庫已滿（${BEAST_CAPACITY} 隻）。` };
   if (!pay(s, { crystal: 1, food: 2 })) return { ok: false, error: '雜交需要 1 異晶與 2 口糧。' };
   const { genome, mutations } = crossGenome(a.genome, b.genome, rng);
   const egg = {
@@ -346,11 +367,13 @@ export function tickSystems(s, dt, safe = false, rng = Math.random) {
     s.vitals.food = clamp(s.vitals.food - dt * 0.032, 0, 100);
     if (s.vitals.food < 5 || s.vitals.water < 5) s.vitals.health = Math.max(0, s.vitals.health - dt * 0.25);
   }
-  if (count(s, 'shelter') && Math.hypot(s.player.x - 1.8, s.player.z - 1.8) < 12)
+  // resting near a shelter (on the raft, or on the fortress's deck)
+  if (s.buildings.some(b => b.type === 'shelter' && !b.stowed && nearFacility(s, b, 12)))
     s.vitals.health = Math.min(100, s.vitals.health + dt * 1.3);
   if (s.elapsed - s.lastSupply >= 35) {
     s.lastSupply = s.elapsed;
-    for (const b of s.buildings) if (b.type === 'collector') b.waterStored = Math.min(20, (b.waterStored || 0) + 2);
+    for (const b of s.buildings)
+      if (b.type === 'collector' && !b.stowed) b.waterStored = Math.min(20, (b.waterStored || 0) + 2);
   }
   if (s.elapsed - s.lastPassive >= 55) {
     s.lastPassive = s.elapsed;
@@ -400,12 +423,23 @@ export function validateSave(s) {
   if (!Object.keys(RESOURCE_NAMES).every(k => Number.isFinite(s.resources[k]) && s.resources[k] >= 0)) return false;
   if (!['health', 'food', 'water'].every(k => Number.isFinite(s.vitals[k]) && s.vitals[k] >= 0 && s.vitals[k] <= 100))
     return false;
-  if (!Array.isArray(s.buildings) || !s.buildings.some(b => b.type === 'floor') || s.buildings.length > 600)
+  // a raft needs its floors; once the base is the fortress, its facilities sit on deck slots or wait aboard
+  if (
+    !Array.isArray(s.buildings) ||
+    (!s.ship && !s.buildings.some(b => b.type === 'floor')) ||
+    s.buildings.length > 600
+  )
     return false;
+  const onRaft = b => Math.abs(b.x) <= 10 && Math.abs(b.z) <= 10,
+    aboard = b => !!s.ship && (b.stowed || (Number.isInteger(b.ship?.slot) && b.ship.slot >= 0 && b.ship.slot < 32));
   if (
     !s.buildings.every(
       b =>
-        RECIPES[b.type] && Number.isInteger(b.x) && Number.isInteger(b.z) && Math.abs(b.x) <= 10 && Math.abs(b.z) <= 10
+        RECIPES[b.type] &&
+        Number.isInteger(b.x) &&
+        Number.isInteger(b.z) &&
+        Math.abs(b.x) <= 100000 &&
+        (b.ship || b.stowed ? aboard(b) : onRaft(b))
     )
   )
     return false;

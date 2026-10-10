@@ -1,6 +1,13 @@
+// Display pens hold 3 each and are for showing and visiting your beasts. Every beast also has a place in the
+// beast storage (kept by its contract, reached from the device), so a full pen never stops a contract or a
+// hatching; the storage only stops at BEAST_CAPACITY beasts in all, eggs included.
 export const PEN_CAPACITY = 3;
+export const BEAST_CAPACITY = 60;
+export const beastCount = s => s.tamed.length + s.eggs.length;
+export const beastRoom = s => Math.max(0, BEAST_CAPACITY - beastCount(s));
 export const penId = b => `pen:${b.x}:${b.z}`;
-export const pens = s => s.buildings.filter(b => b.type === 'pen');
+// pens waiting in the fortress's pending list hold no one (see fortress.js)
+export const pens = s => s.buildings.filter(b => b.type === 'pen' && !b.stowed);
 export const occupants = (s, id) => s.tamed.filter(p => p.penId === id);
 export const reserved = (s, id) => s.eggs.filter(p => p.penId === id);
 export const used = (s, id) => occupants(s, id).length + reserved(s, id).length;
@@ -44,7 +51,7 @@ export function movePet(s, petId, destination, swapId) {
 export function penLabel(s, id) {
   const i = pens(s).findIndex(b => penId(b) === id);
   return i < 0
-    ? '待安置'
+    ? '御獸倉庫'
     : typeof pens(s)[i].name === 'string' && pens(s)[i].name.trim()
       ? pens(s)[i].name
       : `展示池 ${i + 1}`;

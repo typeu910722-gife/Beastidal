@@ -1,6 +1,7 @@
 // The battered handheld found on the raft desk. Once picked up it is the player's hub: a phone-style UI with apps
 // for the bag, vitals/status, beast storage, logbook, codex, achievements and stats (see game.js openDevice).
 import { RECIPES, buildError } from './rules.js?v=0.13.0';
+import { nearFacility } from './fortress.js?v=0.13.0';
 
 export const DEVICE_APPS = [
   { id: 'bag', icon: '▤', name: '背包' },
@@ -43,10 +44,7 @@ export function normalizeDevice(s) {
   }
   return s.device;
 }
-const nearDesk = s => {
-  const d = deskAt(s);
-  return d && s.player.mode === 'foot' && Math.hypot(s.player.x - d.x * 3.6, s.player.z - d.z * 3.6) <= 5.5;
-};
+const nearDesk = s => nearFacility(s, deskAt(s));
 export function takeDevice(s) {
   normalizeDevice(s);
   if (s.device.owned) return { ok: false, error: '裝置已經在你身上。' };

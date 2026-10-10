@@ -1,10 +1,21 @@
 import assert from 'node:assert/strict';
-import { createState, placeBuilding, buildError, count, validateSave } from '../dist/rules.js';
+import {
+  createState,
+  placeBuilding,
+  buildError,
+  count,
+  validateSave,
+  tickSystems,
+  placeOnShip
+} from '../dist/rules.js';
 import { makeGenome } from '../dist/genetics.js';
 import { normalizeExpansion } from '../dist/expansion.js';
 import { normalizeTravel, moveTravel } from '../dist/navigation.js';
-import { normalizeHousing } from '../dist/housing.js';
-import { ISLANDS } from '../dist/islands.js';
+import { ISLANDS, islandDocks } from '../dist/islands.js';
+import { homePos, pendingFacilities, installFacility, stowFacility, SHIP_SLOTS } from '../dist/fortress.js';
+import { atHome, deposit } from '../dist/bag.js';
+import { facilityId, findFacility } from '../dist/facilities.js';
+import { normalizeHousing, penId, penLabel } from '../dist/housing.js';
 import {
   normalizeShip,
   claimIsland,
@@ -24,6 +35,7 @@ import {
   launchSkiff,
   stowSkiff,
   restPlace,
+  syncAboard,
   LIMITS,
   FUSION_COST,
   SHIP_POINTS,
@@ -92,7 +104,9 @@ test('Island claim needs landing, a bonded guardian and materials; dock needs a 
   assert.ok(claimPalm(s).ok);
   assert.equal(s.resources.wood, wood - 20);
   assert.equal(claimPalm(s).ok, false);
-  assert.equal(restPlace(s, s.tamed[0]), 'island');
+  // beasts outside the display pens roam the claimed island; those in a pen stay on show there
+  assert.equal(restPlace(s, { ...s.tamed[0], penId: null }), 'island');
+  assert.equal(restPlace(s, s.tamed[0]), s.tamed[0].penId ? 'pen' : 'island');
   Object.assign(s.player, { mode: 'foot', x: 3, z: 3 });
   assert.equal(buildError(s, 'dock', 4, 2), null);
   assert.ok(placeBuilding(s, 'dock', 4, 2).ok);
@@ -186,8 +200,10 @@ test('Five decks connect by ladders; cargo holds and lounge enforce their rules'
   assert.equal(deckWalk(0, 6, 0), false);
   assert.ok(toggleLounge(s, 'p1').ok);
   assert.equal(restPlace(s, s.tamed[0]), 'lounge');
+  // the fortress carries the whole base, so beasts can leave the lounge far out at sea too
   s.ship.x += 500;
-  assert.equal(toggleLounge(s, 'p1').ok, false);
+  s.expedition.activeId = null;
+  assert.ok(toggleLounge(s, 'p1').ok);
 });
 test('Disembark requires the gangway near a shore; cannon needs the helm and ammo', () => {
   const s = shipState();
@@ -195,6 +211,10 @@ test('Disembark requires the gangway near a shore; cannon needs the helm and amm
   boardShip(s);
   const g = SHIP_POINTS.find(p => p.id === 'gangway');
   Object.assign(s.player, { lx: g.lx, lz: g.lz });
+  // the raft and its dock became the fortress, so there is no shore at the old home any more
+  assert.equal(disembark(s).ok, false);
+  // anchored off an island, the gangway leads ashore
+  Object.assign(s.ship, islandDocks()[0].boat);
   assert.ok(disembark(s).ok);
   assert.equal(s.player.mode, 'foot');
   boardShip(s);
@@ -249,4 +269,132 @@ test('After the fusion the skiff can still be lowered to explore alone and haule
   assert.ok(stowSkiff(s).ok);
   assert.equal(s.player.mode, 'aboard');
   assert.equal(s.skiff, false);
+});
+test('Fortress: the base goes aboard, works far from the spawn, and survives save and reload', () => {
+  const s = rich(maxed());
+  claimPalm(s);
+  Object.assign(s.player, { mode: 'foot', x: 3.6, z: 3.6, level: 0 });
+  placeBuilding(s, 'dock', 4, 2);
+  assert.ok(placeBuilding(s, 'shelter', 1, 2).ok);
+  assert.ok(placeBuilding(s, 'collector', 2, 2).ok);
+  assert.ok(placeBuilding(s, 'hatchery', 2, 3).ok);
+  // an egg in progress and a named pen must come through untouched
+  s.tamed.push({
+    id: 'p2',
+    name: '阿浪',
+    genome: makeGenome(77, 1),
+    generation: 1,
+    bond: 50,
+    stamina: 100,
+    health: 100
+  });
+  normalizeHousing(s);
+  const pen = s.buildings.find(b => b.type === 'pen');
+  pen.name = '星光水母館';
+  s.eggs.push({
+    id: 'egg1',
+    name: '卵',
+    genome: makeGenome(5, 0),
+    generation: 2,
+    readyAt: s.elapsed + 500,
+    duration: 30,
+    penId: null
+  });
+  const before = {
+    pets: s.tamed.map(p => [p.id, p.name, p.bond, JSON.stringify(p.genome)]),
+    facilities: s.buildings.filter(b => !['floor', 'upperfloor', 'stairs', 'dock'].includes(b.type)).length
+  };
+  s.expedition.boatLevel = 3;
+  assert.ok(startFusion(s).ok);
+  s.elapsed += 200;
+  tickShip(s);
+  assert.ok(s.ship);
+  // the raft is used up; every facility is aboard or waiting, none lost or doubled
+  assert.equal(count(s, 'floor'), 0);
+  assert.equal(count(s, 'dock'), 0);
+  const aboard = s.buildings.filter(b => b.ship),
+    waiting = pendingFacilities(s);
+  assert.equal(aboard.length + waiting.length, before.facilities);
+  assert.equal(new Set(aboard.map(b => b.ship.slot)).size, aboard.length);
+  assert.ok(['desk', 'shelter', 'collector', 'hatchery'].every(t => aboard.some(b => b.type === t)));
+  assert.deepEqual(
+    s.tamed.map(p => [p.id, p.name, p.bond, JSON.stringify(p.genome)]),
+    before.pets
+  );
+  assert.equal(s.eggs[0].id, 'egg1');
+  assert.ok(penLabel(s, penId(pen)) === '星光水母館' || pen.stowed);
+  // sail far away from the spawn and anchor by an island
+  Object.assign(
+    s.ship,
+    islandDocks().sort((a, b) => Math.hypot(b.boat.x, b.boat.z) - Math.hypot(a.boat.x, a.boat.z))[0].boat
+  );
+  assert.ok(Math.hypot(s.ship.x, s.ship.z) > 60);
+  const homeNow = homePos(s);
+  assert.deepEqual(homeNow, { x: s.ship.x, z: s.ship.z });
+  // ashore, then back aboard: the base works here
+  const g = SHIP_POINTS.find(p => p.id === 'gangway');
+  Object.assign(s.player, { mode: 'aboard', deck: 3, lx: g.lx, lz: g.lz });
+  assert.ok(disembark(s).ok);
+  assert.ok(boardShip(s).ok);
+  const desk = aboard.find(b => b.type === 'desk'),
+    deskAt = SHIP_SLOTS[desk.ship.slot];
+  Object.assign(s.player, { mode: 'aboard', deck: 3, lx: deskAt.lx + 1, lz: deskAt.lz });
+  syncAboard(s);
+  assert.ok(atHome(s));
+  s.resources.wood = 5;
+  assert.ok(deposit(s).ok, 'the desk storage works aboard');
+  assert.equal(s.resources.wood, 0);
+  // building aboard fills a free slot (or says the deck is full)
+  const free = SHIP_SLOTS.length - aboard.length;
+  const built = placeOnShip(s, 'lamp');
+  assert.equal(built.ok, free > 0, built.error);
+  // the collector still fills, the shelter still heals
+  const tank = s.buildings.find(b => b.type === 'collector' && b.ship);
+  tank.waterStored = 0;
+  s.lastSupply = s.elapsed - 40;
+  s.vitals.health = 50;
+  const shelter = s.buildings.find(b => b.type === 'shelter' && b.ship),
+    bed = SHIP_SLOTS[shelter.ship.slot];
+  Object.assign(s.player, { lx: bed.lx + 1, lz: bed.lz });
+  syncAboard(s);
+  tickSystems(s, 1, true);
+  assert.equal(tank.waterStored, 2);
+  assert.ok(s.vitals.health > 50);
+  // save and reload: still aboard, still home here, still valid
+  const loaded = normalizeShip(JSON.parse(JSON.stringify(s)));
+  assert.ok(validateSave(loaded));
+  assert.deepEqual(homePos(loaded), homeNow);
+  assert.equal(loaded.buildings.filter(b => b.ship).length, s.buildings.filter(b => b.ship).length);
+});
+test('Fortress: a save from before the base went aboard is converted, overflow waits, nothing is lost', () => {
+  const s = rich(maxed());
+  for (const [t, x, z] of [
+    ['shelter', 1, 2],
+    ['collector', 2, 2],
+    ['hatchery', 2, 3],
+    ['table', 3, 3],
+    ['beacon', 3, 4],
+    ['lamp', 0, 4],
+    ['chair', 1, 4]
+  ])
+    assert.ok(placeBuilding(s, t, x, z).ok, t);
+  const facilities = s.buildings.filter(b => b.type !== 'floor').length;
+  // an old save: the ship exists but the facilities still sit on the raft grid
+  s.ship = { x: 40, z: 40, heading: 0, cargo: {}, lounge: [], lastCannon: -999 };
+  const loaded = normalizeShip(JSON.parse(JSON.stringify(s)));
+  assert.equal(count(loaded, 'floor'), 0);
+  const aboard = loaded.buildings.filter(b => b.ship),
+    waiting = pendingFacilities(loaded);
+  assert.equal(aboard.length, SHIP_SLOTS.length);
+  assert.equal(aboard.length + waiting.length, facilities);
+  assert.ok(aboard.some(b => b.type === 'desk') && aboard.some(b => b.type === 'shelter'));
+  // a waiting facility can take a slot once one frees up
+  const out = aboard.find(b => b.type === 'pen');
+  assert.ok(stowFacility(loaded, facilityId(out), findFacility).ok);
+  assert.ok(installFacility(loaded, facilityId(waiting[0]), findFacility).ok);
+  assert.equal(installFacility(loaded, facilityId(out), findFacility).ok, false, 'the deck is full again');
+  assert.ok(validateSave(loaded));
+  // the pens' residents are never dropped: those whose pen waits are kept in the beast storage
+  normalizeHousing(loaded);
+  assert.equal(loaded.tamed.length, s.tamed.length);
 });

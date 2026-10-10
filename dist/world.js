@@ -15,6 +15,7 @@ import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.13.0';
 import { buildError } from './rules.js?v=0.13.0';
 import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.13.0';
 import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.13.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.13.0';
 import { dayPhase } from './clock.js?v=0.13.0';
 const V = T.Vector3;
 const ISLAND_GROUND = 0.42; // top of the island terrain where land beasts stand
@@ -737,6 +738,9 @@ export class OceanWorld {
     this.extra = expansionModels(this.scene);
     this.ship = makeWarship(mat, halo);
     this.ship.visible = false;
+    // the base's facilities once it has gone to sea, on the main deck (shown and hidden with that deck)
+    this.fortress = new T.Group();
+    this.ship.userData.bands[3].add(this.fortress);
     this.scene.add(this.ship);
     this.cannonFx = ball(this.scene, 0xffc27a, 0, 0, 0, 1, 1, 1, {
       emissive: 0xff9a40,
@@ -783,13 +787,38 @@ export class OceanWorld {
     this.setHero(s.hero);
     normalizeHousing(s);
     normalizeExpansion(s);
-    const key = JSON.stringify(s.buildings.map(({ type, x, z, rot, level, off }) => ({ type, x, z, rot, level, off })));
+    const key = JSON.stringify(
+      s.buildings.map(({ type, x, z, rot, level, off, ship, stowed }) => ({
+        type,
+        x,
+        z,
+        rot,
+        level,
+        off,
+        ship,
+        stowed
+      }))
+    );
     if (key !== this.lastBuildings) {
       this.lastBuildings = key;
       while (this.home.children.length) this.home.remove(this.home.children[0]);
-      for (const b of s.buildings) this.home.add(buildingMesh(b));
+      while (this.fortress.children.length) this.fortress.remove(this.fortress.children[0]);
+      for (const b of s.buildings) {
+        if (b.stowed) continue;
+        const g = buildingMesh(b);
+        if (b.ship) {
+          // aboard the fortress: on its deck slot, a little smaller, moving with the ship
+          const slot = SHIP_SLOTS[b.ship.slot];
+          g.position.set(slot.lx, FORTRESS_DECK_Y - 0.45 * FORTRESS_SCALE, slot.lz);
+          g.rotation.y = 0;
+          g.scale.setScalar(FORTRESS_SCALE);
+          this.fortress.add(g);
+        } else this.home.add(g);
+      }
       this.deviceShown = null;
       const floors = s.buildings.filter(b => b.type === 'floor');
+      // the calm water around the raft (none once the raft has become the fortress)
+      if (!floors.length) floors.push({ x: 9999, z: 9999 });
       const minX = Math.min(...floors.map(b => b.x * 3.6)) - 1.8,
         maxX = Math.max(...floors.map(b => b.x * 3.6)) + 1.8,
         minZ = Math.min(...floors.map(b => b.z * 3.6)) - 1.8,
@@ -804,7 +833,7 @@ export class OceanWorld {
     const carried = !!s.device?.owned;
     if (this.deviceShown !== carried) {
       this.deviceShown = carried;
-      this.home.traverse(o => o.userData.handheld && (o.visible = !carried));
+      for (const g of this.facilityGroups()) g.traverse(o => o.userData.handheld && (o.visible = !carried));
     }
     const syncMap = (items, map, make) => {
       const ids = new Set(items.map(x => x.id));
@@ -851,7 +880,7 @@ export class OceanWorld {
     this.pointer.set(((clientX - rect.left) / rect.width) * 2 - 1, (-(clientY - rect.top) / rect.height) * 2 + 1);
     this.scene.updateMatrixWorld(true);
     this.ray.setFromCamera(this.pointer, this.camera);
-    const hits = this.ray.intersectObjects([this.home, this.islandModels.group, this.extra.group], true);
+    const hits = this.ray.intersectObjects([this.home, this.fortress, this.islandModels.group, this.extra.group], true);
     for (const hit of hits) {
       let o = hit.object;
       while (o) {
@@ -943,7 +972,7 @@ export class OceanWorld {
       });
     }
     // facilities that show their state in the world: the collector's gauge, eggs glowing in the hatchery dome
-    for (const g of this.home.children) {
+    for (const g of this.facilityGroups()) {
       const id = g.userData.facilityId;
       if (!id) continue;
       if (g.userData.gauge) {
@@ -1110,15 +1139,14 @@ export class OceanWorld {
         this.animateCreature(m, ud.swim);
       }
     }
-    const pools = new Map(s.buildings.filter(b => b.type === 'pen').map(b => [penId(b), b])),
+    const pools = new Map(s.buildings.filter(b => b.type === 'pen' && !b.stowed).map(b => [penId(b), b])),
       slots = new Map();
     let i = 0;
     for (const c of s.tamed) {
       const m = this.petMeshes.get(c.id);
       if (!m) continue;
       const pen = pools.get(c.penId);
-      m.visible = !!pen;
-      if (!pen) continue;
+      m.visible = true;
       const landPet = m.userData.phenotype.habitat === 'land';
       if (m.userData.perch) m.userData.perch.visible = false;
       if (c.id === s.expedition?.activeId) {
@@ -1177,7 +1205,17 @@ export class OceanWorld {
         i++;
         continue;
       }
-      m.scale.setScalar(phenotype(c.genome).size * 0.22);
+      // kept in the beast storage: not shown until called out
+      if (rest !== 'pen' || !pen) {
+        m.visible = false;
+        continue;
+      }
+      // a pen on the raft, or one aboard the fortress (smaller, on the main deck)
+      const aboardPen = !!(pen.ship && s.ship),
+        k = aboardPen ? FORTRESS_SCALE : 1,
+        at = facilityPos(s, pen),
+        floorY = aboardPen ? FORTRESS_DECK_Y - 0.45 * FORTRESS_SCALE : 0;
+      m.scale.setScalar(phenotype(c.genome).size * 0.22 * k);
       const slot = slots.get(c.penId) || 0;
       slots.set(c.penId, slot + 1);
       const a = t * 0.45 + i * 1.7;
@@ -1190,9 +1228,9 @@ export class OceanWorld {
       // land beasts rest on a rock perch in the pen instead of swimming
       if (m.userData.perch) m.userData.perch.visible = true;
       m.position.set(
-        pen.x * 3.6 + x + (landPet ? 0 : Math.cos(a) * 0.12),
-        landPet ? 0.32 : 0.08 + Math.sin(a * 2) * 0.04,
-        pen.z * 3.6 + z + (landPet ? 0 : Math.sin(a) * 0.13)
+        at.x + (x + (landPet ? 0 : Math.cos(a) * 0.12)) * k,
+        floorY + (landPet ? 0.32 : 0.08 + Math.sin(a * 2) * 0.04) * k + (aboardPen ? 0.35 : 0),
+        at.z + (z + (landPet ? 0 : Math.sin(a) * 0.13)) * k
       );
       m.rotation.y = Math.sin(a) * 0.3;
       this.animateCreature(m, t + i);
@@ -1322,9 +1360,13 @@ export class OceanWorld {
     animateCreature(m, t);
   }
 
+  // Every facility's model: those on the raft and those aboard the fortress.
+  facilityGroups() {
+    return [...this.home.children, ...this.fortress.children];
+  }
   // Where a point given in a facility's own coordinates is in the world right now.
   facilityPoint(b, local) {
-    const g = this.home.children.find(g => g.userData.facilityId === facilityId(b));
+    const g = this.facilityGroups().find(g => g.userData.facilityId === facilityId(b));
     if (!g) return null;
     g.updateWorldMatrix(true, false);
     return g.localToWorld(new V(...local));
@@ -1340,7 +1382,7 @@ export class OceanWorld {
   }
   // The point of one facility under the pointer, if any.
   pickFacilityPoint(b, clientX, clientY) {
-    const g = this.home.children.find(g => g.userData.facilityId === facilityId(b));
+    const g = this.facilityGroups().find(g => g.userData.facilityId === facilityId(b));
     if (!g) return null;
     const rect = this.canvas.getBoundingClientRect();
     this.pointer.set(((clientX - rect.left) / rect.width) * 2 - 1, (-(clientY - rect.top) / rect.height) * 2 + 1);
@@ -1361,7 +1403,7 @@ export class OceanWorld {
   }
   render() {
     // inside the shelter in third person, lift its roof so the camera can see in
-    for (const g of this.home.children)
+    for (const g of this.facilityGroups())
       if (g.userData.roof) {
         const open = g.userData.facilityId === this.inside && !this.firstPerson;
         for (const m of g.userData.roof) m.visible = !open;

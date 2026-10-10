@@ -1,11 +1,12 @@
 import { bagRoom, bagFullError } from './bag.js?v=0.13.0';
+import { nearFacility } from './fortress.js?v=0.13.0';
 export const facilityId = b => `facility:${b.type}:${b.x}:${b.z}${b.level ? ':1' : ''}`;
 export const findFacility = (s, id) => s.buildings.find(b => facilityId(b) === id);
 export function useFacility(s, id, action) {
   const b = findFacility(s, id);
   if (!b) return { ok: false, error: '設施不存在。' };
-  if (Math.hypot(s.player.x - b.x * 3.6, s.player.z - b.z * 3.6) > 5.5)
-    return { ok: false, error: '請靠近設施至 5 公尺內。' };
+  if (b.stowed) return { ok: false, error: '這座設施還在待安置清單上。' };
+  if (!nearFacility(s, b)) return { ok: false, error: '請靠近設施至 5 公尺內。' };
   if (action === 'rest' && b.type === 'shelter') {
     if (s.vitals.health >= 98) return { ok: false, error: '目前體力充足。' };
     if (s.resources.food < 1 || s.resources.water < 1) return { ok: false, error: '休息需要 1 口糧與 1 淡水。' };

@@ -2,6 +2,8 @@
 import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.13.0';
 import { dayOf } from './clock.js?v=0.13.0';
 import { spend, give, bagRoom } from './bag.js?v=0.13.0';
+import { pens, penId } from './housing.js?v=0.13.0';
+import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.13.0';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
@@ -50,7 +52,6 @@ export const SHIP_POINTS = [
 ];
 const fail = error => ({ ok: false, error });
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
-const HOME = { x: 1.8, z: 1.8 };
 const pay = spend;
 const count = (s, t) => s.buildings.filter(b => b.type === t).length;
 export function hullHalfBeam(z) {
@@ -88,6 +89,8 @@ export function normalizeShip(s) {
       p.cargo[k] = Math.max(0, Math.floor(p.cargo[k] || 0));
     p.lounge = (p.lounge || []).filter(id => s.tamed.some(t => t.id === id)).slice(0, LOUNGE_CAPACITY);
     p.lastCannon ??= -999;
+    // the base goes to sea with the ship (also settles saves made before it did)
+    moveBaseAboard(s);
     s.skiff = !!s.skiff;
     if (!s.skiff) s.boat = { x: p.x, z: p.z, heading: p.heading };
     if (!['ship', 'aboard', 'foot', ...(s.skiff ? ['boat'] : [])].includes(s.player.mode)) s.player.mode = 'ship';
@@ -129,13 +132,16 @@ export function claimIsland(s, id, pet) {
   s.occupied.push(id);
   return { ok: true, message: i.name + ' 已占領！御獸平時會在這座島上休息恢復。' };
 }
-// Idle beasts rest on the first claimed island; lounge beasts travel with the ship.
+// Where an idle beast is: the warship's lounge, a display pen (on the raft, or aboard the fortress), or kept by
+// its contract in the beast storage, which shows them roaming the first claimed island once there is one.
+// Every one of them can be called out wherever you are; only the display pens have a fixed number of places.
 export function restIsland(s) {
   return ISLANDS.find(i => i.id === s.occupied?.[0]);
 }
 export function restPlace(s, pet) {
   if (s.ship?.lounge.includes(pet.id)) return 'lounge';
-  return restIsland(s) ? 'island' : 'pen';
+  if (pet.penId && pens(s).some(b => penId(b) === pet.penId)) return 'pen';
+  return restIsland(s) ? 'island' : 'storage';
 }
 // ---------- build menu helpers ----------
 export function limitError(s, type) {
@@ -161,8 +167,8 @@ export function dockMoor(s) {
   if (!d) return null;
   const cx = d.x * 3.6,
     cz = d.z * 3.6;
-  let dx = cx - HOME.x,
-    dz = cz - HOME.z;
+  let dx = cx - RAFT_HOME.x,
+    dz = cz - RAFT_HOME.z;
   const L = Math.hypot(dx, dz) || 1;
   dx /= L;
   dz /= L;
@@ -180,7 +186,7 @@ export function startFusion(s) {
   if (s.shipFusion) return fail('融合工程進行中。');
   const missing = fusionChecks(s).filter(([, ok]) => !ok);
   if (missing.length) return fail('尚未達成：' + missing.map(([n]) => n).join('、'));
-  if (s.player.mode !== 'foot' || dist(s.player, HOME) > 27)
+  if (s.player.mode !== 'foot' || dist(s.player, RAFT_HOME) > 27)
     return fail('請登上避難所，讓小艇停泊在木筏旁再開始融合。');
   if (!pay(s, FUSION_COST)) return fail('融合材料不足。');
   s.shipFusion = { readyAt: s.elapsed + FUSION_TIME, duration: FUSION_TIME };
@@ -210,7 +216,11 @@ export function tickShip(s) {
 function pointBlocked(s, x, z, r) {
   if (islandAt(x, z, r * 0.6)) return true;
   return s.buildings.some(
-    b => ['floor', 'pen', 'dock'].includes(b.type) && Math.hypot(x - b.x * 3.6, z - b.z * 3.6) < r + 2.2
+    b =>
+      !b.ship &&
+      !b.stowed &&
+      ['floor', 'pen', 'dock'].includes(b.type) &&
+      Math.hypot(x - b.x * 3.6, z - b.z * 3.6) < r + 2.2
   );
 }
 // The hull is checked at bow, midship and stern so a 30 m ship cannot plough into land.
@@ -263,7 +273,8 @@ function nearestGap(s, x, z) {
     ];
   for (const [px, pz] of pts) {
     for (const b of s.buildings)
-      if (['floor', 'pen', 'dock'].includes(b.type)) d = Math.min(d, Math.hypot(px - b.x * 3.6, pz - b.z * 3.6));
+      if (!b.ship && !b.stowed && ['floor', 'pen', 'dock'].includes(b.type))
+        d = Math.min(d, Math.hypot(px - b.x * 3.6, pz - b.z * 3.6));
   }
   return d;
 }
@@ -426,36 +437,21 @@ export function transferCargo(s, kind, amount) {
   s.resources[kind] += n;
   return { ok: true, message: '取出 ' + n + '。' };
 }
-export function nearBeastHome(s) {
-  if (!s.ship) return false;
-  if (dist(s.ship, HOME) < 45) return true;
-  return (s.occupied || []).some(id => {
-    const i = ISLANDS.find(v => v.id === id);
-    return i && dist(s.ship, i) < i.rx + 30;
-  });
-}
+// The fortress carries the whole base, so beasts can board or leave its lounge anywhere.
+export const nearBeastHome = s => !!s.ship;
 export function toggleLounge(s, petId) {
   if (!s.ship) return fail('沒有戰艦。');
   const p = s.tamed.find(t => t.id === petId);
   if (!p) return fail('找不到夥伴。');
-  if (!nearBeastHome(s)) return fail('戰艦需停靠在占領島嶼或避難所附近，御獸才能上下船。');
   const L = s.ship.lounge;
   if (L.includes(petId)) {
     if (s.expedition?.activeId === petId && s.player.mode !== 'foot') return fail('出戰中的夥伴請先召回。');
     L.splice(L.indexOf(petId), 1);
-    return { ok: true, message: p.name + ' 回到領地島嶼休息。' };
+    return { ok: true, message: p.name + ' 離開休息室，回到原本的住處。' };
   }
   if (L.length >= LOUNGE_CAPACITY) return fail('休息室最多 ' + LOUNGE_CAPACITY + ' 隻。');
   L.push(petId);
   return { ok: true, message: p.name + ' 登船，進入御獸休息室。' };
-}
-export function canDeploy(s, pet) {
-  if (!s.ship || !s.occupied?.length) return null;
-  if (s.ship.lounge.includes(pet.id)) return null;
-  if (nearBeastHome(s) || (s.player.mode === 'foot' && dist(s.player, HOME) < 40)) return null;
-  const i = restIsland(s);
-  if (i && dist(s.player, i) < i.rx + 40) return null;
-  return pet.name + ' 正在' + (i?.name || '領地') + '休息；請讓牠登上戰艦休息室，或回到領地附近。';
 }
 // ---------- cannon ----------
 export function fireCannon(s) {

@@ -5,8 +5,9 @@
 // chance = trust %). Forcing a contract below 60 % trust can send the beast into a frenzy: 1.2× speed and attack,
 // chasing you for 6–17 seconds.
 import { phenotype, geneName } from './genetics.js?v=0.13.0';
-import { freePen, normalizeHousing } from './housing.js?v=0.13.0';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.13.0';
 import { spend } from './bag.js?v=0.13.0';
+import { nearFacility } from './fortress.js?v=0.13.0';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 6, max: 17, below: 60 };
@@ -69,8 +70,7 @@ export const CONTRACT_COST = { fiber: 2, crystal: 1 };
 export function craftContract(s, table) {
   if (!s.secret) return { ok: false, error: '還不知道怎麼和牠們締結契約。先調查研究浮標。' };
   if (!table) return { ok: false, error: '需要木筏上的工作桌。' };
-  if (s.player.mode !== 'foot' || Math.hypot(s.player.x - table.x * 3.6, s.player.z - table.z * 3.6) > 5.5)
-    return { ok: false, error: '請站在工作桌旁。' };
+  if (!nearFacility(s, table)) return { ok: false, error: '請站在工作桌旁。' };
   if (!spend(s, CONTRACT_COST)) return { ok: false, error: '製作契約書需要 2 纖維與 1 異晶。' };
   s.contracts = (s.contracts || 0) + 1;
   return { ok: true, message: `契約書 +1（背包裡共 ${s.contracts} 份）` };
@@ -80,8 +80,7 @@ export function craftContract(s, table) {
 export function contract(s, id, rng = Math.random) {
   normalizeHousing(s);
   if ((s.contracts || 0) < 1) return { ok: false, error: '背包裡沒有契約書。到木筏的工作桌製作。' };
-  if (!s.buildings.some(b => b.type === 'pen')) return { ok: false, error: '先建造海洋展示池，給牠一個家。' };
-  if (!freePen(s)) return { ok: false, error: '展示池已滿，請增建展示池。' };
+  if (!beastRoom(s)) return { ok: false, error: `御獸倉庫已滿（${BEAST_CAPACITY} 隻）。` };
   const w = s.wild.find(w => w.id === id);
   if (!w) return { ok: false, error: '生物已離開。' };
   if (Math.hypot(w.x - s.player.x, w.z - s.player.z) > 12) return { ok: false, error: '請靠近牠再締結契約。' };

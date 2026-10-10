@@ -44,6 +44,7 @@ export function canWalk(s, x, z) {
   )
     return false;
   for (const b of s.buildings) {
+    if (b.ship || b.stowed) continue; // aboard the fortress, not on the raft
     if ((b.level || 0) !== (s.player.level || 0) || !['collector', 'hatchery', 'beacon'].includes(b.type)) continue;
     const dx = x - b.x * TILE_SIZE,
       dz = z - b.z * TILE_SIZE,
