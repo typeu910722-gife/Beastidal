@@ -48,11 +48,13 @@
     </div>
     <script type="module">
       import * as T from '../vendor/three.module.min.js';
-      import { makeCreature, animateCreature } from '../creatures.js?v=0.29.0';
-      import { makeGenome } from '../genetics.js?v=0.29.0';
-      import { applyGeneMarks, animateMarks } from '../bs-models.js?v=0.29.0';
-      import { lookOf } from '../beast-look.js?v=0.29.0';
-      import { makeSky } from '../realism.js?v=0.29.0';
+      import { makeCreature, animateCreature } from '../creatures.js?v=0.30.0';
+      import { makeGenome } from '../genetics.js?v=0.30.0';
+      import { applyGeneMarks, animateMarks } from '../bs-models.js?v=0.30.0';
+      import { lookOf } from '../beast-look.js?v=0.30.0';
+      import { loadSculpts } from '../sculpt-assets.js?v=0.30.0';
+      if (new URLSearchParams(location.search).get('composite') !== '1') await loadSculpts();
+      import { makeSky } from '../realism.js?v=0.30.0';
       const q = new URLSearchParams(location.search),
         spin = q.get('spin') !== '0';
       const canvas = document.getElementById('c'),
@@ -140,14 +142,16 @@
       window.galleryReady = false;
       function frame() {
         t += 1 / 60;
-        const W = innerWidth / 4,
-          H = (innerHeight - 30) / 4;
-        for (const it of items) {
+        // ?only=N shows one beast filling the frame
+        const only = q.get('only'),
+          W = only !== null ? innerWidth : innerWidth / 4,
+          H = only !== null ? innerHeight - 30 : (innerHeight - 30) / 4;
+        for (const it of only !== null ? [items[Number(only)]].map(o => ({ ...o, row: 3, col: 0 })) : items) {
           const { m, label, row, col, centre, size } = it;
           if (spin) m.rotation.y = -0.6 + Math.sin(t * 0.3) * 0.5;
           animateCreature(m, t);
           animateMarks(m, t);
-          items.forEach(o => (o.m.visible = o === it));
+          items.forEach(o => (o.m.visible = o.m === it.m));
           floor.position.y = it.land ? 0 : it.minY - 0.3;
           camera.aspect = W / H;
           camera.position.set(centre.x + size * 0.8, centre.y + size * 0.3, centre.z + size * 1.55);

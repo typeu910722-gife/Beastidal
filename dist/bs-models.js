@@ -5,10 +5,10 @@
 //     whip tails, claws, bone wings, crystal horns), its eyes burn, a crown of horns rises from its head and a
 //     contract sigil turns beneath it — gold for yours, violet for a wild one.
 import * as T from './vendor/three.module.min.js';
-import { BS_GENES, bsOf } from './bsgenes.js?v=0.29.0';
-import { phenotype } from './genetics.js?v=0.29.0';
-import { makeCreature } from './creatures.js?v=0.29.0';
-import { bodyAnchors, applyBeastLook, lookOf } from './beast-look.js?v=0.29.0';
+import { BS_GENES, bsOf } from './bsgenes.js?v=0.30.0';
+import { phenotype } from './genetics.js?v=0.30.0';
+import { makeCreature } from './creatures.js?v=0.30.0';
+import { bodyAnchors, applyBeastLook, lookOf } from './beast-look.js?v=0.30.0';
 
 export const FORM_SCALE = 1.5;
 const geo = {
@@ -185,7 +185,7 @@ function uprightMark(a, g, c, k) {
     case 'orb': {
       // the breath organ glows in the chest, a core under the hide
       const info = body.parent?.userData?.info || {},
-        o = part(body, geo.orb, mat(c, 2.6), info.chest || [0, 1.5, 0.25], [0, 0, 0], [1.6, 1.6, 1.0]);
+        o = part(body, geo.orb, mat(c, 2.2), info.chest || [0, 1.5, 0.25], [0, 0, 0], [1.05, 1.05, 0.7]);
       o.userData.beastEye = true;
       return true;
     }
@@ -223,16 +223,7 @@ function uprightMark(a, g, c, k) {
           part(body, geo.slit, mat(c, 1.4), [sd * 0.11, 1.84 - i * 0.05, 0.14], [0, sd * 0.4, 0]);
       return true;
     case 'wings':
-      for (const sd of [-1, 1])
-        part(
-          body,
-          geo.wing,
-          mat(c, 0.7, { side: T.DoubleSide, transparent: true, opacity: 0.85 }),
-          [sd * 0.5, 1.72, -0.2],
-          [0.25, sd * 0.45, sd * 0.35],
-          [2.2, 2.4, 1]
-        );
-      return true;
+      return true; // the body grew a pair of its own
     case 'horn':
       part(body, geo.horn, mat(c, 1.6), [0, a.top * 0.98, a.head[2] + 0.04], [0.35, 0, 0], [1.4, 1.6, 1.4]);
       return true;
@@ -273,7 +264,11 @@ export function applyGeneMarks(m, genome, kind = 'creature') {
     const look = lookOf(genome);
     // 0.26: a land beast stands up — rebuilt as a dragon, a wraith or a dryad
     if (phenotype(genome).habitat === 'land' && !m.userData.info?.upright) {
-      const up = makeCreature(genome, { upright: look.plan, wings: look.wings }),
+      // a wing gene grows real wings on a standing body (not the flat sail a swimmer gets)
+      const up = makeCreature(genome, {
+          upright: look.plan,
+          wings: look.wings || ids.some(id => BS_GENES[id]?.mark === 'wings')
+        }),
         mark = m.userData.bsMarked;
       m.clear();
       for (const c of [...up.children]) m.add(c);

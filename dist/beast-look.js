@@ -8,9 +8,9 @@
 //     for the wraiths; tendril hair crowned with a flower for the dryads; crystal or ice shards; venom sacs.
 // Land beasts are rebuilt upright (creatures.js `upright`): a dragon, a wraith or a dryad, picked by the element.
 import * as T from './vendor/three.module.min.js';
-import { bsOf } from './bsgenes.js?v=0.29.0';
-import { phenotype } from './genetics.js?v=0.29.0';
-import { taper, addMesh, creatureDetail } from './creatures.js?v=0.29.0';
+import { bsOf } from './bsgenes.js?v=0.30.0';
+import { phenotype } from './genetics.js?v=0.30.0';
+import { taper, addMesh, creatureDetail } from './creatures.js?v=0.30.0';
 
 const GENE_ELEMENT = {
   fire: 'ember',
@@ -731,9 +731,14 @@ export function applyBeastLook(m, genome, look = lookOf(genome)) {
       mt.userData.beastShade = true;
     }
     // real scales: the normal map over the skin, finer along a body than around it
-    if (!mt.normalMap && mt.map) {
+    if (!mt.normalMap && (mt.map || mt.userData.sculpted)) {
       mt.normalMap = scaleNormalMap(detail);
-      mt.normalMap.repeat.set(a.upright ? 2 : 4, a.upright ? 1 : 1.5);
+      if (mt.userData.sculpted) {
+        // the sculpt wraps its UV round the body (u) and up it (v = height / 2.4)
+        mt.normalMap = mt.normalMap.clone();
+        mt.normalMap.repeat.set(7, 5);
+        mt.normalMap.needsUpdate = true;
+      } else mt.normalMap.repeat.set(a.upright ? 2 : 4, a.upright ? 1 : 1.5);
       mt.normalScale = new T.Vector2(0.75, 0.75);
       mt.needsUpdate = true;
     }

@@ -5,6 +5,10 @@ import { makeCreature, animateCreature } from '../dist/creatures.js';
 import { applyGeneMarks } from '../dist/bs-models.js';
 import { lookOf, LOOKS } from '../dist/beast-look.js';
 import { LAKE_ISLANDS, groundAt, walkable, ISLAND_TOP } from '../dist/lake.js';
+import { uprightPrims, setSculpt, SCULPT_BONES } from '../dist/creatures.js';
+import { sculpt } from '../dist/sculpt.js';
+import { decodeSculpt } from '../dist/sculpt-assets.js';
+import { readFileSync, existsSync } from 'node:fs';
 
 let n = 0;
 const test = (name, fn) => {
@@ -91,5 +95,25 @@ test('The islands lie low and walkable; the basin walls keep their height', () =
     assert.ok(walk / land > 0.9, i.id);
   }
   assert.ok(groundAt(0, -340) > 60 || groundAt(0, 340) > 60 || groundAt(-560, 0) > 60, 'the walls still stand');
+});
+test('Sculpted bodies (0.30): one seamless skinned mesh, bones in place of limb pivots, and it still walks', () => {
+  for (const plan of ['dragon', 'wraith', 'dryad']) {
+    // the shipped bake when present, else a quick coarse one
+    const file = `dist/models/sculpt-${plan}.json`,
+      geo = existsSync(file)
+        ? decodeSculpt(JSON.parse(readFileSync(file, 'utf8')))
+        : sculpt(uprightPrims(plan), { cell: 0.06, boneCount: SCULPT_BONES.length });
+    assert.ok(geo.attributes.position.count > 500 && geo.attributes.skinIndex && geo.attributes.skinWeight, plan);
+    setSculpt(plan, geo);
+    const m = makeCreature(makeGenome(31, 0, 'land'), { upright: plan });
+    let skinned = null;
+    m.traverse(o => o.isSkinnedMesh && (skinned = o));
+    assert.ok(skinned, plan + ' has a skinned body');
+    assert.equal(skinned.skeleton.bones.length, SCULPT_BONES.length);
+    assert.ok(m.userData.limbs.some(l => l.isBone && l.userData.leg !== undefined));
+    assert.ok(finite(m));
+    for (let i = 0; i < 4; i++) animateCreature(m, i * 0.25);
+    setSculpt(plan, null);
+  }
 });
 console.log(`\n${n} look tests passed`);
