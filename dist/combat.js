@@ -9,14 +9,14 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.27.1';
-import { bsOf, geneStats } from './bsgenes.js?v=0.27.1';
-import { WILD_BEASTS } from './beasts.js?v=0.27.1';
-import { rollDrops } from './species.js?v=0.27.1';
-import { give } from './bag.js?v=0.27.1';
-import { tally } from './stats.js?v=0.27.1';
-import { damageBonus } from './skills.js?v=0.27.1';
-import { remember } from './memories.js?v=0.27.1';
+import { phenotype } from './genetics.js?v=0.27.2';
+import { bsOf, geneStats } from './bsgenes.js?v=0.27.2';
+import { WILD_BEASTS } from './beasts.js?v=0.27.2';
+import { rollDrops } from './species.js?v=0.27.2';
+import { give } from './bag.js?v=0.27.2';
+import { tally } from './stats.js?v=0.27.2';
+import { damageBonus } from './skills.js?v=0.27.2';
+import { remember } from './memories.js?v=0.27.2';
 
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;

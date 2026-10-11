@@ -1,8 +1,8 @@
-import { stow, bagRoom, bagFullError } from './bag.js?v=0.27.1';
-import { gatherBonus } from './skills.js?v=0.27.1';
-import { harvestBonus } from './weather.js?v=0.27.1';
-import { hasPerk } from './codex.js?v=0.27.1';
-import { tally } from './stats.js?v=0.27.1';
+import { stow, bagRoom, bagFullError } from './bag.js?v=0.27.2';
+import { gatherBonus } from './skills.js?v=0.27.2';
+import { harvestBonus } from './weather.js?v=0.27.2';
+import { hasPerk } from './codex.js?v=0.27.2';
+import { tally } from './stats.js?v=0.27.2';
 import {
   groundAt,
   slopeAt,
@@ -12,7 +12,7 @@ import {
   islandOf,
   landNear,
   waterNear
-} from './lake.js?v=0.27.1';
+} from './lake.js?v=0.27.2';
 // 0.15: the world is the inland sea of 沉湖遺城. Islands are real terrain now; the old ids stay so saves carry over.
 export const ISLANDS = LAKE_ISLANDS;
 export const MAINLAND = { id: 'mainland', name: '環湖山麓', x: LAKE_CENTER.x, z: LAKE_CENTER.z, rx: 400, rz: 260 };

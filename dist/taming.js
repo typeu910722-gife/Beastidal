@@ -6,16 +6,16 @@
 //     bound by trust; hostile ones must be worn down in a fight — the weaker, the better the odds — and stay
 //     modest even bound. A failed contract can send anything into a frenzy: 1.2× speed and bite, hunting you for
 //     10–20 seconds, and nothing frenzied can be repelled.
-import { phenotype, geneName } from './genetics.js?v=0.27.1';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.27.1';
-import { spend, give } from './bag.js?v=0.27.1';
-import { remember } from './memories.js?v=0.27.1';
-import { nearFacility } from './fortress.js?v=0.27.1';
-import { hasPerk } from './codex.js?v=0.27.1';
-import { tally } from './stats.js?v=0.27.1';
-import { bsOf, canEvolve, EVOLVE_GENES } from './bsgenes.js?v=0.27.1';
-import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.27.1';
-import { trustBonus } from './skills.js?v=0.27.1';
+import { phenotype, geneName } from './genetics.js?v=0.27.2';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.27.2';
+import { spend, give } from './bag.js?v=0.27.2';
+import { remember } from './memories.js?v=0.27.2';
+import { nearFacility } from './fortress.js?v=0.27.2';
+import { hasPerk } from './codex.js?v=0.27.2';
+import { tally } from './stats.js?v=0.27.2';
+import { bsOf, canEvolve, EVOLVE_GENES } from './bsgenes.js?v=0.27.2';
+import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.27.2';
+import { trustBonus } from './skills.js?v=0.27.2';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 10, max: 20, below: 60 };
@@ -58,7 +58,21 @@ export function normalizeTaming(s) {
       w.hp ??= w.maxHp;
     }
   }
-  for (const p of s.tamed || []) p.kind ??= 'beast';
+  for (const p of s.tamed || []) {
+    p.kind ??= 'beast';
+    // 0.27.1: a 御獸 is one that was evolved by contract (契闊), bound as a wild beast, or is ancient. Saves from
+    // before 0.22 called every tamed creature a beast; the rest go back to being creatures.
+    if (p.kind === 'beast' && !p.evolved && !p.wildBeast && !p.ancient && !p.beast) {
+      p.kind = 'creature';
+      p.team = false;
+      if (s.expedition?.activeId === p.id && s.expedition.mounted) {
+        s.expedition.mounted = false;
+        s.expedition.diving = false;
+        const home = s.ship && !s.skiff ? s.ship : s.boat;
+        if (home) Object.assign(s.player, { x: home.x, z: home.z });
+      }
+    }
+  }
   return s;
 }
 function startFrenzy(s, w, rng) {
