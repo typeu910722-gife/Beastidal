@@ -5,3 +5,5 @@ node_modules/
 smoke-*.png
 shots/
 smoke-*.png
+# local playtest bots and their screenshots
+.scratch/
