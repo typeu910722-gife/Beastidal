@@ -6,7 +6,7 @@
 // materials, iris-textured eyes and ray-veined fin membranes. Swimming is done on the GPU: the body and its baked-on
 // parts share one wave deformation, so tails, crests and ribbons ripple together.
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded, dnaCode } from './genetics.js?v=0.25.1';
+import { phenotype, seeded, dnaCode } from './genetics.js?v=0.26.0';
 
 const V = T.Vector3;
 let detail = 'high';
@@ -14,6 +14,7 @@ let detail = 'high';
 export function setCreatureDetail(level) {
   detail = level;
 }
+export const creatureDetail = () => detail;
 const segs = (hi, lo) => (detail === 'low' ? lo : detail === 'balanced' ? Math.round((hi + lo) / 2) : hi);
 const texSize = () => (detail === 'low' ? 128 : 256);
 
@@ -498,6 +499,7 @@ function kit(genome) {
       emissiveIntensity: savage ? 0.55 : p.glow > 0.7 ? 0.25 : 0
     });
     const e = addMesh(parent, new T.SphereGeometry(r, segs(18, 10), segs(14, 8)), mat, pos);
+    e.userData.eye = true;
     // SphereGeometry puts the texture centre (the iris) on +x: turn it outward, or up-and-forward for brow eyes.
     if (Math.abs(pos[0]) < 0.02) e.rotation.set(Math.PI / 4, 0, Math.PI / 2);
     else if (pos[0] < 0) e.rotation.y = Math.PI;
@@ -605,6 +607,7 @@ function fangs(K, parent, mouth) {
         [row > 0 ? Math.PI : 0, 0, t * 0.4]
       );
       m.position.y -= (row * l) / 2;
+      m.userData.tooth = true;
       if (mode) bake(m);
     }
 }
@@ -1944,15 +1947,322 @@ function fusionTrait(K, body, info) {
   }
 }
 
+/* ---------------------------------------------------------------- 0.26: upright beasts */
+// A swept tube whose frame never flips, for bodies that stand up (sweepGeometry's frame is built around +y and
+// degenerates on a vertical path). Same handedness as sweepGeometry, so skins and normals come out the same.
+function sweepUp(pts, profile, S, R) {
+  const path = line(pts),
+    pos = [],
+    uv = [],
+    idx = [],
+    b = new V(-1, 0, 0),
+    n = new V();
+  for (let i = 0; i <= S; i++) {
+    const u = i / S,
+      c = path.getPointAt(u),
+      tan = path.getTangentAt(u);
+    n.crossVectors(b, tan).normalize();
+    const [rx, ry, oy = 0] = profile(u);
+    for (let j = 0; j <= R; j++) {
+      const a = (j / R) * Math.PI * 2,
+        x = Math.cos(a) * rx,
+        y = Math.sin(a) * ry + oy;
+      pos.push(c.x + b.x * x + n.x * y, c.y + b.y * x + n.y * y, c.z + b.z * x + n.z * y);
+      uv.push(u, j / R);
+      if (i && j) {
+        const q = i * (R + 1) + j;
+        idx.push(q - R - 2, q - 1, q, q - R - 2, q, q - R - 1);
+      }
+    }
+  }
+  const g = new T.BufferGeometry();
+  g.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+const taperUp = (pts, r0, r1, S = 14, R = 8) =>
+  sweepUp(pts, u => [mix(r0, r1, u), mix(r0, r1, u)], segs(S, 6), segs(R, 5));
+// Three standing body plans for land 御獸 (beast-look.js picks one by element), feet on y = 0, facing +z:
+//   dragon — heavy, hunched, digitigrade, a long tail, a snouted head with a jaw;
+//   wraith — tall and gaunt, long arms and claws, a hooded skull with slit eyes;
+//   dryad  — slender, a small face, long fingers, root feet.
+const PLANS = {
+  dragon: { waist: 0.2, chest: 0.31, depth: 0.82, hip: 0.18, leg: 0.11, arm: 0.088, reach: 0.62, top: 2.2, tail: true },
+  wraith: { waist: 0.13, chest: 0.23, depth: 0.7, hip: 0.13, leg: 0.08, arm: 0.07, reach: 0.82, top: 2.32 },
+  dryad: { waist: 0.12, chest: 0.19, depth: 0.72, hip: 0.12, leg: 0.075, arm: 0.06, reach: 0.7, top: 2.22 }
+};
+function upright(K, body, plan) {
+  const P = PLANS[plan] || PLANS.dragon,
+    // the skin's light organs read as stitched seams on a standing body: keep them dim
+    skin = K.skinMat('scale', 0, { emissiveIntensity: 0.04 }),
+    dark = K.plain(K.pal.back.clone().offsetHSL(0, -0.2, -0.08), { roughness: 0.6 }),
+    bone = K.plain(hsl(0.07, 0.12, 0.13), { roughness: 0.4, clearcoat: 0.6 });
+  K.u.uSwimA.value = 0;
+  const S = segs(28, 14),
+    R = segs(18, 10),
+    sphere = new T.SphereGeometry(1, R, segs(12, 8)),
+    // dragons hunch and push the head forward; wraiths stoop a little
+    lean = plan === 'dragon' ? 0.16 : plan === 'wraith' ? 0.08 : 0.02,
+    H = [0, plan === 'dragon' ? -0.07 : plan === 'wraith' ? -0.04 : 0, lean],
+    at = (x, y, z) => [x + H[0], y + H[1], z + H[2]];
+  // pelvis, torso, shoulders
+  addMesh(body, sphere, skin, [0, 0.96, -0.05], null, [P.waist * 1.3, P.waist * 1.0, P.waist * 1.05]);
+  const torso = curve([
+    [0, P.waist * 0.95],
+    [0.28, P.waist],
+    [0.72, P.chest],
+    [1, P.chest * 0.72]
+  ]);
+  addMesh(
+    body,
+    sweepUp(
+      [
+        [0, 0.94, -0.06],
+        [0, 1.32, 0.02 + lean * 0.3],
+        [0, 1.7, 0.06 + lean]
+      ],
+      u => [torso(u), torso(u) * P.depth],
+      S,
+      R
+    ),
+    skin
+  );
+  const shoulderZ = 0.05 + lean;
+  addMesh(body, sphere, skin, [0, 1.68, shoulderZ], null, [P.chest * 1.02, P.chest * 0.5, P.chest * P.depth]);
+  // neck
+  const neckTop = plan === 'dragon' ? at(0, 1.97, 0.24) : at(0, 1.95, 0.12);
+  addMesh(
+    body,
+    taperUp(
+      [[0, 1.64, shoulderZ], [0, 1.82, (shoulderZ + neckTop[2]) / 2 + 0.02], neckTop],
+      P.waist * 0.66,
+      P.waist * 0.5,
+      10,
+      R
+    ),
+    skin
+  );
+  // head
+  let head, mouth, eyeAt, eyeR;
+  if (plan === 'dragon') {
+    addMesh(body, sphere, skin, at(0, 2.03, 0.24), null, [0.15, 0.14, 0.17]);
+    const snout = curve([
+      [0, 0.12],
+      [0.6, 0.085],
+      [1, 0.05]
+    ]);
+    addMesh(
+      body,
+      sweepGeometry(
+        line([at(0, 2.02, 0.26), at(0, 1.99, 0.44), at(0, 1.94, 0.62)]),
+        u => [snout(u) * 1.05, snout(u) * 0.8],
+        segs(16, 8),
+        R
+      ),
+      skin
+    );
+    // the lower jaw hangs a little open
+    addMesh(
+      body,
+      sweepGeometry(
+        line([at(0, 1.93, 0.27), at(0, 1.88, 0.42), at(0, 1.865, 0.56)]),
+        u => [0.085 - u * 0.05, 0.055 - u * 0.025],
+        segs(14, 8),
+        R
+      ),
+      skin
+    );
+    // a bony brow and cheek spurs
+    for (const sd of [-1, 1])
+      addMesh(body, new T.ConeGeometry(0.03, 0.16, 5), bone, at(sd * 0.13, 1.98, 0.2), [-1.9, 0, sd * 0.5]);
+    head = at(0, 2.05, 0.3);
+    mouth = { at: at(0, 1.92, 0.56), w: 0.12, depth: 0.2, mode: 0 };
+    eyeAt = at(0.1, 2.09, 0.36);
+    eyeR = 0.04;
+  } else if (plan === 'wraith') {
+    // a hood round a dark face, peaked at the crown
+    addMesh(body, sphere, skin, at(0, 2.06, 0.08), null, [0.17, 0.24, 0.24]);
+    // the hood's point falls back over the nape
+    addMesh(body, new T.ConeGeometry(0.12, 0.34, R), skin, at(0, 2.2, -0.12), [-2.0, 0, 0]);
+    addMesh(body, sphere, dark, at(0, 2.02, 0.2), null, [0.13, 0.17, 0.12]);
+    head = at(0, 2.08, 0.16);
+    mouth = { at: at(0, 1.95, 0.31), w: 0.08, depth: 0.12, mode: 0, scale: 0.8 };
+    eyeAt = at(0.055, 2.07, 0.3);
+    eyeR = 0.026;
+  } else {
+    addMesh(body, sphere, skin, [0, 2.04, 0.14], null, [0.12, 0.15, 0.13]);
+    // cheekbones and a narrow chin
+    addMesh(body, sphere, skin, [0, 1.95, 0.17], null, [0.07, 0.07, 0.07]);
+    head = [0, 2.05, 0.15];
+    mouth = { at: [0, 1.97, 0.26], w: 0.06, depth: 0.1, mode: 0, scale: 0.6 };
+    eyeAt = [0.048, 2.06, 0.245];
+    eyeR = 0.028;
+  }
+  for (const sd of [-1, 1]) {
+    const e = K.eye(body, [sd * eyeAt[0], eyeAt[1], eyeAt[2]], eyeR, true);
+    if (plan !== 'dragon') e.rotation.set(0, -Math.PI / 2 - sd * 0.3, 0); // looking forward, not to the side
+  }
+  // shoulder spurs: bone growing out through the hide
+  if (plan !== 'dryad')
+    for (const sd of [-1, 1])
+      for (let i = 0; i < (plan === 'dragon' ? 3 : 2); i++)
+        addMesh(
+          body,
+          new T.ConeGeometry(0.035 - i * 0.006, 0.26 - i * 0.05, 5),
+          bone,
+          [sd * (P.chest * 0.85 + i * 0.04), 1.76 - i * 0.03, shoulderZ - 0.06 - i * 0.07],
+          [-0.5 - i * 0.2, 0, -sd * (0.5 + i * 0.15)]
+        );
+  // arms: muscled upper arm, lean forearm; hang from the shoulders and swing as it walks
+  const claw = K.plain(hsl(0.08, 0.15, 0.16), { roughness: 0.35, clearcoat: 0.7 }),
+    armR = curve([
+      [0, 1.15],
+      [0.25, 1.25],
+      [0.5, 0.8],
+      [0.7, 0.85],
+      [1, 0.6]
+    ]);
+  for (const sd of [-1, 1]) {
+    const sh = new T.Group();
+    sh.position.set(sd * (P.chest + 0.02), 1.63, shoulderZ);
+    body.add(sh);
+    const r = P.reach,
+      wrist = [sd * 0.1, -r, 0.16];
+    addMesh(
+      sh,
+      sweepUp(
+        [[0, 0, 0], [sd * 0.08, -r * 0.5, 0.0], wrist],
+        u => [P.arm * armR(u), P.arm * armR(u)],
+        segs(16, 8),
+        segs(12, 7)
+      ),
+      skin
+    );
+    addMesh(sh, sphere, skin, [wrist[0], wrist[1] - 0.02, wrist[2] + 0.01], null, [
+      P.arm * 0.65,
+      P.arm * 0.75,
+      P.arm * 0.85
+    ]);
+    const long = plan === 'wraith' ? 0.22 : plan === 'dryad' ? 0.16 : 0.12;
+    for (let i = 0; i < 3; i++)
+      addMesh(
+        sh,
+        new T.ConeGeometry(0.018, long, 5),
+        claw,
+        [wrist[0] + (i - 1) * 0.035, wrist[1] - 0.05 - long * 0.45, wrist[2] + 0.04],
+        [0.35, 0, (i - 1) * 0.12 + Math.PI]
+      );
+    sh.userData.arm = true;
+    sh.userData.side = sd;
+    K.limbs.push(sh);
+  }
+  // legs: a heavy thigh, then digitigrade (dragon, wraith) or straight with root toes (dryad)
+  const legR =
+    plan === 'dryad'
+      ? curve([
+          [0, 1.1],
+          [0.45, 0.85],
+          [1, 0.55]
+        ])
+      : curve([
+          [0, 1.25],
+          [0.22, 1.35],
+          [0.42, 0.75],
+          [0.7, 0.7],
+          [1, 0.5]
+        ]);
+  for (const sd of [-1, 1]) {
+    const hip = new T.Group();
+    hip.position.set(sd * P.hip, 0.98, -0.05);
+    body.add(hip);
+    const pts =
+      plan === 'dryad'
+        ? [
+            [0, 0, 0],
+            [sd * 0.03, -0.48, 0.05],
+            [sd * 0.04, -0.95, -0.01]
+          ]
+        : [
+            [0, 0, 0],
+            [sd * 0.03, -0.42, 0.16],
+            [sd * 0.05, -0.8, -0.08],
+            [sd * 0.05, -0.95, 0.02]
+          ];
+    addMesh(
+      hip,
+      sweepUp(pts, u => [P.leg * legR(u), P.leg * legR(u)], segs(20, 10), segs(12, 7)),
+      skin
+    );
+    addMesh(hip, sphere, skin, [sd * 0.05, -0.955, 0.08], null, [P.leg * 0.7, P.leg * 0.35, P.leg * 1.4]);
+    for (let i = 0; i < 3; i++)
+      addMesh(
+        hip,
+        new T.ConeGeometry(0.02, plan === 'dryad' ? 0.16 : 0.1, 5),
+        claw,
+        [sd * 0.05 + (i - 1) * 0.04, -0.965, 0.17],
+        [Math.PI / 2 - 0.1, 0, (i - 1) * 0.25]
+      );
+    hip.userData.leg = sd > 0 ? 0 : 1;
+    hip.userData.side = sd;
+    K.limbs.push(hip);
+  }
+  if (P.tail) {
+    const tl = new T.Group();
+    tl.position.set(0, 0.95, -0.16);
+    body.add(tl);
+    addMesh(
+      tl,
+      taperUp(
+        [
+          [0, 0, 0],
+          [0, -0.28, -0.45],
+          [0, -0.72, -0.95],
+          [0, -0.9, -1.5]
+        ],
+        0.15,
+        0.012,
+        22,
+        segs(12, 7)
+      ),
+      skin
+    );
+    tl.userData.tail = true;
+    K.limbs.push(tl);
+  }
+  return {
+    head,
+    back: [0, 1.4, -0.22],
+    len: 2.2,
+    top: P.top + H[1],
+    walker: true,
+    upright: plan,
+    mouth,
+    chest: [0, 1.48, 0.06 + lean * 0.6 + P.chest * P.depth * 0.55],
+    spine:
+      plan === 'dragon'
+        ? [
+            [1.0, -0.22],
+            [1.72, -0.12 + lean * 0.8]
+          ]
+        : [
+            [1.02, -0.15],
+            [1.72, -0.1 + lean * 0.8]
+          ]
+  };
+}
+
 /* ---------------------------------------------------------------- public API */
-export function makeCreature(genome) {
+// opts.upright: 'dragon' | 'wraith' | 'dryad' — the standing body of a land 御獸 (0.26)
+export function makeCreature(genome, opts = {}) {
   const K = kit(genome),
     { p } = K,
     group = new T.Group(),
     body = new T.Group();
   group.add(body);
-  const info = BUILDERS[p.family][p.body](K, body);
-  if (p.flora) {
+  const info = opts.upright ? upright(K, body, opts.upright) : BUILDERS[p.family][p.body](K, body);
+  if (p.flora && !info.upright) {
     const [z0, z1, y] = info.flora;
     if (info.jelly) {
       for (let i = 0; i < 3 + p.flora * 4; i++)
@@ -1986,10 +2296,10 @@ export function makeCreature(genome) {
       floraGrowth(K, body, z0, z1, y, p.flora);
     } else floraGrowth(K, body, z0, z1, y, p.flora);
   }
-  fusionTrait(K, body, info);
+  if (!info.upright) fusionTrait(K, body, info);
   if (p.fierce >= 0.55 && info.mouth) fangs(K, body, info.mouth);
   // savage beasts bristle with a ridge of spines (species that already grow a crest keep theirs)
-  if (p.fierce >= 0.8 && !p.horn && !info.jelly && !info.shell && !info.rigid)
+  if (p.fierce >= 0.8 && !p.horn && !info.jelly && !info.shell && !info.rigid && !info.upright)
     crest(K, body, info.back[2] - info.len * 0.3, info.back[2] + info.len * 0.2, info.top * 0.92, 0.12, 7);
   // land beasts get a hidden rock perch, shown when they rest in a sea pen
   let perch = null;
@@ -2014,6 +2324,7 @@ export function animateCreature(m, t) {
   const u = m.userData,
     p = u.phenotype,
     info = u.info;
+  u.beastLook?.update(t);
   u.swimU.uSwimT.value = t * (p.family === 'deep' ? 2.2 : 3);
   // how fast the creature moved since last frame drives gait and fin effort
   const pos = m.getWorldPosition(new V());
@@ -2024,7 +2335,14 @@ export function animateCreature(m, t) {
     u.body.position.y = Math.abs(Math.sin(t * 4)) * 0.03 * Math.min(1, u.gait);
     u.limbs.forEach(l => {
       if (l.userData.wing) l.rotation.z = l.userData.side * (0.2 + Math.sin(t * 1.3) * 0.08);
-      else l.rotation.x = Math.sin(t * 5 + l.userData.leg * Math.PI) * 0.45 * Math.min(1, u.gait + 0.08);
+      else if (l.userData.arm)
+        l.rotation.x =
+          -Math.sin(t * 5 + (l.userData.side > 0 ? Math.PI : 0)) * 0.4 * Math.min(1, u.gait) +
+          Math.sin(t * 1.1 + l.userData.side) * 0.05;
+      else if (l.userData.tail) {
+        l.rotation.y = Math.sin(t * 1.6) * 0.25;
+        l.rotation.x = Math.sin(t * 1.1) * 0.05;
+      } else l.rotation.x = Math.sin(t * 5 + l.userData.leg * Math.PI) * 0.45 * Math.min(1, u.gait + 0.08);
     });
     if (u.parts.head) u.parts.head.rotation.y = Math.sin(t * 0.4) * 0.25;
     return;
@@ -2045,3 +2363,5 @@ export function animateCreature(m, t) {
   });
   if (u.parts.head && !info.walker) u.parts.head.rotation.y = Math.sin(t * 0.7) * 0.15;
 }
+// shared with beast-look.js
+export { taper, addMesh };

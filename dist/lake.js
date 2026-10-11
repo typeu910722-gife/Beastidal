@@ -1,6 +1,6 @@
 // The inland sea of 沉湖遺城: baked terrain lookups shared by rules, navigation and rendering.
 // Game coordinates are metres with the raft at (0,0); map coordinates are the sketch's units.
-import { HS, Q, ORIGIN, LAIR, FINE, COARSE } from './lake-data.js?v=0.25.1';
+import { HS, Q, ORIGIN, LAIR, FINE, COARSE } from './lake-data.js?v=0.26.0';
 export { HS, ORIGIN };
 
 function decode(g) {
@@ -15,6 +15,66 @@ function decode(g) {
 }
 FINE.data = decode(FINE);
 COARSE.data = decode(COARSE);
+// 0.26: the islands lie low. Land that the basin's walls cannot reach over high ground — the islands and the
+// peninsula — is pressed down into beaches and low plateaus (a few metres at most); the walls themselves keep their
+// height, and a soft edge blends the two where they meet.
+export const ISLAND_TOP = 4.6;
+export const flatIsland = h => (h <= 1.2 ? h : 1.2 + (ISLAND_TOP - 1.2) * (1 - Math.exp(-(h - 1.2) / 8)));
+function flattenIslands(g) {
+  const { nx, nz, data } = g,
+    n = nx * nz,
+    high = 8 * Q,
+    rim = new Uint8Array(n),
+    queue = new Int32Array(n);
+  let head = 0,
+    tail = 0;
+  const push = i => {
+    if (!rim[i] && data[i] > high) {
+      rim[i] = 1;
+      queue[tail++] = i;
+    }
+  };
+  for (let ix = 0; ix < nx; ix++) (push(ix), push((nz - 1) * nx + ix));
+  for (let iz = 0; iz < nz; iz++) (push(iz * nx), push(iz * nx + nx - 1));
+  while (head < tail) {
+    const i = queue[head++],
+      x = i % nx;
+    if (x > 0) push(i - 1);
+    if (x < nx - 1) push(i + 1);
+    if (i >= nx) push(i - nx);
+    if (i < n - nx) push(i + nx);
+  }
+  // how near the walls each cell is (the wall mask, blurred by three box passes): island land far from the walls is
+  // pressed down fully, right to its shore; near the walls it eases off so the two meet without a step
+  const w = new Float32Array(n);
+  for (let i = 0; i < n; i++) w[i] = rim[i];
+  const r = Math.max(1, Math.round(10 / (g.step * HS))),
+    tmp = new Float32Array(n);
+  for (let pass = 0; pass < 3; pass++) {
+    for (let iz = 0; iz < nz; iz++)
+      for (let ix = 0; ix < nx; ix++) {
+        let sum = 0,
+          c = 0;
+        for (let k = Math.max(0, ix - r); k <= Math.min(nx - 1, ix + r); k++, c++) sum += w[iz * nx + k];
+        tmp[iz * nx + ix] = sum / c;
+      }
+    for (let iz = 0; iz < nz; iz++)
+      for (let ix = 0; ix < nx; ix++) {
+        let sum = 0,
+          c = 0;
+        for (let k = Math.max(0, iz - r); k <= Math.min(nz - 1, iz + r); k++, c++) sum += tmp[k * nx + ix];
+        w[iz * nx + ix] = sum / c;
+      }
+  }
+  for (let i = 0; i < n; i++)
+    if (data[i] > 0 && !rim[i]) {
+      const h = data[i] / Q,
+        k = Math.max(0, 1 - w[i] * 2);
+      data[i] = Math.round((h + (flatIsland(h) - h) * k) * Q);
+    }
+}
+flattenIslands(FINE);
+flattenIslands(COARSE);
 
 export const toGame = (mx, mz) => ({ x: (mx - ORIGIN.x) * HS, z: (mz - ORIGIN.z) * HS });
 export const toMap = (x, z) => ({ mx: x / HS + ORIGIN.x, mz: z / HS + ORIGIN.z });

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Beastidal · Creature gallery (dev)</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #071a22;
+        color: #dfe9e3;
+        font:
+          13px system-ui,
+          sans-serif;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      #labels {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+      #labels span {
+        position: absolute;
+        transform: translate(-50%, 0);
+        white-space: nowrap;
+        text-shadow: 0 1px 3px #000;
+      }
+      #hud {
+        position: fixed;
+        left: 12px;
+        top: 10px;
+        opacity: 0.75;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div id="labels"></div>
+    <div id="hud">
+      Developer gallery (0.26): 御獸 by element — land beasts stand up, water beasts keep their bodies. ?spin=0 freezes.
+    </div>
+    <script type="module">
+      import * as T from '../vendor/three.module.min.js';
+      import { makeCreature, animateCreature } from '../creatures.js?v=0.26.0';
+      import { makeGenome } from '../genetics.js?v=0.26.0';
+      import { applyGeneMarks, animateMarks } from '../bs-models.js?v=0.26.0';
+      import { lookOf } from '../beast-look.js?v=0.26.0';
+      import { makeSky } from '../realism.js?v=0.26.0';
+      const q = new URLSearchParams(location.search),
+        spin = q.get('spin') !== '0';
+      const canvas = document.getElementById('c'),
+        renderer = new T.WebGLRenderer({ canvas, antialias: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.toneMapping = T.ACESFilmicToneMapping;
+      renderer.shadowMap.enabled = true;
+      const scene = new T.Scene();
+      scene.background = new T.Color(0x140a12);
+      const sky = makeSky();
+      sky.material.uniforms.uSunDir.value.set(0.4, 0.35, 0.5).normalize();
+      const envScene = new T.Scene();
+      sky.scale.setScalar(0.1);
+      envScene.add(sky);
+      scene.environment = new T.PMREMGenerator(renderer).fromScene(envScene, 0, 0.1, 100).texture;
+      scene.environmentIntensity = 0.45;
+      scene.add(new T.HemisphereLight(0x8a5a70, 0x140a10, 0.5));
+      const sun = new T.DirectionalLight(0xffd8c0, 2.0);
+      sun.position.set(6, 14, 10);
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(2048, 2048);
+      Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20 });
+      scene.add(sun);
+      const back = new T.DirectionalLight(0xc04060, 1.6);
+      back.position.set(-8, 5, -10);
+      scene.add(back);
+      const floor = new T.Mesh(
+        new T.PlaneGeometry(80, 80),
+        new T.MeshStandardMaterial({ color: 0x1e1418, roughness: 0.9 })
+      );
+      floor.rotation.x = -Math.PI / 2;
+      floor.receiveShadow = true;
+      scene.add(floor);
+      const camera = new T.PerspectiveCamera(30, 1, 0.1, 200);
+      const SETS = [
+        ['fire', 'hardbody'],
+        ['hardbody', 'boneplates', 'whiptail'],
+        ['lightning', 'bladefin'],
+        ['venomfang', 'venomspine'],
+        ['frostbreath', 'crystalhorn', 'coldheart'],
+        ['ghosteyes', 'nightsight'],
+        ['crystalcore', 'crystalhorn'],
+        ['vinewhip', 'barkskin', 'photoskin']
+      ];
+      const items = [],
+        labels = document.getElementById('labels');
+      SETS.forEach((genes, i) =>
+        ['land', i % 2 ? 'deep' : 'sea'].forEach((fam, j) => {
+          const g = makeGenome(31 + i * 7 + j, i % 2, fam);
+          g.bs = genes;
+          const m = makeCreature(g);
+          applyGeneMarks(m, g, 'beast');
+          if (m.userData.perch) m.userData.perch.visible = false;
+          m.rotation.y = -0.6;
+          m.visible = false;
+          scene.add(m);
+          m.updateMatrixWorld(true);
+          const box = new T.Box3();
+          m.traverse(o => o.isMesh && o.visible && o !== m.userData.perch && box.expandByObject(o));
+          const centre = box.getCenter(new T.Vector3()),
+            size = box.getSize(new T.Vector3()).length();
+          const label = document.createElement('span');
+          label.textContent = `${lookOf(g).id} · ${m.userData.info.upright || fam}`;
+          labels.append(label);
+          const k = i * 2 + j;
+          items.push({
+            m,
+            label,
+            row: Math.floor(k / 4),
+            col: k % 4,
+            centre,
+            size,
+            land: fam === 'land',
+            minY: box.min.y
+          });
+        })
+      );
+      function resize() {
+        renderer.setSize(innerWidth, innerHeight, false);
+      }
+      addEventListener('resize', resize);
+      resize();
+      renderer.setScissorTest(true);
+      let t = 0;
+      window.galleryReady = false;
+      function frame() {
+        t += 1 / 60;
+        const W = innerWidth / 4,
+          H = (innerHeight - 30) / 4;
+        for (const it of items) {
+          const { m, label, row, col, centre, size } = it;
+          if (spin) m.rotation.y = -0.6 + Math.sin(t * 0.3) * 0.5;
+          animateCreature(m, t);
+          animateMarks(m, t);
+          items.forEach(o => (o.m.visible = o === it));
+          floor.position.y = it.land ? 0 : it.minY - 0.3;
+          camera.aspect = W / H;
+          camera.position.set(centre.x + size * 0.8, centre.y + size * 0.3, centre.z + size * 1.55);
+          camera.lookAt(centre);
+          camera.updateProjectionMatrix();
+          const x = col * W,
+            y = (3 - row) * H;
+          renderer.setViewport(x, y, W, H);
+          renderer.setScissor(x, y, W, H);
+          renderer.render(scene, camera);
+          label.style.left = x + W / 2 + 'px';
+          label.style.top = 30 + row * H + H - 22 + 'px';
+        }
+        window.galleryReady = true;
+        requestAnimationFrame(frame);
+      }
+      frame();
+    </script>
+  </body>
+</html>

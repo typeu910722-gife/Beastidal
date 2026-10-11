@@ -1,11 +1,14 @@
-// Visible marks for 比斯基因 (0.22, reworked 0.25). Creatures and 御獸 must look like different things:
+// Visible marks for 比斯基因 (0.22, reworked 0.25; 0.26 adds the dark-fantasy look in beast-look.js). Creatures and 御獸 must look like different things:
 //   · a creature stays an ordinary animal. Its genes show only as small, dull growths — an extra feeler, a few
 //     nubs, a fin a little too sharp — the kind of thing you notice on a second look.
 //   · a 御獸 is bigger (FORM_SCALE), its genes grow into glowing organs (breath orbs, lightning spines, plates,
 //     whip tails, claws, bone wings, crystal horns), its eyes burn, a crown of horns rises from its head and a
 //     contract sigil turns beneath it — gold for yours, violet for a wild one.
 import * as T from './vendor/three.module.min.js';
-import { BS_GENES, bsOf } from './bsgenes.js?v=0.25.1';
+import { BS_GENES, bsOf } from './bsgenes.js?v=0.26.0';
+import { phenotype } from './genetics.js?v=0.26.0';
+import { makeCreature } from './creatures.js?v=0.26.0';
+import { bodyAnchors, applyBeastLook, lookOf } from './beast-look.js?v=0.26.0';
 
 export const FORM_SCALE = 1.5;
 const geo = {
@@ -53,21 +56,7 @@ function part(parent, g, m, pos, rot = [0, 0, 0], scale = [1, 1, 1]) {
   parent.add(mesh);
   return mesh;
 }
-function anchors(m) {
-  const u = m.userData,
-    info = u.info || {},
-    len = info.len || 1.4,
-    top = info.top || 0.5,
-    mouth = info.mouth?.at;
-  return {
-    body: u.body || m,
-    len,
-    top,
-    front: mouth ? mouth[2] : len * 0.55,
-    mouthY: mouth ? mouth[1] : top * 0.4,
-    back: info.back ? info.back[2] : -len * 0.4
-  };
-}
+const anchors = bodyAnchors;
 // Creature marks: one feeler or nub per gene (up to three), dull and small.
 function subtleMarks(m, ids) {
   const a = anchors(m);
@@ -101,6 +90,7 @@ function beastMarks(m, ids) {
     if (!g) continue;
     const c = g.color,
       k = slot++;
+    if (a.upright && uprightMark(a, g, c, k)) continue;
     switch (g.mark) {
       case 'orb':
         part(
@@ -187,21 +177,87 @@ function beastMarks(m, ids) {
     }
   }
 }
+// Marks on a standing beast (0.26): along the spine, at the hands, on the head. Returns false for marks that sit
+// the same on any body (orbs at the mouth, fangs, the ground aura).
+function uprightMark(a, g, c, k) {
+  const { body } = a;
+  switch (g.mark) {
+    case 'orb': {
+      // the breath organ glows in the chest, a core under the hide
+      const info = body.parent?.userData?.info || {},
+        o = part(body, geo.orb, mat(c, 2.6), info.chest || [0, 1.5, 0.25], [0, 0, 0], [1.6, 1.6, 1.0]);
+      o.userData.beastEye = true;
+      return true;
+    }
+    case 'spikes':
+      for (let i = 0; i < 5; i++) part(body, geo.spike, mat(c, 1.2), a.spine((i + 0.5) / 5), a.out, [1.3, 1.6, 1.3]);
+      return true;
+    case 'plates':
+      for (let i = 0; i < 5; i++)
+        part(
+          body,
+          geo.plate,
+          mat(c, 0.35, { metalness: 0.6, roughness: 0.35 }),
+          a.spine((i + 0.5) / 5),
+          [Math.PI / 2 - 0.2, 0, 0],
+          [1.5, 1.6, 1.3]
+        );
+      return true;
+    case 'tail':
+      return true; // a standing body grows its own tail (or none) — a rod on its back only looked like a stick
+    case 'claws':
+      for (const sd of [-1, 1])
+        for (let i = 0; i < 3; i++)
+          part(
+            body,
+            geo.claw,
+            mat(c, 0.8),
+            [sd * 0.34 + (i - 1) * 0.03, 0.92, 0.22],
+            [Math.PI * 0.85, 0, 0],
+            [1.4, 1.8, 1.4]
+          );
+      return true;
+    case 'slits':
+      for (const sd of [-1, 1])
+        for (let i = 0; i < 3; i++)
+          part(body, geo.slit, mat(c, 1.4), [sd * 0.11, 1.84 - i * 0.05, 0.14], [0, sd * 0.4, 0]);
+      return true;
+    case 'wings':
+      for (const sd of [-1, 1])
+        part(
+          body,
+          geo.wing,
+          mat(c, 0.7, { side: T.DoubleSide, transparent: true, opacity: 0.85 }),
+          [sd * 0.5, 1.72, -0.2],
+          [0.25, sd * 0.45, sd * 0.35],
+          [2.2, 2.4, 1]
+        );
+      return true;
+    case 'horn':
+      part(body, geo.horn, mat(c, 1.6), [0, a.top * 0.98, a.head[2] + 0.04], [0.35, 0, 0], [1.4, 1.6, 1.4]);
+      return true;
+  }
+  return false;
+}
 // The beast's own form: burning eyes and a crown of horns, plus the bigger frame.
 function beastForm(m, ids) {
   const a = anchors(m),
     c = ids.length ? BS_GENES[ids[0]]?.color || 0xffd38c : 0xffd38c;
-  for (const sd of [-1, 1]) {
-    const e = part(a.body, geo.eye, mat(c, 3), [sd * 0.13, a.mouthY + 0.16, a.front - 0.12]);
-    e.userData.beastEye = true;
-  }
+  // a standing beast already has glowing eyes of its own (beast-look lights them)
+  if (!a.upright)
+    for (const sd of [-1, 1]) {
+      const e = part(a.body, geo.eye, mat(c, 3), [sd * 0.13, a.mouthY + 0.16, a.front - 0.12]);
+      e.userData.beastEye = true;
+    }
   for (let i = 0; i < 3; i++)
     part(
       a.body,
       geo.horn,
       mat(0x2a2420, 0.15, { roughness: 0.4, metalness: 0.3 }),
-      [(i - 1) * 0.12, a.top * 1.02, a.front * 0.55 - Math.abs(i - 1) * 0.08],
-      [0.7, 0, (i - 1) * 0.35],
+      a.upright
+        ? [(i - 1) * 0.08, a.top * 0.97, a.head[2] - 0.06 - Math.abs(i - 1) * 0.04]
+        : [(i - 1) * 0.12, a.top * 1.02, a.front * 0.55 - Math.abs(i - 1) * 0.08],
+      a.upright ? [-0.5, 0, (i - 1) * 0.4] : [0.7, 0, (i - 1) * 0.35],
       [0.8, 0.9 - Math.abs(i - 1) * 0.2, 0.8]
     );
   // the frame grows; the body group carries it so world.js keeps setting the creature's own size on the group
@@ -214,8 +270,18 @@ export function applyGeneMarks(m, genome, kind = 'creature') {
   m.userData.bsMarked = kind;
   const ids = bsOf(genome);
   if (kind === 'beast') {
+    const look = lookOf(genome);
+    // 0.26: a land beast stands up — rebuilt as a dragon, a wraith or a dryad
+    if (phenotype(genome).habitat === 'land' && !m.userData.info?.upright) {
+      const up = makeCreature(genome, { upright: look.plan }),
+        mark = m.userData.bsMarked;
+      m.clear();
+      for (const c of [...up.children]) m.add(c);
+      m.userData = { ...up.userData, bsMarked: mark };
+    }
     beastForm(m, ids);
     beastMarks(m, ids);
+    applyBeastLook(m, genome, look);
   } else if (ids.length) subtleMarks(m, ids);
 }
 // The contract sigil beneath a beast: gold when it is yours, violet when it is wild.
