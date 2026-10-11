@@ -16,7 +16,7 @@ import {
   cabinPointsWorld,
   CABIN,
   CABIN_ITEMS,
-  POOL,
+  TANKS,
   FLOORS
 } from '../dist/cabin.js';
 
@@ -40,7 +40,7 @@ test('Cabin: the hatch on the main deck leads into the suite, and the stair out 
   assert.ok(SHIP_POINTS.some(p => p.id === 'cabin-door' && p.deck === 3));
   assert.equal(enterCabin(s).ok, true);
   assert.equal(s.player.mode, 'cabin');
-  assert.equal(s.player.floor, 1);
+  assert.equal(s.player.floor, 2); // 0.25: the hatch comes down into 2F, the beast hall
   assert.equal(s.player.x, CABIN.x + s.player.cx);
   assert.deepEqual(shipDockOption(s).mode, 'leave-cabin');
   assert.ok(leaveCabin(s).ok);
@@ -54,23 +54,31 @@ test('Cabin: the hatch on the main deck leads into the suite, and the stair out 
   normalizeShip(s);
   assert.equal(s.player.deck, 3);
 });
-test('Cabin: walls, the pool and the stations block walking; doorways and the garden do not', () => {
+test('Cabin: walls, aquariums and the stations block walking; the foyer doorway does not', () => {
   const s = aboard();
   enterCabin(s);
-  assert.ok(walkable(s, 1, 0, 10)); // the doorway between foyer and hall
-  assert.ok(walkable(s, 1, -8, -5)); // the garden
-  assert.ok(!walkable(s, 1, 7, 0), 'pool');
-  assert.ok(!walkable(s, 1, 13.9, 0), 'wall');
-  assert.ok(!walkable(s, 1, -1.5, -9.2), 'console');
+  assert.ok(walkable(s, 2, 0, 11)); // the doorway between foyer and hall
+  assert.ok(walkable(s, 2, -8, -5)); // the open hall
+  assert.ok(!walkable(s, 2, 15.9, 0), 'wall');
+  assert.ok(!walkable(s, 2, 0, -10.3), 'the contract desk');
+  assert.ok(!walkable(s, 1, TANKS[0].x, TANKS[0].z), 'aquarium');
+  assert.ok(walkable(s, 1, 0, 0), 'the creature floor is open');
   moveCabin(s, 0, -40);
-  assert.ok(s.player.cz > -10 && s.player.cz < -8.5, 'stopped at the far wall');
-  assert.ok(walkable(s, 1, s.player.cx, s.player.cz));
+  assert.ok(s.player.cz > -10 && s.player.cz < -9, 'stopped at the desk');
+  assert.ok(walkable(s, 2, s.player.cx, s.player.cz));
 });
-test('Cabin: the ladder takes you to the hold and back, where the cargo station takes every kind of goods', () => {
+test('Cabin: ladders take you 2F → 1F → the hold and back, where the cargo station takes every kind of goods', () => {
   const s = aboard();
   enterCabin(s);
-  assert.equal(useLadder(s, 'ladder-down').ok, false); // too far away
-  Object.assign(s.player, { cx: 10, cz: 7 });
+  assert.equal(useLadder(s, 'ladder2-down').ok, false); // too far away
+  assert.equal(useLadder(s, 'ladder-down').ok, false); // not on this floor
+  Object.assign(s.player, { cx: -12, cz: 6.4 });
+  const mid = useLadder(s, 'ladder2-down');
+  assert.ok(mid.ok, mid.error);
+  assert.equal(mid.floor, 1);
+  finishLadder(s, mid);
+  assert.equal(s.player.floor, 1);
+  Object.assign(s.player, { cx: 10, cz: 5.6 });
   const r = useLadder(s, 'ladder-down');
   assert.ok(r.ok);
   assert.equal(r.floor, 0);
@@ -87,7 +95,7 @@ test('Cabin: the ladder takes you to the hold and back, where the cargo station 
   finishLadder(s, up);
   assert.equal(s.player.floor, 1);
 });
-test('Cabin: furniture costs materials, cannot overlap walls, the pool, stations or each other, and refunds on pickup', () => {
+test('Cabin: furniture costs materials, cannot overlap walls, aquariums, stations or each other, and refunds on pickup', () => {
   const s = aboard();
   enterCabin(s);
   Object.assign(s.player, { cx: 0, cz: 6 });
@@ -95,13 +103,13 @@ test('Cabin: furniture costs materials, cannot overlap walls, the pool, stations
   const r = placeItem(s, 'sofa', 0, 2, 0);
   assert.ok(r.ok);
   assert.equal(s.resources.wood, wood - CABIN_ITEMS.sofa.cost.wood);
-  assert.ok(!walkable(s, 1, 0, 2), 'the sofa blocks walking');
-  assert.ok(placeError(s, 'table', 1, 0, 2, 0.3), 'overlap');
-  assert.ok(placeError(s, 'table', 1, (POOL.x0 + POOL.x1) / 2, 0, 0), 'pool');
-  assert.ok(placeError(s, 'table', 1, 13.8, 0, 0), 'wall');
-  assert.ok(placeError(s, 'table', 1, -1.5, -8.5, 0), 'station');
-  assert.ok(placeError(s, 'table', 1, 0, 6, 0), 'on the player');
-  assert.equal(placeError(s, 'rug', 1, 0, 2, 0), null, 'rugs go under anything');
+  assert.ok(!walkable(s, 2, 0, 2), 'the sofa blocks walking');
+  assert.ok(placeError(s, 'table', 2, 0, 2, 0.3), 'overlap');
+  assert.ok(placeError(s, 'table', 1, TANKS[1].x, TANKS[1].z, 0), 'aquarium');
+  assert.ok(placeError(s, 'table', 2, 14.8, 0, 0), 'wall');
+  assert.ok(placeError(s, 'table', 2, 0, -9.6, 0), 'station');
+  assert.ok(placeError(s, 'table', 2, 0, 6, 0), 'on the player');
+  assert.equal(placeError(s, 'rug', 2, 0, 2, 0), null, 'rugs go under anything');
   assert.ok(placeItem(s, 'table', -3, 6, 1.2).ok);
   Object.assign(s.player, { cx: -1, cz: 4 });
   const picks = cabinPointsWorld(s).filter(t => t.point.startsWith('pick:'));
@@ -110,7 +118,7 @@ test('Cabin: furniture costs materials, cannot overlap walls, the pool, stations
   const before = total();
   assert.ok(removeItem(s, r.item.id).ok);
   assert.equal(total(), before + CABIN_ITEMS.sofa.cost.wood);
-  assert.ok(walkable(s, 1, 0, 2));
+  assert.ok(walkable(s, 2, 0, 2));
   s.resources.crystal = 0;
   assert.equal(placeItem(s, 'piano', -4, 5, 0).ok, false);
 });

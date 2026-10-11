@@ -167,3 +167,107 @@ body.beast-on.landscape-play .left-hud {
 .underwater #zone-text {
   color: #95e1e6;
 }
+
+/* 0.25: action combat — skill and dodge buttons, damage numbers, foe strength bars */
+#beast-bar .combat-row {
+  margin-top: 6px;
+}
+#beast-bar .combat-row:not(:has(button:not([hidden]))) {
+  display: none;
+}
+#skill-1,
+#skill-2 {
+  border-color: #ffd38c88;
+  color: #ffe4b0;
+}
+#skill-1:disabled,
+#skill-2:disabled {
+  opacity: 0.55;
+}
+#dodge-btn {
+  border-color: #8fe0ff88;
+  color: #c9f1ff;
+}
+#combat-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9;
+}
+#combat-layer .dmg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font:
+    800 18px/1 system-ui,
+    sans-serif;
+  color: #fff;
+  text-shadow:
+    0 2px 3px #000c,
+    0 0 8px #0008;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+#combat-layer .dmg.crit {
+  font-size: 24px;
+  color: #ffd56a;
+}
+#combat-layer .dmg.weak {
+  font-size: 22px;
+  color: #ff9d5c;
+}
+#combat-layer .dmg.dot {
+  font-size: 14px;
+  color: #b8f59a;
+}
+#combat-layer .dmg.hurt {
+  color: #ff6f6f;
+}
+#combat-layer .dmg.ally {
+  font-size: 15px;
+  color: #ffb3b3;
+}
+#combat-layer .dmg.evade {
+  font-size: 15px;
+  color: #9fe7ff;
+}
+#combat-layer .foe-hp {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 74px;
+  height: 7px;
+  border-radius: 4px;
+  background: #1a0f14cc;
+  border: 1px solid #ffffff55;
+}
+#combat-layer .foe-hp i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #e2504a, #ff8a5c);
+  transition: width 0.12s;
+}
+#combat-layer .foe-hp small {
+  position: absolute;
+  left: 50%;
+  bottom: 9px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: #f1e3d0;
+  text-shadow: 0 1px 2px #000;
+  white-space: nowrap;
+}
+#combat-layer .foe-hp.winding {
+  border-color: #ff5a4a;
+  box-shadow: 0 0 8px #ff3a2a;
+}
+#combat-layer .foe-hp.open {
+  border-color: #ffd56a;
+  box-shadow: 0 0 10px #ffd56a;
+}
+#combat-layer .foe-hp.open small {
+  color: #ffd56a;
+  font-weight: 800;
+}

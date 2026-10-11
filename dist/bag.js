@@ -1,8 +1,8 @@
 // The backpack holds a limited number of things in all. What does not fit waits in the storage of the raft's
 // desk: deposit there when the bag is full, and enlarge the bag at the desk with materials. While you are home,
 // building and crafting can draw on the desk's storage as well as the bag.
-import { homePos, nearFacility } from './fortress.js?v=0.24.1';
-import { CARRYABLE } from './items.js?v=0.24.1';
+import { homePos, nearFacility } from './fortress.js?v=0.25.0';
+import { CARRYABLE } from './items.js?v=0.25.0';
 // everything the bag can hold (0.21: the drops and crafted things too)
 export const CARRY = CARRYABLE;
 // supplies you keep on you when depositing
@@ -145,4 +145,19 @@ export function upgradeBag(s) {
   if (!spend(s, next.cost)) return { ok: false, error: '升級背包的材料不足。' };
   s.bagLevel++;
   return { ok: true, message: `背包加大了：可以裝 ${bagCap(s)} 件。` };
+}
+// 0.25: throw things away — from the bag, or from the storage box at the desk. Contract scrolls count too.
+export function discard(s, k, n = Infinity, from = 'bag') {
+  normalizeBag(s);
+  if (k === 'contract') {
+    const m = Math.min(n, s.contracts || 0);
+    if (m <= 0) return { ok: false, error: '沒有契約書可以丟。' };
+    s.contracts -= m;
+    return { ok: true, moved: m };
+  }
+  const store = from === 'box' ? s.storage : s.resources,
+    m = Math.min(n, store[k] || 0);
+  if (m <= 0) return { ok: false, error: '沒有這項物品。' };
+  store[k] -= m;
+  return { ok: true, moved: m };
 }

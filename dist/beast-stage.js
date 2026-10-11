@@ -1,7 +1,8 @@
 // Live previews of beasts for the device's beast storage: one small offscreen renderer draws every visible beast,
 // slowly turning and swimming, into its own 2D canvas each frame.
 import * as T from './vendor/three.module.min.js';
-import { makeCreature, animateCreature } from './creatures.js?v=0.24.1';
+import { makeCreature, animateCreature } from './creatures.js?v=0.25.0';
+import { applyGeneMarks } from './bs-models.js?v=0.25.0';
 
 export class BeastStage {
   constructor() {
@@ -27,10 +28,12 @@ export class BeastStage {
     this.camera = new T.PerspectiveCamera(30, 1, 0.05, 100);
     return true;
   }
-  model(key, genome) {
+  // kind: 'creature' or 'beast' shows the BS marks the way the world does; omitted, the plain animal
+  model(key, genome, kind) {
     let m = this.models.get(key);
     if (m) return m;
     const mesh = makeCreature(genome);
+    if (kind) applyGeneMarks(mesh, genome, kind);
     mesh.visible = false;
     this.scene.add(mesh);
     mesh.updateMatrixWorld(true);
@@ -39,11 +42,11 @@ export class BeastStage {
     this.models.set(key, m);
     return m;
   }
-  // cells: [{ canvas, key, genome }]
+  // cells: [{ canvas, key, genome, kind? }]
   show(cells) {
     this.cells = cells;
     if (!cells.length || !this.ensure()) return;
-    for (const c of cells) this.model(c.key, c.genome);
+    for (const c of cells) this.model(c.key, c.genome, c.kind);
   }
   clear() {
     this.cells = [];

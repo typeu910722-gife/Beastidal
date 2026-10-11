@@ -6,16 +6,16 @@
 //     bound by trust; hostile ones must be worn down in a fight — the weaker, the better the odds — and stay
 //     modest even bound. A failed contract can send anything into a frenzy: 1.2× speed and bite, hunting you for
 //     10–20 seconds, and nothing frenzied can be repelled.
-import { phenotype, geneName } from './genetics.js?v=0.24.1';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.24.1';
-import { spend } from './bag.js?v=0.24.1';
-import { remember } from './memories.js?v=0.24.1';
-import { nearFacility } from './fortress.js?v=0.24.1';
-import { hasPerk } from './codex.js?v=0.24.1';
-import { tally } from './stats.js?v=0.24.1';
-import { bsOf, canEvolve, EVOLVE_GENES } from './bsgenes.js?v=0.24.1';
-import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.24.1';
-import { trustBonus } from './skills.js?v=0.24.1';
+import { phenotype, geneName } from './genetics.js?v=0.25.0';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.25.0';
+import { spend, give } from './bag.js?v=0.25.0';
+import { remember } from './memories.js?v=0.25.0';
+import { nearFacility } from './fortress.js?v=0.25.0';
+import { hasPerk } from './codex.js?v=0.25.0';
+import { tally } from './stats.js?v=0.25.0';
+import { bsOf, canEvolve, EVOLVE_GENES } from './bsgenes.js?v=0.25.0';
+import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.25.0';
+import { trustBonus } from './skills.js?v=0.25.0';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 10, max: 20, below: 60 };
@@ -171,6 +171,7 @@ export function contract(s, id, rng = Math.random) {
   normalizeTaming(s);
   if ((s.contracts || 0) < 1) return { ok: false, error: '背包裡沒有契約書。到木筏的工作桌製作。' };
   if (!beastRoom(s)) return { ok: false, error: `御獸倉庫已滿（${BEAST_CAPACITY} 隻）。` };
+  if (contractsFull(s)) return { ok: false, error: CONTRACTS_FULL };
   const w = s.wild.find(w => w.id === id);
   if (!w) return { ok: false, error: '生物已離開。' };
   if (Math.hypot(w.x - s.player.x, w.z - s.player.z) > 12) return { ok: false, error: '請靠近牠再締結契約。' };
@@ -202,6 +203,7 @@ export function contract(s, id, rng = Math.random) {
         ? `締結契約。${b.friendly ? '牠把頭靠了過來。' : '牠喘著氣，終於低下了頭。'}`
         : `締結契約。牠的信任度是 ${chance}%。`
     );
+    pet.team = teamOf(s).length < TEAM_SIZE;
     s.tamed.push(pet);
     s.wild = s.wild.filter(c => c !== w);
     tally(s, 'tame');
@@ -228,15 +230,154 @@ export function evolve(s, petId, rng = Math.random) {
       error: `需要至少 ${EVOLVE_GENES} 種比斯基因（目前 ${bsOf(p.genome).length} 種）。到孵化台配種看看。`
     };
   if ((s.contracts || 0) < 1) return { ok: false, error: '背包裡沒有契約書。' };
+  if (contractsFull(s)) return { ok: false, error: CONTRACTS_FULL };
   s.contracts--;
   const chance = Math.max(30, Math.round(p.bond));
   if (rng() * 100 < chance) {
     p.kind = 'beast';
     p.evolved = true;
+    p.team = teamOf(s).length < TEAM_SIZE;
+    p.penId = null; // beasts live on the 御獸艙 / in the contract, not in a display pen
     remember(s, p, '契闊進化：契約書的光流進牠身上的每一道突變。牠不再只是生物了。');
     tally(s, 'evolve');
     return { ok: true, chance, message: `${p.name} 契闊進化成御獸了！` };
   }
   p.bond = Math.max(0, p.bond - 10);
   return { ok: false, chance, error: `契闊失敗（${chance}%）。牠退開了，羈絆 -10。` };
+}
+
+// ---------- 0.25: contracts, the team, and letting go ----------
+// A bound beast lives in its 御獸契約 (beast contract). You hold at most ten; three ride with you (the team) and only
+// those can be called out. The story's ancient beast is bound by its own pact and does not count.
+export const MAX_CONTRACTS = 10;
+export const TEAM_SIZE = 3;
+export const CONTRACTS_FULL = `御獸契約已經滿 ${MAX_CONTRACTS} 張了。先解約一隻，才能再締結新的契約。`;
+export const ownedBeasts = s => (s.tamed || []).filter(p => p.kind !== 'creature' && !p.ancient);
+export const contractsFull = s => ownedBeasts(s).length >= MAX_CONTRACTS;
+export const teamOf = s => (s.tamed || []).filter(p => p.kind !== 'creature' && p.team);
+// Old saves: the first three beasts (the one out first) ride with you.
+export function normalizeTeam(s) {
+  const beasts = (s.tamed || []).filter(p => p.kind !== 'creature');
+  for (const p of s.tamed || []) if (p.kind === 'creature') p.team = false;
+  if (!beasts.some(p => p.team)) {
+    const order = [...beasts].sort(
+      (a, b) => (b.id === s.expedition?.activeId) - (a.id === s.expedition?.activeId) || (b.bond || 0) - (a.bond || 0)
+    );
+    order.slice(0, TEAM_SIZE).forEach(p => (p.team = true));
+  }
+  let n = 0;
+  for (const p of beasts) if (p.team && ++n > TEAM_SIZE) p.team = false;
+  return s;
+}
+export function toggleTeam(s, id) {
+  const p = (s.tamed || []).find(t => t.id === id);
+  if (!p) return { ok: false, error: '找不到這隻御獸。' };
+  if (p.kind === 'creature') return { ok: false, error: '生物沒有契約，不能帶在身上。' };
+  if (p.team) {
+    if (s.expedition?.activeId === id) return { ok: false, error: '牠正在外面，先讓牠回來。' };
+    p.team = false;
+    return { ok: true, message: `${p.name} 的契約放回御獸艙。` };
+  }
+  if (teamOf(s).length >= TEAM_SIZE) return { ok: false, error: `身上最多帶 ${TEAM_SIZE} 張御獸契約。先放回一張。` };
+  p.team = true;
+  return { ok: true, message: `把 ${p.name} 的契約帶在身上。` };
+}
+const leave = (s, p) => {
+  s.tamed = s.tamed.filter(t => t !== p);
+  if (s.expedition?.activeId === p.id) {
+    s.expedition.activeId = null;
+    s.expedition.mounted = false;
+    s.expedition.diving = false;
+  }
+  if (s.ship?.lounge) s.ship.lounge = s.ship.lounge.filter(id => id !== p.id);
+};
+const near = s => {
+  const a = Math.random() * Math.PI * 2;
+  return { x: s.player.x + Math.sin(a) * 4, z: s.player.z + Math.cos(a) * 4 };
+};
+// 放生: a creature goes back to the wild beside you, still a little fond of you.
+export function releaseCreature(s, id, at = near(s)) {
+  const p = (s.tamed || []).find(t => t.id === id);
+  if (!p) return { ok: false, error: '找不到這隻生物。' };
+  if (p.kind !== 'creature') return { ok: false, error: '御獸要解約，不能直接放生。' };
+  leave(s, p);
+  s.wild.push({
+    id: p.id,
+    x: at.x,
+    z: at.z,
+    homeX: at.x,
+    homeZ: at.z,
+    phase: Math.random() * 6,
+    heading: 0,
+    genome: p.genome,
+    trust: 40,
+    feeds: 0,
+    hostile: false,
+    released: true,
+    ...(phenotype(p.genome).habitat === 'land' ? { land: true } : {})
+  });
+  return { ok: true, message: `${p.name} 回到了野外。` };
+}
+// 煮來吃: rations, scaled by size, and a little of what its family is made of.
+export function cookCreature(s, id) {
+  const p = (s.tamed || []).find(t => t.id === id);
+  if (!p) return { ok: false, error: '找不到這隻生物。' };
+  if (p.kind !== 'creature') return { ok: false, error: '御獸不能煮。' };
+  const ph = phenotype(p.genome),
+    food = 2 + Math.round(ph.size * 3),
+    extra = { sea: 'fish', deep: 'fish', land: 'fat', flora: 'fruit' }[ph.family] || 'fish';
+  leave(s, p);
+  const got = { food, [extra]: 1 };
+  give(s, got);
+  return { ok: true, got, message: `${p.name} 煮成了一鍋。口糧 +${food}。` };
+}
+// 解約: the contract breaks and the beast turns on you — a frenzy of 60–80 s — then its body, no longer held together
+// by the contract, rots and dissolves away.
+export function dissolveContract(s, id, rng = Math.random, at = near(s)) {
+  const p = (s.tamed || []).find(t => t.id === id);
+  if (!p) return { ok: false, error: '找不到這隻御獸。' };
+  if (p.kind === 'creature') return { ok: false, error: '生物沒有契約可以解。' };
+  if (p.ancient) return { ok: false, error: '遠古的契約，不是你能解開的。' };
+  const secs = Math.round(60 + rng() * 20);
+  leave(s, p);
+  s.wild.push({
+    id: 'rel-' + p.id,
+    x: at.x,
+    z: at.z,
+    homeX: at.x,
+    homeZ: at.z,
+    phase: 0,
+    heading: 0,
+    genome: p.genome,
+    name: p.name,
+    trust: 0,
+    feeds: 0,
+    hostile: true,
+    released: true,
+    formerBeast: true,
+    frenzyUntil: s.elapsed + secs,
+    dissolveAt: s.elapsed + secs,
+    maxHp: 80 + (p.level || 1) * 12,
+    hp: 80 + (p.level || 1) * 12,
+    ...(phenotype(p.genome).habitat === 'land' ? { land: true } : {})
+  });
+  return { ok: true, seconds: secs, message: `${p.name} 的契約碎了。牠會狂暴 ${secs} 秒，之後潰爛溶解。` };
+}
+// Each frame: released beasts whose time is up start to dissolve, then vanish. Returns those that finished.
+export function tickDissolve(s) {
+  const gone = [];
+  for (const w of s.wild || [])
+    if (w.dissolveAt && s.elapsed >= w.dissolveAt && !w.dissolving) {
+      w.dissolving = s.elapsed;
+      w.hostile = false;
+      w.frenzyUntil = 0;
+    }
+  s.wild = (s.wild || []).filter(w => {
+    if (w.dissolving && s.elapsed - w.dissolving > 4) {
+      gone.push(w);
+      return false;
+    }
+    return true;
+  });
+  return gone;
 }

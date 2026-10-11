@@ -192,10 +192,16 @@ test('The hatch leads into the cabin (0.20); the hold takes cargo and the lounge
   const door = SHIP_POINTS.find(v => v.id === 'cabin-door');
   Object.assign(s.player, { lx: door.lx, lz: door.lz });
   assert.ok(enterCabin(s).ok);
-  const r = useLadder(s, 'ladder-down', true);
-  Object.assign(s.player, { cx: 10, cz: 7 });
+  // 0.25: the hatch opens onto 2F (the beast hall); 1F holds the creatures; the hold is at the bottom
+  assert.equal(s.player.floor, 2);
+  Object.assign(s.player, { cx: -12.4, cz: 7.6 });
+  const mid = useLadder(s, 'ladder2-down');
+  assert.ok(mid.ok, mid.error);
+  finishLadder(s, mid);
+  assert.equal(s.player.floor, 1);
+  Object.assign(s.player, { cx: 11.4, cz: 6.6 });
   const down = useLadder(s, 'ladder-down');
-  assert.ok(down.ok, r.error);
+  assert.ok(down.ok, down.error);
   finishLadder(s, down);
   assert.equal(s.player.floor, 0);
   const wood = s.resources.wood;
@@ -211,7 +217,7 @@ test('The hatch leads into the cabin (0.20); the hold takes cargo and the lounge
   for (const d of [3, 4]) assert.ok(deckWalk(d, 0, d === 4 ? -9 : 0));
   assert.equal(deckWalk(3, 6, 0), false);
   assert.ok(toggleLounge(s, 'p1').ok);
-  assert.equal(restPlace(s, s.tamed[0]), 'lounge');
+  assert.equal(restPlace(s, s.tamed[0]), s.tamed[0].kind === 'creature' ? 'hold' : 'hall');
   // the fortress carries the whole base, so beasts can leave the lounge far out at sea too
   s.ship.x += 500;
   s.expedition.activeId = null;

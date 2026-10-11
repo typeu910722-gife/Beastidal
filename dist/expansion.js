@@ -1,21 +1,21 @@
-import { phenotype, clamp } from './genetics.js?v=0.24.1';
-import { NODES, harvest } from './islands.js?v=0.24.1';
-import { restPlace } from './ship.js?v=0.24.1';
-import { dayOf, dayPhase } from './clock.js?v=0.24.1';
-import { remember, rememberFirst } from './memories.js?v=0.24.1';
-import { spend, give, stow } from './bag.js?v=0.24.1';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.24.1';
-import { islandAt } from './islands.js?v=0.24.1';
-import { hasPerk } from './codex.js?v=0.24.1';
-import { tally } from './stats.js?v=0.24.1';
-import { rollDrops } from './species.js?v=0.24.1';
-import { bsOf, geneStats } from './bsgenes.js?v=0.24.1';
-import { WILD_BEASTS } from './beasts.js?v=0.24.1';
-import { hasGear, MASK_OXYGEN } from './gear.js?v=0.24.1';
-import { damageBonus } from './skills.js?v=0.24.1';
-import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.24.1';
-import { ITEM_NAMES } from './items.js?v=0.24.1';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.24.1';
+import { phenotype, clamp } from './genetics.js?v=0.25.0';
+import { NODES, harvest } from './islands.js?v=0.25.0';
+import { restPlace } from './ship.js?v=0.25.0';
+import { dayOf, dayPhase } from './clock.js?v=0.25.0';
+import { remember, rememberFirst } from './memories.js?v=0.25.0';
+import { spend, give, stow } from './bag.js?v=0.25.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.25.0';
+import { islandAt } from './islands.js?v=0.25.0';
+import { hasPerk } from './codex.js?v=0.25.0';
+import { tally } from './stats.js?v=0.25.0';
+import { rollDrops } from './species.js?v=0.25.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.25.0';
+import { WILD_BEASTS } from './beasts.js?v=0.25.0';
+import { hasGear, MASK_OXYGEN } from './gear.js?v=0.25.0';
+import { damageBonus } from './skills.js?v=0.25.0';
+import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.25.0';
+import { ITEM_NAMES } from './items.js?v=0.25.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.25.0';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
 // the 深淵潛行者 collection perk lengthens every dive
@@ -134,7 +134,19 @@ export function commandPet(s, id, order = 'follow') {
     s.expedition.activeId = null;
     return { ok: true, message: '夥伴回去休息了。' };
   }
-  if (p.kind === 'creature') return fail('牠還只是生物，不能出戰。在孵化台配種出 3 種比斯基因，契闊進化後才能帶出去。');
+  // 0.25: creatures may follow you, nothing more; a beast must be one of the three contracts you carry
+  if (p.kind === 'creature') {
+    if (order !== 'follow') return fail('生物只能跟隨，不能採集或戰鬥。契闊進化成御獸後才行。');
+    if (p.health < 15) return fail('牠需要休息。');
+    s.expedition.activeId = id;
+    s.expedition.order = 'follow';
+    rememberFirst(s, p, 'out', '第一次跟著你出門。');
+    return { ok: true, message: p.name + ' 跟著你。生物不能騎乘，也不能戰鬥。' };
+  }
+  // a beast never sorted into the team yet (older saves, fresh contracts) joins it while there is room
+  if (p.team === undefined && !p.ancient && s.tamed.filter(t => t.kind !== 'creature' && t.team).length < 3)
+    p.team = true;
+  if (!p.team && !p.ancient) return fail('這張御獸契約不在身上。先在御獸倉庫把牠「帶在身上」（最多 3 張）。');
   if (!['follow', 'gather', 'guard'].includes(order)) return fail('未知指令。');
   if (p.bond < (order === 'guard' ? 30 : 15))
     return fail(order === 'guard' ? '羈絆 30 才能協戰。' : '羈絆 15 才願意跟隨與採集。');
@@ -160,6 +172,7 @@ export function toggleRide(s) {
     Object.assign(s.player, { x: s.boat.x, z: s.boat.z });
     return { ok: true, message: '已返回小艇。' };
   }
+  if (p?.kind === 'creature') return fail('生物不能騎乘。只有御獸可以。');
   if (!p || p.bond < 45) return fail('先派出羈絆 45 的夥伴。');
   if (phenotype(p.genome).habitat === 'land') return fail('陸棲御獸不會游泳，沒辦法下海騎乘；牠會坐在船頭陪你。');
   if (s.player.mode === 'foot') return fail('請先登艇，再騎乘夥伴。');
@@ -292,16 +305,7 @@ export function attack(s, heavy = false) {
   e.hitAt = { x: target.x, z: target.z, at: s.elapsed };
   if (target.hp <= 0) {
     if (target === b) {
-      b.defeated = true;
-      e.boneNote = onWatcherDown(s);
-      remember(s, p, '並肩擊退了深海守望者。');
-      reward(s, { crystal: 12, metal: 15, food: 5 });
-      p.bond = Math.min(100, p.bond + 6);
-      s.log.unshift({
-        day: dayOf(s),
-        title: '深海守望者沉入海溝',
-        text: '我們並肩度過了風浪。守望者留下的契印回應了夥伴的光。'
-      });
+      onBossDown(s, p);
     } else {
       tally(s, target.beast ? 'beastkill' : 'kill');
       s.wild = s.wild.filter(w => w !== target);
@@ -324,6 +328,25 @@ export function attack(s, heavy = false) {
     message: `${heavy ? '重擊' : '攻擊'}造成 ${damage} 傷害；${target.beast ? WILD_BEASTS[target.beast].name : '敵人'}體力 ${Math.ceil(target.hp)}${target.maxHp ? ' / ' + target.maxHp : ''}。`
   };
 }
+// The deep watcher falls: its story note, the reward and the log (from attack() or from combat.js).
+export function onBossDown(s, p) {
+  const e = s.expedition,
+    b = e.boss;
+  if (b.defeated) return null;
+  b.defeated = true;
+  e.boneNote = onWatcherDown(s);
+  if (p) {
+    remember(s, p, '並肩擊退了深海守望者。');
+    p.bond = Math.min(100, p.bond + 6);
+  }
+  reward(s, { crystal: 12, metal: 15, food: 5 });
+  s.log.unshift({
+    day: dayOf(s),
+    title: '深海守望者沉入海溝',
+    text: '我們並肩度過了風浪。守望者留下的契印回應了夥伴的光。'
+  });
+  return e.boneNote;
+}
 export function awaken(s, id) {
   normalizeExpansion(s);
   const p = s.tamed.find(p => p.id === id),
@@ -344,7 +367,7 @@ export function tickExpansion(s, dt, safe = false) {
     events = [];
   for (const pet of s.tamed) {
     if (pet !== p) {
-      const k = { island: 1.6, lounge: 1.3, pen: 1, storage: 1 }[restPlace(s, pet)];
+      const k = { island: 1.6, lounge: 1.3, hold: 1.3, hall: 1.4, pen: 1, storage: 1 }[restPlace(s, pet)] || 1;
       pet.stamina = Math.min(100, pet.stamina + dt * 0.7 * k);
       pet.health = Math.min(100, pet.health + dt * 0.45 * k);
     }
@@ -397,10 +420,6 @@ export function tickExpansion(s, dt, safe = false) {
         rememberFirst(s, p, 'gather', '第一次幫你採集物資。');
         events.push('夥伴協助採集，物資已放入背包，羈絆 +1。');
       }
-    }
-    if (!safe && e.order === 'guard' && s.elapsed - p.lastAttack >= 4) {
-      const r = attack(s);
-      if (r.ok) events.push(r.message);
     }
   }
   if (!safe && !s.inCave && !e.diving && stormAt(s) && s.player.mode !== 'foot' && s.elapsed - e.lastStorm > 10) {

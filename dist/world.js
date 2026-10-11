@@ -1,32 +1,33 @@
-import { expansionModels } from './expansion-models.js?v=0.24.1';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.24.1';
-import { normalizeHousing, penId } from './housing.js?v=0.24.1';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.24.1';
-export { makeCreature } from './creatures.js?v=0.24.1';
-import { makeIslands } from './island-models.js?v=0.24.1';
-import { facilityId } from './facilities.js?v=0.24.1';
+import { expansionModels } from './expansion-models.js?v=0.25.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.25.0';
+import { normalizeHousing, penId } from './housing.js?v=0.25.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.25.0';
+export { makeCreature } from './creatures.js?v=0.25.0';
+import { makeIslands } from './island-models.js?v=0.25.0';
+import { facilityId } from './facilities.js?v=0.25.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.24.1';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.24.1';
-import { makeLake } from './lake-models.js?v=0.24.1';
-import { groundAt, LANDMARKS } from './lake.js?v=0.24.1';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.24.1';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.24.1';
-import { PostFX } from './postfx.js?v=0.24.1';
-import { makeHuman, animateHuman } from './human.js?v=0.24.1';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.24.1';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.24.1';
-import { buildError } from './rules.js?v=0.24.1';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.24.1';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.24.1';
-import { CABIN, FLOORS, POOL_SLOTS, GARDEN_SLOTS } from './cabin.js?v=0.24.1';
-import { makeCabin } from './cabin-models.js?v=0.24.1';
-import { applyGeneMarks, beastHalo, animateMarks } from './bs-models.js?v=0.24.1';
-import { syncPlots } from './land-models.js?v=0.24.1';
-import { plotTargets } from './reclaim.js?v=0.24.1';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.24.1';
-import { dayPhase } from './clock.js?v=0.24.1';
-import { weatherAt, season } from './weather.js?v=0.24.1';
+import { phenotype, seeded } from './genetics.js?v=0.25.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.25.0';
+import { makeLake } from './lake-models.js?v=0.25.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.25.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.25.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.25.0';
+import { PostFX } from './postfx.js?v=0.25.0';
+import { makeHuman, animateHuman } from './human.js?v=0.25.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.25.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.25.0';
+import { buildError } from './rules.js?v=0.25.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.25.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.25.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.25.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.25.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.25.0';
+import { CombatFX } from './combat-fx.js?v=0.25.0';
+import { syncPlots } from './land-models.js?v=0.25.0';
+import { plotTargets } from './reclaim.js?v=0.25.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.25.0';
+import { dayPhase } from './clock.js?v=0.25.0';
+import { weatherAt, season } from './weather.js?v=0.25.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -873,6 +874,10 @@ export class OceanWorld {
     this.plots = new T.Group();
     this.plotMeshes = new Map();
     this.scene.add(this.plots);
+    // 0.25: combat effects, and the walkers that roam the creature and beast floors
+    this.combatFX = new CombatFX(this.scene);
+    this.roam = new Map();
+    this.shake = 0;
     this.cabin = makeCabin(mat, halo);
     this.cabin.group.visible = false;
     for (const l of this.cabin.lights) l.visible = false;
@@ -946,7 +951,7 @@ export class OceanWorld {
       while (this.fortress.children.length) this.fortress.remove(this.fortress.children[0]);
       for (const b of s.buildings) {
         if (b.stowed) continue;
-        const g = buildingMesh(b);
+        const g = b.ship && b.type === 'pen' ? tankMesh(3.2, 3.2, 1.9) : buildingMesh(b);
         if (b.ship) {
           // aboard the fortress: on its deck slot, a little smaller, moving with the ship
           const slot = SHIP_SLOTS[b.ship.slot];
@@ -996,15 +1001,25 @@ export class OceanWorld {
       m.rotation.y = l.spin;
       return m;
     });
+    const beastish = c => !!(c.beast || c.formerBeast);
     syncMap(s.wild, this.wildMeshes, c => {
       const m = makeCreature(c.genome);
-      applyGeneMarks(m, c.genome);
-      if (c.beast) beastHalo(m);
+      applyGeneMarks(m, c.genome, beastish(c) ? 'beast' : 'creature');
+      if (beastish(c)) beastHalo(m, true);
       return m;
     });
+    const kindOf = c => (c.kind === 'creature' ? 'creature' : 'beast');
+    for (const [id, m] of this.petMeshes) {
+      const c = s.tamed.find(x => x.id === id);
+      if (c && m.userData.bsMarked !== kindOf(c)) {
+        this.scene.remove(m);
+        this.petMeshes.delete(id);
+      }
+    }
     syncMap(s.tamed, this.petMeshes, c => {
       const m = makeCreature(c.genome);
-      applyGeneMarks(m, c.genome);
+      applyGeneMarks(m, c.genome, kindOf(c));
+      if (kindOf(c) === 'beast') beastHalo(m, false);
       m.userData.petId = c.id;
       m.scale.multiplyScalar(0.22);
       return m;
@@ -1040,6 +1055,25 @@ export class OceanWorld {
       if (hit.distance > 0) return null;
     }
     return null;
+  }
+  groundFn(s) {
+    const diving = !!s.expedition?.diving;
+    return (x, z) => (diving ? this.diveY : s.inCave ? 0 : Math.max(0, groundAt(x, z)));
+  }
+  // 0.25: what combat.js reported this frame — effects, the swing animation, recoil and shake
+  combatEvents(s, events) {
+    if (!events?.length) return;
+    this.combatFX.handle(events, s.elapsed, this.groundFn(s));
+    for (const e of events) {
+      if (e.type === 'swing') this.swing = { at: s.elapsed, dir: e.dir, combo: e.combo, heavy: e.heavy };
+      if (e.type === 'hit' && e.target === 'foe') {
+        const m = this.wildMeshes.get(e.id);
+        if (m) m.userData.hitAt = s.elapsed;
+        this.shake = Math.max(this.shake, e.crit || e.weak ? 0.35 : 0.18);
+      }
+      if (e.type === 'hit' && e.target !== 'foe') this.shake = Math.max(this.shake, 0.5);
+      if (e.type === 'erupt' || e.type === 'kill') this.shake = Math.max(this.shake, 0.45);
+    }
   }
   screenPoint(x, y, z) {
     const v = new V(x, y, z).project(this.camera);
@@ -1322,10 +1356,25 @@ export class OceanWorld {
           m.position.x += Math.sin(c.heading || 0) * k;
           m.position.z += Math.cos(c.heading || 0) * k;
         }
+        if (ud.hitAt && s.elapsed - ud.hitAt < 0.16) m.rotation.x += 0.3 * (1 - (s.elapsed - ud.hitAt) / 0.16);
+        if (c.ai?.state === 'recover') m.rotation.z = Math.sin(t * 9) * 0.06;
+        else m.rotation.z = 0;
+        if (c.dissolving) {
+          const k = Math.min(1, (s.elapsed - c.dissolving) / 4);
+          dissolveLook(m, k);
+          m.position.y -= k * 0.9;
+        }
         this.animateCreature(m, ud.swim);
         animateMarks(m, t);
       }
     }
+    if (s.ship && cabin)
+      this.tankPlan = tankSlots(
+        s,
+        s.tamed.filter(
+          c => c.kind === 'creature' && restPlace(s, c) === 'hold' && phenotype(c.genome).habitat !== 'land'
+        )
+      );
     const pools = new Map(s.buildings.filter(b => b.type === 'pen' && !b.stowed).map(b => [penId(b), b])),
       slots = new Map();
     let i = 0;
@@ -1352,15 +1401,28 @@ export class OceanWorld {
           this.animateCreature(m, t);
           continue;
         }
-        m.scale.setScalar(phenotype(c.genome).size * (riding ? 1 : 0.75));
+        // a creature following you stays small; a beast keeps its full frame (its form scale is on the body)
+        m.scale.setScalar(phenotype(c.genome).size * (riding ? 1 : c.kind === 'creature' ? 0.6 : 0.8));
+        const cb = s.combat,
+          fight = !!cb?.engaged && !riding && Number.isFinite(cb.ax);
         const target = new V(
-          s.player.x + (riding ? 0 : Math.cos(t * 0.4) * 2.5),
+          fight ? cb.ax : s.player.x + (riding ? 0 : Math.cos(t * 0.4) * 2.5),
           this.baseY + (foot ? (landPet ? this.footLift : 0.8) : 0),
-          s.player.z + (riding ? 0 : Math.sin(t * 0.4) * 2.5)
+          fight ? cb.az : s.player.z + (riding ? 0 : Math.sin(t * 0.4) * 2.5)
         );
-        m.position.lerp(target, 1 - Math.exp(-dt * 3));
+        m.position.lerp(target, 1 - Math.exp(-dt * (fight ? 9 : 3)));
         if (m.position.distanceTo(target) > 15) m.position.copy(target);
-        m.rotation.y = s.player.heading;
+        m.rotation.y = fight && Number.isFinite(cb.facing) ? cb.facing : s.player.heading;
+        // a swing: the beast lunges into it and rears back out
+        const sw = this.swing;
+        if (sw && s.elapsed - sw.at < (sw.heavy ? 0.42 : 0.3)) {
+          const k = (s.elapsed - sw.at) / (sw.heavy ? 0.42 : 0.3),
+            push = Math.sin(k * Math.PI) * (sw.heavy ? 1.1 : 0.7) * (riding ? 0.3 : 1);
+          m.rotation.y = sw.dir;
+          m.position.x += Math.sin(sw.dir) * push;
+          m.position.z += Math.cos(sw.dir) * push;
+          m.rotation.z = (sw.combo === 2 ? 1 : -1) * Math.sin(k * Math.PI) * 0.25;
+        } else m.rotation.z = 0;
         // 0.22: the partner lunges at what it strikes, and the hit sparks
         const lg = s.expedition.lunge;
         if (lg && lg.until > s.elapsed && !riding) {
@@ -1384,21 +1446,47 @@ export class OceanWorld {
         continue;
       }
       const rest = restPlace(s, c);
-      if (rest === 'lounge' && s.ship) {
-        // the cabin's lounge (0.20): sea beasts in the pool, land beasts in the garden; only seen from inside
-        const k = s.ship.lounge.indexOf(c.id),
-          [sx, sz] = (landPet ? GARDEN_SLOTS : POOL_SLOTS)[Math.max(0, k) % 6];
-        m.visible = cabin && (s.player.floor | 0) === 1;
+      if ((rest === 'hold' || rest === 'hall') && s.ship) {
+        const floor = rest === 'hall' ? 2 : 1,
+          pf = s.player.floor | 0;
+        m.visible = cabin && Math.abs(floor - pf) <= 1;
         if (!m.visible) continue;
-        m.scale.setScalar(phenotype(c.genome).size * 0.42);
-        m.position.set(
-          CABIN.x + sx + (landPet ? 0 : Math.cos(t * 0.5 + k) * 0.4),
-          FLOORS[1].y + (landPet ? 0.28 : -0.1 + Math.sin(t * 1.5 + k) * 0.06),
-          CABIN.z + sz + (landPet ? 0 : Math.sin(t * 0.5 + k) * 0.4)
-        );
-        m.rotation.y = t * 0.2 + k;
-        this.animateCreature(m, t * 0.4 + k);
-        applyIdle(m, t, c.id, landPet, m.scale.x);
+        const fy = FLOORS[floor].y;
+        if (rest === 'hold' && !landPet) {
+          const slot = (this.tankPlan || {})[c.id];
+          if (!slot) {
+            m.visible = false;
+            continue;
+          }
+          const tk = slot.tank,
+            along = (slot.slot - 1) * (Math.max(tk.w, tk.d) * 0.28),
+            ca = Math.cos(tk.rot || 0),
+            sa = Math.sin(tk.rot || 0),
+            lx = (tk.w >= tk.d ? along : 0) + Math.cos(t * 0.6 + slot.slot * 2) * 0.25,
+            lz = (tk.w >= tk.d ? 0 : along) + Math.sin(t * 0.6 + slot.slot * 2) * 0.15;
+          m.scale.setScalar(phenotype(c.genome).size * 0.24);
+          m.position.set(
+            CABIN.x + tk.x + lx * ca + lz * sa,
+            FLOORS[tk.floor].y + 0.95 + slot.slot * 0.22 + Math.sin(t * 1.4 + slot.slot) * 0.06,
+            CABIN.z + tk.z - lx * sa + lz * ca
+          );
+          m.rotation.y = t * 0.3 + slot.slot * 2;
+          this.animateCreature(m, t * 0.7 + slot.slot);
+          continue;
+        }
+        let ag = this.roam.get(c.id);
+        if (!ag || ag.floor !== floor) {
+          ag = { floor };
+          this.roam.set(c.id, ag);
+        }
+        const beast = c.kind !== 'creature';
+        wanderStep(s, floor, ag, dt, Math.random, beast ? 1.5 : 1.1, beast ? 1.0 : 0.6);
+        m.scale.setScalar(phenotype(c.genome).size * (beast ? 0.62 : 0.42));
+        m.position.set(CABIN.x + ag.x, fy + (landPet ? 0 : 0.35 + Math.sin(t * 1.3 + ag.x) * 0.06), CABIN.z + ag.z);
+        m.rotation.y = ag.heading || 0;
+        this.animateCreature(m, ag.moving ? t * 1.2 : t * 0.3);
+        if (!ag.moving) applyIdle(m, t, c.id, landPet, m.scale.x);
+        animateMarks(m, t);
         continue;
       }
       if (rest === 'island') {
@@ -1436,10 +1524,12 @@ export class OceanWorld {
       ];
       const [x, z] = positions[slot] || [0, 0];
       // land beasts rest on a rock perch in the pen instead of swimming
-      if (m.userData.perch) m.userData.perch.visible = true;
+      if (m.userData.perch) m.userData.perch.visible = !aboardPen;
       m.position.set(
         at.x + (x + (landPet ? 0 : Math.cos(a) * 0.12)) * k,
-        floorY + (landPet ? 0.32 : 0.08 + Math.sin(a * 2) * 0.04) * k + (aboardPen ? 0.35 : 0),
+        aboardPen
+          ? floorY + (0.95 + Math.sin(a * 2) * 0.12) * k
+          : floorY + (landPet ? 0.32 : 0.08 + Math.sin(a * 2) * 0.04) * k,
         at.z + (z + (landPet ? 0 : Math.sin(a) * 0.13)) * k
       );
       m.rotation.y = Math.sin(a) * 0.3;
@@ -1450,6 +1540,7 @@ export class OceanWorld {
 
     this.updatePact(s, t, dt, foot);
     this.updateEvents(s, t);
+    this.combatFX.update(s, s.elapsed, this.groundFn(s));
     this.motes.children.forEach((m, i) => {
       m.position.y = 0.1 + Math.sin(t + m.userData.phase) * 0.06;
       m.scale.setScalar(0.035 * (0.6 + Math.sin(t * 2 + i) * 0.4)); // twinkling specks, not metre-wide domes
@@ -1831,6 +1922,11 @@ export class OceanWorld {
       this.camera.fov = 44;
       this.boat.userData.human.visible = !this.onFoot && !this.onRiding && !this.hasShip;
       this.walker.visible = this.onFoot || this.onRiding;
+    }
+    if (this.shake > 0) {
+      this.camera.position.x += (Math.random() - 0.5) * this.shake;
+      this.camera.position.y += (Math.random() - 0.5) * this.shake * 0.6;
+      this.shake = Math.max(0, this.shake - 0.058);
     }
     this.camera.updateProjectionMatrix();
     this.sky.position.copy(this.camera.position);

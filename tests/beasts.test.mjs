@@ -74,8 +74,9 @@ test('Creatures: a plain wild creature cannot be contracted, but a trusting one 
   assert.equal(r.tamed.kind, 'creature');
   assert.equal(s.resources.cage, 1);
   assert.ok(!s.wild.includes(w));
-  // a creature cannot go out to fight
-  assert.match(commandPet(s, r.tamed.id, 'follow').error, /生物/);
+  // 0.25: a creature may follow you, but cannot gather, guard or fight
+  assert.ok(commandPet(s, r.tamed.id, 'follow').ok);
+  assert.match(commandPet(s, r.tamed.id, 'guard').error, /生物/);
   s.expedition.activeId = r.tamed.id;
   r.tamed.bond = 50;
   assert.match(attack(s).error, /生物/);

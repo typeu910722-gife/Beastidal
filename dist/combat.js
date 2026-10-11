@@ -1,0 +1,812 @@
+// Action combat (0.25). Fights are fought by your 御獸, in real time:
+//   · a basic attack (F) chains into a three-hit combo; hold F for a heavy blow. Every swing is an arc in front of
+//     the beast and hits whatever stands in it — riding, the arc follows your heading; on foot or in the boat the
+//     beast dashes to its target and swings there.
+//   · two skills (1 / 2) come from the beast's 比斯基因: fire breath, chain lightning, a frost wave, venom, a tail
+//     sweep, hardening, regeneration, a dash, crystal spikes, a crushing bite, a stunning roar.
+//   · a dodge (Space) dashes you clear with a moment of invulnerability.
+// Enemies fight back with telegraphed attacks: a red shape on the ground (an arc for a bite, a ring for a sweep, a
+// lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
+// hit. After striking they are open for a moment (破綻) and take extra damage.
+// Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
+import { phenotype } from './genetics.js?v=0.25.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.25.0';
+import { WILD_BEASTS } from './beasts.js?v=0.25.0';
+import { rollDrops } from './species.js?v=0.25.0';
+import { give } from './bag.js?v=0.25.0';
+import { tally } from './stats.js?v=0.25.0';
+import { damageBonus } from './skills.js?v=0.25.0';
+import { remember } from './memories.js?v=0.25.0';
+
+export const ENGAGE = 20; // foes this close to the player start a fight
+export const AI_RANGE = 34;
+export const COMBO_WINDOW = 0.95;
+export const DODGE = { dist: 4.2, iframes: 0.45, cd: 1.1 };
+const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
+const angleTo = (a, b) => Math.atan2(b.x - a.x, b.z - a.z);
+const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
+const frenzied = (w, t) => (w.frenzyUntil || 0) > t;
+export const dangerousFoe = (w, t) => !!w.hostile || frenzied(w, t);
+
+// ---------- skills ----------
+export const SKILLS = {
+  flame: {
+    name: '火焰吐息',
+    icon: '🔥',
+    cd: 9,
+    sta: 14,
+    color: 0xff6a2a,
+    shape: 'cone',
+    range: 6.5,
+    arc: 1.25,
+    mul: 1.4,
+    burn: [3, 5]
+  },
+  thunder: {
+    name: '連鎖雷擊',
+    icon: '⚡',
+    cd: 10,
+    sta: 14,
+    color: 0x8fe0ff,
+    shape: 'chain',
+    range: 9,
+    mul: 1.5,
+    stun: 0.8,
+    jumps: 2
+  },
+  frost: { name: '冰霜波', icon: '❄', cd: 9, sta: 12, color: 0xbfe8ff, shape: 'ring', range: 5.5, mul: 1.0, slow: 4 },
+  venom: {
+    name: '毒液噴射',
+    icon: '🧪',
+    cd: 7,
+    sta: 10,
+    color: 0x9be36a,
+    shape: 'shot',
+    range: 16,
+    mul: 0.8,
+    poison: [5, 5]
+  },
+  tail: {
+    name: '迴旋尾擊',
+    icon: '🌀',
+    cd: 6,
+    sta: 10,
+    color: 0xe8d8a8,
+    shape: 'ring',
+    range: 3.9,
+    mul: 1.3,
+    knock: 3
+  },
+  guard: { name: '硬化', icon: '🛡', cd: 12, sta: 10, color: 0xb8c0c8, shape: 'self', guard: 3 },
+  heal: { name: '再生', icon: '💚', cd: 15, sta: 8, color: 0x7fe0a8, shape: 'self', heal: [30, 15] },
+  dash: { name: '突進', icon: '💨', cd: 7, sta: 12, color: 0xffffff, shape: 'lane', range: 7.5, width: 1.9, mul: 1.6 },
+  crystal: {
+    name: '晶刺爆發',
+    icon: '💎',
+    cd: 11,
+    sta: 16,
+    color: 0xc1b2ee,
+    shape: 'burst',
+    range: 12,
+    radius: 3.1,
+    delay: 0.6,
+    mul: 2.0
+  },
+  jaw: { name: '巨顎咬殺', icon: '🦈', cd: 9, sta: 14, color: 0xf0f0f0, shape: 'bite', range: 4.5, mul: 2.4 },
+  roar: { name: '震懾咆哮', icon: '📣', cd: 12, sta: 10, color: 0xffd0ff, shape: 'ring', range: 7, mul: 0.4, stun: 1.4 }
+};
+const GENE_SKILL = {
+  fire: 'flame',
+  magmacore: 'flame',
+  heatsense: 'flame',
+  lightning: 'thunder',
+  staticfur: 'thunder',
+  electricgill: 'thunder',
+  magnetsense: 'thunder',
+  frostbreath: 'frost',
+  frostscale: 'frost',
+  coldheart: 'frost',
+  venomfang: 'venom',
+  venomspine: 'venom',
+  sporecloud: 'venom',
+  inkjet: 'venom',
+  whiptail: 'tail',
+  vinewhip: 'tail',
+  tailclub: 'tail',
+  tendrils: 'tail',
+  hardbody: 'guard',
+  stoneskin: 'guard',
+  boneplates: 'guard',
+  barkskin: 'guard',
+  camouflage: 'guard',
+  sandburrow: 'guard',
+  regen: 'heal',
+  twinheart: 'heal',
+  photoskin: 'heal',
+  honeygland: 'heal',
+  landgill: 'heal',
+  divebladder: 'heal',
+  burst: 'dash',
+  springlegs: 'dash',
+  finclaw: 'dash',
+  bladefin: 'dash',
+  hydrofoil: 'dash',
+  vortexfin: 'dash',
+  glide: 'dash',
+  bonewings: 'dash',
+  suckerfeet: 'dash',
+  crystalhorn: 'crystal',
+  crystalcore: 'crystal',
+  greatjaw: 'jaw',
+  lure: 'roar',
+  ghosteyes: 'roar',
+  nightsight: 'roar',
+  resonant: 'roar',
+  echo: 'roar',
+  scenttrail: 'roar'
+};
+// A beast's two skills, from its genes in order; beasts with fewer genes fall back on a dash and a roar.
+export function beastSkills(p) {
+  const out = [];
+  for (const g of bsOf(p?.genome)) {
+    const k = GENE_SKILL[g];
+    if (k && !out.includes(k)) out.push(k);
+    if (out.length === 2) break;
+  }
+  for (const k of ['dash', 'roar']) if (out.length < 2 && !out.includes(k)) out.push(k);
+  return out;
+}
+
+// ---------- the beast's strength ----------
+export const MAX_LEVEL = 10;
+export const levelCap = p => (p.wildBeast ? p.cap || 3 : MAX_LEVEL);
+export const xpFor = lv => Math.round(30 * Math.pow(lv, 1.5));
+export function normalizeLevel(p) {
+  p.level ??= 1;
+  p.xp ??= 0;
+  p.level = Math.max(1, Math.min(levelCap(p), p.level));
+  return p;
+}
+export function allyPower(s, p) {
+  const ph = phenotype(p.genome),
+    g = geneStats(bsOf(p.genome));
+  normalizeLevel(p);
+  return {
+    atk:
+      (10 + ph.armor * 0.06 + ph.speed * 0.05 + g.atk + damageBonus(s) + (p.awakened ? 12 : 0) + (p.ancient ? 20 : 0)) *
+      (1 + 0.08 * (p.level - 1)),
+    def: g.def,
+    reach: 2.6 + ph.size * 0.9
+  };
+}
+export function grantXp(s, p, xp) {
+  normalizeLevel(p);
+  const cap = levelCap(p);
+  if (p.level >= cap) return 0;
+  p.xp += xp;
+  let up = 0;
+  while (p.level < cap && p.xp >= xpFor(p.level)) {
+    p.xp -= xpFor(p.level);
+    p.level++;
+    up++;
+  }
+  if (p.level >= cap) p.xp = 0;
+  return up;
+}
+// ---------- foes ----------
+// A foe's attacks, from what it carries: everything bites; tails sweep; breath and venom spit; burst muscles charge.
+export function foeMoves(w) {
+  const genes = bsOf(w.genome),
+    moves = ['bite'];
+  if (genes.some(g => ['whiptail', 'vinewhip', 'tailclub', 'tendrils'].includes(g))) moves.push('sweep');
+  if (genes.some(g => ['fire', 'lightning', 'frostbreath', 'venomfang', 'sporecloud', 'lure', 'magmacore'].includes(g)))
+    moves.push('spit');
+  if (genes.some(g => ['burst', 'springlegs', 'greatjaw', 'hydrofoil', 'bladefin'].includes(g))) moves.push('charge');
+  return moves;
+}
+const MOVE = {
+  bite: { windup: 0.7, range: 2.9, mul: 1, recover: 0.9 },
+  sweep: { windup: 0.9, range: 3.5, mul: 0.9, recover: 1.0 },
+  spit: { windup: 0.85, range: 16, mul: 0.8, recover: 0.8, speed: 12 },
+  charge: { windup: 1.0, range: 8.5, width: 1.7, mul: 1.3, recover: 1.2 }
+};
+export function foeStats(w) {
+  const ph = phenotype(w.genome),
+    g = geneStats(bsOf(w.genome));
+  if (!w.maxHp) w.maxHp = w.beast ? WILD_BEASTS[w.beast]?.hp || 90 : Math.round(40 + ph.armor * 0.4);
+  if (!Number.isFinite(w.hp)) w.hp = w.maxHp;
+  return {
+    bite: (w.beast ? 12 : 7) * (frenzied(w, 0) ? 1 : 1),
+    def: g.def,
+    speed: (w.beast ? 2.9 : 2.3) + ph.speed / 120,
+    size: ph.size
+  };
+}
+const COLORS = {
+  fire: 0xff6a2a,
+  lightning: 0x8fe0ff,
+  frostbreath: 0xbfe8ff,
+  venomfang: 0x9be36a,
+  sporecloud: 0xd8f0a0,
+  lure: 0xffe27a,
+  magmacore: 0xff4d1a
+};
+const spitColor = w => COLORS[bsOf(w.genome).find(g => COLORS[g])] || 0xff8a6a;
+
+// ---------- state ----------
+export function normalizeCombat(s) {
+  s.combat ??= {};
+  const c = s.combat;
+  c.cd ??= {};
+  c.shots = Array.isArray(c.shots) ? c.shots : [];
+  c.zones = Array.isArray(c.zones) ? c.zones : [];
+  c.combo ??= { n: 0, until: -1 };
+  return c;
+}
+// fresh session: nothing in flight carries over a reload
+export function resetCombat(s) {
+  s.combat = { cd: {}, shots: [], zones: [], combo: { n: 0, until: -1 } };
+  for (const w of s.wild || []) delete w.ai;
+  return s.combat;
+}
+export const activeBeast = s => {
+  const p = (s.tamed || []).find(t => t.id === s.expedition?.activeId);
+  return p && p.kind !== 'creature' && (p.health ?? 100) > 0 ? p : null;
+};
+// Where your beast is: under you when riding, else beside you (combat moves it).
+export function allyPos(s) {
+  const c = normalizeCombat(s);
+  if (s.expedition?.mounted) return { x: s.player.x, z: s.player.z };
+  if (!Number.isFinite(c.ax) || dist({ x: c.ax, z: c.az }, s.player) > 16) {
+    c.ax = s.player.x - Math.sin(s.player.heading || 0) * 2.4;
+    c.az = s.player.z - Math.cos(s.player.heading || 0) * 2.4;
+  }
+  return { x: c.ax, z: c.az };
+}
+export function foesNear(s, r = ENGAGE, from = s.player) {
+  const out = (s.wild || []).filter(w => dangerousFoe(w, s.elapsed) && !w.dissolving && dist(w, from) < r);
+  const b = s.expedition?.boss;
+  if (b && !b.defeated && !s.inCave && dist(b, from) < r + 4) out.push(b);
+  return out;
+}
+export function combatActive(s) {
+  if (s.inCave || s.player.mode === 'cabin' || s.player.mode === 'aboard') return false;
+  return !!activeBeast(s) && foesNear(s).length > 0;
+}
+const isBoss = (s, t) => t === s.expedition?.boss;
+// the foe your beast goes for: the one you last hit if still close, else the nearest
+export function lockTarget(s) {
+  const c = normalizeCombat(s),
+    from = allyPos(s),
+    foes = foesNear(s, ENGAGE + 4);
+  const keep = foes.find(f => (f.id || 'boss') === c.target);
+  if (keep) return keep;
+  const t = foes.sort((a, b) => dist(a, from) - dist(b, from))[0] || null;
+  c.target = t ? t.id || 'boss' : null;
+  return t;
+}
+// ---------- dealing damage ----------
+function damageFoe(s, t, base, ev, opts = {}) {
+  const c = normalizeCombat(s);
+  const theirs = t.genome ? foeStats(t).def : 6,
+    open = t.ai?.state === 'recover',
+    crit = (opts.rng || Math.random)() < 0.1;
+  let amount = base * Math.max(0.4, 1 - theirs / 60) * (open ? 1.5 : 1) * (crit ? 1.5 : 1);
+  amount = Math.max(1, Math.round(amount));
+  t.hp = (t.hp ?? 60) - amount;
+  c.target = t.id || 'boss';
+  ev.push({ type: 'hit', target: 'foe', id: t.id || 'boss', x: t.x, z: t.z, amount, crit, weak: open });
+  if (opts.knock && !isBoss(s, t) && opts.from) {
+    const a = angleTo(opts.from, t),
+      nx = t.x + Math.sin(a) * opts.knock,
+      nz = t.z + Math.cos(a) * opts.knock;
+    if (!opts.canMove || opts.canMove(t, nx, nz)) {
+      t.x = nx;
+      t.z = nz;
+    }
+  }
+  if (t.ai && opts.stun) t.ai.stunUntil = s.elapsed + opts.stun;
+  if (t.ai && opts.slow) t.ai.slowUntil = s.elapsed + opts.slow;
+  if (opts.dot) t.dot = { until: s.elapsed + opts.dot[0], dps: opts.dot[1], color: opts.dotColor };
+  // a strike interrupts a foe that is winding up only when it is heavy or a stun
+  if (t.ai && t.ai.state === 'windup' && (opts.heavy || opts.stun)) {
+    t.ai.state = 'recover';
+    t.ai.until = s.elapsed + 0.8;
+    ev.push({ type: 'interrupt', id: t.id });
+  }
+  if (t.hp <= 0) killFoe(s, t, ev);
+  return amount;
+}
+function killFoe(s, t, ev) {
+  const p = activeBeast(s) || (s.tamed || []).find(x => x.id === s.expedition?.activeId);
+  if (isBoss(s, t)) {
+    ev.push({ type: 'bossdown' });
+    return;
+  }
+  if (!s.wild.includes(t)) return;
+  s.wild = s.wild.filter(w => w !== t);
+  const drops = t.released ? {} : rollDrops(phenotype(t.genome));
+  if (t.beast) drops.crystal = (drops.crystal || 0) + 3;
+  give(s, drops);
+  tally(s, t.beast ? 'beastkill' : 'kill');
+  let up = 0;
+  if (p) {
+    p.bond = Math.min(100, (p.bond || 0) + 1);
+    up = grantXp(s, p, t.beast ? 25 : 8);
+    if (up) remember(s, p, `在戰鬥中成長到 Lv${p.level}。`);
+  }
+  ev.push({ type: 'kill', id: t.id, x: t.x, z: t.z, beast: t.beast || null, drops, levelUp: up ? p.level : 0 });
+}
+// shapes
+const inArc = (o, dir, r, half, t, pad = 0.4) =>
+  dist(o, t) <= r + pad && Math.abs(wrap(angleTo(o, t) - dir)) <= half + Math.atan2(pad, Math.max(0.5, dist(o, t)));
+const inRing = (o, r, t, pad = 0.4) => dist(o, t) <= r + pad;
+function inLane(o, dir, len, width, t) {
+  const dx = t.x - o.x,
+    dz = t.z - o.z,
+    fx = Math.sin(dir),
+    fz = Math.cos(dir),
+    along = dx * fx + dz * fz,
+    side = Math.abs(dx * fz - dz * fx);
+  return along >= -0.5 && along <= len + 0.5 && side <= width / 2 + 0.5;
+}
+// ---------- your moves ----------
+function ready(s, key) {
+  return (normalizeCombat(s).cd[key] || 0) <= s.elapsed;
+}
+// Facing: riding, where you steer; otherwise toward the locked foe.
+function facing(s, from, target) {
+  if (s.expedition?.mounted || !target) return s.player.heading || 0;
+  return angleTo(from, target);
+}
+export function basicAttack(s, heavy = false, env = {}) {
+  const c = normalizeCombat(s),
+    p = activeBeast(s),
+    ev = [];
+  if (!p) return { ok: false, error: '需要出戰的御獸。', events: ev };
+  if (!ready(s, 'basic')) return { ok: false, quiet: true, events: ev };
+  const sta = heavy ? 12 : 3;
+  if ((p.stamina ?? 100) < sta) return { ok: false, error: '御獸累了，先讓牠喘口氣。', events: ev };
+  const target = lockTarget(s);
+  let from = allyPos(s);
+  // not riding: the beast closes in on its target before it swings
+  if (!s.expedition?.mounted && target) {
+    const d = dist(from, target),
+      reach = allyPower(s, p).reach;
+    if (d > reach * 0.85 && d < 13) {
+      const a = angleTo(target, from);
+      c.ax = target.x + Math.sin(a) * reach * 0.7;
+      c.az = target.z + Math.cos(a) * reach * 0.7;
+      from = { x: c.ax, z: c.az };
+      ev.push({ type: 'lunge', x: c.ax, z: c.az });
+    }
+  }
+  const combo = !heavy && c.combo.until > s.elapsed && c.combo.n < 3 ? c.combo.n + 1 : 1,
+    mul = heavy ? 2.0 : [1, 1, 1.15, 1.7][combo],
+    pw = allyPower(s, p),
+    dir = facing(s, from, target);
+  c.combo = { n: heavy ? 0 : combo, until: s.elapsed + COMBO_WINDOW };
+  c.cd.basic = s.elapsed + (heavy ? 1.0 : combo === 3 ? 0.62 : 0.36);
+  c.facing = dir;
+  p.stamina = Math.max(0, (p.stamina ?? 100) - sta);
+  ev.push({ type: 'swing', combo, heavy, x: from.x, z: from.z, dir, reach: pw.reach });
+  const knock = heavy ? 3 : combo === 3 ? 2.4 : 0.5;
+  let hits = 0;
+  for (const t of foesNear(s, pw.reach + 3, from))
+    if (inArc(from, dir, pw.reach, 0.95, t)) {
+      damageFoe(s, t, pw.atk * mul, ev, {
+        knock,
+        from,
+        heavy: heavy || combo === 3,
+        canMove: env.canMove,
+        rng: env.rng
+      });
+      hits++;
+    }
+  if (!hits) ev.push({ type: 'whiff' });
+  tally(s, 'strike');
+  return { ok: true, hits, combo, events: ev };
+}
+export function useSkill(s, slot, env = {}) {
+  const c = normalizeCombat(s),
+    p = activeBeast(s),
+    ev = [];
+  if (!p) return { ok: false, error: '需要出戰的御獸。', events: ev };
+  const key = beastSkills(p)[slot],
+    sk = SKILLS[key];
+  if (!sk) return { ok: false, error: '沒有這個技能。', events: ev };
+  if (!ready(s, 'skill' + slot)) {
+    return { ok: false, error: `${sk.name}冷卻中（${Math.ceil(c.cd['skill' + slot] - s.elapsed)} 秒）。`, events: ev };
+  }
+  if ((p.stamina ?? 100) < sk.sta) return { ok: false, error: '御獸累了，先讓牠喘口氣。', events: ev };
+  const target = lockTarget(s),
+    pw = allyPower(s, p);
+  let from = allyPos(s);
+  const dir = facing(s, from, target);
+  c.cd['skill' + slot] = s.elapsed + sk.cd;
+  p.stamina = Math.max(0, (p.stamina ?? 100) - sk.sta);
+  const base = { from, canMove: env.canMove, rng: env.rng };
+  const fx = { type: 'skill', skill: key, x: from.x, z: from.z, dir, color: sk.color, range: sk.range };
+  switch (sk.shape) {
+    case 'cone':
+      for (const t of foesNear(s, sk.range + 2, from))
+        if (inArc(from, dir, sk.range, sk.arc / 2, t))
+          damageFoe(s, t, pw.atk * sk.mul, ev, { ...base, dot: sk.burn, dotColor: sk.color });
+      break;
+    case 'ring':
+      for (const t of foesNear(s, sk.range + 2, from))
+        if (inRing(from, sk.range, t))
+          damageFoe(s, t, pw.atk * sk.mul, ev, { ...base, knock: sk.knock, stun: sk.stun, slow: sk.slow });
+      break;
+    case 'chain': {
+      if (!target || dist(from, target) > sk.range) {
+        ev.push({ type: 'whiff' });
+        break;
+      }
+      const hit = [target];
+      let last = target;
+      for (let i = 0; i < sk.jumps; i++) {
+        const next = foesNear(s, 7, last).find(f => !hit.includes(f));
+        if (!next) break;
+        hit.push(next);
+        last = next;
+      }
+      fx.chain = hit.map(t => ({ x: t.x, z: t.z }));
+      for (const t of hit) damageFoe(s, t, pw.atk * sk.mul, ev, { ...base, stun: sk.stun });
+      break;
+    }
+    case 'shot':
+      c.shots.push({
+        id: 'a' + Math.floor(s.elapsed * 1000) + slot,
+        side: 'ally',
+        x: from.x,
+        z: from.z,
+        vx: Math.sin(dir) * 15,
+        vz: Math.cos(dir) * 15,
+        until: s.elapsed + sk.range / 15,
+        dmg: pw.atk * sk.mul,
+        color: sk.color,
+        dot: sk.poison
+      });
+      break;
+    case 'lane': {
+      const len = sk.range,
+        to = { x: from.x + Math.sin(dir) * len, z: from.z + Math.cos(dir) * len };
+      for (const t of foesNear(s, len + 3, from))
+        if (inLane(from, dir, len, sk.width, t)) damageFoe(s, t, pw.atk * sk.mul, ev, { ...base, knock: 1.5 });
+      fx.tx = to.x;
+      fx.tz = to.z;
+      c.iframesUntil = s.elapsed + 0.4;
+      ev.push({ type: 'dash', x: to.x, z: to.z, ally: true });
+      if (!s.expedition?.mounted) {
+        c.ax = to.x;
+        c.az = to.z;
+      }
+      break;
+    }
+    case 'burst': {
+      const at =
+        target && dist(from, target) <= sk.range
+          ? { x: target.x, z: target.z }
+          : { x: from.x + Math.sin(dir) * 6, z: from.z + Math.cos(dir) * 6 };
+      c.zones.push({
+        side: 'ally',
+        x: at.x,
+        z: at.z,
+        r: sk.radius,
+        at: s.elapsed + sk.delay,
+        start: s.elapsed,
+        dmg: pw.atk * sk.mul,
+        color: sk.color,
+        skill: key
+      });
+      fx.tx = at.x;
+      fx.tz = at.z;
+      break;
+    }
+    case 'bite':
+      if (!target || dist(from, target) > sk.range + pw.reach) {
+        ev.push({ type: 'whiff' });
+        break;
+      }
+      if (!s.expedition?.mounted) {
+        const a = angleTo(target, from);
+        c.ax = target.x + Math.sin(a) * 1.4;
+        c.az = target.z + Math.cos(a) * 1.4;
+      }
+      damageFoe(s, target, pw.atk * sk.mul, ev, { ...base, heavy: true, knock: 1 });
+      break;
+    case 'self':
+      if (sk.guard) c.guardUntil = s.elapsed + sk.guard;
+      if (sk.heal) {
+        p.health = Math.min(100, (p.health ?? 100) + sk.heal[0]);
+        s.vitals.health = Math.min(100, s.vitals.health + sk.heal[1]);
+        ev.push({ type: 'heal', amount: sk.heal[0], x: from.x, z: from.z });
+      }
+      break;
+  }
+  ev.unshift(fx);
+  return { ok: true, skill: key, events: ev };
+}
+// A quick dash with a moment of invulnerability. Returns the offset; the caller moves the player (and boat).
+export function dodge(s, dx = 0, dz = 0) {
+  const c = normalizeCombat(s);
+  if (!ready(s, 'dodge')) return { ok: false, quiet: true };
+  let L = Math.hypot(dx, dz);
+  if (L < 0.1) {
+    // no direction held: hop back from the nearest threat
+    const f = foesNear(s, ENGAGE).sort((a, b) => dist(a, s.player) - dist(b, s.player))[0];
+    const a = f ? angleTo(f, s.player) : (s.player.heading || 0) + Math.PI;
+    dx = Math.sin(a);
+    dz = Math.cos(a);
+    L = 1;
+  }
+  c.cd.dodge = s.elapsed + DODGE.cd;
+  c.iframesUntil = s.elapsed + DODGE.iframes;
+  return {
+    ok: true,
+    dx: (dx / L) * DODGE.dist,
+    dz: (dz / L) * DODGE.dist,
+    events: [{ type: 'dodge', x: s.player.x, z: s.player.z }]
+  };
+}
+// ---------- the fight, each frame ----------
+// env: { canMove(w, x, z), canReach(w) — can this foe get at the player where they are, rng, autoAlly }
+export function tickCombat(s, dt, env = {}) {
+  const c = normalizeCombat(s),
+    ev = [],
+    t = s.elapsed,
+    rng = env.rng || Math.random,
+    p = activeBeast(s),
+    riding = !!s.expedition?.mounted,
+    me = { x: s.player.x, z: s.player.z };
+  const ally = p ? allyPos(s) : null;
+  c.engaged = combatActive(s);
+  // damage over time
+  for (const w of s.wild || [])
+    if (w.dot && w.dot.until > t) {
+      w.dotAcc = (w.dotAcc || 0) + w.dot.dps * dt;
+      if (w.dotAcc >= 1) {
+        const n = Math.floor(w.dotAcc);
+        w.dotAcc -= n;
+        w.hp = (w.hp ?? 60) - n;
+        ev.push({ type: 'hit', target: 'foe', id: w.id, x: w.x, z: w.z, amount: n, dot: true });
+        if (w.hp <= 0) killFoe(s, w, ev);
+      }
+    }
+  // foes
+  for (const w of [...(s.wild || [])]) {
+    if (!dangerousFoe(w, t) || w.dissolving || dist(w, me) > AI_RANGE) {
+      if (w.ai && w.ai.state === 'windup') delete w.ai;
+      continue;
+    }
+    foeStats(w);
+    const ai = (w.ai ??= { state: 'approach', until: 0, next: t + 0.5 + rng() * 0.8 });
+    if (ai.stunUntil > t) continue;
+    // a foe driven off by the paddle is running away (game.js moves it)
+    if (w.fleeUntil > t && !frenzied(w, t)) {
+      ai.state = 'approach';
+      w.windup = 0;
+      continue;
+    }
+    const slow = ai.slowUntil > t ? 0.5 : 1,
+      st = foeStats(w),
+      reach = env.canReach ? env.canReach(w) : true;
+    // aggro: your beast draws attacks while it is out and nearer than you
+    const onAlly = p && ally && !riding && dist(w, ally) + 2 < dist(w, me);
+    const target = onAlly ? ally : me;
+    if (!reach && !onAlly) {
+      ai.state = 'approach';
+      continue;
+    }
+    const d = dist(w, target);
+    if (ai.state === 'approach') {
+      const moves = foeMoves(w);
+      if (t >= ai.next) {
+        let move = null;
+        if (moves.includes('spit') && d > 5 && d < MOVE.spit.range) move = 'spit';
+        else if (moves.includes('charge') && d > 4 && d < MOVE.charge.range) move = 'charge';
+        else if (moves.includes('sweep') && d < MOVE.sweep.range && rng() < 0.5) move = 'sweep';
+        else if (d < MOVE.bite.range + st.size * 0.4) move = 'bite';
+        if (move) {
+          const m = MOVE[move],
+            dir = angleTo(w, target);
+          ai.state = 'windup';
+          ai.move = move;
+          ai.dir = dir;
+          ai.ox = w.x;
+          ai.oz = w.z;
+          ai.start = t;
+          ai.until = t + m.windup * (slow < 1 ? 1.3 : 1) * (frenzied(w, t) ? 0.85 : 1);
+          w.heading = dir;
+          w.windup = ai.until; // world.js rears the model up
+          ev.push({
+            type: 'telegraph',
+            id: w.id,
+            move,
+            x: w.x,
+            z: w.z,
+            dir,
+            range: move === 'bite' ? m.range + st.size * 0.4 : m.range,
+            width: m.width || 0,
+            until: ai.until,
+            start: t
+          });
+          continue;
+        }
+      }
+      // close in (spitters keep their distance)
+      const want = foeMoves(w).includes('spit') ? 8 : MOVE.bite.range * 0.8,
+        a = angleTo(w, target),
+        step = st.speed * slow * (frenzied(w, t) ? 1.2 : 1) * dt * (d > want ? 1 : -0.6);
+      if (Math.abs(d - want) > 0.4) {
+        const nx = w.x + Math.sin(a) * step,
+          nz = w.z + Math.cos(a) * step;
+        if (!env.canMove || env.canMove(w, nx, nz)) {
+          w.x = nx;
+          w.z = nz;
+        }
+      }
+      w.heading = a;
+      continue;
+    }
+    if (ai.state === 'windup' && t >= ai.until) {
+      const m = MOVE[ai.move],
+        o = { x: ai.ox, z: ai.oz },
+        dmg = st.bite * m.mul * (frenzied(w, t) ? 1.2 : 1);
+      w.struckAt = t;
+      w.windup = 0;
+      ev.push({ type: 'strike', id: w.id, move: ai.move, x: w.x, z: w.z, dir: ai.dir });
+      if (ai.move === 'spit') {
+        c.shots.push({
+          id: 'f' + w.id + Math.floor(t * 100),
+          side: 'foe',
+          from: w.id,
+          x: w.x,
+          z: w.z,
+          vx: Math.sin(ai.dir) * m.speed,
+          vz: Math.cos(ai.dir) * m.speed,
+          until: t + m.range / m.speed,
+          dmg,
+          color: spitColor(w)
+        });
+      } else {
+        const victims = [];
+        const test = pt =>
+          ai.move === 'bite'
+            ? inArc(o, ai.dir, m.range + st.size * 0.4, 0.85, pt, 0.2)
+            : ai.move === 'sweep'
+              ? inRing(o, m.range, pt, 0.2)
+              : inLane(o, ai.dir, m.range, m.width, pt);
+        if (test(me)) victims.push('player');
+        if (p && ally && !riding && test(ally)) victims.push('ally');
+        for (const v of victims) hurt(s, v, dmg, w, ev);
+        if (ai.move === 'charge') {
+          const nx = o.x + Math.sin(ai.dir) * m.range,
+            nz = o.z + Math.cos(ai.dir) * m.range;
+          if (!env.canMove || env.canMove(w, nx, nz)) {
+            w.x = nx;
+            w.z = nz;
+          }
+        }
+        if (!victims.length) ev.push({ type: 'dodged', id: w.id });
+      }
+      ai.state = 'recover';
+      ai.until = t + m.recover;
+      continue;
+    }
+    if (ai.state === 'recover' && t >= ai.until) {
+      ai.state = 'approach';
+      ai.next = t + 0.5 + rng() * 0.9;
+    }
+  }
+  // the boss keeps its own ram in expansion.js; here it only takes hits
+  // projectiles
+  c.shots = c.shots.filter(sh => {
+    sh.x += sh.vx * dt;
+    sh.z += sh.vz * dt;
+    if (sh.side === 'foe') {
+      if (dist(sh, me) < 1.3) {
+        hurt(s, 'player', sh.dmg, null, ev);
+        ev.push({ type: 'impact', x: sh.x, z: sh.z, color: sh.color });
+        return false;
+      }
+      if (p && ally && !riding && dist(sh, ally) < 1.3) {
+        hurt(s, 'ally', sh.dmg, null, ev);
+        ev.push({ type: 'impact', x: sh.x, z: sh.z, color: sh.color });
+        return false;
+      }
+    } else {
+      const hit = foesNear(s, 30, sh).find(f => dist(f, sh) < 1.4 + (f.genome ? phenotype(f.genome).size * 0.4 : 2));
+      if (hit) {
+        damageFoe(s, hit, sh.dmg, ev, { dot: sh.dot, dotColor: sh.color, rng });
+        ev.push({ type: 'impact', x: sh.x, z: sh.z, color: sh.color });
+        return false;
+      }
+    }
+    return t < sh.until;
+  });
+  // delayed areas (crystal spikes)
+  c.zones = c.zones.filter(z => {
+    if (t < z.at) return true;
+    for (const f of foesNear(s, z.r + 4, z))
+      if (inRing(z, z.r, f)) damageFoe(s, f, z.dmg, ev, { from: z, knock: 1.2, heavy: true, rng });
+    ev.push({ type: 'erupt', x: z.x, z: z.z, r: z.r, color: z.color });
+    return false;
+  });
+  // your beast, when you are not riding it: keeps beside you, and in a fight goes for the target on its own
+  if (p && ally && !riding) {
+    const target = c.engaged ? lockTarget(s) : null,
+      pw = allyPower(s, p),
+      speed = 4.2 + phenotype(p.genome).speed / 40;
+    let goal;
+    if (target) {
+      const a = angleTo(target, ally);
+      goal = { x: target.x + Math.sin(a) * pw.reach * 0.75, z: target.z + Math.cos(a) * pw.reach * 0.75 };
+    } else {
+      goal = { x: me.x - Math.sin(s.player.heading || 0) * 2.4, z: me.z - Math.cos(s.player.heading || 0) * 2.4 };
+    }
+    const d = dist(ally, goal);
+    if (d > 0.3) {
+      const k = Math.min(1, (speed * dt) / d);
+      c.ax = ally.x + (goal.x - ally.x) * k;
+      c.az = ally.z + (goal.z - ally.z) * k;
+    }
+    if (
+      target &&
+      env.autoAlly !== false &&
+      dist({ x: c.ax, z: c.az }, target) < pw.reach + 0.6 &&
+      ready(s, 'basic') &&
+      t >= (c.autoAt || 0)
+    ) {
+      c.autoAt = t + 1.5;
+      const r = basicAttack(s, false, env);
+      ev.push(...r.events.map(e => ({ ...e, auto: true })));
+    }
+  }
+  return ev;
+}
+// Damage to you or your beast, after dodges, guards and defences.
+function hurt(s, who, dmg, from, ev) {
+  const c = normalizeCombat(s),
+    p = activeBeast(s),
+    riding = !!s.expedition?.mounted;
+  if (c.iframesUntil > s.elapsed && (who === 'player' || riding)) {
+    ev.push({ type: 'evade' });
+    return 0;
+  }
+  // riding, the beast under you takes the blow
+  const onBeast = who === 'ally' || (riding && p);
+  if (onBeast && p) {
+    const def = geneStats(bsOf(p.genome)).def,
+      guard = c.guardUntil > s.elapsed ? 0.3 : 1,
+      amount = Math.max(1, Math.round(dmg * 0.8 * Math.max(0.35, 1 - def / 50) * guard));
+    p.health = Math.max(0, (p.health ?? 100) - amount);
+    ev.push({
+      type: 'hit',
+      target: 'ally',
+      x: riding ? s.player.x : c.ax,
+      z: riding ? s.player.z : c.az,
+      amount,
+      guarded: guard < 1
+    });
+    if (guard < 1 && from && dangerousFoe(from, s.elapsed)) damageFoe(s, from, allyPower(s, p).atk * 0.8, ev, {});
+    if (p.health <= 0) {
+      ev.push({ type: 'ko', name: p.name, id: p.id });
+      remember(s, p, '在戰鬥中倒下了，回到契約裡休息。');
+      s.expedition.activeId = null;
+      if (riding) {
+        s.expedition.mounted = false;
+        s.expedition.diving = false;
+        Object.assign(s.player, { x: s.boat.x, z: s.boat.z });
+      }
+    }
+    return amount;
+  }
+  // guard jobs and guardian beasts at home soften what reaches you (game.js sets playerMul each frame)
+  const amount = Math.max(1, Math.round(dmg * (c.playerMul ?? 1)));
+  s.vitals.health = Math.max(0, s.vitals.health - amount);
+  ev.push({ type: 'hit', target: 'player', x: s.player.x, z: s.player.z, amount });
+  return amount;
+}
+export const cooldownLeft = (s, key) => Math.max(0, (normalizeCombat(s).cd[key] || 0) - s.elapsed);
