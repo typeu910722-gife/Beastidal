@@ -12,12 +12,12 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./brand/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./style.css?v=0.24.0" />
-    <link rel="stylesheet" href="./mobile.css?v=0.24.0" />
-    <link rel="stylesheet" href="./panels.css?v=0.24.0" />
-    <link rel="stylesheet" href="./expansion.css?v=0.24.0" />
-    <link rel="stylesheet" href="./beastidal.css?v=0.24.0" />
-    <link rel="stylesheet" href="./inventory.css?v=0.24.0" />
+    <link rel="stylesheet" href="./style.css?v=0.24.1" />
+    <link rel="stylesheet" href="./mobile.css?v=0.24.1" />
+    <link rel="stylesheet" href="./panels.css?v=0.24.1" />
+    <link rel="stylesheet" href="./expansion.css?v=0.24.1" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.24.1" />
+    <link rel="stylesheet" href="./inventory.css?v=0.24.1" />
   </head>
   <body>
     <!-- Studio splash (about 7 s, tap or any key to skip): the YZ mark assembles, then the studio name rises. -->
@@ -117,9 +117,15 @@
           <div id="resources" class="resource-bar" aria-label="背包物資"></div>
           <div class="header-tools">
             <button id="fullscreen-btn" class="icon-button" hidden aria-label="全螢幕遊玩" title="全螢幕">⛶</button
-            ><button id="view-btn" class="view-button" hidden aria-label="切換第一人稱或第三人稱" title="切換視角 · V / R3">
+            ><button
+              id="view-btn"
+              class="view-button"
+              hidden
+              aria-label="切換第一人稱或第三人稱"
+              title="切換視角 · V / R3"
+            >
               第三人稱</button
-            ><button id="sound-btn" class="icon-button" hidden aria-label="開啟海洋環境音" title="環境音">♫</button
+            ><button id="sound-btn" class="icon-button" aria-label="開啟海洋環境音" title="音樂與環境音">♫</button
             ><button id="menu-btn" class="icon-button menu-button" aria-label="選單" title="選單 · Esc">☰</button>
           </div>
         </header>
@@ -160,7 +166,10 @@
         <div id="world-labels" aria-hidden="true"></div>
         <section id="bigmap" hidden aria-label="湖域地圖">
           <header>
-            <div><p class="eyebrow">LAKE CHART</p><h2>湖域地圖</h2></div>
+            <div>
+              <p class="eyebrow">LAKE CHART</p>
+              <h2>湖域地圖</h2>
+            </div>
             <div class="bigmap-tools">
               <button type="button" id="bigmap-sail" class="small-button">沿路線航行</button
               ><button type="button" id="bigmap-clear" class="small-button">清除標記</button
@@ -299,7 +308,7 @@
         <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
       </section>
     </main>
-    <script type="module" src="./game.js?v=0.24.0"></script>
+    <script type="module" src="./game.js?v=0.24.1"></script>
     <script>
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));

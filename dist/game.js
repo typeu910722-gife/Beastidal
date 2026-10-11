@@ -10,8 +10,8 @@ import {
   tickExpansion,
   trainPet,
   commandPet
-} from './expansion.js?v=0.24.0';
-import { renderAdventure } from './expansion-ui.js?v=0.24.0';
+} from './expansion.js?v=0.24.1';
+import { renderAdventure } from './expansion-ui.js?v=0.24.1';
 import {
   normalizeShip,
   tickShip,
@@ -40,9 +40,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.24.0';
-import { monologue, markGuide } from './guide.js?v=0.24.0';
-import { climb, demolish, relocate } from './construction.js?v=0.24.0';
+} from './ship.js?v=0.24.1';
+import { monologue, markGuide } from './guide.js?v=0.24.1';
+import { climb, demolish, relocate } from './construction.js?v=0.24.1';
 import {
   normalizeHousing,
   penId,
@@ -54,7 +54,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.24.0';
+} from './housing.js?v=0.24.1';
 import {
   ISLANDS,
   NODES,
@@ -65,10 +65,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.24.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable } from './lake.js?v=0.24.0';
-import { lakeMinimap } from './lake-map.js?v=0.24.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.24.0';
+} from './islands.js?v=0.24.1';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable } from './lake.js?v=0.24.1';
+import { lakeMinimap } from './lake-map.js?v=0.24.1';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.24.1';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -87,7 +87,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.24.0';
+} from './cabin.js?v=0.24.1';
 import {
   normalizeStory,
   SCRIPT,
@@ -102,17 +102,17 @@ import {
   finishCrossing,
   tickStory,
   duelActive
-} from './story.js?v=0.24.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.24.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.24.0';
-import { QUALITY } from './realism.js?v=0.24.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.24.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.24.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.24.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.24.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.24.0';
-import { CONFIG } from './config.js?v=0.24.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.24.0';
+} from './story.js?v=0.24.1';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.24.1';
+import { OceanWorld, IntroFilm } from './world.js?v=0.24.1';
+import { QUALITY } from './realism.js?v=0.24.1';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.24.1';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.24.1';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.24.1';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.24.1';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.24.1';
+import { CONFIG } from './config.js?v=0.24.1';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.24.1';
 import {
   normalizeCodex,
   recordCreature,
@@ -123,13 +123,13 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.24.0';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.24.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.24.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.24.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.24.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.24.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.24.0';
+} from './codex.js?v=0.24.1';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.24.1';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.24.1';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.24.1';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.24.1';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.24.1';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.24.1';
 import {
   startFishing,
   tickFishing,
@@ -138,7 +138,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.24.0';
+} from './fishing.js?v=0.24.1';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -148,10 +148,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.24.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.24.0';
-import { setClimbing } from './lake.js?v=0.24.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.24.0';
+} from './reclaim.js?v=0.24.1';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.24.1';
+import { setClimbing } from './lake.js?v=0.24.1';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.24.1';
 import {
   RARITY,
   FRENZY,
@@ -166,10 +166,10 @@ import {
   cageCreature,
   dangerous,
   CAGE_TRUST
-} from './taming.js?v=0.24.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.24.0';
-import { BeastStage } from './beast-stage.js?v=0.24.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.24.0';
+} from './taming.js?v=0.24.1';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.24.1';
+import { BeastStage } from './beast-stage.js?v=0.24.1';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.24.1';
 import {
   funds,
   normalizeBag,
@@ -187,12 +187,12 @@ import {
   stash,
   unstash,
   CARRY
-} from './bag.js?v=0.24.0';
-import { iconFor } from './icons.js?v=0.24.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.24.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.24.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.24.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.24.0';
+} from './bag.js?v=0.24.1';
+import { iconFor } from './icons.js?v=0.24.1';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.24.1';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.24.1';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.24.1';
+import { codexRewards, claimCodex } from './codex.js?v=0.24.1';
 import {
   homePos,
   facilityPos,
@@ -204,10 +204,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.24.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.24.0';
-export const GAME_VERSION = '0.24.0';
-import { CloudSave } from './cloud-save.js?v=0.24.0';
+} from './fortress.js?v=0.24.1';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.24.1';
+export const GAME_VERSION = '0.24.1';
+import { CloudSave } from './cloud-save.js?v=0.24.1';
 import {
   readLocal,
   writeLocal,
@@ -224,9 +224,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.24.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.24.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.24.0';
+} from './save-store.js?v=0.24.1';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.24.1';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.24.1';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -247,8 +247,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.24.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.24.0';
+} from './rules.js?v=0.24.1';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.24.1';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -1782,7 +1782,7 @@ function updateNearest() {
                                     : selected.beast
                                       ? beastText(selected)
                                       : selected.follow
-                                        ? '信任 100% · 跟著你 · 帶著契約書按 X 締結'
+                                        ? '信任 100% · 跟著你 · 拿出外出籠按 X 帶牠回船上'
                                         : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
                                   : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
@@ -1898,7 +1898,7 @@ function interact() {
     log(
       state,
       '隱藏航線：共生計畫',
-      '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先以誘餌建立信任，再用契約書締結，最後讓兩個不同個體配對。'
+      '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先以誘餌建立信任，用外出籠帶回船上，讓兩個個體配對出比斯基因，最後以契約書契闊進化。'
     );
     selectedTarget = null;
     world.sync(state);
@@ -1907,7 +1907,7 @@ function interact() {
     modal(
       'HIDDEN QUEST · 共生計畫',
       '牠們並不是怪物。',
-      '<p>「我們曾試圖消滅突變，最後才發現，<strong>共生才是生存的方法</strong>。」</p><p>浮標中找到 6 份誘餌、3 顆異晶與 4 束纖維，以及一張展示池藍圖。</p><p>做<strong>誘餌</strong>（口糧 1 + 纖維 1 → 3 份），連續餵同一隻野生生物：每餵一次<strong>信任度</strong>上升，下一次要多花一點誘餌。到工作桌做<strong>契約書</strong>帶在身上，在信任你的生物旁按 X 締結，信任度就是成功率。收服之後，你們之間的是<strong>羈絆</strong>，靠一起冒險慢慢加深。</p>',
+      '<p>「我們曾試圖消滅突變，最後才發現，<strong>共生才是生存的方法</strong>。」</p><p>浮標中找到 6 份誘餌、3 顆異晶與 4 束纖維，以及一張展示池藍圖。</p><p>做<strong>誘餌</strong>（口糧 1 + 纖維 1 → 3 份），連續餵同一隻野生生物：每餵一次<strong>信任度</strong>上升，下一次要多花一點誘餌。到工作桌「製作物品」做<strong>外出籠</strong>（廢金屬 6 + 纖維 4），信任 50% 以上時在牠旁邊按 X，把牠帶回船上。</p><p>帶回來的是<strong>生物</strong>，還不能出戰。蓋孵化台讓牠們配對，突變會長出<strong>比斯基因</strong>；集滿 3 種，就能在御獸倉庫用<strong>契約書</strong>（纖維 2 + 異晶 1）契闊進化成<strong>御獸</strong>。契約書也能直接用在野生御獸，和身上已有 3 種基因的生物。收服之後，你們之間的是<strong>羈絆</strong>，靠一起冒險慢慢加深。</p>',
       [
         {
           label: '開啟共生之路',
@@ -1950,7 +1950,10 @@ function interact() {
     if (!r.ok) toast(r.error, true);
     else if (r.follow) {
       selectedTarget = null;
-      discover('完全信任', `${geneName(state.wild.find(w => w.id === t.id).genome)} 會跟著你。帶著契約書按 X 締結。`);
+      discover(
+        '完全信任',
+        `${geneName(state.wild.find(w => w.id === t.id).genome)} 會跟著你。拿出外出籠按 X 帶牠回船上。`
+      );
       haptic('discover');
       save(true);
     } else {
@@ -2203,7 +2206,7 @@ function renderBeastStorage(body) {
   if (!p) beastPick = null;
   if (!state.secret || !pets.length) {
     beastStage.clear();
-    body.innerHTML = `<p class="dv-note">${state.secret ? '還沒有御獸。餵誘餌建立信任，再用契約書締結。' : '還沒有御獸。先調查東北方的研究浮標。'}</p>`;
+    body.innerHTML = `<p class="dv-note">${state.secret ? '還沒有生物或御獸。餵誘餌建立信任，用外出籠帶回船上；配種出 3 種比斯基因後，再用契約書契闊進化。' : '還沒有御獸。先調查東北方的研究浮標。'}</p>`;
     return;
   }
   if (p) {
@@ -2662,6 +2665,7 @@ function updateBeastHUD() {
     e = state.expedition;
   if (!$('beast-bar')) return;
   $('beast-bar').hidden = !running || paused || !!panel || !!buildType || !p;
+  document.body.classList.toggle('beast-on', !$('beast-bar').hidden);
   if (p) {
     $('beast-status').textContent =
       `${p.name} · 羈絆 ${p.bond.toFixed(1)} · 耐力 ${Math.ceil(p.stamina)}${e.diving ? ' · 氧氣 ' + Math.ceil(e.oxygen) + '秒' : ''}`;
@@ -3221,8 +3225,8 @@ function focusCard(b, item, near) {
       { primary: true }
     );
   } else if (item.key === 'bench') {
-    card.eyebrow = '工作桌 · 契約書';
-    card.info = `背包裡有 ${state.contracts || 0} 份契約書。帶在身上，靠近信任你的野生御獸按「契約」就能締結；信任度就是成功率。`;
+    card.eyebrow = '工作桌 · 契約書與外出籠';
+    card.info = `背包裡有 ${state.contracts || 0} 份契約書、${state.resources.cage || 0} 個外出籠。外出籠在「製作物品」裡做（廢金屬 6 + 纖維 4），用來把信任 50% 以上的野生生物帶回船上；契約書用在野生御獸、身上有 3 種比斯基因的生物，以及御獸倉庫裡的契闊進化。`;
     if (!near) card.info += ' 走到桌旁才能製作。';
     act('製作契約書 · 纖維 2 + 異晶 1', () => focusDone(craftContract(state, b)), {
       primary: true,
@@ -3898,7 +3902,7 @@ function renderPanel() {
     if (geneTab === 'collection') {
       if (!state.tamed.length) {
         body.innerHTML +=
-          '<p>帶誘餌連續餵同一隻野生生物提高信任度，再用契約書締結。收服的御獸都會住進御獸倉庫；展示池用來陳列牠們。</p><button class="full-button" id="go-build-pen">建造展示池</button>';
+          '<p>帶誘餌連續餵同一隻野生生物提高信任度，再用外出籠帶回船上；配種出 3 種比斯基因後用契約書契闊進化。收服的生物與御獸都會住進御獸倉庫；展示池用來陳列牠們。</p><button class="full-button" id="go-build-pen">建造展示池</button>';
         $('go-build-pen').onclick = () => openPanel('build');
       } else {
         body.innerHTML += state.tamed

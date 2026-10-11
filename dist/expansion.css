@@ -89,10 +89,9 @@
 }
 #beast-bar {
   position: absolute;
-  left: 50%;
-  bottom: 230px;
-  transform: translateX(-50%);
-  max-width: 520px;
+  left: 30px;
+  top: 103px;
+  max-width: 320px;
   width: max-content;
   padding: 10px 14px;
   border: 1px solid #acd1bc66;
@@ -132,10 +131,17 @@
   background: radial-gradient(ellipse, transparent 25%, #002134bd);
 }
 .landscape-play #beast-bar {
-  top: 52px;
-  bottom: auto;
+  top: 61px;
+  left: var(--edge-left);
   max-width: 55vw;
   padding: 6px 10px;
+}
+/* the mission block steps down while the partner bar is shown */
+body.beast-on .left-hud {
+  top: 196px;
+}
+body.beast-on.landscape-play .left-hud {
+  top: 140px;
 }
 .landscape-play #beast-status {
   font-size: 11px;
