@@ -1,6 +1,7 @@
-import { CAVE } from './expansion.js?v=0.27.0';
-import { moveAboard, moveShip } from './ship.js?v=0.27.0';
-import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.27.0';
+import { CAVE } from './expansion.js?v=0.27.1';
+import { moveAboard, moveShip } from './ship.js?v=0.27.1';
+import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.27.1';
+import { groundAt, waterNear } from './lake.js?v=0.27.1';
 // All travel modes share world coordinates. The boat stays moored while walking.
 export const TILE_SIZE = 3.6;
 const SIDES = [
@@ -85,6 +86,18 @@ export function normalizeTravel(s) {
   if (s.player.mode === 'boat' && islandAt(s.player.x, s.player.z, 1)) {
     const d = islandDocks().sort((a, b) => distance(a.boat, s.player) - distance(b.boat, s.player))[0];
     Object.assign(s.player, d.boat);
+  }
+  // 0.27.1: nothing afloat may sit on dry land. At the helm you are wherever the warship is (older saves kept a
+  // stale skiff position after a dismount, which put the chart's pin and the route finder on an island); a rider
+  // or a boat found ashore is set back onto open water nearby.
+  if (s.ship && s.player.mode === 'ship' && !s.expedition?.mounted) {
+    s.player.x = s.ship.x;
+    s.player.z = s.ship.z;
+  } else if ((s.player.mode === 'boat' || s.expedition?.mounted) && groundAt(s.player.x, s.player.z) > -0.3) {
+    const w = waterNear(s.player.x, s.player.z, 1.5, 200);
+    s.player.x = w.x;
+    s.player.z = w.z;
+    if (s.expedition?.mounted) s.expedition.diving = false;
   }
   if (s.player.mode === 'boat' && !s.expedition?.mounted)
     Object.assign(s.boat, { x: s.player.x, z: s.player.z, heading: s.player.heading || 0 });

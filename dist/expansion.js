@@ -1,21 +1,21 @@
-import { phenotype, clamp } from './genetics.js?v=0.27.0';
-import { NODES, harvest } from './islands.js?v=0.27.0';
-import { restPlace } from './ship.js?v=0.27.0';
-import { dayOf, dayPhase } from './clock.js?v=0.27.0';
-import { remember, rememberFirst } from './memories.js?v=0.27.0';
-import { spend, give, stow } from './bag.js?v=0.27.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.27.0';
-import { islandAt } from './islands.js?v=0.27.0';
-import { hasPerk } from './codex.js?v=0.27.0';
-import { tally } from './stats.js?v=0.27.0';
-import { rollDrops } from './species.js?v=0.27.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.27.0';
-import { WILD_BEASTS } from './beasts.js?v=0.27.0';
-import { hasGear, MASK_OXYGEN } from './gear.js?v=0.27.0';
-import { damageBonus } from './skills.js?v=0.27.0';
-import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.27.0';
-import { ITEM_NAMES } from './items.js?v=0.27.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.27.0';
+import { phenotype, clamp } from './genetics.js?v=0.27.1';
+import { NODES, harvest } from './islands.js?v=0.27.1';
+import { restPlace } from './ship.js?v=0.27.1';
+import { dayOf, dayPhase } from './clock.js?v=0.27.1';
+import { remember, rememberFirst } from './memories.js?v=0.27.1';
+import { spend, give, stow } from './bag.js?v=0.27.1';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.27.1';
+import { islandAt } from './islands.js?v=0.27.1';
+import { hasPerk } from './codex.js?v=0.27.1';
+import { tally } from './stats.js?v=0.27.1';
+import { rollDrops } from './species.js?v=0.27.1';
+import { bsOf, geneStats } from './bsgenes.js?v=0.27.1';
+import { WILD_BEASTS } from './beasts.js?v=0.27.1';
+import { hasGear, MASK_OXYGEN } from './gear.js?v=0.27.1';
+import { damageBonus } from './skills.js?v=0.27.1';
+import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.27.1';
+import { ITEM_NAMES } from './items.js?v=0.27.1';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.27.1';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
 // the 深淵潛行者 collection perk lengthens every dive
@@ -159,18 +159,21 @@ export function commandPet(s, id, order = 'follow') {
     message: p.name + '：' + { follow: '跟隨', gather: '協助採集', guard: '守護協戰' }[order] + '。原池名額會保留。'
   };
 }
+// Where a rider dismounts to: the warship when it is the vessel they rode out from, else the skiff or the raft.
+export const rideHome = s => (s.ship && !s.skiff ? s.ship : s.boat);
 export function toggleRide(s) {
   normalizeExpansion(s);
   const e = s.expedition,
     p = activePet(s);
   if (e.mounted) {
     if (e.diving) return fail('請先浮上海面。');
-    if (Math.hypot(s.player.x - s.boat.x, s.player.z - s.boat.z) > (s.ship ? 16 : 7))
-      return fail(s.ship ? '請回到戰艦 16 公尺內解除騎乘。' : '請回到停泊的小艇 7 公尺內解除騎乘。');
+    const home = rideHome(s);
+    if (Math.hypot(s.player.x - home.x, s.player.z - home.z) > (s.ship && !s.skiff ? 16 : 7))
+      return fail(s.ship && !s.skiff ? '請回到戰艦 16 公尺內解除騎乘。' : '請回到停泊的小艇 7 公尺內解除騎乘。');
     e.mounted = false;
     e.diving = false;
-    Object.assign(s.player, { x: s.boat.x, z: s.boat.z });
-    return { ok: true, message: '已返回小艇。' };
+    Object.assign(s.player, { x: home.x, z: home.z });
+    return { ok: true, message: s.ship && !s.skiff ? '已返回戰艦。' : '已返回小艇。' };
   }
   if (p?.kind === 'creature') return fail('生物不能騎乘。只有御獸可以。');
   if (!p || p.bond < 45) return fail('先派出羈絆 45 的夥伴。');
@@ -393,7 +396,7 @@ export function tickExpansion(s, dt, safe = false) {
     if (p.stamina <= 1 && e.mounted) {
       e.diving = false;
       e.mounted = false;
-      Object.assign(s.player, { x: s.boat.x, z: s.boat.z });
+      Object.assign(s.player, { x: rideHome(s).x, z: rideHome(s).z });
       s.vitals.health = Math.max(1, s.vitals.health - 8);
       events.push('夥伴力竭，緊急返回小艇；體力 -8。');
     }

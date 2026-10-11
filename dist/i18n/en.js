@@ -2906,5 +2906,10 @@ export default {
   '✦ 關於 YZPJ': '✦ About YZPJ',
   標題選單: 'Title menu',
   展開全版面地圖: 'Open the full-screen map',
-  '展開地圖 · M': 'Open map · M'
+  '展開地圖 · M': 'Open map · M',
+  '已返回戰艦。': 'Back aboard the warship.',
+  '已回到比斯泰德號的舵輪前。': "You are back at the Beastidal's helm.",
+  '已回到小艇上，停在開闊的水面。': 'Back in the boat, on open water.',
+  '🆘 脫困 · 回到船上': '🆘 Unstuck · back to the vessel',
+  '已標記戰艦，靠近後按 T 解除騎乘。': 'Warship marked; press T beside it to dismount.'
 };
