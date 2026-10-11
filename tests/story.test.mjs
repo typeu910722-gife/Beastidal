@@ -18,8 +18,10 @@ import {
   tickStory,
   pactPet,
   PACT_ID,
-  DUEL
+  DUEL,
+  winDuel
 } from '../dist/story.js';
+import { tickCombat, basicAttack, resetCombat, DUEL_YIELD } from '../dist/combat.js';
 
 let n = 0;
 const test = (name, fn) => {
@@ -128,35 +130,42 @@ test('Trial of side-by-side needs a partner at bond 60', () => {
   assert.ok(trySide(s, s.tamed[0]).ok);
   assert.ok(s.story.trials.includes('side'));
 });
-test('Trial of might: the swipe is telegraphed, stepping away dodges, and it yields at 30 %', () => {
+test('Trial of might (0.28): 嘯岳 fights through combat — telegraphed, dodgeable — and yields at 30 %', () => {
   const s = awake(),
     st = s.story;
+  s.tamed[0].kind = 'beast';
+  s.tamed[0].evolved = true;
   assert.ok(startDuel(s, s.tamed[0]).ok);
-  // wind-up then a swipe while standing close: hit
-  const hp = s.vitals.health;
-  s.elapsed += 1.5;
-  assert.ok(tickStory(s, 0.1, { active: s.tamed[0] }).some(e => e.type === 'windup'));
-  s.elapsed += 1.5;
-  const hit = tickStory(s, 0.1, { active: s.tamed[0] }).find(e => e.type === 'swipe');
-  assert.ok(hit.hit);
-  assert.ok(s.vitals.health < hp);
-  // next one: step back out of reach before it lands
-  s.elapsed += DUEL.every - DUEL.windup + 0.1;
-  tickStory(s, 0.1, { active: s.tamed[0] });
-  s.player.x = st.beast.x + DUEL.reach + 2;
-  s.elapsed += DUEL.windup + 0.1;
-  const miss = tickStory(s, 0.1, { active: s.tamed[0] }).find(e => e.type === 'swipe');
-  assert.equal(miss.hit, false);
-  // the partner wears it down; it backs off instead of dying
-  let r,
-    i = 0;
-  while (!st.trials.includes('might') && i++ < 200) {
-    s.elapsed += 4;
-    s.tamed[0].stamina = 100;
-    r = attack(s);
-    assert.ok(r.ok, r.error);
+  s.expedition.activeId = s.tamed[0].id;
+  Object.assign(s.player, { mode: 'foot', x: st.beast.x, z: st.beast.z + 3 });
+  resetCombat(s);
+  const env = { rng: () => 0, canReach: () => true };
+  // a telegraph first; standing in it gets you hit
+  let ev = [];
+  for (let i = 0; i < 80 && !ev.some(e => e.type === 'telegraph' && e.id === 'duel'); i++) {
+    s.elapsed += 0.05;
+    ev = tickCombat(s, 0.05, env);
   }
-  assert.ok(r.won);
+  assert.ok(ev.some(e => e.type === 'telegraph' && e.id === 'duel' && e.line));
+  assert.ok(st.duel.windupAt, 'the world sees it rear up');
+  const hp = s.vitals.health;
+  s.elapsed = st.beast.ai.until + 0.01;
+  tickCombat(s, 0.05, env);
+  assert.ok(s.vitals.health < hp || s.tamed[0].health < 100);
+  // the story still ends the duel when you are beaten
+  s.vitals.health = 20;
+  assert.ok(tickStory(s, 0.1, { active: s.tamed[0] }).some(e => e.type === 'duel-lost'));
+  assert.equal(st.duel, null);
+  // fight again and wear it down: it yields instead of dying
+  s.vitals.health = 100;
+  assert.ok(startDuel(s, s.tamed[0]).ok);
+  st.beast.hp = Math.round(st.beast.maxHp * DUEL_YIELD) + 1;
+  Object.assign(s.player, { x: st.beast.x, z: st.beast.z + 2.5 });
+  s.elapsed += 3;
+  const r = basicAttack(s, true, env);
+  assert.ok(r.events.some(e => e.type === 'duelwon'));
+  assert.ok(winDuel(s).won);
+  assert.ok(st.trials.includes('might'));
   assert.equal(st.duel, null);
   assert.equal(st.beast.hp, st.beast.maxHp);
 });

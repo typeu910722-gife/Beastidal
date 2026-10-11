@@ -1,33 +1,33 @@
-import { expansionModels } from './expansion-models.js?v=0.27.2';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.27.2';
-import { normalizeHousing, penId } from './housing.js?v=0.27.2';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.27.2';
-export { makeCreature } from './creatures.js?v=0.27.2';
-import { makeIslands } from './island-models.js?v=0.27.2';
-import { facilityId } from './facilities.js?v=0.27.2';
+import { expansionModels } from './expansion-models.js?v=0.28.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.28.0';
+import { normalizeHousing, penId } from './housing.js?v=0.28.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.28.0';
+export { makeCreature } from './creatures.js?v=0.28.0';
+import { makeIslands } from './island-models.js?v=0.28.0';
+import { facilityId } from './facilities.js?v=0.28.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.27.2';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.27.2';
-import { makeLake } from './lake-models.js?v=0.27.2';
-import { groundAt, LANDMARKS } from './lake.js?v=0.27.2';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.27.2';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.27.2';
-import { PostFX } from './postfx.js?v=0.27.2';
-import { makeHuman, animateHuman } from './human.js?v=0.27.2';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.27.2';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.27.2';
-import { buildError } from './rules.js?v=0.27.2';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.27.2';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.27.2';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.27.2';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.27.2';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.27.2';
-import { CombatFX } from './combat-fx.js?v=0.27.2';
-import { syncPlots } from './land-models.js?v=0.27.2';
-import { plotTargets } from './reclaim.js?v=0.27.2';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.27.2';
-import { dayPhase } from './clock.js?v=0.27.2';
-import { weatherAt, season } from './weather.js?v=0.27.2';
+import { phenotype, seeded } from './genetics.js?v=0.28.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.28.0';
+import { makeLake } from './lake-models.js?v=0.28.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.28.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.28.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.28.0';
+import { PostFX } from './postfx.js?v=0.28.0';
+import { makeHuman, animateHuman } from './human.js?v=0.28.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.28.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.28.0';
+import { buildError } from './rules.js?v=0.28.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.28.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.28.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.28.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.28.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.28.0';
+import { CombatFX } from './combat-fx.js?v=0.28.0';
+import { syncPlots } from './land-models.js?v=0.28.0';
+import { plotTargets } from './reclaim.js?v=0.28.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.28.0';
+import { dayPhase } from './clock.js?v=0.28.0';
+import { weatherAt, season } from './weather.js?v=0.28.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -663,6 +663,7 @@ function makeMerchant() {
   g.userData.flag = box(g, 0xecc78e, 0.5, 7.4, 0.6, 0.9, 0.5, 0.04);
   return g;
 }
+const nowMs = () => performance.now();
 export class OceanWorld {
   constructor(canvas, state) {
     this.canvas = canvas;
@@ -1646,8 +1647,19 @@ export class OceanWorld {
     }
     const boss = s.expedition.boss;
     this.extra.boss.visible = !boss.defeated && !s.inCave && !cabin;
-    this.extra.boss.position.set(boss.x, diving ? -4 : 0, boss.z);
-    this.extra.boss.rotation.y = Math.atan2(s.player.x - boss.x, s.player.z - boss.z);
+    // 0.28: it rears out of the water as it winds up, faces where it will strike, and sinks back after
+    const bai = boss.ai,
+      rear =
+        bai?.state === 'windup'
+          ? Math.min(1, (s.elapsed - bai.start) / Math.max(0.1, bai.until - bai.start))
+          : bai?.state === 'recover'
+            ? -0.4
+            : 0;
+    this.bossRear = (this.bossRear || 0) + (rear - (this.bossRear || 0)) * Math.min(1, dt * 6);
+    this.extra.boss.position.set(boss.x, (diving ? -4 : 0) + this.bossRear * 1.6, boss.z);
+    this.extra.boss.rotation.y =
+      bai?.state === 'windup' ? bai.dir : Math.atan2(s.player.x - boss.x, s.player.z - boss.z);
+    this.extra.boss.rotation.x = -this.bossRear * 0.35;
     this.animateCreature(this.extra.boss, t);
     this.extra.rain.visible = !!sky.drops && !diving && !s.inCave && !cabin;
     this.extra.rain.position.set(s.player.x, 0, s.player.z);
@@ -1942,8 +1954,30 @@ export class OceanWorld {
     this.post.storm = this.stormLevel;
     this.post.focus = this.focusDist || 30;
     this.post.warmth = this.diveY < -0.5 ? 0.3 : 1;
-    this.post.render(this.scene, this.camera, Math.min(0.1, (now - (this.lastRender || now)) / 1000));
+    const frameDt = Math.min(0.1, (now - (this.lastRender || now)) / 1000);
+    this.post.render(this.scene, this.camera, frameDt);
     this.lastRender = now;
+    this.watchFrames(frameDt);
+  }
+  // 0.28: if frames stay slow (under ~40 fps for three seconds, after the first few seconds of play), shed cost one
+  // step at a time — depth of field, then the widest bloom and sharpening, then resolution — and say so once each.
+  watchFrames(dt) {
+    if (!dt || document.hidden) return;
+    this.fpsT = (this.fpsT || 0) + dt;
+    this.fpsAvg = this.fpsAvg ? this.fpsAvg + (dt - this.fpsAvg) * 0.05 : dt;
+    if (this.fpsT < 8 || (this.degradeLevel || 0) >= 3) return;
+    if (this.fpsAvg > 1 / 40) this.slowFor = (this.slowFor || 0) + dt;
+    else this.slowFor = Math.max(0, (this.slowFor || 0) - dt * 2);
+    if (this.slowFor < 3 || nowMs() - (this.lastDegrade || 0) < 6000) return;
+    this.slowFor = 0;
+    this.lastDegrade = nowMs();
+    this.degradeLevel = (this.degradeLevel || 0) + 1;
+    if (this.degradeLevel <= 2) this.post.degrade(this.degradeLevel);
+    else {
+      this.renderer.setPixelRatio(Math.max(1, this.renderer.getPixelRatio() * 0.75));
+      this.resize?.();
+    }
+    this.onDegrade?.(this.degradeLevel);
   }
   homeRect() {
     const h = this.water.material.uniforms.uHome.value;

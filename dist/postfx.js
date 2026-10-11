@@ -158,6 +158,20 @@ export class PostFX {
     u.uDir.value.set(0, scale / a.height);
     this.pass(this.blurMat, b);
   }
+  // 0.28: shed cost when frames run slow — 1: no depth of field · 2: no third bloom level, no sharpening
+  degrade(level) {
+    if (!this.enabled) return;
+    const u = this.finalMat.uniforms;
+    if (level >= 1) {
+      this.soft = null;
+      u.uDof.value = 0;
+    }
+    if (level >= 2) {
+      this.thinBloom = true;
+      u.tBloomC.value = this.blurB[1].texture;
+      u.uSharpen.value = 0;
+    }
+  }
   render(scene, camera, dt = 0) {
     const r = this.renderer;
     if (!this.enabled) return r.render(scene, camera);
@@ -169,7 +183,7 @@ export class PostFX {
       this.pass(this.brightMat, this.bright);
       this.blur(this.bright, this.blurA, 1);
       this.blur(this.blurA[1], this.blurB, 1.4);
-      this.blur(this.blurB[1], this.blurC, 1.6);
+      if (!this.thinBloom) this.blur(this.blurB[1], this.blurC, 1.6);
     }
     if (this.soft) this.blur(this.scene, this.soft, 1.3);
     const u = this.finalMat.uniforms;

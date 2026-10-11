@@ -2,10 +2,10 @@
 // 起 a sealed slab under the Great Gate → 承 three keys (tide / stone / bone) → 轉 the ancient sabre-tooth wakes and
 // speaks → 合 three trials and a pact → it carries you over the mountains (the hook for chapter two).
 // Nothing here is required to keep playing; every step is reached only by exploring.
-import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.27.2';
-import { spend } from './bag.js?v=0.27.2';
-import { dayOf } from './clock.js?v=0.27.2';
-import { makeGenome } from './genetics.js?v=0.27.2';
+import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.28.0';
+import { spend } from './bag.js?v=0.28.0';
+import { dayOf } from './clock.js?v=0.28.0';
+import { makeGenome } from './genetics.js?v=0.28.0';
 
 export const PACT_ID = 'ancient-xiaoyue';
 export const PACT_NAME = '嘯岳';
@@ -151,6 +151,8 @@ export function startDuel(s, active) {
   if (st.trials.includes('might')) return fail('力量的試煉已經通過了。');
   if (!active || active.bond < 30) return fail('需要一隻羈絆 30 以上的出戰夥伴一起應戰。');
   st.beast.hp = st.beast.maxHp;
+  st.beast.yielded = false;
+  delete st.beast.ai;
   st.duel = { next: s.elapsed + 2.5, windupAt: null };
   return { ok: true, script: 'mightStart' };
 }
@@ -168,6 +170,19 @@ export function hitBeast(s, damage) {
   return { ok: true, message: `命中嘯岳！還差 ${Math.ceil(b.hp - b.maxHp * DUEL.yieldAt)} 才能讓牠退後。` };
 }
 export const duelActive = s => !!s.story?.duel;
+// 0.28: 嘯岳 yields (combat.js reports it when its strength falls to the yield line)
+export function winDuel(s) {
+  const st = normalizeStory(s).story;
+  if (!st.duel) return null;
+  st.duel = null;
+  if (!st.trials.includes('might')) st.trials.push('might');
+  if (st.beast) {
+    st.beast.hp = st.beast.maxHp;
+    st.beast.yielded = false;
+    delete st.beast.ai;
+  }
+  return { ok: true, won: true, script: 'mightWin', message: '嘯岳收起爪子，後退了一步。' };
+}
 // Trial 3: the oath. Only "partner" is accepted; a wrong answer makes it turn away for a minute.
 export function answerOath(s, choice) {
   const st = normalizeStory(s).story;
@@ -259,23 +274,13 @@ export function tickStory(s, dt, { diving, active } = {}) {
       ev.push({ type: 'duel-off', text: '你離開了戰場。嘯岳收起架勢。' });
       return ev;
     }
-    if (!d.windupAt && s.elapsed >= d.next - DUEL.windup) {
-      d.windupAt = s.elapsed;
-      ev.push({ type: 'windup', text: '嘯岳壓低身子——快退開！' });
-    }
-    if (d.windupAt && s.elapsed >= d.next) {
-      d.windupAt = null;
-      d.next = s.elapsed + DUEL.every;
-      if (dist < DUEL.reach) {
-        s.vitals.health = Math.max(0, s.vitals.health - DUEL.damage);
-        if (active) active.health = Math.max(0, active.health - 6);
-        ev.push({ type: 'swipe', hit: true, text: '嘯岳的爪擊掃過！' });
-        if (s.vitals.health < 25) {
-          st.duel = null;
-          b.hp = b.maxHp;
-          ev.push({ type: 'duel-lost', script: 'mightLose' });
-        }
-      } else ev.push({ type: 'swipe', hit: false, text: '閃開了！' });
+    // 0.28: 嘯岳's swipes, pounces and roars come from combat.js; losing is still decided here
+    if (s.vitals.health < 25) {
+      st.duel = null;
+      b.hp = b.maxHp;
+      b.yielded = false;
+      delete b.ai;
+      ev.push({ type: 'duel-lost', script: 'mightLose' });
     }
   }
   return ev;

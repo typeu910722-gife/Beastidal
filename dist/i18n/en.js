@@ -2911,5 +2911,23 @@ export default {
   '已回到比斯泰德號的舵輪前。': "You are back at the Beastidal's helm.",
   '已回到小艇上，停在開闊的水面。': 'Back in the boat, on open water.',
   '🆘 脫困 · 回到船上': '🆘 Unstuck · back to the vessel',
-  '已標記戰艦，靠近後按 T 解除騎乘。': 'Warship marked; press T beside it to dismount.'
+  '已標記戰艦，靠近後按 T 解除騎乘。': 'Warship marked; press T beside it to dismount.',
+  深海守望者: 'Deep Watcher',
+  '深海守望者高高躍起——快離開牠身邊！': 'The Deep Watcher rears high — get away from it!',
+  '守望者甩動長尾，掀起一道巨浪！': 'The Watcher lashes its tail and raises a great wave!',
+  '守望者沉下身子，朝你直衝而來！': 'The Watcher sinks low and charges straight at you!',
+  '嘯岳壓低身子——爪擊要來了！': 'Xiaoyue crouches — a claw strike is coming!',
+  '嘯岳弓起背，準備撲上來！': 'Xiaoyue arches its back, ready to pounce!',
+  '嘯岳深吸一口氣——': 'Xiaoyue draws a deep breath —',
+  '騎乘御獸 · 比斯泰德號在': 'Riding · the Beastidal is',
+  'm 外': 'm away',
+  '騎乘中 · 回到戰艦旁按 T 解除騎乘': 'Riding · return beside the warship and press T to dismount',
+  '畫面有點吃力：已關閉景深，保持流暢。': 'Frames were struggling: depth of field is off to keep things smooth.',
+  '已簡化泛光與銳化，保持流暢。': 'Bloom and sharpening simplified to keep things smooth.',
+  '已降低解析度，保持流暢。可在設定改成「平衡」畫質。':
+    'Resolution lowered to keep things smooth. You can switch to Balanced quality in Settings.',
+  回到戰艦: 'Back to the warship',
+  騎乘中: 'Riding',
+  '按 T 解除騎乘': 'Press T to dismount',
+  '靠近戰艦按 T 解除騎乘': 'Get close to the warship and press T to dismount'
 };

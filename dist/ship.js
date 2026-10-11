@@ -1,15 +1,15 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.27.2';
-import { waterNear, groundAt } from './lake.js?v=0.27.2';
-import { onWatcherDown } from './story.js?v=0.27.2';
-import { dayOf } from './clock.js?v=0.27.2';
-import { spend, give, bagRoom } from './bag.js?v=0.27.2';
-import { pens, penId } from './housing.js?v=0.27.2';
-import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.27.2';
-import { normalizeCabin, syncCabin } from './cabin.js?v=0.27.2';
-import { rollDrops } from './species.js?v=0.27.2';
-import { phenotype } from './genetics.js?v=0.27.2';
-import { ITEM_NAMES } from './items.js?v=0.27.2';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.28.0';
+import { waterNear, groundAt } from './lake.js?v=0.28.0';
+import { onWatcherDown } from './story.js?v=0.28.0';
+import { dayOf } from './clock.js?v=0.28.0';
+import { spend, give, bagRoom } from './bag.js?v=0.28.0';
+import { pens, penId } from './housing.js?v=0.28.0';
+import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.28.0';
+import { normalizeCabin, syncCabin } from './cabin.js?v=0.28.0';
+import { rollDrops } from './species.js?v=0.28.0';
+import { phenotype } from './genetics.js?v=0.28.0';
+import { ITEM_NAMES } from './items.js?v=0.28.0';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
@@ -311,6 +311,16 @@ export function shipDockOption(s) {
       near,
       label: near ? '登上戰艦' : '返回戰艦',
       detail: near ? '從舷梯進入主甲板' : '戰艦停在遠處'
+    };
+  }
+  // riding out from the helm: the way home is to ride back and dismount (T), not to leave the wheel
+  if (m === 'ship' && s.expedition?.mounted) {
+    const near = Math.hypot(s.player.x - s.ship.x, s.player.z - s.ship.z) <= 16;
+    return {
+      mode: 'ride-home',
+      near,
+      label: near ? '回到戰艦' : '騎乘中',
+      detail: near ? '按 T 解除騎乘' : '靠近戰艦按 T 解除騎乘'
     };
   }
   if (m === 'ship') return { mode: 'leave-helm', near: true, label: '離開舵輪', detail: '在駕駛室內自由走動' };

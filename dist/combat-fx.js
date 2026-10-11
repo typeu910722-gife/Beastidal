@@ -36,7 +36,7 @@ export class CombatFX {
       fil = additive(RED, 0.4);
     let outline, fill;
     if (info.move === 'bite') {
-      const half = 0.85;
+      const half = info.half || 0.85;
       outline = new T.Mesh(new T.CircleGeometry(info.range, 28, Math.PI / 2 - half, half * 2), out);
       fill = new T.Mesh(new T.CircleGeometry(info.range, 28, Math.PI / 2 - half, half * 2), fil);
     } else if (info.move === 'sweep') {

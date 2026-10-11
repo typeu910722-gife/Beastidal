@@ -30,6 +30,8 @@ import {
   MAX_LEVEL
 } from '../dist/combat.js';
 import { discard } from '../dist/bag.js';
+import { SPECIAL, DUEL_YIELD } from '../dist/combat.js';
+import { winDuel, normalizeStory } from '../dist/story.js';
 import { tankSlots, tankRoom, TANK_CAP } from '../dist/cabin.js';
 
 let n = 0;
@@ -257,5 +259,63 @@ test('Aquariums on 1F hold three water creatures each; the rest wait in storage'
   const perTank = {};
   for (const v of Object.values(plan)) perTank[v.tank.id] = (perTank[v.tank.id] || 0) + 1;
   assert.ok(Object.values(perTank).every(k => k <= TANK_CAP));
+});
+test('深海守望者 telegraphs slams, waves and rams; a dodge evades it, and it can be brought down', () => {
+  const s = world(),
+    b = s.expedition.boss;
+  out(s, pet('beast', ['fire']));
+  Object.assign(b, { x: 0, z: 6, hp: 480, maxHp: 480, defeated: false });
+  delete b.ai;
+  const env = { rng: fixed(0) };
+  let ev = [];
+  for (let i = 0; i < 60 && !ev.some(e => e.type === 'telegraph'); i++) {
+    s.elapsed += 0.05;
+    ev = tickCombat(s, 0.05, env);
+  }
+  const tel = ev.find(e => e.type === 'telegraph');
+  assert.ok(tel && tel.id === 'boss' && tel.big && tel.line, 'the watcher winds up with a warning');
+  assert.ok(Object.values(SPECIAL.boss.moves).some(m => m.shape === tel.move));
+  const hp = s.vitals.health;
+  s.elapsed = b.ai.until - 0.2;
+  dodge(s, 0, 0);
+  s.elapsed = b.ai.until + 0.01;
+  ev = tickCombat(s, 0.05, env);
+  assert.ok(ev.some(e => e.type === 'evade' || e.type === 'dodged'));
+  assert.equal(s.vitals.health, hp);
+  assert.equal(b.ai.state, 'recover');
+  // bring it down while it is open
+  b.hp = 3;
+  Object.assign(b, { x: 0, z: 2.5 });
+  s.elapsed += 1.2;
+  const r = basicAttack(s, true, env);
+  assert.ok(
+    r.events.some(e => e.type === 'bossdown'),
+    'the last blow brings it down'
+  );
+});
+test('嘯岳 fights the trial of might in real time and yields at 30 % instead of dying', () => {
+  const s = world();
+  out(s, pet('beast', ['fire']));
+  normalizeStory(s);
+  s.story.beast = { x: 0, z: 3, hp: 900, maxHp: 900 };
+  s.story.duel = { next: s.elapsed + 2.5, windupAt: null };
+  s.story.trials = [];
+  s.player.mode = 'foot';
+  const env = { rng: fixed(0), canReach: () => true };
+  let ev = [];
+  for (let i = 0; i < 60 && !ev.some(e => e.type === 'telegraph'); i++) {
+    s.elapsed += 0.05;
+    ev = tickCombat(s, 0.05, env);
+  }
+  assert.ok(ev.some(e => e.type === 'telegraph' && e.id === 'duel'));
+  assert.ok(combatActive(s));
+  s.story.beast.hp = Math.round(900 * DUEL_YIELD) + 2;
+  delete s.story.beast.ai;
+  s.elapsed += 2;
+  const r = basicAttack(s, true, env);
+  assert.ok(r.events.some(e => e.type === 'duelwon'));
+  assert.ok(s.story.beast.hp > 0, 'it yields, it is not killed');
+  assert.ok(winDuel(s).won);
+  assert.ok(s.story.trials.includes('might') && !s.story.duel);
 });
 console.log(`\n${n} combat tests passed`);

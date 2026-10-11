@@ -9,14 +9,14 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.27.2';
-import { bsOf, geneStats } from './bsgenes.js?v=0.27.2';
-import { WILD_BEASTS } from './beasts.js?v=0.27.2';
-import { rollDrops } from './species.js?v=0.27.2';
-import { give } from './bag.js?v=0.27.2';
-import { tally } from './stats.js?v=0.27.2';
-import { damageBonus } from './skills.js?v=0.27.2';
-import { remember } from './memories.js?v=0.27.2';
+import { phenotype } from './genetics.js?v=0.28.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.28.0';
+import { WILD_BEASTS } from './beasts.js?v=0.28.0';
+import { rollDrops } from './species.js?v=0.28.0';
+import { give } from './bag.js?v=0.28.0';
+import { tally } from './stats.js?v=0.28.0';
+import { damageBonus } from './skills.js?v=0.28.0';
+import { remember } from './memories.js?v=0.28.0';
 
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;
@@ -247,6 +247,8 @@ export function normalizeCombat(s) {
 export function resetCombat(s) {
   s.combat = { cd: {}, shots: [], zones: [], combo: { n: 0, until: -1 } };
   for (const w of s.wild || []) delete w.ai;
+  if (s.expedition?.boss) delete s.expedition.boss.ai;
+  if (s.story?.beast) delete s.story.beast.ai;
   return s.combat;
 }
 export const activeBeast = s => {
@@ -267,6 +269,14 @@ export function foesNear(s, r = ENGAGE, from = s.player) {
   const out = (s.wild || []).filter(w => dangerousFoe(w, s.elapsed) && !w.dissolving && dist(w, from) < r);
   const b = s.expedition?.boss;
   if (b && !b.defeated && !s.inCave && dist(b, from) < r + 4) out.push(b);
+  // 嘯岳 during the trial of might
+  const xb = s.story?.duel && s.story.beast;
+  if (xb && !s.inCave && dist(xb, from) < r + 4) {
+    xb.id = 'duel';
+    xb.duelBeast = true;
+    xb.land = true;
+    out.push(xb);
+  }
   return out;
 }
 export function combatActive(s) {
@@ -313,6 +323,14 @@ function damageFoe(s, t, base, ev, opts = {}) {
     t.ai.state = 'recover';
     t.ai.until = s.elapsed + 0.8;
     ev.push({ type: 'interrupt', id: t.id });
+  }
+  if (t.duelBeast) {
+    if (t.hp <= t.maxHp * DUEL_YIELD && !t.yielded) {
+      t.yielded = true;
+      t.hp = Math.round(t.maxHp * DUEL_YIELD);
+      ev.push({ type: 'duelwon' });
+    }
+    return amount;
   }
   if (t.hp <= 0) killFoe(s, t, ev);
   return amount;
@@ -550,6 +568,177 @@ export function dodge(s, dx = 0, dz = 0) {
     events: [{ type: 'dodge', x: s.player.x, z: s.player.z }]
   };
 }
+// ---------- the great foes (0.28) ----------
+// 深海守望者 (the boss, afloat only) and 嘯岳 in the trial of might each have their own moves. Every one is
+// telegraphed on the ground — a ring for a slam or a roar, a wide arc for a wave or a swipe, a lane for a ram or a
+// pounce — and leaves them open (破綻) for a moment after. Below half strength the watcher gets faster.
+export const DUEL_YIELD = 0.3;
+export const SPECIAL = {
+  boss: {
+    name: '深海守望者',
+    range: 30,
+    speed: 2.2,
+    want: 8,
+    dmg: 13,
+    vessel: true,
+    phase2: 0.5,
+    moves: {
+      slam: {
+        shape: 'sweep',
+        windup: 1.45,
+        range: 7.5,
+        mul: 1.1,
+        recover: 1.7,
+        line: '深海守望者高高躍起——快離開牠身邊！'
+      },
+      wave: {
+        shape: 'bite',
+        windup: 1.15,
+        range: 13,
+        half: 1.05,
+        mul: 0.9,
+        recover: 1.3,
+        line: '守望者甩動長尾，掀起一道巨浪！'
+      },
+      ram: {
+        shape: 'charge',
+        windup: 1.25,
+        range: 16,
+        width: 4.4,
+        mul: 1.3,
+        min: 5,
+        recover: 1.9,
+        line: '守望者沉下身子，朝你直衝而來！'
+      }
+    }
+  },
+  duel: {
+    name: '嘯岳',
+    range: 40,
+    speed: 3.1,
+    want: 3.6,
+    dmg: 9,
+    moves: {
+      swipe: {
+        shape: 'bite',
+        windup: 1.3,
+        range: 7.5,
+        half: 0.95,
+        mul: 1,
+        recover: 1.4,
+        line: '嘯岳壓低身子——爪擊要來了！'
+      },
+      pounce: {
+        shape: 'charge',
+        windup: 1.05,
+        range: 11,
+        width: 2.6,
+        mul: 1.2,
+        min: 4,
+        recover: 1.7,
+        line: '嘯岳弓起背，準備撲上來！'
+      },
+      roar: { shape: 'sweep', windup: 1.5, range: 6, mul: 0.6, recover: 1.2, stun: true, line: '嘯岳深吸一口氣——' }
+    }
+  }
+};
+// a warship or a better boat takes the edge off the watcher's blows
+const vesselFactor = s => Math.max(0.35, 1 - (s.ship ? 0.6 : (s.expedition?.boatLevel || 0) * 0.15));
+function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
+  const t = s.elapsed,
+    id = w.id || 'boss',
+    ai = (w.ai ??= { state: 'approach', until: 0, next: t + 1.2 + rng() });
+  if (ai.stunUntil > t) return;
+  const phase2 = !!def.phase2 && w.hp < w.maxHp * def.phase2,
+    quick = phase2 ? 0.75 : 1,
+    onAlly = p && ally && !riding && dist(w, ally) + 2 < dist(w, me),
+    target = onAlly ? ally : me,
+    d = dist(w, target);
+  if (ai.state === 'approach') {
+    if (t >= ai.next) {
+      const opts = Object.entries(def.moves).filter(([, m]) => d < m.range * 0.92 && (!m.min || d > m.min));
+      if (opts.length) {
+        const [name, m] = opts[Math.floor(rng() * opts.length)],
+          dir = angleTo(w, target);
+        Object.assign(ai, {
+          state: 'windup',
+          move: name,
+          dir,
+          ox: w.x,
+          oz: w.z,
+          start: t,
+          until: t + m.windup * quick
+        });
+        w.windup = ai.until;
+        w.heading = dir;
+        ev.push({
+          type: 'telegraph',
+          id,
+          move: m.shape,
+          x: w.x,
+          z: w.z,
+          dir,
+          range: m.range,
+          width: m.width || 0,
+          half: m.half,
+          until: ai.until,
+          start: t,
+          big: true,
+          line: m.line
+        });
+        return;
+      }
+    }
+    const a = angleTo(w, target),
+      step = def.speed * (phase2 ? 1.25 : 1) * dt * (d > def.want ? 1 : -0.5);
+    if (Math.abs(d - def.want) > 0.5) {
+      const nx = w.x + Math.sin(a) * step,
+        nz = w.z + Math.cos(a) * step;
+      if (!env.canMove || env.canMove(w, nx, nz)) {
+        w.x = nx;
+        w.z = nz;
+      }
+    }
+    w.heading = a;
+    return;
+  }
+  if (ai.state === 'windup' && t >= ai.until) {
+    const m = def.moves[ai.move],
+      o = { x: ai.ox, z: ai.oz },
+      dmg = def.dmg * (m.mul || 1) * (phase2 ? 1.2 : 1) * (def.vessel ? vesselFactor(s) : 1);
+    w.windup = 0;
+    w.struckAt = t;
+    ev.push({ type: 'strike', id, move: m.shape, x: w.x, z: w.z, dir: ai.dir, big: true });
+    const test = pt =>
+      m.shape === 'bite'
+        ? inArc(o, ai.dir, m.range, m.half || 0.85, pt, 0.2)
+        : m.shape === 'sweep'
+          ? inRing(o, m.range, pt, 0.2)
+          : inLane(o, ai.dir, m.range, m.width, pt);
+    const victims = [];
+    if (test(me)) victims.push('player');
+    if (p && ally && !riding && test(ally)) victims.push('ally');
+    for (const v of victims) hurt(s, v, dmg, w, ev);
+    // a roar that lands leaves your beast reeling
+    if (m.stun && victims.length) normalizeCombat(s).cd.basic = Math.max(normalizeCombat(s).cd.basic || 0, t + 1.2);
+    if (m.shape === 'charge') {
+      const nx = o.x + Math.sin(ai.dir) * m.range * 0.85,
+        nz = o.z + Math.cos(ai.dir) * m.range * 0.85;
+      if (!env.canMove || env.canMove(w, nx, nz)) {
+        w.x = nx;
+        w.z = nz;
+      }
+    }
+    if (!victims.length) ev.push({ type: 'dodged', id });
+    ai.state = 'recover';
+    ai.until = t + m.recover;
+    return;
+  }
+  if (ai.state === 'recover' && t >= ai.until) {
+    ai.state = 'approach';
+    ai.next = t + (phase2 ? 0.45 : 0.85) + rng() * 0.8;
+  }
+}
 // ---------- the fight, each frame ----------
 // env: { canMove(w, x, z), canReach(w) — can this foe get at the player where they are, rng, autoAlly }
 export function tickCombat(s, dt, env = {}) {
@@ -700,7 +889,23 @@ export function tickCombat(s, dt, env = {}) {
       ai.next = t + 0.5 + rng() * 0.9;
     }
   }
-  // the boss keeps its own ram in expansion.js; here it only takes hits
+  // 0.28: the two great foes fight the same way as everything else — telegraphed, dodgeable, open after a blow
+  const boss = s.expedition?.boss;
+  if (
+    boss &&
+    !boss.defeated &&
+    !s.inCave &&
+    !['foot', 'cabin', 'aboard'].includes(s.player.mode) &&
+    dist(boss, me) < SPECIAL.boss.range
+  )
+    specialTurn(s, boss, SPECIAL.boss, env, ev, dt, rng, p, ally, riding, me);
+  else if (boss?.ai?.state === 'windup') delete boss.ai;
+  const xb = s.story?.duel && s.story.beast;
+  if (xb && !s.inCave && s.player.mode === 'foot' && dist(xb, me) < SPECIAL.duel.range) {
+    foesNear(s, 0); // tags 嘯岳 as a foe
+    specialTurn(s, xb, SPECIAL.duel, env, ev, dt, rng, p, ally, riding, me);
+    s.story.duel.windupAt = xb.ai?.state === 'windup' ? xb.ai.start : null; // world.js rears the model up
+  }
   // projectiles
   c.shots = c.shots.filter(sh => {
     sh.x += sh.vx * dt;
@@ -790,7 +995,8 @@ function hurt(s, who, dmg, from, ev) {
       amount,
       guarded: guard < 1
     });
-    if (guard < 1 && from && dangerousFoe(from, s.elapsed)) damageFoe(s, from, allyPower(s, p).atk * 0.8, ev, {});
+    if (guard < 1 && from && (dangerousFoe(from, s.elapsed) || from.duelBeast || isBoss(s, from)))
+      damageFoe(s, from, allyPower(s, p).atk * 0.8, ev, {});
     if (p.health <= 0) {
       ev.push({ type: 'ko', name: p.name, id: p.id });
       remember(s, p, '在戰鬥中倒下了，回到契約裡休息。');

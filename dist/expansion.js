@@ -1,21 +1,21 @@
-import { phenotype, clamp } from './genetics.js?v=0.27.2';
-import { NODES, harvest } from './islands.js?v=0.27.2';
-import { restPlace } from './ship.js?v=0.27.2';
-import { dayOf, dayPhase } from './clock.js?v=0.27.2';
-import { remember, rememberFirst } from './memories.js?v=0.27.2';
-import { spend, give, stow } from './bag.js?v=0.27.2';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.27.2';
-import { islandAt } from './islands.js?v=0.27.2';
-import { hasPerk } from './codex.js?v=0.27.2';
-import { tally } from './stats.js?v=0.27.2';
-import { rollDrops } from './species.js?v=0.27.2';
-import { bsOf, geneStats } from './bsgenes.js?v=0.27.2';
-import { WILD_BEASTS } from './beasts.js?v=0.27.2';
-import { hasGear, MASK_OXYGEN } from './gear.js?v=0.27.2';
-import { damageBonus } from './skills.js?v=0.27.2';
-import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.27.2';
-import { ITEM_NAMES } from './items.js?v=0.27.2';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.27.2';
+import { phenotype, clamp } from './genetics.js?v=0.28.0';
+import { NODES, harvest } from './islands.js?v=0.28.0';
+import { restPlace } from './ship.js?v=0.28.0';
+import { dayOf, dayPhase } from './clock.js?v=0.28.0';
+import { remember, rememberFirst } from './memories.js?v=0.28.0';
+import { spend, give, stow } from './bag.js?v=0.28.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.28.0';
+import { islandAt } from './islands.js?v=0.28.0';
+import { hasPerk } from './codex.js?v=0.28.0';
+import { tally } from './stats.js?v=0.28.0';
+import { rollDrops } from './species.js?v=0.28.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.28.0';
+import { WILD_BEASTS } from './beasts.js?v=0.28.0';
+import { hasGear, MASK_OXYGEN } from './gear.js?v=0.28.0';
+import { damageBonus } from './skills.js?v=0.28.0';
+import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.28.0';
+import { ITEM_NAMES } from './items.js?v=0.28.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.28.0';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
 // the 深淵潛行者 collection perk lengthens every dive
@@ -432,19 +432,9 @@ export function tickExpansion(s, dt, safe = false) {
   }
   const b = e.boss,
     d = Math.hypot(s.player.x - b.x, s.player.z - b.z);
-  if (!safe && !s.inCave && !b.defeated && s.player.mode !== 'foot' && d < 30) {
-    if (d > 6) {
-      b.x += ((s.player.x - b.x) / d) * dt * 1.5;
-      b.z += ((s.player.z - b.z) / d) * dt * 1.5;
-    }
-    if (d < 9 && s.elapsed - b.lastAttack >= 4) {
-      b.lastAttack = s.elapsed;
-      const damage = 10 - (s.ship ? 6 : e.boatLevel) * 1.5;
-      s.vitals.health = Math.max(0, s.vitals.health - damage);
-      if (p) p.health = Math.max(0, p.health - 4);
-      events.push('深海守望者撞擊！命令夥伴攻擊，或立刻撤離。');
-    }
-  } else if (d > 45 && !b.defeated) {
+  // 0.28: within reach the watcher fights through combat.js (telegraphed slams, waves and rams); out of it, it
+  // drifts back to its trench
+  if (d > 45 && !b.defeated) {
     b.x += (BOSS_HOME.x - b.x) * Math.min(1, dt * 0.25);
     b.z += (BOSS_HOME.z - b.z) * Math.min(1, dt * 0.25);
   }

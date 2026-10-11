@@ -1,6 +1,6 @@
 // Minimap backdrop: the baked basin drawn once to a canvas (water by depth, land by height).
-import { HS, ORIGIN } from './lake.js?v=0.27.2';
-import { FINE, Q } from './lake-data.js?v=0.27.2';
+import { HS, ORIGIN } from './lake.js?v=0.28.0';
+import { FINE, Q } from './lake-data.js?v=0.28.0';
 let cached;
 export function lakeMinimap() {
   if (cached !== undefined) return cached;
