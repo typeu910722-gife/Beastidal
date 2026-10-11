@@ -115,6 +115,20 @@ export default {
   '這張書桌是醒來時就在的東西，留著吧。': 'This desk was here when you woke up. Better keep it.',
   狀態: 'Status',
   御獸倉庫: 'Beast storage',
+  生物倉庫: 'Creature storage',
+  '還沒有生物。先調查東北方的研究浮標。': 'No creatures yet. Investigate the research buoy to the north-east first.',
+  '還沒有生物。餵誘餌建立信任，用外出籠帶回船上，牠們就會住進這裡。':
+    'No creatures yet. Build trust with bait and bring one aboard in the carry cage; it will live here.',
+  '（生物倉庫有 {0} 隻）': '(the creature storage holds {0})',
+  '還沒有御獸。生物倉庫裡配種出 3 種比斯基因的生物，用契約書契闊進化；或帶著契約書締結野生御獸。{0}':
+    'No beasts yet. Evolve a creature from the creature storage once breeding gives it 3 BS genes, or bind a wild beast with a contract scroll. {0}',
+  全部生物: 'All creatures',
+  全部御獸: 'All beasts',
+  可契闊: 'Can evolve',
+  '基因 {0}/{1}': 'Genes {0}/{1}',
+  同行中: 'With you',
+  '· 可契闊進化': '· can evolve',
+  '· 倉庫': '· storage',
   圖鑑: 'Codex',
   成就: 'Achievements',
   統計: 'Stats',
@@ -2719,26 +2733,26 @@ export default {
     'Trust 100% · following you · take out the carry cage and press X to bring it aboard',
   '工作桌 · 契約書與外出籠': 'Work table · scrolls and the carry cage',
   帶回來的是: 'What you bring back is a ',
-  '帶誘餌連續餵同一隻野生生物提高信任度，再用外出籠帶回船上；配種出 3 種比斯基因後用契約書契闊進化。收服的生物與御獸都會住進御獸倉庫；展示池用來陳列牠們。':
+  '帶誘餌連續餵同一隻野生生物提高信任度，再用外出籠帶回船上；配種出 3 種比斯基因後用契約書契闊進化。帶回的生物住進生物倉庫，契闊進化後搬進御獸倉庫；展示池用來陳列牠們。':
     'Feed the same wild creature bait again and again to build trust, then bring it aboard in the carry cage; breed 3 BS genes into it and evolve it with a contract scroll. Creatures and beasts live in the beast storage; display pens show them off.',
   比斯基因: 'BS genes',
   '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先以誘餌建立信任，用外出籠帶回船上，讓兩個個體配對出比斯基因，最後以契約書契闊進化。':
     "The buoy's research notes say crystal gave every living thing in the lake one genetic language. Build trust with bait, bring them aboard in the carry cage, breed two of them for BS genes, and finally evolve one with a contract scroll.",
-  '背包裡有 {0} 份契約書、{1} 個外出籠。外出籠在「製作物品」裡做（廢金屬 6 + 纖維 4），用來把信任 50% 以上的野生生物帶回船上；契約書用在野生御獸、身上有 3 種比斯基因的生物，以及御獸倉庫裡的契闊進化。':
+  '背包裡有 {0} 份契約書、{1} 個外出籠。外出籠在「製作物品」裡做（廢金屬 6 + 纖維 4），用來把信任 50% 以上的野生生物帶回船上；契約書用在野生御獸、身上有 3 種比斯基因的生物，以及生物倉庫裡的契闊進化。':
     'You carry {0} contract scrolls and {1} carry cages. Cages are made under Craft items (scrap metal 6 + fibre 4) and bring a wild creature with 50% trust or more aboard; scrolls are for wild beasts, creatures carrying 3 BS genes, and evolution in the beast storage.',
   '還沒有生物或御獸。餵誘餌建立信任，用外出籠帶回船上；配種出 3 種比斯基因後，再用契約書契闊進化。':
     'No creatures or beasts yet. Build trust with bait, bring one aboard in the carry cage; once breeding gives it 3 BS genes, evolve it with a contract scroll.',
   音樂與環境音: 'Music and ambience',
   '（在工作桌做些誘餌，再從「製作物品」做一個外出籠。連續餵同一隻生物，信任到 50% 以上，靠近牠按 X 就能帶回船上。）':
     '(Make some bait at the work table, then a carry cage under Craft items. Feed the same creature until it trusts me past 50%, then press X beside it to bring it aboard.)',
-  '（帶回來的還只是生物，不能出戰。蓋孵化台讓牠們配對，等誰身上出現 3 種比斯基因，再帶著契約書到御獸倉庫按「契闊進化」。）':
-    '(What I brought back is still just a creature; it cannot fight. Build a hatchery and breed them; when one carries 3 BS genes, take a contract scroll to the beast storage and press Evolve.)',
+  '（帶回來的還只是生物，不能出戰。蓋孵化台讓牠們配對，等誰身上出現 3 種比斯基因，再帶著契約書到生物倉庫按「契闊進化」。）':
+    '(What I brought back is still just a creature; it cannot fight. Build a hatchery and breed them; when one carries 3 BS genes, take a contract scroll to the creature storage and press Evolve.)',
   '（廢金屬 6 + 纖維 4），信任 50% 以上時在牠旁邊按 X，把牠帶回船上。':
     ' (scrap metal 6 + fibre 4); at 50% trust or more press X beside it to bring it aboard.',
   '（纖維 2 + 異晶 1）契闊進化成': ' (fibre 2 + crystal 1) to evolve it into a ',
   '，還不能出戰。蓋孵化台讓牠們配對，突變會長出':
     ', not yet able to fight. Build a hatchery and let them breed; mutations grow ',
-  '；集滿 3 種，就能在御獸倉庫用': '; with 3 of them, use a ',
+  '；集滿 3 種，就能在生物倉庫用': '; with 3 of them, use a ',
   '沒有契約書可以丟。': 'No contract scrolls to throw away.',
   '沒有這項物品。': "You don't have that item.",
   '1F 生物艙': '1F Creature deck',

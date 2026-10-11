@@ -1,10 +1,11 @@
 // Live previews of beasts for the device's beast storage: one small offscreen renderer draws every visible beast,
 // slowly turning and swimming, into its own 2D canvas each frame.
 import * as T from './vendor/three.module.min.js';
-import { makeCreature, animateCreature } from './creatures.js?v=0.32.0';
-import { applyGeneMarks } from './bs-models.js?v=0.32.0';
+import { makeCreature, animateCreature } from './creatures.js?v=0.33.0';
+import { applyGeneMarks } from './bs-models.js?v=0.33.0';
 
 export class BeastStage {
+  static BUDGET = 12;
   constructor() {
     this.renderer = null;
     this.models = new Map(); // key -> { mesh, centre, radius }
@@ -51,11 +52,23 @@ export class BeastStage {
   clear() {
     this.cells = [];
   }
+  // Only cells on screen are drawn, and at most BUDGET of them per frame (round-robin), so a storage of sixty
+  // beasts costs about as much as the old page of nine; a cell keeps its last picture between its turns.
   update(dt) {
     if (!this.cells.length || !this.renderer) return;
     this.t += dt;
-    for (const c of this.cells) {
-      if (!c.canvas.isConnected) continue;
+    const live = this.cells.filter(c => {
+      if (!c.canvas.isConnected) return false;
+      const r = c.canvas.getBoundingClientRect();
+      return r.width > 0 && r.bottom > -40 && r.top < innerHeight + 40 && r.right > -40 && r.left < innerWidth + 40;
+    });
+    if (!live.length) return;
+    this.cursor = (this.cursor || 0) % live.length;
+    const n = Math.min(live.length, BeastStage.BUDGET),
+      batch = [];
+    for (let i = 0; i < n; i++) batch.push(live[(this.cursor + i) % live.length]);
+    this.cursor = (this.cursor + n) % live.length;
+    for (const c of batch) {
       const m = this.models.get(c.key);
       if (!m) continue;
       for (const o of this.models.values()) o.mesh.visible = o === m;
