@@ -1,8 +1,9 @@
 import * as T from './vendor/three.module.min.js';
-import { EXPLORE, CAVE } from './expansion.js?v=0.30.0';
-import { makeCreature } from './creatures.js?v=0.30.0';
-import { makeGenome } from './genetics.js?v=0.30.0';
-import { groundAt } from './lake.js?v=0.30.0';
+import { EXPLORE } from './expansion.js?v=0.31.0';
+import { makeGarden } from './garden-models.js?v=0.31.0';
+import { makeCreature } from './creatures.js?v=0.31.0';
+import { makeGenome } from './genetics.js?v=0.31.0';
+import { groundAt } from './lake.js?v=0.31.0';
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.65, ...extra });
 function m(g, geo, c, x, y, z, s = [1, 1, 1], extra = {}) {
   const mesh = new T.Mesh(geo, mat(c, extra));
@@ -79,23 +80,9 @@ export function expansionModels(scene) {
       });
     }
   }
-  const cave = new T.Group();
-  cave.position.set(CAVE.x, 0, CAVE.z);
+  // 0.31: the crystal cave is a corrupted garden maze now (garden-models.js)
+  const cave = makeGarden();
   group.add(cave);
-  m(cave, new T.CylinderGeometry(6.5, 6.5, 0.4, 40), 0x364956, 0, 0.21, 0);
-  for (let i = 0; i < 22; i++) {
-    const a = (i / 22) * Math.PI * 2;
-    if (Math.abs(a) < 0.4 || Math.abs(a - Math.PI * 2) < 0.4) continue;
-    m(cave, new T.DodecahedronGeometry(1, 1), 0x33434f, Math.sin(a) * 6.5, 1.7, Math.cos(a) * 6.5, [1.2, 2.5, 1]);
-    if (i % 3 === 0)
-      m(cave, new T.ConeGeometry(0.25, 2.3, 5), 0x79b9bf, Math.sin(a) * 5.6, 1.1, Math.cos(a) * 5.6, [1, 1, 1], {
-        emissive: 0x427d91,
-        emissiveIntensity: 0.8
-      });
-  }
-  const light = new T.PointLight(0x76bfd6, 40, 22);
-  light.position.set(0, 3, 0);
-  cave.add(light);
   // 0.15: the lake terrain is the seabed now; this stays as an empty group for older callers.
   const seabed = new T.Group();
   scene.add(seabed);

@@ -3023,5 +3023,61 @@ export default {
   '需要 {0} 異晶。': 'Needs {0} crystal.',
   '技能樹{0}': 'Skill tree{0}',
   '{0} 個性 ·': '{0} Personality ·',
-  '{0} 叼回了一點東西：{1}。': '{0} brought something back: {1}.'
+  '{0} 叼回了一點東西：{1}。': '{0} brought something back: {1}.',
+  '嘯岳（狂暴）': 'Xiaoyue (frenzied)',
+  '嘯岳弓起背，朝你撲來！': 'Xiaoyue arches its back and pounces at you!',
+  '整座花園的荊棘朝牠腳下收攏——快跑出圈外！': 'Every thorn in the garden closes in around it — get out of the ring!',
+  '進入異晶洞窟——裡面長成了一座腐化的花園迷宮。出口在身後。':
+    'You enter the crystal cave — it has grown into a corrupted garden maze. The way out is behind you.',
+  沉睡的嘯岳: 'Sleeping Xiaoyue',
+  '心跳聲從右岸半島的異晶洞窟傳來。那裡有什麼睡得很沉的東西。':
+    'A heartbeat sounds from the crystal cave on the east peninsula. Something there sleeps very deeply.',
+  '契約書 {0} / {1}。到工作桌製作。': 'Contract scrolls {0} / {1}. Make them at the work table.',
+  '消耗 {0} 份契約書（你有 {1} 份）。': 'Uses {0} contract scrolls (you have {1}).',
+  '嘯岳 · 狂暴': 'Xiaoyue · Frenzy',
+  '撐過牠的攻擊，把牠打到清醒過來。看準地上的紅色範圍閃開。':
+    'Survive its attacks and beat it back to its senses. Watch for the red shapes on the ground and get clear.',
+  岳脊之王: 'King of the Mountain Spine',
+  千根之母: 'Mother of a Thousand Roots',
+  淵潮之主: 'Lord of the Abyssal Tide',
+  腐化花園迷宮深處的岩紋石壁: 'a carved rock wall deep in the corrupted garden maze',
+  '嘯岳回到了異晶洞窟——那裡已經長成一座腐化的花園。牠在最深處又睡著了。':
+    'Xiaoyue has gone back to the crystal cave — it has grown into a corrupted garden. It has fallen asleep again at the very heart.',
+  '三枚鑰匙沒入凹槽。湖底傳來不屬於我的心跳——不是從這裡，而是從右岸半島的方向。異晶洞窟裡，有什麼睡得很沉的東西翻了個身。':
+    'The three keys sink into their slots. A heartbeat that is not mine sounds through the lakebed — not from here, but from the east peninsula. In the crystal cave, something sleeping very deeply turns over.',
+  '三枚鑰匙沒入凹槽——心跳聲從異晶洞窟的方向傳來。':
+    'The three keys sink into their slots — a heartbeat sounds from the direction of the crystal cave.',
+  '（牠睡得很沉，四周的花藤跟著牠的呼吸起伏。我一個人的氣息，好像吵不醒牠。）':
+    "(It sleeps deeply; the vines around it rise and fall with its breath. My scent alone doesn't seem enough to wake it.)",
+  '你身上三張契約同時發燙。花園裡的藤蔓一齊轉向你。':
+    'The three contracts you carry burn hot at once. Every vine in the garden turns toward you.',
+  '……契……約……的……味道……': '…the… smell… of… contracts…',
+  '牠睜開眼——那不是清醒的眼神。腐化的紫光從牠的牙縫間溢出來。':
+    'It opens its eyes — they are not the eyes of something awake. Corrupted violet light spills between its teeth.',
+  '嘯岳的咆哮把你掀翻在花叢裡。等你爬起來，牠已經伏回石台上，又睡著了。':
+    "Xiaoyue's roar throws you into the flowers. By the time you get up, it lies on the dais again, asleep.",
+  '……我咬到了什麼？……是你，還有你的御獸。': '…What did I bite? …It was you, and your beasts.',
+  '這座花園在我睡著的時候爛掉了。裂縫的氣味滲進來，鑽進我的夢裡。我分不清誰是敵人。':
+    "This garden rotted while I slept. The rift's stench seeped in and crept into my dreams. I could not tell who was the enemy.",
+  '你沒有逃，也沒有殺我。上一個人類想用一張紙綁住我——他叫自己「研究員」。湖替我收下了他。':
+    'You didn\'t run, and you didn\'t kill me. The last human tried to bind me with a sheet of paper — he called himself "the researcher". The lake took him for me.',
+  '我太老了，一張契約撐不住我。拿十張來。這一次，不是綁住我——是我選擇你。':
+    "I am too old for one contract to hold me. Bring ten. This time it won't be you binding me — it will be me choosing you.",
+  '十張契約……你真的帶來了。好。這一次，不是綁住我——是我選擇你。':
+    "Ten contracts… you really brought them. Good. This time it isn't you binding me — it's me choosing you.",
+  '十張。少一張，契約就會在我身上燒成灰。': 'Ten. One fewer and the contract burns to ash on my hide.',
+  '嘯岳 · 清醒': 'Xiaoyue · Clear-eyed',
+  '狂暴的紫光從牠眼裡退去。牠看著我，像是第一次看見我。':
+    'The frenzied violet fades from its eyes. It looks at me as if seeing me for the first time.',
+  '嘯岳眼裡的紫光退去了。': "The violet light leaves Xiaoyue's eyes.",
+  '牠還在沉睡，或還沒有清醒過來。': 'It is still asleep, or not yet come back to itself.',
+  '需要 {0} 份契約書（你有 {1} 份）。到工作桌製作。':
+    'Needs {0} contract scrolls (you have {1}). Make them at the work table.',
+  '你逃出了花園的心臟。嘯岳的咆哮漸漸平息，又沉沉睡去。':
+    "You flee the garden's heart. Xiaoyue's roars die down and it sinks back into sleep.",
+  '嘯岳沉睡在異晶洞窟——腐化花園迷宮的中心':
+    'Xiaoyue sleeps in the crystal cave — at the heart of the corrupted garden maze',
+  '帶著至少 {0} 張御獸契約靠近牠，撐過牠的狂暴':
+    'Approach it carrying at least {0} beast contracts, and survive its frenzy',
+  '以 {0} 份契約書締結契約': 'Seal the pact with {0} contract scrolls'
 };

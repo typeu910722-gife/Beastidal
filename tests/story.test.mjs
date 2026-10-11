@@ -8,10 +8,6 @@ import { normalizeTravel } from '../dist/navigation.js';
 import {
   normalizeStory,
   objectives,
-  trySide,
-  startDuel,
-  answerOath,
-  trialsDone,
   sealPact,
   canCross,
   finishCrossing,
@@ -19,9 +15,15 @@ import {
   pactPet,
   PACT_ID,
   DUEL,
-  winDuel
+  winDuel,
+  SLEEP_AT,
+  PACT_CONTRACTS,
+  WAKE_TEAM,
+  FRENZY_HP
 } from '../dist/story.js';
-import { tickCombat, basicAttack, resetCombat, DUEL_YIELD } from '../dist/combat.js';
+import { tickCombat, basicAttack, resetCombat, combatActive } from '../dist/combat.js';
+import { canWalk } from '../dist/navigation.js';
+import { CAVE, ENTRANCE } from '../dist/cave-maze.js';
 
 let n = 0;
 const test = (name, fn) => {
@@ -72,7 +74,7 @@ test('The line stays hidden until you find it, and the keys need the seal first'
   assert.ok(tickStory(s, 0.1, { diving: true }).some(e => e.type === 'hint'));
 });
 
-test('Seal → three keys → awakening; the watcher always drops the bone key', () => {
+test('Seal → three keys → the seal opens (0.31: 嘯岳 sleeps in the cave); the watcher always drops the bone key', () => {
   const s = ready();
   diveTo(s, 'pact-seal');
   const r = explore(s, 'pact-seal');
@@ -107,96 +109,121 @@ test('Seal → three keys → awakening; the watcher always drops the bone key',
   diveTo(s, 'pact-seal');
   const w = explore(s, 'pact-seal');
   assert.ok(w.ok && w.story === 'awaken');
-  assert.equal(s.story.stage, 3);
-  assert.ok(s.story.beast);
+  assert.equal(s.story.stage, 2);
+  assert.ok(s.story.beast.cave && s.story.sleeping, 'it sleeps in the garden');
 });
 
-function awake() {
+// in the garden's heart, a few steps from the sleeper
+function inGarden() {
   const s = ready();
-  Object.assign(s.story, {
-    stage: 3,
-    keys: ['tide', 'stone', 'bone'],
-    beast: { x: 0, z: 0, hp: DUEL.hp, maxHp: DUEL.hp }
-  });
-  const st = s.story;
-  Object.assign(s.player, { x: st.beast.x + 4, z: st.beast.z, mode: 'foot' });
+  Object.assign(s.story, { stage: 2, keys: ['tide', 'stone', 'bone'] });
+  normalizeStory(s);
+  s.inCave = true;
+  Object.assign(s.player, { x: SLEEP_AT.x, z: SLEEP_AT.z + 5, mode: 'foot' });
+  resetCombat(s);
   return s;
 }
-test('Trial of side-by-side needs a partner at bond 60', () => {
-  const s = awake();
-  s.tamed[0].bond = 40;
-  assert.equal(trySide(s, s.tamed[0]).ok, false);
-  s.tamed[0].bond = 60;
-  assert.ok(trySide(s, s.tamed[0]).ok);
-  assert.ok(s.story.trials.includes('side'));
+function calm() {
+  const s = inGarden();
+  Object.assign(s.story, { stage: 3, sleeping: false });
+  return s;
+}
+test('The cave is a maze: walls block, the entrance leads to the heart', () => {
+  const s = ready();
+  s.inCave = true;
+  s.player.mode = 'foot';
+  assert.ok(canWalk(s, CAVE.x + ENTRANCE.x, CAVE.z + ENTRANCE.z));
+  assert.equal(canWalk(s, CAVE.x, CAVE.z), false, 'the dais is solid');
+  assert.ok(canWalk(s, SLEEP_AT.x, SLEEP_AT.z + 2));
+  assert.equal(canWalk(s, CAVE.x + 40, CAVE.z), false, 'outside the hedges');
 });
-test('Trial of might (0.28): 嘯岳 fights through combat — telegraphed, dodgeable — and yields at 30 %', () => {
-  const s = awake(),
+test('Alone it does not stir; carrying three 御獸 contracts tears it awake in a frenzy', () => {
+  const s = inGarden(),
     st = s.story;
-  s.tamed[0].kind = 'beast';
-  s.tamed[0].evolved = true;
-  assert.ok(startDuel(s, s.tamed[0]).ok);
-  s.expedition.activeId = s.tamed[0].id;
-  Object.assign(s.player, { mode: 'foot', x: st.beast.x, z: st.beast.z + 3 });
-  resetCombat(s);
-  const env = { rng: () => 0, canReach: () => true };
-  // a telegraph first; standing in it gets you hit
+  assert.ok(st.sleeping);
+  let ev = tickStory(s, 0.1, { team: 1 });
+  assert.ok(st.sleeping && !st.duel);
+  assert.ok(
+    ev.some(e => e.type === 'script' && e.script === 'sleepHint'),
+    'a quiet hint, once'
+  );
+  ev = tickStory(s, 0.1, { team: WAKE_TEAM });
+  assert.ok(ev.some(e => e.type === 'frenzy-wake'));
+  assert.ok(st.duel?.frenzy && !st.sleeping);
+  assert.equal(st.beast.maxHp, FRENZY_HP);
+  assert.ok(combatActive(s), 'the fight runs inside the cave');
+});
+test('The frenzy fights with telegraphed moves; beaten down it comes back to itself and speaks', () => {
+  const s = inGarden(),
+    st = s.story;
+  tickStory(s, 0.1, { team: WAKE_TEAM });
+  const env = { rng: () => 0, canReach: () => true, canMove: () => true };
   let ev = [];
   for (let i = 0; i < 80 && !ev.some(e => e.type === 'telegraph' && e.id === 'duel'); i++) {
     s.elapsed += 0.05;
     ev = tickCombat(s, 0.05, env);
   }
   assert.ok(ev.some(e => e.type === 'telegraph' && e.id === 'duel' && e.line));
-  assert.ok(st.duel.windupAt, 'the world sees it rear up');
-  const hp = s.vitals.health;
-  s.elapsed = st.beast.ai.until + 0.01;
-  tickCombat(s, 0.05, env);
-  assert.ok(s.vitals.health < hp || s.tamed[0].health < 100);
-  // the story still ends the duel when you are beaten
-  s.vitals.health = 20;
-  assert.ok(tickStory(s, 0.1, { active: s.tamed[0] }).some(e => e.type === 'duel-lost'));
-  assert.equal(st.duel, null);
-  // fight again and wear it down: it yields instead of dying
-  s.vitals.health = 100;
-  assert.ok(startDuel(s, s.tamed[0]).ok);
-  st.beast.hp = Math.round(st.beast.maxHp * DUEL_YIELD) + 1;
+  st.beast.hp = Math.round(FRENZY_HP * DUEL.yieldAt) + 1;
+  delete st.beast.ai;
   Object.assign(s.player, { x: st.beast.x, z: st.beast.z + 2.5 });
   s.elapsed += 3;
   const r = basicAttack(s, true, env);
   assert.ok(r.events.some(e => e.type === 'duelwon'));
-  assert.ok(winDuel(s).won);
-  assert.ok(st.trials.includes('might'));
-  assert.equal(st.duel, null);
-  assert.equal(st.beast.hp, st.beast.maxHp);
+  const w = winDuel(s);
+  assert.ok(w.won && w.script === 'calm');
+  assert.equal(st.stage, 3);
+  assert.ok(!st.sleeping && !st.duel);
 });
-test('Trial of the oath: only "partner" is accepted; a wrong answer makes it wait a minute', () => {
-  const s = awake();
-  assert.equal(answerOath(s, 'weapon').ok, false);
-  assert.equal(answerOath(s, 'friend').ok, false); // still turned away
-  s.elapsed += 61;
-  assert.ok(answerOath(s, 'friend').ok);
+test('Losing, or running from the garden, puts it back to sleep', () => {
+  const s = inGarden(),
+    st = s.story;
+  tickStory(s, 0.1, { team: WAKE_TEAM });
+  s.vitals.health = 20;
+  assert.ok(tickStory(s, 0.1, { team: WAKE_TEAM }).some(e => e.type === 'duel-lost' && e.script === 'frenzyLose'));
+  assert.ok(st.sleeping && !st.duel);
+  s.vitals.health = 100;
+  tickStory(s, 0.1, { team: WAKE_TEAM });
+  assert.ok(st.duel);
+  s.inCave = false;
+  assert.ok(tickStory(s, 0.1, { team: WAKE_TEAM }).some(e => e.type === 'duel-off'));
+  assert.ok(st.sleeping);
 });
-test('The pact needs all trials, a contract scroll and crystal; the ancient beast cannot be bred', () => {
-  const s = awake();
-  s.contracts = 1;
+test('The pact takes ten contract scrolls; the ancient beast cannot be bred', () => {
+  const s = calm();
+  s.contracts = PACT_CONTRACTS - 1;
   assert.equal(sealPact(s).ok, false);
-  s.story.trials = ['side', 'might', 'oath'];
-  assert.ok(trialsDone(s));
-  const crystal = s.resources.crystal;
+  s.contracts = PACT_CONTRACTS + 2;
   assert.ok(sealPact(s).ok);
-  assert.equal(s.contracts, 0);
-  assert.ok(s.resources.crystal < crystal);
+  assert.equal(s.contracts, 2);
   const x = pactPet(s);
   assert.ok(x && x.ancient && x.name === '嘯岳');
   assert.equal(s.story.stage, 5);
   assert.equal(breed(s, PACT_ID, 'p1').ok, false);
   assert.equal(sealPact(s).ok, false);
+  // asleep, it cannot be bound
+  const t = inGarden();
+  t.contracts = 20;
+  assert.equal(sealPact(t).ok, false);
+});
+test('Old saves with 嘯岳 awake on the central island send it back to sleep in the garden', () => {
+  const s = ready();
+  s.story = {
+    stage: 4,
+    keys: ['tide', 'stone', 'bone'],
+    trials: ['side', 'might'],
+    seen: [],
+    beast: { x: 0, z: 0, hp: 900, maxHp: 900 }
+  };
+  normalizeStory(s);
+  assert.equal(s.story.stage, 2);
+  assert.ok(s.story.beast.cave && s.story.sleeping);
 });
 test('The crossing needs Xiaoyue deployed on the basin shore, and it closes chapter one', () => {
-  const s = awake();
-  s.contracts = 1;
-  s.story.trials = ['side', 'might', 'oath'];
+  const s = calm();
+  s.contracts = PACT_CONTRACTS;
   sealPact(s);
+  s.inCave = false;
   const x = pactPet(s);
   assert.equal(canCross(s, s.tamed[0], true).ok, false);
   assert.equal(canCross(s, x, false).ok, false);

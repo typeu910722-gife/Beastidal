@@ -1,7 +1,8 @@
-import { CAVE } from './expansion.js?v=0.30.0';
-import { moveAboard, moveShip } from './ship.js?v=0.30.0';
-import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.30.0';
-import { groundAt, waterNear } from './lake.js?v=0.30.0';
+import { CAVE } from './expansion.js?v=0.31.0';
+import { mazeWalkable } from './cave-maze.js?v=0.31.0';
+import { moveAboard, moveShip } from './ship.js?v=0.31.0';
+import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.31.0';
+import { groundAt, waterNear } from './lake.js?v=0.31.0';
 // All travel modes share world coordinates. The boat stays moored while walking.
 export const TILE_SIZE = 3.6;
 const SIDES = [
@@ -32,7 +33,7 @@ export function boatBlocked(s, x, z) {
 }
 export function canWalk(s, x, z) {
   if (!Number.isFinite(x) || !Number.isFinite(z)) return false;
-  if (s.inCave) return Math.hypot(x - CAVE.x, z - CAVE.z) < CAVE.r - 0.3;
+  if (s.inCave) return mazeWalkable(x - CAVE.x, z - CAVE.z);
   if (!s.player.level && onLand(x, z)) return true; // islands and the basin shore are real terrain
   if (
     ![

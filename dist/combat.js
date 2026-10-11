@@ -9,15 +9,15 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.30.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.30.0';
-import { WILD_BEASTS } from './beasts.js?v=0.30.0';
-import { rollDrops } from './species.js?v=0.30.0';
-import { give } from './bag.js?v=0.30.0';
-import { tally } from './stats.js?v=0.30.0';
-import { damageBonus } from './skills.js?v=0.30.0';
-import { remember } from './memories.js?v=0.30.0';
-import { perks, personality, normalizeTree } from './beast-tree.js?v=0.30.0';
+import { phenotype } from './genetics.js?v=0.31.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.31.0';
+import { WILD_BEASTS } from './beasts.js?v=0.31.0';
+import { rollDrops } from './species.js?v=0.31.0';
+import { give } from './bag.js?v=0.31.0';
+import { tally } from './stats.js?v=0.31.0';
+import { damageBonus } from './skills.js?v=0.31.0';
+import { remember } from './memories.js?v=0.31.0';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.31.0';
 
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;
@@ -281,7 +281,7 @@ export function foesNear(s, r = ENGAGE, from = s.player) {
   if (b && !b.defeated && !s.inCave && dist(b, from) < r + 4) out.push(b);
   // 嘯岳 during the trial of might
   const xb = s.story?.duel && s.story.beast;
-  if (xb && !s.inCave && dist(xb, from) < r + 4) {
+  if (xb && !!s.inCave === !!xb.cave && dist(xb, from) < r + 4) {
     xb.id = 'duel';
     xb.duelBeast = true;
     xb.land = true;
@@ -290,7 +290,7 @@ export function foesNear(s, r = ENGAGE, from = s.player) {
   return out;
 }
 export function combatActive(s) {
-  if (s.inCave || s.player.mode === 'cabin' || s.player.mode === 'aboard') return false;
+  if ((s.inCave && !s.story?.duel) || s.player.mode === 'cabin' || s.player.mode === 'aboard') return false;
   return !!activeBeast(s) && foesNear(s).length > 0;
 }
 const isBoss = (s, t) => t === s.expedition?.boss;
@@ -336,9 +336,10 @@ function damageFoe(s, t, base, ev, opts = {}) {
     ev.push({ type: 'interrupt', id: t.id });
   }
   if (t.duelBeast) {
-    if (t.hp <= t.maxHp * DUEL_YIELD && !t.yielded) {
+    const yieldAt = t.yieldAt ?? DUEL_YIELD;
+    if (t.hp <= t.maxHp * yieldAt && !t.yielded) {
       t.yielded = true;
-      t.hp = Math.round(t.maxHp * DUEL_YIELD);
+      t.hp = Math.round(t.maxHp * yieldAt);
       ev.push({ type: 'duelwon' });
     }
     return amount;
@@ -629,6 +630,45 @@ export const SPECIAL = {
         min: 5,
         recover: 1.9,
         line: '守望者沉下身子，朝你直衝而來！'
+      }
+    }
+  },
+  // 0.31: 嘯岳 torn awake in the corrupted garden — faster, harder, and the garden's thorns answer its roar
+  frenzy: {
+    name: '嘯岳（狂暴）',
+    range: 40,
+    speed: 3.7,
+    want: 3.8,
+    dmg: 13,
+    phase2: 0.5,
+    moves: {
+      swipe: {
+        shape: 'bite',
+        windup: 1.05,
+        range: 8,
+        half: 1.0,
+        mul: 1,
+        recover: 1.2,
+        line: '嘯岳壓低身子——爪擊要來了！'
+      },
+      pounce: {
+        shape: 'charge',
+        windup: 0.95,
+        range: 13,
+        width: 3,
+        mul: 1.25,
+        min: 4,
+        recover: 1.5,
+        line: '嘯岳弓起背，朝你撲來！'
+      },
+      roar: { shape: 'sweep', windup: 1.35, range: 7, mul: 0.6, recover: 1.1, stun: true, line: '嘯岳深吸一口氣——' },
+      thorns: {
+        shape: 'sweep',
+        windup: 1.8,
+        range: 11,
+        mul: 1.4,
+        recover: 1.6,
+        line: '整座花園的荊棘朝牠腳下收攏——快跑出圈外！'
       }
     }
   },
@@ -932,9 +972,9 @@ export function tickCombat(s, dt, env = {}) {
     specialTurn(s, boss, SPECIAL.boss, env, ev, dt, rng, p, ally, riding, me);
   else if (boss?.ai?.state === 'windup') delete boss.ai;
   const xb = s.story?.duel && s.story.beast;
-  if (xb && !s.inCave && s.player.mode === 'foot' && dist(xb, me) < SPECIAL.duel.range) {
+  if (xb && !!s.inCave === !!xb.cave && s.player.mode === 'foot' && dist(xb, me) < SPECIAL.duel.range) {
     foesNear(s, 0); // tags 嘯岳 as a foe
-    specialTurn(s, xb, SPECIAL.duel, env, ev, dt, rng, p, ally, riding, me);
+    specialTurn(s, xb, s.story.duel.frenzy ? SPECIAL.frenzy : SPECIAL.duel, env, ev, dt, rng, p, ally, riding, me);
     s.story.duel.windupAt = xb.ai?.state === 'windup' ? xb.ai.start : null; // world.js rears the model up
   }
   // projectiles

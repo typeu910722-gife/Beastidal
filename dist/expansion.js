@@ -1,24 +1,29 @@
-import { phenotype, clamp } from './genetics.js?v=0.30.0';
-import { NODES, harvest } from './islands.js?v=0.30.0';
-import { restPlace } from './ship.js?v=0.30.0';
-import { dayOf, dayPhase } from './clock.js?v=0.30.0';
-import { remember, rememberFirst } from './memories.js?v=0.30.0';
-import { spend, give, stow } from './bag.js?v=0.30.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.30.0';
-import { islandAt } from './islands.js?v=0.30.0';
-import { hasPerk } from './codex.js?v=0.30.0';
-import { tally } from './stats.js?v=0.30.0';
-import { rollDrops } from './species.js?v=0.30.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.30.0';
-import { WILD_BEASTS } from './beasts.js?v=0.30.0';
-import { hasGear, MASK_OXYGEN } from './gear.js?v=0.30.0';
-import { damageBonus } from './skills.js?v=0.30.0';
-import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.30.0';
-import { ITEM_NAMES } from './items.js?v=0.30.0';
-import { personality } from './beast-tree.js?v=0.30.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.30.0';
-// The crystal cave is its own pocket of the world, far outside the basin.
-export const CAVE = { x: 2600, z: -2600, r: 6 };
+import { phenotype, clamp } from './genetics.js?v=0.31.0';
+import { NODES, harvest } from './islands.js?v=0.31.0';
+import { restPlace } from './ship.js?v=0.31.0';
+import { dayOf, dayPhase } from './clock.js?v=0.31.0';
+import { remember, rememberFirst } from './memories.js?v=0.31.0';
+import { spend, give, stow } from './bag.js?v=0.31.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.31.0';
+import { islandAt } from './islands.js?v=0.31.0';
+import { hasPerk } from './codex.js?v=0.31.0';
+import { tally } from './stats.js?v=0.31.0';
+import { rollDrops } from './species.js?v=0.31.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.31.0';
+import { WILD_BEASTS } from './beasts.js?v=0.31.0';
+import { hasGear, MASK_OXYGEN } from './gear.js?v=0.31.0';
+import { damageBonus } from './skills.js?v=0.31.0';
+import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.31.0';
+import { ITEM_NAMES } from './items.js?v=0.31.0';
+import { personality } from './beast-tree.js?v=0.31.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT } from './story.js?v=0.31.0';
+// The crystal cave is its own pocket of the world, far outside the basin — since 0.31 a corrupted garden maze
+// (cave-maze.js), with 嘯岳 asleep at its heart.
+import { CAVE, ENTRANCE, DEAD_ENDS, mazeWalkable } from './cave-maze.js?v=0.31.0';
+export { CAVE };
+const inMaze = (x, z) => ({ x: CAVE.x + x, z: CAVE.z + z });
+const KEY_WALL = inMaze(DEAD_ENDS[0].x, DEAD_ENDS[0].z),
+  HEART_CHEST = inMaze(DEAD_ENDS[1].x, DEAD_ENDS[1].z);
 // the 深淵潛行者 collection perk lengthens every dive
 export const oxygenMax = s =>
   Math.max(40, 90 + (hasPerk(s, 'deep') ? 30 : 0) + (hasGear(s, 'mask') ? MASK_OXYGEN : 0) + oxygenShift(s));
@@ -37,12 +42,19 @@ export const EXPLORE = [
   },
   { id: 'archive', name: '御獸文明石碑', x: ARCHIVE.x, z: ARCHIVE.z, kind: 'ruin', rewards: { crystal: 3 } },
   { id: 'cave-door', name: '晶窟入口', x: CAVE_DOOR.x, z: CAVE_DOOR.z, kind: 'entrance' },
-  { id: 'cave-exit', name: '返回右岸半島', x: CAVE.x, z: CAVE.z + 4, kind: 'exit', cave: true },
+  {
+    id: 'cave-exit',
+    name: '返回右岸半島',
+    x: CAVE.x + ENTRANCE.x,
+    z: CAVE.z + ENTRANCE.z + 1.2,
+    kind: 'exit',
+    cave: true
+  },
   {
     id: 'cave-heart',
     name: '晶窟封印寶箱',
-    x: CAVE.x,
-    z: CAVE.z - 2,
+    x: HEART_CHEST.x,
+    z: HEART_CHEST.z,
     kind: 'chest',
     cave: true,
     rewards: { crystal: 8, metal: 6 }
@@ -59,7 +71,7 @@ export const EXPLORE = [
   // 嘯岳之契 (story.js): the sealed slab, and the two keys you can reach by exploring
   { id: 'pact-seal', name: '封印石板', x: SEAL_AT.x, z: SEAL_AT.z, kind: 'seal', deep: true, story: true },
   { id: 'key-tide', name: '潮紋祭台', x: TIDE_AT.x, z: TIDE_AT.z, kind: 'relic', deep: true, story: true },
-  { id: 'key-stone', name: '岩紋石壁', x: CAVE.x - 4, z: CAVE.z - 1, kind: 'relic', cave: true, story: true }
+  { id: 'key-stone', name: '岩紋石壁', x: KEY_WALL.x, z: KEY_WALL.z, kind: 'relic', cave: true, story: true }
 ];
 export const STAGES = [
   [0, '初識'],
@@ -84,9 +96,9 @@ export function normalizeExpansion(s) {
   e.boss ??= { x: BOSS_HOME.x, z: BOSS_HOME.z, hp: 480, maxHp: 480, defeated: false, lastAttack: -999 };
   // 0.15 moved the world into the basin: re-home anything left on the new land or in the old cave pocket
   if (!e.boss.defeated && islandAt(e.boss.x, e.boss.z, 3)) Object.assign(e.boss, { x: BOSS_HOME.x, z: BOSS_HOME.z });
-  if (s.inCave && Math.hypot(s.player.x - CAVE.x, s.player.z - CAVE.z) > CAVE.r + 3) {
-    s.player.x = CAVE.x;
-    s.player.z = CAVE.z + 3;
+  if (s.inCave && !mazeWalkable(s.player.x - CAVE.x, s.player.z - CAVE.z)) {
+    s.player.x = CAVE.x + ENTRANCE.x;
+    s.player.z = CAVE.z + ENTRANCE.z;
   }
   e.lastStorm ??= s.elapsed;
   e.lastGather ??= s.elapsed;
@@ -235,10 +247,11 @@ export function explore(s, id) {
   if (site.kind === 'entrance') {
     s.caveReturn = { x: s.player.x, z: s.player.z };
     s.inCave = true;
-    s.player.x = CAVE.x;
-    s.player.z = CAVE.z + 3;
+    s.player.x = CAVE.x + ENTRANCE.x;
+    s.player.z = CAVE.z + ENTRANCE.z;
+    s.player.heading = Math.PI;
     s.player.level = 0;
-    return { ok: true, message: '進入異晶洞窟。出口在身後。' };
+    return { ok: true, message: '進入異晶洞窟——裡面長成了一座腐化的花園迷宮。出口在身後。' };
   }
   if (site.kind === 'exit') {
     s.inCave = false;
@@ -281,14 +294,6 @@ export function attack(s, heavy = false) {
   if (s.elapsed - p.lastAttack < (p.lastHeavy ? 3.4 : 2)) return fail('攻擊恢復中。');
   p.lastHeavy = heavy;
   const b = e.boss;
-  // the trial of might: while the duel is on, your partner fights 嘯岳
-  if (duelActive(s) && nearBeast(s, 17)) {
-    p.stamina -= 6;
-    p.lastAttack = s.elapsed;
-    e.attackFlashUntil = s.elapsed + 0.25;
-    const ph = phenotype(p.genome);
-    return hitBeast(s, Math.round(8 + ph.armor * 0.07 + ph.speed * 0.06 + (p.awakened ? 12 : 0)));
-  }
   let target =
     !b.defeated && Math.hypot(s.player.x - b.x, s.player.z - b.z) < 17
       ? b

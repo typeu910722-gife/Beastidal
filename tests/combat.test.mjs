@@ -30,8 +30,7 @@ import {
   MAX_LEVEL
 } from '../dist/combat.js';
 import { discard } from '../dist/bag.js';
-import { SPECIAL, DUEL_YIELD } from '../dist/combat.js';
-import { winDuel, normalizeStory } from '../dist/story.js';
+import { SPECIAL } from '../dist/combat.js';
 import { tankSlots, tankRoom, TANK_CAP } from '../dist/cabin.js';
 
 let n = 0;
@@ -292,30 +291,5 @@ test('深海守望者 telegraphs slams, waves and rams; a dodge evades it, and i
     r.events.some(e => e.type === 'bossdown'),
     'the last blow brings it down'
   );
-});
-test('嘯岳 fights the trial of might in real time and yields at 30 % instead of dying', () => {
-  const s = world();
-  out(s, pet('beast', ['fire']));
-  normalizeStory(s);
-  s.story.beast = { x: 0, z: 3, hp: 900, maxHp: 900 };
-  s.story.duel = { next: s.elapsed + 2.5, windupAt: null };
-  s.story.trials = [];
-  s.player.mode = 'foot';
-  const env = { rng: fixed(0), canReach: () => true };
-  let ev = [];
-  for (let i = 0; i < 60 && !ev.some(e => e.type === 'telegraph'); i++) {
-    s.elapsed += 0.05;
-    ev = tickCombat(s, 0.05, env);
-  }
-  assert.ok(ev.some(e => e.type === 'telegraph' && e.id === 'duel'));
-  assert.ok(combatActive(s));
-  s.story.beast.hp = Math.round(900 * DUEL_YIELD) + 2;
-  delete s.story.beast.ai;
-  s.elapsed += 2;
-  const r = basicAttack(s, true, env);
-  assert.ok(r.events.some(e => e.type === 'duelwon'));
-  assert.ok(s.story.beast.hp > 0, 'it yields, it is not killed');
-  assert.ok(winDuel(s).won);
-  assert.ok(s.story.trials.includes('might') && !s.story.duel);
 });
 console.log(`\n${n} combat tests passed`);

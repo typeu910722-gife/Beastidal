@@ -1,33 +1,35 @@
-import { expansionModels } from './expansion-models.js?v=0.30.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.30.0';
-import { normalizeHousing, penId } from './housing.js?v=0.30.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.30.0';
-export { makeCreature } from './creatures.js?v=0.30.0';
-import { makeIslands } from './island-models.js?v=0.30.0';
-import { facilityId } from './facilities.js?v=0.30.0';
+import { expansionModels } from './expansion-models.js?v=0.31.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.31.0';
+import { normalizeHousing, penId } from './housing.js?v=0.31.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.31.0';
+export { makeCreature } from './creatures.js?v=0.31.0';
+import { makeIslands } from './island-models.js?v=0.31.0';
+import { facilityId } from './facilities.js?v=0.31.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.30.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.30.0';
-import { makeLake } from './lake-models.js?v=0.30.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.30.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.30.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.30.0';
-import { PostFX } from './postfx.js?v=0.30.0';
-import { makeHuman, animateHuman } from './human.js?v=0.30.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.30.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.30.0';
-import { buildError } from './rules.js?v=0.30.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.30.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.30.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.30.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.30.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.30.0';
-import { CombatFX } from './combat-fx.js?v=0.30.0';
-import { syncPlots } from './land-models.js?v=0.30.0';
-import { plotTargets } from './reclaim.js?v=0.30.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.30.0';
-import { dayPhase } from './clock.js?v=0.30.0';
-import { weatherAt, season } from './weather.js?v=0.30.0';
+import { phenotype, seeded } from './genetics.js?v=0.31.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.31.0';
+import { makeLake } from './lake-models.js?v=0.31.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.31.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.31.0';
+import { makeStatues } from './statues.js?v=0.31.0';
+import { animateGarden } from './garden-models.js?v=0.31.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.31.0';
+import { PostFX } from './postfx.js?v=0.31.0';
+import { makeHuman, animateHuman } from './human.js?v=0.31.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.31.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.31.0';
+import { buildError } from './rules.js?v=0.31.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.31.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.31.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.31.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.31.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.31.0';
+import { CombatFX } from './combat-fx.js?v=0.31.0';
+import { syncPlots } from './land-models.js?v=0.31.0';
+import { plotTargets } from './reclaim.js?v=0.31.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.31.0';
+import { dayPhase } from './clock.js?v=0.31.0';
+import { weatherAt, season } from './weather.js?v=0.31.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -785,6 +787,9 @@ export class OceanWorld {
     ball(this.eventChest, 0xffe3a0, 0, 1.3, 0, 0.3, 0.3, 0.3, { emissive: 0xffd27a, emissiveIntensity: 2 });
     this.eventChest.visible = false;
     this.scene.add(this.eventChest);
+    // 0.31: three mythic beasts in stone — central island, the old water gate, the sunken ruins
+    this.statues = makeStatues();
+    this.scene.add(this.statues);
     this.pactBeast = makeSabertooth();
     this.pactBeast.scale.setScalar(1.7);
     this.pactBeast.visible = false;
@@ -1631,6 +1636,8 @@ export class OceanWorld {
       this.navMarker.scale.setScalar(1 + Math.sin(t * 4) * 0.15);
     } else this.navMarker.visible = false;
     this.extra.cave.visible = !!s.inCave;
+    if (s.inCave) animateGarden(this.extra.cave, t);
+    this.statues.visible = !s.inCave && !cabin;
     this.cabin.group.visible = cabin;
     for (const l of this.cabin.lights) l.visible = cabin;
     if (cabin) this.cabin.update(t, s.player.floor | 0);
@@ -1673,7 +1680,7 @@ export class OceanWorld {
       if (sky.snow) rain.setX(i, rain.getX(i) + Math.sin(t * 1.3 + i) * dt * 0.6);
     }
     rain.needsUpdate = true;
-    this.scene.fog.density = cabin ? 0.008 : diving ? 0.035 : s.inCave ? 0.045 : this.skyFog + storm * 0.003;
+    this.scene.fog.density = cabin ? 0.008 : diving ? 0.035 : s.inCave ? 0.016 : this.skyFog + storm * 0.003;
     if (cabin) {
       // warm lamplight indoors
       this.scene.background.set(0x1a120c);
@@ -1683,10 +1690,11 @@ export class OceanWorld {
       this.sun.intensity = 0;
       this.scene.environmentIntensity = 0.35;
     } else if (diving || s.inCave) {
-      this.scene.background.set(diving ? 0x062738 : 0x081720);
+      // 0.31: the cave is a rotten garden now — violet murk, sick green light
+      this.scene.background.set(diving ? 0x062738 : 0x0d0814);
       this.scene.fog.color.copy(this.scene.background);
-      this.ambient.color.set(diving ? 0x2a7a8a : 0x5a6a80);
-      this.ambient.intensity = diving ? 1.2 : 0.7;
+      this.ambient.color.set(diving ? 0x2a7a8a : 0x8a78b0);
+      this.ambient.intensity = diving ? 1.2 : 1.6;
       this.sun.intensity = diving ? 0.5 : 0.1;
       this.scene.environmentIntensity = 0.15;
     } else {
@@ -1825,7 +1833,8 @@ export class OceanWorld {
       look = 0,
       gait = 0,
       roar = 0;
-    if (st.beast && st.stage >= 3 && st.stage < 5) at = { x: st.beast.x, z: st.beast.z };
+    // 0.31: before the pact it lies in the garden at the cave's heart — asleep, raging, or awake and calm
+    if (st.beast && (st.stage || 0) < 5 && !!st.beast.cave === !!s.inCave) at = { x: st.beast.x, z: st.beast.z };
     else if (pet) {
       if (s.expedition?.activeId === PACT_ID && !s.inCave) {
         // pads along a few metres behind you, ashore or swimming beside the boat
@@ -1835,8 +1844,8 @@ export class OceanWorld {
     }
     beast.visible = !!at;
     if (!at) return;
-    const ground = groundAt(at.x, at.z),
-      y = Math.max(ground, foot ? ground : -0.9);
+    const ground = s.inCave ? 0.2 : groundAt(at.x, at.z),
+      y = s.inCave ? ground : Math.max(ground, foot ? ground : -0.9);
     const prev = beast.position.clone();
     if (beast.userData.placed) beast.position.lerp(new V(at.x, y, at.z), 1 - Math.exp(-dt * 3));
     else beast.position.set(at.x, y, at.z);
@@ -1861,7 +1870,19 @@ export class OceanWorld {
     if (st.duel?.windupAt) roar = 1;
     if (this.pactTalk) roar = Math.max(roar, 0.35 + 0.25 * Math.sin(t * 9));
     beast.userData.rig.position.y = st.duel?.windupAt ? -0.25 : 0;
+    if (st.sleeping && s.inCave) {
+      // curled low on the dais, facing the way in, breathing slowly
+      beast.rotation.y = 0;
+      beast.userData.rig.position.y = -0.62 + Math.sin(t * 0.9) * 0.03;
+      look = Math.sin(t * 0.15) * 0.1;
+      gait = 0;
+      roar = 0;
+    }
     animateSabertooth(beast, t, { look, gait, roar });
+    // in its frenzy the corruption shows: it swells and its eyes burn violet
+    const rage = st.duel?.frenzy ? 1 : 0;
+    this.pactRage = (this.pactRage || 0) + (rage - (this.pactRage || 0)) * Math.min(1, dt * 3);
+    beast.scale.setScalar(1.7 * (1 + this.pactRage * 0.18));
   }
   animateCreature(m, t) {
     animateCreature(m, t);

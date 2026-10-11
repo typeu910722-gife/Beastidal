@@ -1,25 +1,28 @@
 // 嘯岳之契 (The Pact of Xiaoyue): an optional main line hidden under the lake.
-// 起 a sealed slab under the Great Gate → 承 three keys (tide / stone / bone) → 轉 the ancient sabre-tooth wakes and
-// speaks → 合 three trials and a pact → it carries you over the mountains (the hook for chapter two).
-// Nothing here is required to keep playing; every step is reached only by exploring.
-import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.30.0';
-import { spend } from './bag.js?v=0.30.0';
-import { dayOf } from './clock.js?v=0.30.0';
-import { makeGenome } from './genetics.js?v=0.30.0';
+// 起 a sealed slab under the Great Gate → 承 three keys (tide / stone / bone), the lore of who built the mountains →
+// 轉 (0.31) the ancient sabre-tooth sleeps at the heart of the corrupted garden in the crystal cave. It does not stir
+// for a lone visitor; come carrying three 御獸 contracts and their scent tears it awake in a frenzy. Beat it down
+// and it comes back to itself and speaks → 合 a pact of ten contract scrolls → it carries you over the mountains (the
+// hook for chapter two). Nothing here is required to keep playing; every step is reached only by exploring.
+import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.31.0';
+import { spend } from './bag.js?v=0.31.0';
+import { dayOf } from './clock.js?v=0.31.0';
+import { makeGenome } from './genetics.js?v=0.31.0';
+import { CAVE } from './cave-maze.js?v=0.31.0';
 
 export const PACT_ID = 'ancient-xiaoyue';
 export const PACT_NAME = '嘯岳';
 export const KEYS = {
   tide: { name: '潮之鑰', where: '沉沒神殿的潮紋祭台' },
-  stone: { name: '岩之鑰', where: '異晶洞窟深處的岩紋石壁' },
+  stone: { name: '岩之鑰', where: '腐化花園迷宮深處的岩紋石壁' },
   bone: { name: '骨之鑰', where: '深海守望者的體內' }
 };
-export const TRIALS = {
-  side: { name: '並肩', hint: '帶著一隻羈絆 60 以上的出戰夥伴站到嘯岳面前。' },
-  might: { name: '力量', hint: '與夥伴一起和嘯岳交手，讓牠退後。牠蓄力時快退開。' },
-  oath: { name: '誓言', hint: '回答牠的問題：你要牠成為你的什麼？' }
-};
-export const PACT_COST = { crystal: 20 };
+// 0.31: ten contract scrolls — one contract cannot hold something this old
+export const PACT_CONTRACTS = 10;
+export const WAKE_TEAM = 3; // 御獸 contracts you must carry for it to wake
+// where it sleeps: on the south side of the dais at the garden's heart, facing the way in
+export const SLEEP_AT = { x: CAVE.x, z: CAVE.z + 3.6 };
+export const FRENZY_HP = 1500;
 // Where things are (game coordinates).
 export const SEAL_AT = { x: LANDMARKS.greatGate.x, z: LANDMARKS.greatGate.z - 14 };
 export const TIDE_AT = { x: LANDMARKS.sunkTemple.x, z: LANDMARKS.sunkTemple.z };
@@ -28,19 +31,32 @@ export const BEAST_HOME = landNear(LANDMARKS.centralRuins.x - 18, LANDMARKS.cent
   max: 50,
   maxSlope: 0.35
 });
-export const DUEL = { hp: 900, yieldAt: 0.3, every: 4.6, windup: 1.3, damage: 9, reach: 8 };
+export const DUEL = { hp: FRENZY_HP, yieldAt: 0.05 };
 
 const fail = error => ({ ok: false, error });
 const log = (s, title, text) => s.log.unshift({ day: dayOf(s), title, text });
 export function normalizeStory(s) {
   s.story ??= {};
   const st = s.story;
-  st.stage ??= 0; // 0 unknown · 1 seal read · 2 keys gathered · 3 awake · 4 trials passed · 5 pact · 6 crossed
+  st.stage ??= 0; // 0 unknown · 1 seal read · 2 seal opened · 3 woken and calm · 5 pact · 6 crossed
   st.keys ??= [];
   st.trials ??= [];
   st.seen ??= [];
   st.duel ??= null;
-  st.oathWait ??= -999;
+  // 0.31: before the pact it lies in the garden's heart; saves that had it awake on the central island send it back
+  if (st.stage < 5) {
+    if (!st.beast || !st.beast.cave) {
+      if (st.stage === 3 || st.stage === 4) {
+        st.stage = 2;
+        st.trials = [];
+        log(s, '嘯岳', '嘯岳回到了異晶洞窟——那裡已經長成一座腐化的花園。牠在最深處又睡著了。');
+      }
+      st.beast = { x: SLEEP_AT.x, z: SLEEP_AT.z, hp: FRENZY_HP, maxHp: FRENZY_HP, cave: true };
+      st.sleeping = true;
+      st.duel = null;
+    }
+    st.sleeping ??= true;
+  }
   return s;
 }
 export const storyStage = s => normalizeStory(s).story.stage;
@@ -67,10 +83,13 @@ export function storyExplore(s, site) {
           .map(([, v]) => v.name);
         return fail(`凹槽還空著：${missing.join('、')}。`);
       }
-      st.stage = 3;
-      st.beast = { x: BEAST_HOME.x, z: BEAST_HOME.z, hp: DUEL.hp, maxHp: DUEL.hp };
-      log(s, '封印解除', '三枚鑰匙沒入凹槽。湖底傳來不屬於我的心跳。一道金光沿著湖底竄向中央遺跡島。');
-      return { ok: true, story: 'awaken', message: '三枚鑰匙沒入凹槽——湖底傳來低沉的心跳。' };
+      st.stage = 2;
+      log(
+        s,
+        '封印解除',
+        '三枚鑰匙沒入凹槽。湖底傳來不屬於我的心跳——不是從這裡，而是從右岸半島的方向。異晶洞窟裡，有什麼睡得很沉的東西翻了個身。'
+      );
+      return { ok: true, story: 'awaken', message: '三枚鑰匙沒入凹槽——心跳聲從異晶洞窟的方向傳來。' };
     }
     return fail('封印已經解開了。');
   }
@@ -104,6 +123,22 @@ export function onWatcherDown(s) {
 // ---------- 轉: the awakened beast speaks ----------
 // Dialogue scripts: [speaker, line]. The game shows them one card at a time.
 export const SCRIPT = {
+  // 0.31: the frenzy, the calm, the pact of ten
+  sleepHint: [['', '（牠睡得很沉，四周的花藤跟著牠的呼吸起伏。我一個人的氣息，好像吵不醒牠。）']],
+  frenzyWake: [
+    ['', '你身上三張契約同時發燙。花園裡的藤蔓一齊轉向你。'],
+    ['嘯岳', '……契……約……的……味道……'],
+    ['', '牠睜開眼——那不是清醒的眼神。腐化的紫光從牠的牙縫間溢出來。']
+  ],
+  frenzyLose: [['', '嘯岳的咆哮把你掀翻在花叢裡。等你爬起來，牠已經伏回石台上，又睡著了。']],
+  calm: [
+    ['嘯岳', '……我咬到了什麼？……是你，還有你的御獸。'],
+    ['嘯岳', '這座花園在我睡著的時候爛掉了。裂縫的氣味滲進來，鑽進我的夢裡。我分不清誰是敵人。'],
+    ['嘯岳', '你沒有逃，也沒有殺我。上一個人類想用一張紙綁住我——他叫自己「研究員」。湖替我收下了他。'],
+    ['你', '……你知道我是怎麼來的？'],
+    ['嘯岳', '你以為那頭巨大的鐵獸撞上你，是意外？裂縫在挑選聽得懂野獸的人。你們每一個，都是被選中的。'],
+    ['嘯岳', '我太老了，一張契約撐不住我。拿十張來。這一次，不是綁住我——是我選擇你。']
+  ],
   wake: [
     ['嘯岳', '……又一個從裂縫那頭掉下來的人類。'],
     ['嘯岳', '上一個也是。他叫自己「研究員」，帶著會發光的盒子，想用一張紙把我綁住。'],
@@ -121,7 +156,8 @@ export const SCRIPT = {
   oathMount: [['嘯岳', '我不是你的船。']],
   oathWeapon: [['嘯岳', '我的牙，不為別人的仇恨而長。']],
   oathFriend: [['嘯岳', '……夥伴。很久沒有人這樣說了。']],
-  ready: [['嘯岳', '好。拿出你的契約。這一次，不是綁住我——是我選擇你。']],
+  ready: [['嘯岳', '十張契約……你真的帶來了。好。這一次，不是綁住我——是我選擇你。']],
+  notReady: [['嘯岳', '十張。少一張，契約就會在我身上燒成灰。']],
   joined: [
     ['嘯岳', '這座湖是牢，也是盾。山外沒有路……但我能越過去。'],
     ['嘯岳', '等你準備好，帶我到湖岸的山腳下。我會讓你看看，那些人到底在擋什麼。']
@@ -135,76 +171,36 @@ export const SCRIPT = {
   ]
 };
 export const nearBeast = (s, r = 9) =>
-  !!s.story?.beast && !s.inCave && Math.hypot(s.player.x - s.story.beast.x, s.player.z - s.story.beast.z) < r;
+  !!s.story?.beast &&
+  !!s.inCave === !!s.story.beast.cave &&
+  Math.hypot(s.player.x - s.story.beast.x, s.player.z - s.story.beast.z) < r;
 
-// Trial 1: arrive with a partner at bond 60.
-export function trySide(s, active) {
-  const st = normalizeStory(s).story;
-  if (st.trials.includes('side')) return { ok: true, script: 'side' };
-  if (!active || active.bond < 60) return { ok: false, script: 'sideFail' };
-  st.trials.push('side');
-  return { ok: true, script: 'side' };
-}
-// Trial 2: the duel. The beast winds up before each swipe; stepping out of reach dodges it.
-export function startDuel(s, active) {
-  const st = normalizeStory(s).story;
-  if (st.trials.includes('might')) return fail('力量的試煉已經通過了。');
-  if (!active || active.bond < 30) return fail('需要一隻羈絆 30 以上的出戰夥伴一起應戰。');
-  st.beast.hp = st.beast.maxHp;
-  st.beast.yielded = false;
-  delete st.beast.ai;
-  st.duel = { next: s.elapsed + 2.5, windupAt: null };
-  return { ok: true, script: 'mightStart' };
-}
-// Called by the attack command when the duel is on and the beast is the nearest foe.
-export function hitBeast(s, damage) {
-  const st = normalizeStory(s).story,
-    b = st.beast;
-  b.hp = Math.max(0, b.hp - damage);
-  if (b.hp <= b.maxHp * DUEL.yieldAt) {
-    st.duel = null;
-    st.trials.push('might');
-    b.hp = b.maxHp;
-    return { ok: true, won: true, script: 'mightWin', message: '嘯岳收起爪子，後退了一步。' };
-  }
-  return { ok: true, message: `命中嘯岳！還差 ${Math.ceil(b.hp - b.maxHp * DUEL.yieldAt)} 才能讓牠退後。` };
-}
-export const duelActive = s => !!s.story?.duel;
-// 0.28: 嘯岳 yields (combat.js reports it when its strength falls to the yield line)
+// The fight is combat.js's (SPECIAL.frenzy); this ends it when 嘯岳 is beaten down — it comes back to itself.
 export function winDuel(s) {
   const st = normalizeStory(s).story;
   if (!st.duel) return null;
   st.duel = null;
-  if (!st.trials.includes('might')) st.trials.push('might');
+  st.sleeping = false;
   if (st.beast) {
     st.beast.hp = st.beast.maxHp;
     st.beast.yielded = false;
     delete st.beast.ai;
   }
-  return { ok: true, won: true, script: 'mightWin', message: '嘯岳收起爪子，後退了一步。' };
+  if (st.stage < 3) st.stage = 3;
+  if (!st.trials.includes('might')) st.trials.push('might');
+  log(s, '嘯岳 · 清醒', '狂暴的紫光從牠眼裡退去。牠看著我，像是第一次看見我。');
+  return { ok: true, won: true, script: 'calm', message: '嘯岳眼裡的紫光退去了。' };
 }
-// Trial 3: the oath. Only "partner" is accepted; a wrong answer makes it turn away for a minute.
-export function answerOath(s, choice) {
-  const st = normalizeStory(s).story;
-  if (st.trials.includes('oath')) return { ok: true, script: 'oathFriend' };
-  if (s.elapsed < st.oathWait) return fail(`嘯岳別過頭去。等 ${Math.ceil(st.oathWait - s.elapsed)} 秒再問牠。`);
-  if (choice === 'friend') {
-    st.trials.push('oath');
-    return { ok: true, script: 'oathFriend' };
-  }
-  st.oathWait = s.elapsed + 60;
-  return { ok: false, script: choice === 'mount' ? 'oathMount' : 'oathWeapon' };
-}
-export const trialsDone = s => ['side', 'might', 'oath'].every(t => normalizeStory(s).story.trials.includes(t));
-
+export const duelActive = s => !!s.story?.duel;
+export const awakeAndCalm = s => normalizeStory(s).story.stage >= 3 && normalizeStory(s).story.stage < 5;
 // ---------- 合: the pact ----------
 export function sealPact(s) {
   const st = normalizeStory(s).story;
   if (st.stage >= 5) return fail('嘯岳已經與你締約了。');
-  if (!trialsDone(s)) return fail('三個試煉還沒全部通過。');
-  if ((s.contracts || 0) < 1) return fail('需要一份契約書。到工作桌製作。');
-  if (!spend(s, PACT_COST)) return fail('締約需要 20 異晶，讓契約能承受遠古的力量。');
-  s.contracts--;
+  if (st.stage < 3) return fail('牠還在沉睡，或還沒有清醒過來。');
+  if ((s.contracts || 0) < PACT_CONTRACTS)
+    return fail(`需要 ${PACT_CONTRACTS} 份契約書（你有 ${s.contracts || 0} 份）。到工作桌製作。`);
+  s.contracts -= PACT_CONTRACTS;
   const genome = makeGenome(2718281, 2, 'land');
   s.tamed.push({
     id: PACT_ID,
@@ -251,7 +247,7 @@ export function finishCrossing(s) {
 
 // ---------- every frame ----------
 // Returns events for the game: hint toasts, the beast's wind-up and its swipe.
-export function tickStory(s, dt, { diving, active } = {}) {
+export function tickStory(s, dt, { diving, active, team } = {}) {
   const st = normalizeStory(s).story,
     ev = [];
   // a quiet hook the first time you dive near the gate
@@ -264,14 +260,32 @@ export function tickStory(s, dt, { diving, active } = {}) {
     st.seen.push('glow');
     ev.push({ type: 'hint', text: '（大拱門前……那塊石板在發光？）' });
   }
+  // 0.31: the sleeper in the garden's heart wakes only for someone carrying three 御獸 contracts
+  if (st.sleeping && st.beast?.cave && s.inCave && st.stage < 5 && !st.duel) {
+    const dist = Math.hypot(s.player.x - st.beast.x, s.player.z - st.beast.z);
+    if (dist < 13) {
+      if ((team || 0) >= WAKE_TEAM) {
+        st.sleeping = false;
+        st.duel = { frenzy: true, next: s.elapsed + 2, windupAt: null };
+        Object.assign(st.beast, { hp: FRENZY_HP, maxHp: FRENZY_HP, yieldAt: DUEL.yieldAt, yielded: false });
+        delete st.beast.ai;
+        ev.push({ type: 'frenzy-wake', script: 'frenzyWake' });
+      } else if (!st.seen.includes('sleep')) {
+        st.seen.push('sleep');
+        ev.push({ type: 'script', script: 'sleepHint' });
+      }
+    }
+  }
   if (st.duel && st.beast) {
-    const d = st.duel,
-      b = st.beast,
+    const b = st.beast,
       dist = Math.hypot(s.player.x - b.x, s.player.z - b.z);
-    if (dist > 40 || s.player.mode !== 'foot') {
+    if (dist > 40 || s.player.mode !== 'foot' || !!s.inCave !== !!b.cave) {
       st.duel = null;
       b.hp = b.maxHp;
-      ev.push({ type: 'duel-off', text: '你離開了戰場。嘯岳收起架勢。' });
+      delete b.ai;
+      Object.assign(b, { x: SLEEP_AT.x, z: SLEEP_AT.z });
+      st.sleeping = true;
+      ev.push({ type: 'duel-off', text: '你逃出了花園的心臟。嘯岳的咆哮漸漸平息，又沉沉睡去。' });
       return ev;
     }
     // 0.28: 嘯岳's swipes, pounces and roars come from combat.js; losing is still decided here
@@ -280,7 +294,9 @@ export function tickStory(s, dt, { diving, active } = {}) {
       b.hp = b.maxHp;
       b.yielded = false;
       delete b.ai;
-      ev.push({ type: 'duel-lost', script: 'mightLose' });
+      Object.assign(b, { x: SLEEP_AT.x, z: SLEEP_AT.z });
+      st.sleeping = true;
+      ev.push({ type: 'duel-lost', script: 'frenzyLose' });
     }
   }
   return ev;
@@ -288,17 +304,16 @@ export function tickStory(s, dt, { diving, active } = {}) {
 // Objectives for the story tab, in order.
 export function objectives(s) {
   const st = normalizeStory(s).story,
-    k = id => st.keys.includes(id),
-    t = id => st.trials.includes(id);
+    k = id => st.keys.includes(id);
   if (st.stage === 0)
     return st.keys.includes('bone') ? [['一枚刻著獸牙的骨片……湖底大拱門附近，好像有同樣的紋路。', false]] : [];
   const list = [['解讀湖底大拱門前的封印石板', true]];
   if (st.stage >= 1 && st.stage < 3)
     for (const [id, v] of Object.entries(KEYS)) list.push([`${v.name} · ${v.where}`, k(id)]);
   if (st.stage === 1) list.push(['把三枚鑰匙放回封印石板', false]);
-  if (st.stage >= 3) list.push(['喚醒嘯岳', true]);
-  if (st.stage >= 3) for (const [id, v] of Object.entries(TRIALS)) list.push([`試煉 · ${v.name}：${v.hint}`, t(id)]);
-  if (st.stage >= 3) list.push(['以契約書與 20 異晶締結契約', st.stage >= 5]);
+  if (st.stage >= 2) list.push(['嘯岳沉睡在異晶洞窟——腐化花園迷宮的中心', true]);
+  if (st.stage >= 2) list.push([`帶著至少 ${WAKE_TEAM} 張御獸契約靠近牠，撐過牠的狂暴`, st.stage >= 3]);
+  if (st.stage >= 3) list.push([`以 ${PACT_CONTRACTS} 份契約書締結契約`, st.stage >= 5]);
   if (st.stage >= 5) list.push(['帶嘯岳到環湖的山腳，越過群山', st.stage >= 6]);
   return list;
 }
