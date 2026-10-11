@@ -1,15 +1,15 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.31.0';
-import { waterNear, groundAt } from './lake.js?v=0.31.0';
-import { onWatcherDown } from './story.js?v=0.31.0';
-import { dayOf } from './clock.js?v=0.31.0';
-import { spend, give, bagRoom } from './bag.js?v=0.31.0';
-import { pens, penId } from './housing.js?v=0.31.0';
-import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.31.0';
-import { normalizeCabin, syncCabin } from './cabin.js?v=0.31.0';
-import { rollDrops } from './species.js?v=0.31.0';
-import { phenotype } from './genetics.js?v=0.31.0';
-import { ITEM_NAMES } from './items.js?v=0.31.0';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.32.0';
+import { waterNear, groundAt } from './lake.js?v=0.32.0';
+import { onWatcherDown } from './story.js?v=0.32.0';
+import { dayOf } from './clock.js?v=0.32.0';
+import { spend, give, bagRoom } from './bag.js?v=0.32.0';
+import { pens, penId } from './housing.js?v=0.32.0';
+import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.32.0';
+import { normalizeCabin, syncCabin } from './cabin.js?v=0.32.0';
+import { rollDrops } from './species.js?v=0.32.0';
+import { phenotype } from './genetics.js?v=0.32.0';
+import { ITEM_NAMES } from './items.js?v=0.32.0';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };

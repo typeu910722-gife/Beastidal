@@ -3079,5 +3079,22 @@ export default {
     'Xiaoyue sleeps in the crystal cave — at the heart of the corrupted garden maze',
   '帶著至少 {0} 張御獸契約靠近牠，撐過牠的狂暴':
     'Approach it carrying at least {0} beast contracts, and survive its frenzy',
-  '以 {0} 份契約書締結契約': 'Seal the pact with {0} contract scrolls'
+  '以 {0} 份契約書締結契約': 'Seal the pact with {0} contract scrolls',
+  '點一下畫面鎖定滑鼠轉頭。': 'Click the view to lock the mouse and look around.',
+  'H 返航 · R 旋轉設施 · 1–6 快捷物品 · Esc 返回': 'H return home · R rotate facility · 1–6 hotbar · Esc back',
+  '點擊海面航行；全程第一人稱：移動滑鼠轉頭，Esc 釋放游標':
+    'Click the sea to sail; always first person: move the mouse to look, Esc releases the cursor',
+  '左搖桿駕艇（推到底加速）· 右搖桿環視 · 十字鍵←騎乘／→潛水':
+    'Left stick steers (push fully to sprint) · right stick looks · D-pad ← ride / → dive',
+  '✦ 御獸遠航': '✦ Beast expedition',
+  釣竿: 'Fishing rod',
+  '沒有{0}。': 'No {0}.',
+  '附近沒有可以餵食的生物。': 'No creature nearby to feed.',
+  '牠要用契約書收服，不是外出籠。': 'This one is bound with a contract scroll, not a carry cage.',
+  '這隻要先用外出籠帶回船上，配種後再契闊進化。':
+    'Bring this one aboard in a carry cage first; breed it, then evolve it by contract.',
+  '滑鼠鎖定未啟用，點一下畫面再試一次。': 'Mouse lock is off — click the view to try again.',
+  滑鼠: 'Mouse',
+  '轉頭 ·': 'look ·',
+  快捷物品: 'Hotbar'
 };

@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.31.0';
-import { renderAdventure } from './expansion-ui.js?v=0.31.0';
+} from './expansion.js?v=0.32.0';
+import { renderAdventure } from './expansion-ui.js?v=0.32.0';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.31.0';
-import { monologue, markGuide } from './guide.js?v=0.31.0';
-import { climb, demolish, relocate } from './construction.js?v=0.31.0';
+} from './ship.js?v=0.32.0';
+import { monologue, markGuide } from './guide.js?v=0.32.0';
+import { climb, demolish, relocate } from './construction.js?v=0.32.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.31.0';
+} from './housing.js?v=0.32.0';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.31.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.31.0';
-import { lakeMinimap } from './lake-map.js?v=0.31.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.31.0';
+} from './islands.js?v=0.32.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.32.0';
+import { lakeMinimap } from './lake-map.js?v=0.32.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.32.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.31.0';
+} from './cabin.js?v=0.32.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.31.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.31.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.31.0';
-import { QUALITY } from './realism.js?v=0.31.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.31.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.31.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.31.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.31.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.31.0';
-import { CONFIG } from './config.js?v=0.31.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.31.0';
+} from './story.js?v=0.32.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.32.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.32.0';
+import { QUALITY } from './realism.js?v=0.32.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.32.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.32.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.32.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.32.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.32.0';
+import { CONFIG } from './config.js?v=0.32.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.32.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,13 +122,13 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.31.0';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.31.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.31.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.31.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.31.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.31.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.31.0';
+} from './codex.js?v=0.32.0';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.32.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.32.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.32.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.32.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.32.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.32.0';
 import {
   startFishing,
   tickFishing,
@@ -137,7 +137,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.31.0';
+} from './fishing.js?v=0.32.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -147,10 +147,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.31.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.31.0';
-import { setClimbing } from './lake.js?v=0.31.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.31.0';
+} from './reclaim.js?v=0.32.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.32.0';
+import { setClimbing } from './lake.js?v=0.32.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.32.0';
 import {
   RARITY,
   FRENZY,
@@ -175,7 +175,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.31.0';
+} from './taming.js?v=0.32.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -192,12 +192,13 @@ import {
   levelCap,
   xpFor,
   AI_RANGE
-} from './combat.js?v=0.31.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.31.0';
-import { BeastStage } from './beast-stage.js?v=0.31.0';
-import { loadArt, art, artImg } from './art.js?v=0.31.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.31.0';
-import { lookOf } from './beast-look.js?v=0.31.0';
+} from './combat.js?v=0.32.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.32.0';
+import { BeastStage } from './beast-stage.js?v=0.32.0';
+import { loadArt, art, artImg } from './art.js?v=0.32.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.32.0';
+import { separateBodies } from './bodies.js?v=0.32.0';
+import { lookOf } from './beast-look.js?v=0.32.0';
 import {
   TREE,
   BRANCHES,
@@ -209,8 +210,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.31.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.31.0';
+} from './beast-tree.js?v=0.32.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.32.0';
 import {
   funds,
   normalizeBag,
@@ -230,12 +231,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.31.0';
-import { iconFor } from './icons.js?v=0.31.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.31.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.31.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.31.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.31.0';
+} from './bag.js?v=0.32.0';
+import { iconFor } from './icons.js?v=0.32.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.32.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.32.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.32.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.32.0';
 import {
   homePos,
   facilityPos,
@@ -247,10 +248,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.31.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.31.0';
-export const GAME_VERSION = '0.31.0';
-import { CloudSave } from './cloud-save.js?v=0.31.0';
+} from './fortress.js?v=0.32.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.32.0';
+export const GAME_VERSION = '0.32.0';
+import { CloudSave } from './cloud-save.js?v=0.32.0';
 import {
   readLocal,
   writeLocal,
@@ -267,9 +268,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.31.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.31.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.31.0';
+} from './save-store.js?v=0.32.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.32.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.32.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -290,8 +291,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.31.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.31.0';
+} from './rules.js?v=0.32.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.32.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -358,7 +359,7 @@ function lockMouse() {
     const promise = $('ocean').requestPointerLock?.();
     promise?.catch?.(() => toast('點一下畫面啟用滑鼠環視；也可按住右鍵拖曳。'));
   } catch {
-    toast('可按住滑鼠右鍵拖曳環視。');
+    toast('點一下畫面鎖定滑鼠轉頭。');
   }
 }
 // Touch layout only when touch is the primary input. Touchscreen laptops report touch points but keep a fine,
@@ -1494,7 +1495,7 @@ function showHelp(back = showMenu) {
   modal(
     'HOW TO PLAY · 操作說明',
     '每一種玩法的按鍵',
-    `<div class="help-keys"><span>鍵盤</span><span>WASD 移動／駕艇 · Shift 加速 · E 互動 · Q 登岸／登艇 · 空白鍵驅離／跳躍<br>M 地圖與標記 · 潛水時往哪裡看就往哪裡游，空白鍵上浮、Z 下潛<br>B 建造 · I 背包 · J 日誌 · C 生物<br>H 返航 · R 旋轉設施 · V 切換視角 · Esc 返回<br>K 御獸遠航 · T 騎乘 · G 潛水／浮上<br>戰鬥：F 攻擊（連按連段、按住重擊）· 1／2 御獸技能 · 空白鍵閃避 · 看準地上的紅色範圍閃開<br>戰艦：Q 登船／下船／離開舵輪 · 駕駛室舵輪按 E 掌舵 · 掌舵時空白鍵發射艦砲</span><span>滑鼠／觸控</span><span>點擊海面航行；第三人稱右鍵拖曳環視<br>第一人稱移動滑鼠轉頭，Esc 釋放游標<br>手機橫屏：左下搖桿移動（推到底約半秒自動加速），右側單指環視、雙指縮放／旋轉<br>搖桿旁「加速」點一下開啟、停下自動關閉；可同時移動、環視與按按鈕；駛過漂流物、走過採集點會自動收集<br>靠近木筏或島嶼，點登岸即可步行<br>建築可直接點擊；J 日誌可設定島嶼航線<br>滾輪／雙指縮放，點擊按鈕互動</span><span>遊戲手把</span><span>左搖桿駕艇（推到底加速）· 右搖桿環視 · 十字鍵←騎乘／→潛水 · R3 切換視角<br>A 互動 · X 建造 · Y 生物 · B 返回<br>LB 背包 · RB 日誌 · LT 登岸／登艇<br>RT 攻擊（未出戰時驅離）· 戰鬥中 RB／LB 技能、B 閃避 · Select 御獸遠航 · L3 返航<br>十字鍵選單 · 左右切換親代 · Start 暫停</span></div>`,
+    `<div class="help-keys"><span>鍵盤</span><span>WASD 移動／駕艇 · Shift 加速 · E 互動 · Q 登岸／登艇 · 空白鍵驅離／跳躍<br>M 地圖與標記 · 潛水時往哪裡看就往哪裡游，空白鍵上浮、Z 下潛<br>B 建造 · I 背包 · J 日誌 · C 生物<br>H 返航 · R 旋轉設施 · 1–6 快捷物品 · Esc 返回<br>K 御獸遠航 · T 騎乘 · G 潛水／浮上<br>戰鬥：F 攻擊（連按連段、按住重擊）· 1／2 御獸技能 · 空白鍵閃避 · 看準地上的紅色範圍閃開<br>戰艦：Q 登船／下船／離開舵輪 · 駕駛室舵輪按 E 掌舵 · 掌舵時空白鍵發射艦砲</span><span>滑鼠／觸控</span><span>點擊海面航行；全程第一人稱：移動滑鼠轉頭，Esc 釋放游標<br>手機橫屏：左下搖桿移動（推到底約半秒自動加速），右側單指環視、雙指縮放／旋轉<br>搖桿旁「加速」點一下開啟、停下自動關閉；可同時移動、環視與按按鈕；駛過漂流物、走過採集點會自動收集<br>靠近木筏或島嶼，點登岸即可步行<br>建築可直接點擊；J 日誌可設定島嶼航線<br>滾輪／雙指縮放，點擊按鈕互動</span><span>遊戲手把</span><span>左搖桿駕艇（推到底加速）· 右搖桿環視 · 十字鍵←騎乘／→潛水<br>A 互動 · X 建造 · Y 生物 · B 返回<br>LB 背包 · RB 日誌 · LT 登岸／登艇<br>RT 攻擊（未出戰時驅離）· 戰鬥中 RB／LB 技能、B 閃避 · Select 御獸遠航 · L3 返航<br>十字鍵選單 · 左右切換親代 · Start 暫停</span></div>`,
     [{ label: '返回', primary: true, action: back }]
   );
 }
@@ -1529,17 +1530,11 @@ function showMenu() {
   closeBigMap();
   modal('MENU · 選單', '漂流者，休息一下。', cloudMenuHTML(), [
     { label: '繼續漂流', primary: true, action: closeModal },
-    {
-      label: world.firstPerson ? '切換為第三人稱' : '切換為第一人稱',
-      action: () => {
-        closeModal();
-        toggleView();
-      }
-    },
     { label: document.fullscreenElement ? '離開全螢幕' : '全螢幕', action: () => (closeModal(), fullscreen()) },
     { label: audio.on ? '關閉環境音' : '開啟環境音', action: () => ($('sound-btn').click(), showMenu()) },
     { label: '⚙ 設定', action: () => openSettings(showMenu) },
     { label: '操作說明', action: () => showHelp(showMenu) },
+    { label: '✦ 御獸遠航', action: () => (closeModal(), openPanel('adventure')) },
     { label: '📊 統計', action: () => openStats(showMenu) },
     { label: '🆘 脫困 · 回到船上', action: unstuck },
     {
@@ -1733,19 +1728,12 @@ function openSettings(back = closeModal) {
     } else toast('下次開始遊戲時會先播放新手教學。');
   };
 }
+// 0.32: the whole game is played in first person (build placement keeps its overhead view)
 function toggleView() {
   if (!running || paused || film) return;
-  if (state.player.mode === 'cabin') {
-    toast('船艙內是第一人稱視角。');
-    return;
-  }
-  const first = world.toggleView();
-  state.view = first ? 'first' : 'third';
-  if (first) lockMouse();
-  else releaseMouse();
-  $('view-btn').textContent = first ? '第一人稱' : '第三人稱';
-  toast(first ? '第一人稱 · 滑鼠轉頭，Esc 釋放游標；手機滑動環視' : '第三人稱 · 拖曳環視，滾輪／雙指縮放');
-  save(true);
+  world.firstPerson = true;
+  lockMouse();
+  toast('第一人稱 · 滑鼠轉頭，Esc 釋放游標；手機滑動環視');
 }
 function beginGame(fresh = false) {
   state.hero ??= 'male';
@@ -1790,9 +1778,11 @@ function beginGame(fresh = false) {
   $('film-fade').hidden = true;
   $('ocean').style.filter = '';
   if ($('film-flash')) $('film-flash').style.opacity = 0;
-  world.firstPerson = state.view === 'first' || state.player.mode === 'cabin';
+  world.firstPerson = true;
+  state.view = 'first';
   world.firstPitch = 0;
-  $('view-btn').textContent = world.firstPerson ? '第一人稱' : '第三人稱';
+  $('view-btn').hidden = true;
+  if (!touchUI()) lockMouse();
   world.yaw = 0.63;
   world.pitch = 0.64;
   world.distance = touchUI() ? 30 : 36;
@@ -2214,6 +2204,7 @@ function interact() {
       return;
     }
     const r = feed(state, t.id);
+    if (r.ok) world.act('feed');
     if (!r.ok) toast(r.error, true);
     else if (r.follow) {
       selectedTarget = null;
@@ -2303,6 +2294,7 @@ function finishSalvage() {
   salvaging = null;
   $('salvage-progress').hidden = true;
   if (r.ok) {
+    world.act('pickup');
     flyResources(r.rewards, at.x, 0.6, at.z);
     haptic('pickup');
     audio.note(860, 0.16);
@@ -2804,7 +2796,8 @@ function renderBeastStorage(body) {
     body
       .querySelectorAll('[data-job]')
       .forEach(b => (b.onclick = () => done(setJob(state, p.id, b.dataset.job || null))));
-    body.querySelector('[data-bx=go]').onclick = () => done(commandPet(state, p.id, active ? 'home' : 'follow'));
+    body.querySelector('[data-bx=go]').onclick = () =>
+      done(summonResult(commandPet(state, p.id, active ? 'home' : 'follow'), !active));
     const on = (k, fn) => {
       const b = body.querySelector(`[data-bx=${k}]`);
       if (b) b.onclick = fn;
@@ -2873,6 +2866,7 @@ function renderBeastStorage(body) {
       ev.onclick = () => {
         const r = evolve(state, p.id);
         if (r.ok) {
+          world.act('evolve');
           haptic('discover');
           audio.note(980, 0.5);
           log(state, '契闊進化', `${p.name} 身上的突變在契約書的光裡連成了一體。牠成了御獸。`);
@@ -3643,6 +3637,7 @@ function updateMonologue(force = false) {
 function gather(id) {
   const r = harvest(state, id);
   if (r.ok) {
+    world.act('pickup');
     flyResources({ [r.node.kind]: r.node.yield }, r.node.x, 1, r.node.z);
     haptic('pickup');
   } else if (r.full) bagFullNotice();
@@ -3808,7 +3803,7 @@ function focusCard(b, item, near) {
       )}</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small><form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
     act('默契訓練 · 口糧 2 / 異晶 1', () => focusDone(trainPet(state, p.id)), { primary: true });
     if (active) act('讓牠回池休息', () => focusDone(commandPet(state, p.id, 'home')));
-    else act('帶牠出發（跟隨）', () => focusDone(commandPet(state, p.id, 'follow')));
+    else act('帶牠出發（跟隨）', () => focusDone(summonResult(commandPet(state, p.id, 'follow'), true)));
     act('改名', () => {
       const form = $('focus-ui').querySelector('.focus-rename');
       form.hidden = false;
@@ -4095,6 +4090,7 @@ function updateContractButton() {
 function performCage(id) {
   if (!running || paused) return;
   const r = cageCreature(state, id);
+  if (r.ok) world.act('cage');
   toast(r.ok ? `${r.tamed.name} 進了外出籠，跟你回船上了。` : r.error, !r.ok);
   if (!r.ok) return;
   selectedTarget = null;
@@ -4110,6 +4106,7 @@ function performCage(id) {
 function performContract(id) {
   if (!running || paused) return;
   const r = contract(state, id);
+  if (r.ok || r.frenzy) world.act('contract');
   if (r.ok) {
     selectedTarget = null;
     haptic('discover');
@@ -4633,8 +4630,83 @@ function renderEggs() {
     )
     .join('');
 }
+// 0.32: calling a beast out — the scroll in your hands, and a circle of light a few steps ahead where it appears
+function summonResult(r, out) {
+  if (r?.ok && out) {
+    world.act('summon');
+    const h = world.yaw;
+    world.summonFlash(state.player.x - Math.sin(h) * 3, state.player.z - Math.cos(h) * 3);
+    audio.note(660, 0.4);
+  }
+  return r;
+}
+// 0.32: the hotbar — what you can use with a key or a tap, between your vitals and the build and device buttons
+const HOTBAR = [
+  { id: 'food', icon: '🍙', name: '口糧', count: () => state.resources.food || 0, use: () => consume('food') },
+  { id: 'water', icon: '💧', name: '淡水', count: () => state.resources.water || 0, use: () => consume('water') },
+  { id: 'bait', icon: '🐟', name: '誘餌', count: () => state.resources.bait || 0, use: () => feedNearest() },
+  { id: 'contract', icon: '📜', name: '契約書', count: () => state.contracts || 0, use: () => tameNearest('contract') },
+  { id: 'cage', icon: '🧺', name: '外出籠', count: () => state.resources.cage || 0, use: () => tameNearest('cage') },
+  { id: 'rod', icon: '🎣', name: '釣竿', count: () => (hasGear(state, 'rod') ? '∞' : 0), use: () => castOrReel() }
+];
+function useHotbar(i) {
+  const slot = HOTBAR[i];
+  if (!slot || !running || paused || panel) return;
+  if (!slot.count()) {
+    toast(`沒有${slot.name}。`, true);
+    return;
+  }
+  slot.use();
+  renderHotbar();
+}
+function renderHotbar() {
+  const bar = $('hotbar');
+  if (!bar) return;
+  if (!bar.childElementCount)
+    bar.innerHTML = HOTBAR.map(
+      (h, i) =>
+        `<button type="button" class="hot-slot" data-hot="${i}" title="${h.name}"><kbd>${i + 1}</kbd><span class="hot-icon">${h.icon}</span><b></b><small>${h.name}</small></button>`
+    ).join('');
+  HOTBAR.forEach((h, i) => {
+    const b = bar.children[i],
+      n = h.count();
+    b.querySelector('b').textContent = n === 0 ? '0' : String(n);
+    b.classList.toggle('empty', !n);
+  });
+}
+// throw bait to the nearest wild creature that is not hostile
+function feedNearest() {
+  const w = state.wild
+    .filter(w => !w.hostile && !w.dissolving && Math.hypot(w.x - state.player.x, w.z - state.player.z) < 11)
+    .sort(
+      (a, b) =>
+        Math.hypot(a.x - state.player.x, a.z - state.player.z) - Math.hypot(b.x - state.player.x, b.z - state.player.z)
+    )[0];
+  if (!w) {
+    toast('附近沒有可以餵食的生物。', true);
+    return;
+  }
+  // aim the interaction at it for this one use, the way E would
+  nearest = { ...w, type: 'wild', name: geneName(w.genome) };
+  interact();
+}
+// the contract scroll or the carry cage on whatever in front of you will take it
+function tameNearest(kind) {
+  const w = contractTarget();
+  if (!w) {
+    contractNearest();
+    return;
+  }
+  const act = tameAction(w);
+  if (act.kind !== kind) {
+    toast(kind === 'cage' ? '牠要用契約書收服，不是外出籠。' : '這隻要先用外出籠帶回船上，配種後再契闊進化。', true);
+    return;
+  }
+  contractNearest();
+}
 function consume(type) {
   const r = useSupply(state, type);
+  if (r.ok) world.act(type === 'water' ? 'drink' : 'eat');
   toast(r.ok ? (type === 'water' ? '補充水分 +35' : '補充飽食 +35') : r.error, !r.ok);
   renderPanel();
   updateUI();
@@ -4809,12 +4881,10 @@ function place() {
 }
 // ---------- 0.20: the warship's cabin — first person inside, ladder climbs, free furniture placement ----------
 let ladderClimb = null,
-  cabinPlace = null,
-  viewBeforeCabin = null;
+  cabinPlace = null;
 // inside the cabin the view is always first person; the old view comes back at the hatch
 function cabinView(inside) {
   if (inside) {
-    viewBeforeCabin = world.firstPerson;
     world.firstPerson = true;
     world.firstPitch = 0;
     world.yaw = 0; // facing into the suite from the hatch
@@ -4823,13 +4893,7 @@ function cabinView(inside) {
     cancelPlace();
     ladderClimb = null;
     world.climbY = 0;
-    if (viewBeforeCabin === false) {
-      world.firstPerson = false;
-      releaseMouse();
-    }
-    viewBeforeCabin = null;
   }
-  $('view-btn').textContent = world.firstPerson ? '第一人稱' : '第三人稱';
 }
 // the ladder: a short ladderClimb with the camera, then the other floor
 function startClimb(id, r) {
@@ -5364,7 +5428,8 @@ function updateUI() {
   const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin';
   $('build-tool').hidden = !onFoot || !atHome(state);
   $('home-btn').firstChild.textContent = state.ship ? '⌂ 回到戰艦 ' : '⌂ 導航回避難所 ';
-  $('adventure-btn').hidden = onFoot;
+  $('adventure-btn').hidden = true; // 0.32: in the ☰ menu now (K still opens it)
+  renderHotbar();
   $('drink-count').textContent = state.resources.water || 0;
   $('eat-count').textContent = state.resources.food || 0;
   $('drink-btn').disabled = !state.resources.water || state.vitals.water >= 98;
@@ -5525,6 +5590,7 @@ function castOrReel() {
     return;
   }
   const r = startFishing(state);
+  if (r.ok) world.act('fish');
   toast(r.ok ? r.message : r.error, !r.ok);
   if (r.ok) {
     audio.splash(0.3, true);
@@ -6639,6 +6705,10 @@ function gamepad(dt) {
 }
 function setupEvents() {
   $('adventure-btn').onclick = () => openPanel('adventure');
+  $('hotbar').onclick = e => {
+    const b = e.target.closest('[data-hot]');
+    if (b) useHotbar(Number(b.dataset.hot));
+  };
   $('drink-btn').onclick = () => consume('water');
   $('eat-btn').onclick = () => consume('food');
   $('monologue').onclick = () => {
@@ -6674,7 +6744,7 @@ function setupEvents() {
     cameraDrag = null;
     document.body.classList.toggle('mouse-look', document.pointerLockElement === $('ocean'));
   });
-  document.addEventListener('pointerlockerror', () => toast('滑鼠鎖定未啟用，可按住右鍵拖曳環視。'));
+  document.addEventListener('pointerlockerror', () => toast('滑鼠鎖定未啟用，點一下畫面再試一次。'));
 
   $('start-btn').onclick = async () => {
     const btn = $('start-btn');
@@ -6826,9 +6896,11 @@ function setupEvents() {
     if (k === 'e') interact();
     if (k === 'x') contractNearest();
     if (k === ' ') inFight() ? doDodge() : actionKey();
-    if (k === '1') castSkill(0);
-    if (k === '2') castSkill(1);
-    if (k === '3') castSkill(2);
+    if (/^[1-6]$/.test(k)) {
+      const n = Number(k) - 1;
+      if (inFight() && n < 3) castSkill(n);
+      else useHotbar(n);
+    }
     if (k === 'b') openPanel('build');
     if (k === 'i') openDevice();
     if (k === 'j') openPanel('journal');
@@ -7264,6 +7336,8 @@ function frame(now) {
     if (!panel && !buildType) {
       normalizeCombat(state).playerMul = playerGuard();
       onCombat(tickCombat(state, dt, combatEnv()));
+      // 0.32: bodies take up room — nothing moving passes through anything else
+      separateBodies(state, combatEnv());
     }
     if (!panel && !buildType) {
       const pe = tickPersona(state, dt);

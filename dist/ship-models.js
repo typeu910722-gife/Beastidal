@@ -1,6 +1,6 @@
 // Procedural warship "比斯泰德號": keel + five walkable deck bands that can be cut away.
 import * as T from './vendor/three.module.min.js';
-import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.31.0';
+import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.32.0';
 export const LOUNGE_SLOTS = [
   [-2.4, -7],
   [2.4, -7],
@@ -342,20 +342,24 @@ export function makeWarship(mat, halo) {
       }).rotation.y = Math.PI / 2;
     }
     box(b, C.strake, 0, y + 0.5, -5.9, 7.2, 1, 0.2);
-    for (const s of [-1, 1]) box(b, C.strake, s * 2.4, y + 1.5, -5.9, 2.4, 2.6, 0.2);
-    box(b, C.strake, 0, y + 2.6, -5.9, 7.2, 0.4, 0.2);
-    add(b, new T.PlaneGeometry(2.4, 1.4), C.glass, [0, y + 1.5, -5.88], [1, 1, 1], {
+    // 0.32: the wheelhouse's front and roof, hidden while you stand at the wheel so nothing blocks the view ahead
+    const cab = new T.Group();
+    b.add(cab);
+    g.userData.cab = cab;
+    for (const s of [-1, 1]) box(cab, C.strake, s * 2.4, y + 1.5, -5.9, 2.4, 2.6, 0.2);
+    box(cab, C.strake, 0, y + 2.6, -5.9, 7.2, 0.4, 0.2);
+    add(cab, new T.PlaneGeometry(2.4, 1.4), C.glass, [0, y + 1.5, -5.88], [1, 1, 1], {
       transparent: true,
       opacity: 0.28,
       side: T.DoubleSide
     });
-    box(b, C.hull, 0, y + 2.75, -9.5, 7.8, 0.25, 8);
-    box(b, C.trim, 0, y + 2.92, -9.5, 7.9, 0.08, 8.1);
-    add(b, new T.SphereGeometry(0.28, 12, 8), 0xffd38c, [0, y + 3.3, -9.5], [1, 1.2, 1], {
+    box(cab, C.hull, 0, y + 2.75, -9.5, 7.8, 0.25, 8);
+    box(cab, C.trim, 0, y + 2.92, -9.5, 7.9, 0.08, 8.1);
+    add(cab, new T.SphereGeometry(0.28, 12, 8), 0xffd38c, [0, y + 3.3, -9.5], [1, 1.2, 1], {
       emissive: 0xffc06a,
       emissiveIntensity: 1.6
     });
-    halo(b, 0xffd499, 0, y + 3.3, -9.5, 1.6);
+    halo(cab, 0xffd499, 0, y + 3.3, -9.5, 1.6);
     const helm = new T.Group();
     helm.position.set(0, y + 1.35, -10.6);
     b.add(helm);

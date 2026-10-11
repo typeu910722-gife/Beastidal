@@ -190,6 +190,7 @@ export class PostFX {
     u.uTime.value += dt;
     u.uStorm.value = this.storm;
     u.uFocus.value += (this.focus - u.uFocus.value) * Math.min(1, dt * 6);
+    u.uDof.value = this.soft && !this.handsUp ? this.preset.dof : 0;
     u.uNear.value = camera.near;
     u.uFar.value = camera.far;
     u.uWarmth.value = this.warmth;

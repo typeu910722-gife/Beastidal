@@ -1,35 +1,36 @@
-import { expansionModels } from './expansion-models.js?v=0.31.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.31.0';
-import { normalizeHousing, penId } from './housing.js?v=0.31.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.31.0';
-export { makeCreature } from './creatures.js?v=0.31.0';
-import { makeIslands } from './island-models.js?v=0.31.0';
-import { facilityId } from './facilities.js?v=0.31.0';
+import { expansionModels } from './expansion-models.js?v=0.32.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.32.0';
+import { normalizeHousing, penId } from './housing.js?v=0.32.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.32.0';
+export { makeCreature } from './creatures.js?v=0.32.0';
+import { makeIslands } from './island-models.js?v=0.32.0';
+import { facilityId } from './facilities.js?v=0.32.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.31.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.31.0';
-import { makeLake } from './lake-models.js?v=0.31.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.31.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.31.0';
-import { makeStatues } from './statues.js?v=0.31.0';
-import { animateGarden } from './garden-models.js?v=0.31.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.31.0';
-import { PostFX } from './postfx.js?v=0.31.0';
-import { makeHuman, animateHuman } from './human.js?v=0.31.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.31.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.31.0';
-import { buildError } from './rules.js?v=0.31.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.31.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.31.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.31.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.31.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.31.0';
-import { CombatFX } from './combat-fx.js?v=0.31.0';
-import { syncPlots } from './land-models.js?v=0.31.0';
-import { plotTargets } from './reclaim.js?v=0.31.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.31.0';
-import { dayPhase } from './clock.js?v=0.31.0';
-import { weatherAt, season } from './weather.js?v=0.31.0';
+import { phenotype, seeded } from './genetics.js?v=0.32.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.32.0';
+import { makeLake } from './lake-models.js?v=0.32.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.32.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.32.0';
+import { makeStatues } from './statues.js?v=0.32.0';
+import { animateGarden } from './garden-models.js?v=0.32.0';
+import { ViewModel } from './viewmodel.js?v=0.32.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.32.0';
+import { PostFX } from './postfx.js?v=0.32.0';
+import { makeHuman, animateHuman } from './human.js?v=0.32.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.32.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.32.0';
+import { buildError } from './rules.js?v=0.32.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.32.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.32.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.32.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.32.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.32.0';
+import { CombatFX } from './combat-fx.js?v=0.32.0';
+import { syncPlots } from './land-models.js?v=0.32.0';
+import { plotTargets } from './reclaim.js?v=0.32.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.32.0';
+import { dayPhase } from './clock.js?v=0.32.0';
+import { weatherAt, season } from './weather.js?v=0.32.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -688,6 +689,10 @@ export class OceanWorld {
     this.post = new PostFX(this.renderer, this.settings.quality);
     loadProtagonist();
     this.camera = new T.PerspectiveCamera(44, 1, 0.1, 1800);
+    // 0.32: the camera carries the first-person hands, so it lives in the scene
+    this.scene.add(this.camera);
+    this.viewmodel = new ViewModel(this.camera);
+    this.summons = [];
     this.yaw = 0.63;
     this.pitch = 0.64;
     this.diveDir = 0;
@@ -1081,6 +1086,68 @@ export class OceanWorld {
       if (e.type === 'erupt' || e.type === 'kill') this.shake = Math.max(this.shake, 0.45);
     }
   }
+  // 0.32: the hands do something (see viewmodel.js), and a circle of light where a beast is called out
+  act(name) {
+    this.viewmodel.play(name);
+  }
+  summonFlash(x, z, color = 0xffd27a, y = null) {
+    const g = new T.Group(),
+      base = y ?? (this.lastState?.inCave ? 0.05 : Math.max(0, groundAt(x, z)) + 0.05);
+    g.position.set(x, base, z);
+    const ring = new T.Mesh(
+      new T.RingGeometry(0.6, 0.85, 48),
+      new T.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.9,
+        side: T.DoubleSide,
+        blending: T.AdditiveBlending,
+        depthWrite: false
+      })
+    );
+    ring.rotation.x = -Math.PI / 2;
+    const beam = new T.Mesh(
+      new T.CylinderGeometry(0.7, 1.1, 6, 24, 1, true),
+      new T.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.5,
+        side: T.DoubleSide,
+        blending: T.AdditiveBlending,
+        depthWrite: false
+      })
+    );
+    beam.position.y = 3;
+    g.add(ring, beam);
+    this.scene.add(g);
+    this.summons.push({ g, ring, beam, t: 0 });
+  }
+  updateSummons(dt) {
+    for (let i = this.summons.length - 1; i >= 0; i--) {
+      const f = this.summons[i];
+      f.t += dt;
+      const k = f.t / 1.3;
+      f.ring.scale.setScalar(1 + k * 3.5);
+      f.ring.material.opacity = 0.9 * (1 - k);
+      f.beam.scale.set(1 - k * 0.6, 1 + k * 0.4, 1 - k * 0.6);
+      f.beam.material.opacity = 0.5 * (1 - k);
+      if (k >= 1) {
+        this.scene.remove(f.g);
+        this.summons.splice(i, 1);
+      }
+    }
+  }
+  // 0.32: may a follower stand here — clear of the warship's hull, on land if it walks, in water if it swims
+  followOk(s, x, z, onLand, r) {
+    if (s.ship && !s.skiff && !s.inCave) {
+      const h = s.ship.heading || 0;
+      for (const k of [-8, 0, 8])
+        if (Math.hypot(x - (s.ship.x + Math.sin(h) * k), z - (s.ship.z + Math.cos(h) * k)) < 3.8 + r) return false;
+    }
+    if (s.inCave) return true;
+    const g = groundAt(x, z);
+    return onLand ? g > 0.35 : g < -0.6;
+  }
   screenPoint(x, y, z) {
     const v = new V(x, y, z).project(this.camera);
     return {
@@ -1137,6 +1204,9 @@ export class OceanWorld {
     );
   }
   update(dt, s, opts = {}) {
+    this.lastState = s;
+    this.viewmodel.update(dt, this.firstPerson && !this.placement && !opts.title);
+    this.updateSummons(dt);
     this.time += dt;
     // Harvested spots regrow piece by piece over 120 s (logs wash back ashore, crystals and fruit grow back);
     // the last piece popping into place is the cue that the spot can be harvested again.
@@ -1411,14 +1481,80 @@ export class OceanWorld {
         m.scale.setScalar(phenotype(c.genome).size * (riding ? 1 : c.kind === 'creature' ? 0.6 : 0.8));
         const cb = s.combat,
           fight = !!cb?.engaged && !riding && Number.isFinite(cb.ax);
-        const target = new V(
-          fight ? cb.ax : s.player.x + (riding ? 0 : Math.cos(t * 0.4) * 2.5),
-          this.baseY + (foot ? (landPet ? this.footLift : 0.8) : 0),
-          fight ? cb.az : s.player.z + (riding ? 0 : Math.sin(t * 0.4) * 2.5)
-        );
-        m.position.lerp(target, 1 - Math.exp(-dt * (fight ? 9 : 3)));
+        // 0.32: a follower roams around you on its own — it picks a spot near you, goes there facing where it walks,
+        // idles, picks another; it keeps clear of you, the warship's hull, and ground it cannot stand on
+        let fx = s.player.x,
+          fz = s.player.z,
+          face = s.player.heading;
+        if (!riding && !fight) {
+          const f = (m.userData.follow ??= { x: s.player.x + 2, z: s.player.z + 2, wait: 0, heading: 0 }),
+            rad =
+              0.4 +
+              (m.userData.bodyR ??
+                (m.userData.bodyR = phenotype(c.genome).size * (c.kind === 'creature' ? 0.35 : 0.6))),
+            rMin = rad + 1.1,
+            rMax = rMin + 4.5,
+            okAt = (x, z) => this.followOk(s, x, z, landPet && foot, rad),
+            far = Math.hypot(f.gx - s.player.x, f.gz - s.player.z);
+          if (!Number.isFinite(f.gx) || far > rMax + 2 || (f.arrived && (f.wait -= dt) <= 0)) {
+            for (let k = 0; k < 10; k++) {
+              const a = Math.random() * Math.PI * 2,
+                r = rMin + Math.random() * (rMax - rMin),
+                gx = s.player.x + Math.sin(a) * r,
+                gz = s.player.z + Math.cos(a) * r;
+              if (okAt(gx, gz) || k === 9) {
+                // (on a raft or a deck there may be no proper ground nearby: take the last try anyway)
+                f.gx = gx;
+                f.gz = gz;
+                break;
+              }
+            }
+            f.arrived = false;
+          }
+          const dx = (f.gx ?? f.x) - f.x,
+            dz = (f.gz ?? f.z) - f.z,
+            d = Math.hypot(dx, dz),
+            speed = Math.min(9, 2.4 + phenotype(c.genome).speed / 40 + (far > rMax ? far * 0.6 : 0));
+          if (d > 0.25) {
+            const step = Math.min(d, speed * dt),
+              nx = f.x + (dx / d) * step,
+              nz = f.z + (dz / d) * step;
+            if (okAt(nx, nz) || !okAt(f.x, f.z)) {
+              f.x = nx;
+              f.z = nz;
+            } else f.gx = undefined; // blocked: choose again
+            f.heading = Math.atan2(dx, dz);
+            f.moving = true;
+          } else if (!f.arrived) {
+            f.arrived = true;
+            f.moving = false;
+            f.wait = 1.5 + Math.random() * 4;
+          }
+          // never stand inside you
+          const pd = Math.hypot(f.x - s.player.x, f.z - s.player.z);
+          if (pd < rMin * 0.8 && pd > 1e-3) {
+            f.x = s.player.x + ((f.x - s.player.x) / pd) * rMin * 0.8;
+            f.z = s.player.z + ((f.z - s.player.z) / pd) * rMin * 0.8;
+          }
+          if (Math.hypot(f.x - s.player.x, f.z - s.player.z) > 30) {
+            f.x = s.player.x + 2;
+            f.z = s.player.z + 2;
+            f.gx = undefined;
+          }
+          fx = f.x;
+          fz = f.z;
+          face = f.heading;
+          m.userData.followMoving = f.moving;
+        } else if (fight) {
+          fx = cb.ax;
+          fz = cb.az;
+          face = Number.isFinite(cb.facing) ? cb.facing : face;
+          if (m.userData.follow) Object.assign(m.userData.follow, { x: fx, z: fz, gx: undefined });
+        }
+        const target = new V(fx, this.baseY + (foot ? (landPet ? this.footLift : 0.8) : 0), fz);
+        m.position.lerp(target, 1 - Math.exp(-dt * (fight || !riding ? 9 : 3)));
         if (m.position.distanceTo(target) > 15) m.position.copy(target);
-        m.rotation.y = fight && Number.isFinite(cb.facing) ? cb.facing : s.player.heading;
+        m.rotation.y += Math.atan2(Math.sin(face - m.rotation.y), Math.cos(face - m.rotation.y)) * Math.min(1, dt * 6);
         // a swing: the beast lunges into it and rears back out
         const sw = this.swing;
         if (sw && s.elapsed - sw.at < (sw.heavy ? 0.42 : 0.3)) {
@@ -1769,6 +1905,7 @@ export class OceanWorld {
     bands.forEach((b, i) => (b.visible = !cut || i <= s.player.deck));
     ship.userData.keel.visible = true;
     ship.userData.wheel.rotation.z = helm ? Math.sin(t * 0.5) * 0.6 : 0;
+    if (ship.userData.cab) ship.userData.cab.visible = !(helm && this.firstPerson);
     const fx = s.ship.cannonFx;
     if (fx && s.elapsed - fx.at < 0.7) {
       this.cannonFx.visible = true;
@@ -1937,9 +2074,9 @@ export class OceanWorld {
         for (const m of g.userData.roof) m.visible = !open;
       }
     if (this.firstPerson && !this.placement && !this.titleMode) {
-      const x = this.playerAnchor.x,
+      // 0.32: first person everywhere — on foot, on deck, at the helm, in the boat, on a beast's back, under water
+      let x = this.playerAnchor.x,
         z = this.playerAnchor.z,
-        p = this.firstPitch || 0,
         y =
           this.baseY +
           (this.onFoot
@@ -1947,7 +2084,28 @@ export class OceanWorld {
               (this.jumpY || 0) +
               (this.climbY || 0) +
               Math.sin(this.walkPhase * 2) * Math.min(0.018, this.moveSpeed * 0.008)
-            : 2.13 + this.boatHeave);
+            : 1.55 + this.boatHeave); // seated in the boat, eyes just over the gunwale
+      const p = this.firstPitch || 0,
+        st = this.lastState;
+      if (st?.player.mode === 'ship' && !st.expedition?.mounted && st.ship) {
+        // at the wheel: stand just behind it, the wheelhouse's front and roof out of the way
+        const h = st.ship.heading || 0;
+        x = st.ship.x + Math.sin(h) * -12.5;
+        z = st.ship.z + Math.cos(h) * -12.5;
+        y += 0.35;
+      }
+      if (this.onRiding && st) {
+        // on the beast's back, high enough that its head and horns stay below the view
+        const pm = this.petMeshes.get(st.expedition?.activeId);
+        if (pm) {
+          if (pm.userData.topLocal === undefined) {
+            pm.updateMatrixWorld(true);
+            const box = new T.Box3().setFromObject(pm);
+            pm.userData.topLocal = (box.max.y - pm.position.y) / (pm.scale.y || 1);
+          }
+          y = pm.position.y + pm.userData.topLocal * pm.scale.y + 0.75;
+        }
+      }
       this.camera.position.set(x, y, z);
       this.camera.lookAt(
         x - Math.sin(this.yaw) * Math.cos(p) * 10,
@@ -1974,6 +2132,8 @@ export class OceanWorld {
     const now = performance.now();
     this.post.storm = this.stormLevel;
     this.post.focus = this.focusDist || 30;
+    // the hands are not in the depth buffer: no depth of field while they are up, or it would blur them
+    this.post.handsUp = this.viewmodel.busy;
     this.post.warmth = this.diveY < -0.5 ? 0.3 : 1;
     const frameDt = Math.min(0.1, (now - (this.lastRender || now)) / 1000);
     this.post.render(this.scene, this.camera, frameDt);

@@ -12,12 +12,12 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./brand/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./style.css?v=0.31.0" />
-    <link rel="stylesheet" href="./mobile.css?v=0.31.0" />
-    <link rel="stylesheet" href="./panels.css?v=0.31.0" />
-    <link rel="stylesheet" href="./expansion.css?v=0.31.0" />
-    <link rel="stylesheet" href="./beastidal.css?v=0.31.0" />
-    <link rel="stylesheet" href="./inventory.css?v=0.31.0" />
+    <link rel="stylesheet" href="./style.css?v=0.32.0" />
+    <link rel="stylesheet" href="./mobile.css?v=0.32.0" />
+    <link rel="stylesheet" href="./panels.css?v=0.32.0" />
+    <link rel="stylesheet" href="./expansion.css?v=0.32.0" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.32.0" />
+    <link rel="stylesheet" href="./inventory.css?v=0.32.0" />
   </head>
   <body>
     <!-- Studio splash (about 7 s, tap or any key to skip): the YZ mark assembles, then the studio name rises. -->
@@ -258,19 +258,20 @@
             </div>
             <small id="save-status">存檔僅保存在此裝置</small>
           </section>
+          <nav id="hotbar" class="hotbar" aria-label="快捷物品"></nav>
           <nav class="action-bar" aria-label="遊戲功能">
             <button data-panel="build" id="build-tool">
               <span class="tool-icon">⌂</span><span>建造</span><kbd>B</kbd></button
             ><button data-panel="device" id="device-tool">
               <span class="tool-icon">▯</span><span>裝置</span><kbd>I</kbd></button
-            ><button id="adventure-btn" data-panel="adventure">
+            ><button id="adventure-btn" data-panel="adventure" hidden>
               <kbd>K</kbd><span class="tool-icon">✦</span><span>御獸遠航</span>
             </button>
           </nav>
         </div>
         <div class="control-hint">
           <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 駕艇</span
-          ><span><kbd>滑鼠右鍵</kbd> 環視 · <kbd>滾輪</kbd> 縮放</span
+          ><span><kbd>滑鼠</kbd> 轉頭 · <kbd>1</kbd>–<kbd>6</kbd> 快捷物品</span
           ><span><kbd>點擊海面</kbd> 航行 · <kbd>空白鍵</kbd> 驅離</span>
         </div>
         <div id="beast-bar" hidden>
@@ -334,7 +335,7 @@
         <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
       </section>
     </main>
-    <script type="module" src="./game.js?v=0.31.0"></script>
+    <script type="module" src="./game.js?v=0.32.0"></script>
     <script>
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
