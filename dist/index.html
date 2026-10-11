@@ -12,12 +12,12 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./brand/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./style.css?v=0.25.0" />
-    <link rel="stylesheet" href="./mobile.css?v=0.25.0" />
-    <link rel="stylesheet" href="./panels.css?v=0.25.0" />
-    <link rel="stylesheet" href="./expansion.css?v=0.25.0" />
-    <link rel="stylesheet" href="./beastidal.css?v=0.25.0" />
-    <link rel="stylesheet" href="./inventory.css?v=0.25.0" />
+    <link rel="stylesheet" href="./style.css?v=0.25.1" />
+    <link rel="stylesheet" href="./mobile.css?v=0.25.1" />
+    <link rel="stylesheet" href="./panels.css?v=0.25.1" />
+    <link rel="stylesheet" href="./expansion.css?v=0.25.1" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.25.1" />
+    <link rel="stylesheet" href="./inventory.css?v=0.25.1" />
   </head>
   <body>
     <!-- Studio splash (about 7 s, tap or any key to skip): the YZ mark assembles, then the studio name rises. -->
@@ -78,7 +78,7 @@
       <section id="title-screen" hidden>
         <div class="title-top">
           <img class="logo-mark logo-emblem" src="./brand/emblem.svg" alt="" /><span>一場新的漂流</span
-          ><span class="version">BEASTIDAL / 0.11</span>
+          ><span class="version" id="title-version">BEASTIDAL</span>
         </div>
         <div class="title-copy">
           <img class="title-emblem" src="./brand/emblem.svg" alt="比斯泰德 Beastidal 徽章" />
@@ -86,27 +86,47 @@
           <h1>比斯<span>泰德</span><i>。</i></h1>
           <div class="title-rule"></div>
           <p class="intro">那天，你沒能抵達公司。<br />醒來後，世界只剩下海。</p>
-          <p class="story-small">
-            剛畢業的你，騎車上班途中被砂石車撞上。<br />第二次人生，從一塊漂流木與未知的呼吸開始。
-          </p>
-          <button id="start-btn" class="primary large" disabled>正在準備海域…</button>
-          <button id="new-btn" class="text-button" hidden>重新開始一段人生</button
-          ><button id="slots-btn" class="text-button">💾 存檔槽</button
-          ><button id="settings-btn" class="text-button">⚙ 設定</button>
-          <p class="start-note">
-            手機請橫屏遊玩・建議戴上耳機<br /><span
-              >免登入即可遊玩 · 鍵鼠／觸控／手把 · <a href="./privacy.html" style="color: inherit">隱私權政策</a></span
-            >
-          </p>
+          <div class="title-actions">
+            <button id="start-btn" class="primary large" disabled>正在準備海域…</button>
+            <button id="slots-btn" class="title-action">💾 存檔槽</button>
+            <button id="google-btn" class="title-action google-button" hidden>
+              <span class="g-mark" aria-hidden="true">G</span><span id="google-btn-text">連結 Google Drive</span>
+            </button>
+            <div id="cloud-card" class="cloud-card" hidden>
+              <div class="cloud-head">
+                <span class="cloud-icon" aria-hidden="true">☁</span>
+                <p id="account-text"></p>
+                <button id="signout-btn" class="text-button signout">登出</button>
+              </div>
+              <div class="cloud-actions">
+                <button id="cloud-up" class="cloud-btn up">
+                  <b>⬆ 上傳目前進度</b><small>此裝置 → Google Drive</small>
+                </button>
+                <button id="cloud-down" class="cloud-btn down">
+                  <b>⬇ 下載雲端進度</b><small>Google Drive → 此裝置</small>
+                </button>
+              </div>
+              <p id="cloud-info" class="cloud-info"></p>
+            </div>
+          </div>
         </div>
-        <div id="account-box" class="account-box">
-          <span class="account-icon" aria-hidden="true">☁</span>
-          <p id="account-text"></p>
-          <button id="google-btn" class="google-button" hidden>
-            <span class="g-mark" aria-hidden="true">G</span><span id="google-btn-text">使用 Google 登入</span></button
-          ><button id="signout-btn" class="text-button signout" hidden>登出 Google</button>
-        </div>
-        <div class="title-coordinate">海域 00 / 無陸地訊號<br /><span>不要只是活下來，試著在這裡生活。</span></div>
+        <button
+          id="title-menu-btn"
+          class="title-menu-btn"
+          aria-label="選單"
+          aria-expanded="false"
+          aria-controls="title-menu"
+        >
+          <span></span><span></span><span></span>
+        </button>
+        <nav id="title-menu" class="title-menu" hidden aria-label="標題選單">
+          <button id="menu-saves">💾 存檔管理</button>
+          <button id="new-btn" hidden>🌱 重新開始一段人生</button>
+          <button id="settings-btn">⚙ 設定</button>
+          <button id="game-intro-btn">📖 遊戲介紹</button>
+          <button id="about-yz-btn">✦ 關於 YZPJ</button>
+          <a href="./privacy.html">隱私權政策</a>
+        </nav>
       </section>
       <div id="hud" hidden>
         <header class="hud-header">
@@ -158,7 +178,8 @@
         <aside class="right-hud">
           <div class="map-shell">
             <canvas id="minimap" width="190" height="190" aria-label="附近物資、生物與避難所雷達"></canvas
-            ><span class="map-north">N</span><span class="map-label">點開地圖 · M</span>
+            ><span class="map-north">N</span><span class="map-label">點開地圖 · M</span
+            ><button id="map-expand" class="map-expand" aria-label="展開全版面地圖" title="展開地圖 · M">⤢</button>
           </div>
           <div class="location"><span id="zone-text">初醒淺海</span><small id="coords">00.0 N / 00.0 E</small></div>
           <button id="home-btn" class="small-button">⌂ 導航回避難所 <kbd>H</kbd></button>
@@ -313,7 +334,7 @@
         <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
       </section>
     </main>
-    <script type="module" src="./game.js?v=0.25.0"></script>
+    <script type="module" src="./game.js?v=0.25.1"></script>
     <script>
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));

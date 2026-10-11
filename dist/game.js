@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.25.0';
-import { renderAdventure } from './expansion-ui.js?v=0.25.0';
+} from './expansion.js?v=0.25.1';
+import { renderAdventure } from './expansion-ui.js?v=0.25.1';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.25.0';
-import { monologue, markGuide } from './guide.js?v=0.25.0';
-import { climb, demolish, relocate } from './construction.js?v=0.25.0';
+} from './ship.js?v=0.25.1';
+import { monologue, markGuide } from './guide.js?v=0.25.1';
+import { climb, demolish, relocate } from './construction.js?v=0.25.1';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.25.0';
+} from './housing.js?v=0.25.1';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.25.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable } from './lake.js?v=0.25.0';
-import { lakeMinimap } from './lake-map.js?v=0.25.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.25.0';
+} from './islands.js?v=0.25.1';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable } from './lake.js?v=0.25.1';
+import { lakeMinimap } from './lake-map.js?v=0.25.1';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.25.1';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.25.0';
+} from './cabin.js?v=0.25.1';
 import {
   normalizeStory,
   SCRIPT,
@@ -104,17 +104,17 @@ import {
   finishCrossing,
   tickStory,
   duelActive
-} from './story.js?v=0.25.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.25.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.25.0';
-import { QUALITY } from './realism.js?v=0.25.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.25.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.25.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.25.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.25.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.25.0';
-import { CONFIG } from './config.js?v=0.25.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.25.0';
+} from './story.js?v=0.25.1';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.25.1';
+import { OceanWorld, IntroFilm } from './world.js?v=0.25.1';
+import { QUALITY } from './realism.js?v=0.25.1';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.25.1';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.25.1';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.25.1';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.25.1';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.25.1';
+import { CONFIG } from './config.js?v=0.25.1';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.25.1';
 import {
   normalizeCodex,
   recordCreature,
@@ -125,13 +125,13 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.25.0';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.25.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.25.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.25.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.25.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.25.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.25.0';
+} from './codex.js?v=0.25.1';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.25.1';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.25.1';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.25.1';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.25.1';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.25.1';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.25.1';
 import {
   startFishing,
   tickFishing,
@@ -140,7 +140,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.25.0';
+} from './fishing.js?v=0.25.1';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -150,10 +150,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.25.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.25.0';
-import { setClimbing } from './lake.js?v=0.25.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.25.0';
+} from './reclaim.js?v=0.25.1';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.25.1';
+import { setClimbing } from './lake.js?v=0.25.1';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.25.1';
 import {
   RARITY,
   FRENZY,
@@ -178,7 +178,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.25.0';
+} from './taming.js?v=0.25.1';
 import {
   resetCombat,
   normalizeCombat,
@@ -195,10 +195,10 @@ import {
   levelCap,
   xpFor,
   AI_RANGE
-} from './combat.js?v=0.25.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.25.0';
-import { BeastStage } from './beast-stage.js?v=0.25.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.25.0';
+} from './combat.js?v=0.25.1';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.25.1';
+import { BeastStage } from './beast-stage.js?v=0.25.1';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.25.1';
 import {
   funds,
   normalizeBag,
@@ -217,12 +217,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.25.0';
-import { iconFor } from './icons.js?v=0.25.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.25.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.25.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.25.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.25.0';
+} from './bag.js?v=0.25.1';
+import { iconFor } from './icons.js?v=0.25.1';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.25.1';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.25.1';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.25.1';
+import { codexRewards, claimCodex } from './codex.js?v=0.25.1';
 import {
   homePos,
   facilityPos,
@@ -234,10 +234,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.25.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.25.0';
-export const GAME_VERSION = '0.25.0';
-import { CloudSave } from './cloud-save.js?v=0.25.0';
+} from './fortress.js?v=0.25.1';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.25.1';
+export const GAME_VERSION = '0.25.1';
+import { CloudSave } from './cloud-save.js?v=0.25.1';
 import {
   readLocal,
   writeLocal,
@@ -254,9 +254,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.25.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.25.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.25.0';
+} from './save-store.js?v=0.25.1';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.25.1';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.25.1';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -277,8 +277,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.25.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.25.0';
+} from './rules.js?v=0.25.1';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.25.1';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -987,26 +987,170 @@ function setCloud(status) {
   if (changed && running) flashSaveStatus();
   updateAccountUI();
 }
+// 0.25.1: the title shows a "link Google Drive" button; once linked, a cloud card with upload and download kept
+// apart — nothing moves between this device and the cloud until you press one of them (or start the game, which
+// reconciles the two copies the safe way, asking when they differ).
+let cloudRemote; // undefined: not checked yet; null: nothing in the cloud; { savedAt }
 function updateAccountUI() {
-  const box = $('account-box');
-  if (!box) return;
+  const card = $('cloud-card');
+  if (!card) return;
   const a = cloud.account,
     busy = cloudStatus === 'connecting' || cloudStatus === 'syncing';
-  $('account-text').innerHTML = a
-    ? `<b>${esc(a.email || a.name)}</b><br>${cloud.connected ? (cloudStatus === 'synced' ? '已同步到 Google Drive' : cloudStatus === 'syncing' ? '同步中…' : '已連線 Google Drive') : '開始遊戲時自動連線並同步雲端'}`
-    : cloud.configured
-      ? '<b>免登入單機體驗</b><br>進度自動保存在此裝置；登入 Google 可備份到雲端'
-      : '<b>單機體驗版</b><br>進度自動保存在此裝置';
-  $('google-btn').hidden = !cloud.configured;
+  $('google-btn').hidden = !cloud.configured || !!a;
   $('google-btn').disabled = busy;
-  $('google-btn-text').textContent = busy
-    ? '連線中…'
-    : a
-      ? cloud.connected
-        ? '立即同步雲端存檔'
-        : '連線 Google Drive'
-      : 'Google 登入 · 雲端存檔';
-  $('signout-btn').hidden = !a;
+  $('google-btn-text').textContent = busy ? '連線中…' : '連結 Google Drive';
+  card.hidden = !a;
+  if (!a) return;
+  const state_ =
+    {
+      synced: '已同步',
+      syncing: '傳輸中…',
+      connecting: '連線中…',
+      offline: '離線',
+      reconnect: '需要重新連線'
+    }[cloudStatus] || (cloud.connected ? '已連結' : '尚未連線');
+  $('account-text').innerHTML = `<b>${esc(a.email || a.name)}</b><small>Google Drive · ${state_}</small>`;
+  const local = hasSave ? readMeta(localStorage, slot).savedAt : 0;
+  $('cloud-info').innerHTML = `此裝置（存檔 ${slot}）：${local ? formatTime(local) : '沒有進度'}<br>雲端：${
+    cloudRemote === undefined ? '尚未讀取' : cloudRemote ? formatTime(cloudRemote.savedAt) : '沒有存檔'
+  }`;
+  $('cloud-up').disabled = busy || !hasSave;
+  $('cloud-down').disabled = busy || cloudRemote === null;
+  $('signout-btn').disabled = busy;
+}
+// Link (sign in) without moving any progress; reads what the cloud holds.
+async function linkCloud(interactive = true) {
+  if (!cloud.configured) return false;
+  setCloud('connecting');
+  try {
+    if (!cloud.connected) await cloud.signIn({ interactive });
+    cloudRemote = await cloud.remoteInfo();
+    setCloud('idle');
+    if (interactive)
+      toast(`已連結 ${cloud.account.email || cloud.account.name}。要上傳或下載進度，請按下方對應的按鈕。`);
+    return true;
+  } catch (e) {
+    setCloud(cloud.signedIn ? (e.code === 'offline' ? 'offline' : 'reconnect') : 'off');
+    toast(e.message || 'Google 連線失敗。', true);
+    return false;
+  }
+}
+function cloudUpload() {
+  if (!hasSave) {
+    toast('此裝置還沒有進度可以上傳。', true);
+    return;
+  }
+  const local = readMeta(localStorage, slot).savedAt;
+  modal(
+    'GOOGLE DRIVE · 上傳',
+    '用此裝置的進度覆蓋雲端？',
+    `<p><strong>此裝置（存檔 ${slot}）</strong>：${esc(describeSave(state))}<br><small>${formatTime(local)}</small></p><p><strong>Google Drive</strong>：${
+      cloudRemote ? formatTime(cloudRemote.savedAt) : '沒有存檔'
+    }</p><p>雲端原本的進度會被取代。</p>`,
+    [
+      {
+        label: '⬆ 上傳',
+        primary: true,
+        action: async () => {
+          closeModal();
+          if (!cloud.connected && !(await linkCloud(true))) return;
+          setCloud('syncing');
+          try {
+            const at = readMeta(localStorage, slot).savedAt;
+            await cloud.uploadNow(structuredClone(state), at);
+            markSynced(localStorage, cloud.account.id, at, slot);
+            cloudRemote = { savedAt: at };
+            cloudReady = true;
+            cloudLast = Date.now();
+            setCloud('synced');
+            toast('已把此裝置的進度上傳到 Google Drive。');
+          } catch (e) {
+            setCloud(e.code === 'offline' ? 'offline' : 'reconnect');
+            toast(e.message || '上傳失敗。', true);
+          }
+        }
+      },
+      { label: '取消', action: closeModal }
+    ]
+  );
+}
+async function cloudDownload() {
+  if (!cloud.connected && !(await linkCloud(true))) return;
+  setCloud('syncing');
+  let d;
+  try {
+    d = await cloud.download();
+  } catch (e) {
+    setCloud(e.code === 'offline' ? 'offline' : 'reconnect');
+    toast(e.message || '下載失敗。', true);
+    return;
+  }
+  setCloud('idle');
+  if (!d) {
+    cloudRemote = null;
+    updateAccountUI();
+    toast('Google Drive 上還沒有存檔。', true);
+    return;
+  }
+  cloudRemote = { savedAt: d.savedAt };
+  const local = hasSave ? readMeta(localStorage, slot).savedAt : 0;
+  modal(
+    'GOOGLE DRIVE · 下載',
+    '用雲端的進度覆蓋此裝置？',
+    `<p><strong>Google Drive</strong>：${esc(describeSave(d.state))}<br><small>${formatTime(d.savedAt)}</small></p><p><strong>此裝置（存檔 ${slot}）</strong>：${
+      hasSave ? `${esc(describeSave(state))}<br><small>${formatTime(local)}</small>` : '沒有進度'
+    }</p><p>此裝置這個存檔槽原本的進度會被取代。</p>`,
+    [
+      {
+        label: '⬇ 下載',
+        primary: true,
+        action: () => {
+          closeModal();
+          try {
+            adoptState(d.state, d.savedAt);
+            markSynced(localStorage, cloud.account.id, d.savedAt, slot);
+            cloudReady = true;
+            cloudLast = Date.now();
+            setCloud('synced');
+            toast('已把 Google Drive 的進度下載到此裝置。');
+          } catch (e) {
+            toast(e.message || '雲端存檔無法載入。', true);
+          }
+        }
+      },
+      { label: '取消', action: closeModal }
+    ]
+  );
+}
+// The bottom-right ☰ on the title: saves, settings, about the game, about the studio.
+function toggleTitleMenu(open = $('title-menu').hidden) {
+  $('title-menu').hidden = !open;
+  $('title-menu-btn').setAttribute('aria-expanded', String(open));
+  $('title-menu-btn').classList.toggle('open', open);
+}
+function openGameIntro() {
+  toggleTitleMenu(false);
+  modal(
+    'BEASTIDAL · 遊戲介紹',
+    '比斯泰德',
+    `<p>剛畢業的你，騎車上班途中被砂石車撞上。醒來時，世界只剩下一片湖海、一塊漂流木，和水裡未知的呼吸。</p>
+    <p>撈起漂流物、搭起木筏，在湖上活下來；餵食野生生物建立信任，用外出籠帶牠們回家；讓牠們配種出比斯基因，再以契約契闊進化成御獸——騎乘、潛水、並肩戰鬥。</p>
+    <p>不要只是活下來，試著在這裡生活。</p>
+    <p class="intro-meta">手機請橫屏遊玩 · 建議戴上耳機 · 支援鍵鼠／觸控／手把 · 免登入即可遊玩</p>`,
+    [{ label: '關閉', primary: true, action: closeModal }]
+  );
+}
+function openAboutYZ() {
+  toggleTitleMenu(false);
+  modal(
+    'ABOUT · YZPJ',
+    '歪計劃工作室 YZProJect',
+    `<p>YZPJ（YZProJect，歪計劃工作室）是製作《比斯泰德 Beastidal》的獨立團隊。</p>
+    <p>我們想做一款讓人慢下來的遊戲：在陌生的水域裡生活、照顧牠們、看牠們長大。</p>
+    <p><a href="https://yzprojecttw.com" target="_blank" rel="noopener">yzprojecttw.com</a> · <a href="./privacy.html">隱私權政策</a></p>
+    <p class="intro-meta">版本 ${GAME_VERSION}</p>`,
+    [{ label: '關閉', primary: true, action: closeModal }]
+  );
 }
 // Uploads only after this session reconciled with the cloud, so a stale device never overwrites newer progress.
 function scheduleCloud(now = false) {
@@ -1028,6 +1172,7 @@ async function pushCloud() {
     await cloud.upload(structuredClone(state), savedAt);
     if (cloud.account?.id !== account) return;
     markSynced(localStorage, account, savedAt, slot);
+    cloudRemote = { savedAt };
     cloudLast = Date.now();
     setCloud('synced');
   } catch (e) {
@@ -1084,6 +1229,7 @@ async function connectCloud(interactive) {
     const id = cloud.account.id,
       meta = readMeta(localStorage, slot),
       remote = await cloud.remoteInfo();
+    cloudRemote = remote;
     const decision = reconcile(hasSave ? { savedAt: meta.savedAt } : null, remote, meta.synced[id] || 0);
     if (decision === 'download' || decision === 'conflict') {
       const d = await cloud.download();
@@ -1120,6 +1266,7 @@ async function signOutCloud() {
     } catch {}
   }
   cloudReady = false;
+  cloudRemote = undefined;
   await cloud.signOut();
   setCloud('off');
   toast('已登出 Google。進度仍保存在此裝置，可繼續單機遊玩。');
@@ -1158,9 +1305,11 @@ function closeModal() {
 }
 // Title-screen buttons reflect the active slot.
 function updateTitleButtons() {
-  $('start-btn').textContent = hasSave ? '繼續這段漂流' : '開始第二次人生';
+  $('start-btn').textContent = hasSave ? '繼續旅途' : '開始第二次人生';
   $('new-btn').hidden = !hasSave;
-  $('slots-btn').textContent = `💾 存檔槽 · 目前存檔 ${slot}`;
+  $('slots-btn').textContent = `💾 存檔槽 · 存檔 ${slot}`;
+  $('title-version').textContent = `BEASTIDAL / ${GAME_VERSION}`;
+  updateAccountUI();
 }
 // Load another slot (title screen only); its cloud copy is reconciled the next time the game starts.
 function useSlot(n) {
@@ -6409,21 +6558,37 @@ function setupEvents() {
     }
     hasSave ? beginGame(false) : beginIntro();
   };
-  $('google-btn').onclick = () => {
-    if (cloud.connected) {
-      save(true);
-      scheduleCloud(true);
-    } else connectCloud(true);
-  };
+  $('google-btn').onclick = () => linkCloud(true);
+  $('cloud-up').onclick = cloudUpload;
+  $('cloud-down').onclick = cloudDownload;
   $('signout-btn').onclick = signOutCloud;
   updateAccountUI();
-  $('settings-btn').onclick = () => openSettings();
+  $('settings-btn').onclick = () => {
+    toggleTitleMenu(false);
+    openSettings();
+  };
   $('slots-btn').onclick = openSlots;
+  $('menu-saves').onclick = () => {
+    toggleTitleMenu(false);
+    openSlots();
+  };
+  $('game-intro-btn').onclick = openGameIntro;
+  $('about-yz-btn').onclick = openAboutYZ;
+  $('title-menu-btn').onclick = e => {
+    e.stopPropagation();
+    toggleTitleMenu();
+  };
+  document.addEventListener('pointerdown', e => {
+    if (!$('title-menu').hidden && !e.target.closest('#title-menu, #title-menu-btn')) toggleTitleMenu(false);
+  });
   $('storm-go').onclick = goShelter;
   $('tut-skip').onclick = () => endTutorial(true);
   migrateSettings();
   applyUiSettings();
-  $('new-btn').onclick = confirmNew;
+  $('new-btn').onclick = () => {
+    toggleTitleMenu(false);
+    confirmNew();
+  };
   $('menu-btn').onclick = showMenu;
   $('view-btn').onclick = toggleView;
   $('dock-btn').onclick = dock;
@@ -6438,6 +6603,7 @@ function setupEvents() {
   };
   $('home-btn').onclick = returnHome;
   $('minimap').onclick = openBigMap;
+  $('map-expand').onclick = openBigMap;
   $('bigmap-close').onclick = closeBigMap;
   $('bigmap-clear').onclick = () => {
     clearMarker();

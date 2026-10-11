@@ -2616,3 +2616,334 @@ body.focus-on .contract-btn {
   color: #ecc78e;
   border-left-color: #ecc78e;
 }
+
+/* 0.25.1: the title — three things up front (continue, save slots, Google Drive), the rest behind a ☰ */
+.title-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: min(320px, 82vw);
+  margin-top: 26px;
+}
+.title-actions #start-btn {
+  min-width: 0;
+  width: 100%;
+  letter-spacing: 0.14em;
+}
+.title-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: 1px solid #d3f4eb33;
+  background: #06222dbf;
+  backdrop-filter: blur(8px);
+  color: #e3efeb;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-align: left;
+}
+.title-action:hover:not(:disabled) {
+  background: #0d3542e6;
+  border-color: #9ce8d199;
+}
+#slots-btn {
+  margin-top: 0;
+}
+.title-actions .google-button {
+  margin-top: 0;
+  justify-content: flex-start;
+  background: #f4f6f3;
+  border-color: #f4f6f3;
+  color: #1f2b2e;
+  font-weight: 600;
+}
+.title-actions .google-button:hover:not(:disabled) {
+  background: #fff;
+  border-color: #fff;
+}
+.cloud-card {
+  padding: 12px 13px 11px;
+  border-radius: 8px;
+  border: 1px solid #9ce8d140;
+  background: #06222dd9;
+  backdrop-filter: blur(10px);
+}
+.cloud-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cloud-icon {
+  font-size: 20px;
+  color: var(--mint);
+}
+.cloud-head p {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #b4cdca;
+}
+.cloud-head p b {
+  display: block;
+  color: #eef5ef;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cloud-head p small {
+  font-size: 11px;
+}
+.cloud-head .signout {
+  margin: 0;
+  min-height: 28px;
+  padding: 2px 6px;
+  font-size: 12px;
+  color: #9fbcbb;
+}
+.cloud-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.cloud-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 9px 11px;
+  border-radius: 6px;
+  text-align: left;
+}
+.cloud-btn b {
+  font-size: 13px;
+  font-weight: 600;
+}
+.cloud-btn small {
+  font-size: 10.5px;
+  opacity: 0.75;
+}
+.cloud-btn.up {
+  background: #12443ccc;
+  border-color: #9ce8d166;
+  color: #d4fff1;
+}
+.cloud-btn.down {
+  background: #3d3418cc;
+  border-color: #ecc78e66;
+  color: #ffeccb;
+}
+.cloud-info {
+  margin-top: 9px;
+  font-size: 11px;
+  line-height: 1.65;
+  color: #9fbab7;
+}
+.title-menu-btn {
+  position: absolute;
+  right: max(4.5%, env(safe-area-inset-right));
+  bottom: max(28px, env(safe-area-inset-bottom));
+  z-index: 3;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  gap: 5px;
+  background: #06222dd9;
+  border: 1px solid #d3f4eb44;
+  backdrop-filter: blur(8px);
+}
+.title-menu-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: #e3efeb;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+.title-menu-btn.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.title-menu-btn.open span:nth-child(2) {
+  opacity: 0;
+}
+.title-menu-btn.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+.title-menu {
+  position: absolute;
+  right: max(4.5%, env(safe-area-inset-right));
+  bottom: calc(max(28px, env(safe-area-inset-bottom)) + 66px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #d3f4eb33;
+  background: #051c25f2;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 34px #0009;
+}
+.title-menu[hidden] {
+  display: none;
+}
+.title-menu button,
+.title-menu a {
+  display: block;
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: #e3efeb;
+  font-size: 14px;
+  text-align: left;
+  text-decoration: none;
+}
+.title-menu button:hover,
+.title-menu a:hover {
+  background: #14394399;
+}
+.title-menu a {
+  margin-top: 4px;
+  border-top: 1px solid #d3f4eb1f;
+  border-radius: 0 0 6px 6px;
+  font-size: 12px;
+  color: #9fbab7;
+}
+.intro-meta {
+  font-size: 12px;
+  color: #9fbab7;
+}
+@media (max-height: 760px) {
+  .title-actions {
+    margin-top: 16px;
+    gap: 8px;
+  }
+  .title-action {
+    min-height: 40px;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+.landscape-play .title-actions {
+  width: min(300px, 44vw);
+  margin-top: 12px;
+  gap: 7px;
+}
+.landscape-play .title-actions #start-btn {
+  min-width: 0;
+}
+.landscape-play .title-action {
+  min-height: 36px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.landscape-play .cloud-card {
+  padding: 8px 10px;
+}
+.landscape-play .cloud-btn {
+  padding: 6px 9px;
+}
+.landscape-play .cloud-info {
+  display: none;
+}
+.landscape-play .title-menu-btn {
+  width: 46px;
+  height: 46px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  right: var(--edge-right, 4%);
+}
+.landscape-play .title-menu {
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 56px);
+  right: var(--edge-right, 4%);
+}
+.title-menu #settings-btn {
+  margin-top: 0;
+}
+/* with the cloud card open, make room on shorter screens */
+@media (max-height: 940px) {
+  #title-screen:has(#cloud-card:not([hidden])) .title-emblem,
+  #title-screen:has(#cloud-card:not([hidden])) .title-copy > .eyebrow {
+    display: none;
+  }
+}
+@media (max-height: 700px) {
+  #title-screen:has(#cloud-card:not([hidden])) .intro,
+  #title-screen:has(#cloud-card:not([hidden])) .title-rule {
+    display: none;
+  }
+}
+.landscape-play #title-screen:has(#cloud-card:not([hidden])) .title-copy {
+  top: 64px;
+}
+.landscape-play #title-screen:has(#cloud-card:not([hidden])) .title-copy h1 {
+  font-size: 34px;
+  margin: 0 0 4px;
+}
+/* short screens (phones in landscape, small windows): the name and the three actions, nothing else */
+@media (max-height: 560px) {
+  #title-screen .title-copy {
+    top: 52px;
+    max-width: 440px;
+  }
+  #title-screen .title-emblem,
+  #title-screen .title-copy > .eyebrow,
+  #title-screen .title-rule,
+  #title-screen .intro,
+  #title-screen .cloud-info {
+    display: none;
+  }
+  #title-screen .title-copy h1 {
+    font-size: 40px;
+    margin: 0 0 4px;
+    line-height: 1.15;
+  }
+  #title-screen .title-actions {
+    margin-top: 8px;
+    gap: 6px;
+    width: min(300px, 46vw);
+  }
+  #title-screen .title-actions #start-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  #title-screen .title-action {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  #title-screen .cloud-card {
+    padding: 8px 10px;
+  }
+  #title-screen .cloud-actions {
+    margin-top: 6px;
+  }
+  #title-screen .cloud-btn {
+    padding: 6px 9px;
+  }
+  .title-menu-btn {
+    width: 46px;
+    height: 46px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .title-menu {
+    bottom: calc(max(16px, env(safe-area-inset-bottom)) + 56px);
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+  }
+  .title-menu button,
+  .title-menu a {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
