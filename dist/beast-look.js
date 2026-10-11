@@ -8,9 +8,9 @@
 //     for the wraiths; tendril hair crowned with a flower for the dryads; crystal or ice shards; venom sacs.
 // Land beasts are rebuilt upright (creatures.js `upright`): a dragon, a wraith or a dryad, picked by the element.
 import * as T from './vendor/three.module.min.js';
-import { bsOf } from './bsgenes.js?v=0.26.0';
-import { phenotype } from './genetics.js?v=0.26.0';
-import { taper, addMesh, creatureDetail } from './creatures.js?v=0.26.0';
+import { bsOf } from './bsgenes.js?v=0.27.0';
+import { phenotype } from './genetics.js?v=0.27.0';
+import { taper, addMesh, creatureDetail } from './creatures.js?v=0.27.0';
 
 const GENE_ELEMENT = {
   fire: 'ember',
@@ -53,6 +53,7 @@ const GENE_ELEMENT = {
 export const LOOKS = {
   ember: {
     plan: 'dragon',
+    wings: true,
     shade: 0x7a5a50,
     rim: 0xff4a1e,
     vein: 0xff6a14,
@@ -75,6 +76,7 @@ export const LOOKS = {
   },
   storm: {
     plan: 'dragon',
+    wings: true,
     shade: 0x56627a,
     rim: 0x5ab8ff,
     vein: 0x8fe0ff,
@@ -304,6 +306,62 @@ function inject(mt, U, flat) {
   };
   mt.customProgramCacheKey = () => (prevKey ? prevKey.call(mt) : '') + '|beast' + (flat ? 'F' : 'B');
   mt.needsUpdate = true;
+}
+
+/* ---------------------------------------------------------------- the scales */
+// A tileable normal map of scales: a Voronoi height field (each cell a domed scale, grooves between), its slopes
+// turned into normals. Baked once per detail level; the shader's vein cracks still come from the same kind of
+// cells in object space, so burning grooves line up with grooves.
+let scaleMap = null;
+function scaleNormalMap(detail) {
+  if (scaleMap) return scaleMap;
+  const N = detail === 'low' ? 128 : 256,
+    cells = 9,
+    pts = [];
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+  for (let j = 0; j < cells; j++)
+    for (let i = 0; i < cells; i++) pts.push([(i + 0.2 + rnd() * 0.6) / cells, (j + 0.2 + rnd() * 0.6) / cells]);
+  const hgt = new Float32Array(N * N);
+  for (let y = 0; y < N; y++)
+    for (let x = 0; x < N; x++) {
+      const u = x / N,
+        v = y / N;
+      let d1 = 9,
+        d2 = 9;
+      for (const [px, py] of pts)
+        for (let ox = -1; ox <= 1; ox++)
+          for (let oy = -1; oy <= 1; oy++) {
+            const dx = u - (px + ox),
+              dy = v - (py + oy),
+              d = Math.sqrt(dx * dx + dy * dy);
+            if (d < d1) {
+              d2 = d1;
+              d1 = d;
+            } else if (d < d2) d2 = d;
+          }
+      const edge = d2 - d1; // 0 on a groove
+      hgt[y * N + x] = Math.min(1, edge * cells * 2.2) ** 0.6 - d1 * cells * 0.35;
+    }
+  const data = new Uint8Array(N * N * 4),
+    amp = 2.4;
+  for (let y = 0; y < N; y++)
+    for (let x = 0; x < N; x++) {
+      const h = (xx, yy) => hgt[((yy + N) % N) * N + ((xx + N) % N)],
+        dx = (h(x + 1, y) - h(x - 1, y)) * amp,
+        dy = (h(x, y + 1) - h(x, y - 1)) * amp,
+        len = Math.hypot(dx, dy, 1),
+        i = (y * N + x) * 4;
+      data[i] = Math.round((-dx / len) * 127 + 128);
+      data[i + 1] = Math.round((-dy / len) * 127 + 128);
+      data[i + 2] = Math.round((1 / len) * 127 + 128);
+      data[i + 3] = 255;
+    }
+  scaleMap = new T.DataTexture(data, N, N, T.RGBAFormat);
+  scaleMap.wrapS = scaleMap.wrapT = T.RepeatWrapping;
+  scaleMap.anisotropy = 4;
+  scaleMap.needsUpdate = true;
+  return scaleMap;
 }
 
 /* ---------------------------------------------------------------- the aura */
@@ -672,7 +730,14 @@ export function applyBeastLook(m, genome, look = lookOf(genome)) {
       mt.color.multiply(shade);
       mt.userData.beastShade = true;
     }
-    inject(mt, U, detail === 'low');
+    // real scales: the normal map over the skin, finer along a body than around it
+    if (!mt.normalMap && mt.map) {
+      mt.normalMap = scaleNormalMap(detail);
+      mt.normalMap.repeat.set(a.upright ? 2 : 4, a.upright ? 1 : 1.5);
+      mt.normalScale = new T.Vector2(0.75, 0.75);
+      mt.needsUpdate = true;
+    }
+    inject(mt, U, true);
   });
   const aura = makeAura(a, look, detail);
   if (aura) m.add(aura);

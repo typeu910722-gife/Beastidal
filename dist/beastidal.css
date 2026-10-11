@@ -2947,3 +2947,63 @@ body.focus-on .contract-btn {
     font-size: 13px;
   }
 }
+
+/* 0.27: illustrations from dist/art/ wherever they exist */
+#title-screen.has-art {
+  background:
+    linear-gradient(90deg, #052b39f8 0%, #052b39e0 26%, #052b3980 46%, #052b3922 70%, transparent 100%),
+    var(--title-art) center / cover no-repeat;
+}
+#title-screen.has-art ~ #ocean,
+#title-screen.has-art + .vignette {
+  opacity: 1;
+}
+.modal-art {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 0 0 12px;
+}
+.reward-tile.has-art {
+  position: relative;
+  overflow: hidden;
+  min-height: 150px;
+  isolation: isolate;
+}
+.reward-tile.has-art .tile-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.85;
+  mask-image: linear-gradient(180deg, #000 30%, transparent 95%);
+  -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent 95%);
+}
+.reward-tile.has-art b,
+.reward-tile.has-art small,
+.reward-tile.has-art span {
+  text-shadow: 0 1px 3px #000c;
+}
+.reward-tile.has-art b {
+  margin-top: 64px;
+}
+.bx-detail.has-art {
+  position: relative;
+  padding: 10px;
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, #06222dd8 0%, #06222d9a 45%, #06222dee 100%),
+    var(--art) center / cover no-repeat;
+}
+.bx-detail.has-art canvas {
+  background: #0a1f2688;
+  box-shadow: 0 6px 24px #000a;
+}
+.codex-page img,
+.codex-tile img {
+  object-fit: cover;
+}

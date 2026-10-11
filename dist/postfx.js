@@ -1,6 +1,10 @@
 // Post-processing: the scene renders into an HDR target, then one full-screen pass adds bloom, tone mapping and a
-// colour grade (muted, cold shadows, a little lens fringe, vignette and film grain) for the alien-survival look.
-// Bloom uses a bright pass at 1/4 resolution blurred twice (1/4 and 1/8) so glowing crystals and the rift bleed light.
+// colour grade for the look of the lake — and (0.27) the cinematic finish: a filmic S-curve with teal-violet shadows
+// and crimson-amber highlights, a wide three-level bloom so burning eyes and crystals bleed light into the fog, a
+// depth of field that softens the far shore around whatever the camera is on, a touch of sharpening on what is in
+// focus, a little lens fringe, vignette and film grain.
+// Bloom uses a bright pass at 1/4 resolution blurred three times (1/4, 1/8, 1/16); the depth of field blurs the
+// scene once at 1/2 resolution and blends it in by distance from the focus.
 import * as T from './vendor/three.module.min.js';
 
 const FULLSCREEN = 'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}';
@@ -10,20 +14,37 @@ const BLUR = `uniform sampler2D tSrc;uniform vec2 uDir;varying vec2 vUv;
 void main(){vec3 c=texture2D(tSrc,vUv).rgb*.227;
  c+=(texture2D(tSrc,vUv+uDir*1.385).rgb+texture2D(tSrc,vUv-uDir*1.385).rgb)*.316;
  c+=(texture2D(tSrc,vUv+uDir*3.231).rgb+texture2D(tSrc,vUv-uDir*3.231).rgb)*.07;gl_FragColor=vec4(c,1.);}`;
-const FINAL = `uniform sampler2D tScene;uniform sampler2D tBloomA;uniform sampler2D tBloomB;uniform float uBloom;uniform float uTime;
-uniform float uGrain;uniform float uVignette;uniform float uFringe;uniform float uStorm;uniform float uHurt;uniform vec2 uRes;varying vec2 vUv;
+const FINAL = `uniform sampler2D tScene;uniform sampler2D tSoft;uniform sampler2D tDepth;uniform sampler2D tBloomA;uniform sampler2D tBloomB;uniform sampler2D tBloomC;
+uniform float uBloom;uniform float uTime;uniform float uGrain;uniform float uVignette;uniform float uFringe;uniform float uStorm;uniform float uHurt;
+uniform float uDof;uniform float uFocus;uniform float uNear;uniform float uFar;uniform float uSharpen;uniform float uWarmth;uniform vec2 uRes;varying vec2 vUv;
 float h(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+float linDepth(vec2 uv){float z=texture2D(tDepth,uv).x*2.-1.;return 2.*uNear*uFar/(uFar+uNear-z*(uFar-uNear));}
 void main(){
- vec2 c=vUv-.5;float r2=dot(c,c);vec2 off=c*r2*uFringe;
+ vec2 c=vUv-.5;float r2=dot(c,c);vec2 off=c*r2*uFringe;vec2 px=1./uRes;
  vec3 col=vec3(texture2D(tScene,vUv+off).r,texture2D(tScene,vUv).g,texture2D(tScene,vUv-off).b);
- col+=(texture2D(tBloomA,vUv).rgb*.6+texture2D(tBloomB,vUv).rgb*.8)*uBloom;
+ // circle of confusion from the distance to the focus: the far shore softens, the near foreground a little
+ float coc=0.;
+ if(uDof>0.){
+  float d=linDepth(vUv);
+  float far=smoothstep(0.,1.,(d-uFocus*1.15)/(uFocus*2.6+30.));
+  float near=smoothstep(0.,1.,(uFocus*.38-d)/(uFocus*.38))*.6;
+  coc=clamp(max(far,near),0.,1.)*uDof;
+  col=mix(col,texture2D(tSoft,vUv).rgb,coc);
+ }
+ // a touch of sharpening on what is in focus
+ if(uSharpen>0.){
+  vec3 nb=texture2D(tScene,vUv+vec2(px.x,0.)).rgb+texture2D(tScene,vUv-vec2(px.x,0.)).rgb+texture2D(tScene,vUv+vec2(0.,px.y)).rgb+texture2D(tScene,vUv-vec2(0.,px.y)).rgb;
+  col+=(col-nb*.25)*uSharpen*(1.-coc);
+ }
+ col+=(texture2D(tBloomA,vUv).rgb*.45+texture2D(tBloomB,vUv).rgb*.65+texture2D(tBloomC,vUv).rgb*.9)*uBloom;
  gl_FragColor=vec4(col,1.);
  #include <tonemapping_fragment>
  vec3 g=gl_FragColor.rgb;float l=dot(g,vec3(.2126,.7152,.0722));
- g=mix(vec3(l),g,.78-uStorm*.12);                       // muted
- g=mix(g,g*vec3(.86,1.,1.02),smoothstep(.25,0.,l)*.6);  // cold, green-teal shadows
- g=mix(g,g*vec3(1.04,1.,.94),smoothstep(.4,.9,l)*.3);   // pale highlights
- g=max(g-.004,0.)*1.02;                                 // crushed blacks
+ g=mix(vec3(l),g,1.06-uStorm*.14);                              // a little richer than life
+ g=mix(g,g*vec3(.78,.9,1.14),smoothstep(.32,0.,l)*.6);         // teal-violet shadows
+ g=mix(g,g*mix(vec3(1.0),vec3(1.1,.96,.88),uWarmth),smoothstep(.42,.95,l)*.4); // crimson-amber highlights
+ g=mix(g,g*g*(3.-2.*g),.42);                                    // filmic S-curve
+ g=max(g-.006,0.)*1.03;                                         // crushed blacks
  g*=1.-uVignette*smoothstep(.12,.62,r2*1.6);
  g=mix(g,g*vec3(1.25,.55,.5),uHurt*smoothstep(.05,.45,r2*1.6));
  gl_FragColor.rgb=g;
@@ -32,8 +53,8 @@ void main(){
 }`;
 
 const PRESETS = {
-  high: { bloom: true, samples: 4, fringe: 0.012 },
-  balanced: { bloom: true, samples: 2, fringe: 0.008 },
+  high: { bloom: true, samples: 4, fringe: 0.012, dof: 1, sharpen: 0.3 },
+  balanced: { bloom: true, samples: 2, fringe: 0.008, dof: 0, sharpen: 0.18 },
   low: null // phones on battery saver: render straight to the screen
 };
 
@@ -44,19 +65,27 @@ export class PostFX {
     this.enabled = !!this.preset && renderer.capabilities.isWebGL2;
     this.hurt = 0;
     this.storm = 0;
+    this.focus = 30; // metres from the camera to what it is looking at (world.js sets it each frame)
+    this.warmth = 1; // how far the highlights lean crimson-amber (0 keeps them neutral)
     if (!this.enabled) return;
     const opts = { type: T.HalfFloatType, depthBuffer: true };
     this.scene = new T.WebGLRenderTarget(1, 1, { ...opts, samples: this.preset.samples });
+    if (this.preset.dof) {
+      this.scene.depthTexture = new T.DepthTexture(1, 1, T.UnsignedIntType);
+      this.scene.depthTexture.format = T.DepthFormat;
+    }
     this.bright = new T.WebGLRenderTarget(1, 1, { type: T.HalfFloatType, depthBuffer: false });
     this.blurA = [this.bright.clone(), this.bright.clone()];
     this.blurB = [this.bright.clone(), this.bright.clone()];
+    this.blurC = [this.bright.clone(), this.bright.clone()];
+    this.soft = this.preset.dof ? [this.bright.clone(), this.bright.clone()] : null;
     this.quad = new T.Mesh(new T.PlaneGeometry(2, 2));
     this.quad.frustumCulled = false;
     this.cam = new T.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     this.brightMat = new T.ShaderMaterial({
       vertexShader: FULLSCREEN,
       fragmentShader: BRIGHT,
-      uniforms: { tSrc: { value: null }, uThreshold: { value: 1.1 } },
+      uniforms: { tSrc: { value: null }, uThreshold: { value: 0.95 } },
       depthTest: false,
       depthWrite: false
     });
@@ -72,15 +101,24 @@ export class PostFX {
       fragmentShader: FINAL,
       uniforms: {
         tScene: { value: this.scene.texture },
+        tSoft: { value: this.soft ? this.soft[1].texture : null },
+        tDepth: { value: this.scene.depthTexture || null },
         tBloomA: { value: this.blurA[1].texture },
         tBloomB: { value: this.blurB[1].texture },
+        tBloomC: { value: this.blurC[1].texture },
         uBloom: { value: this.preset.bloom ? 1 : 0 },
         uTime: { value: 0 },
-        uGrain: { value: 0.035 },
-        uVignette: { value: 0.42 },
+        uGrain: { value: 0.03 },
+        uVignette: { value: 0.4 },
         uFringe: { value: this.preset.fringe },
         uStorm: { value: 0 },
         uHurt: { value: 0 },
+        uDof: { value: this.preset.dof },
+        uFocus: { value: 30 },
+        uNear: { value: 0.1 },
+        uFar: { value: 1800 },
+        uSharpen: { value: this.preset.sharpen },
+        uWarmth: { value: 1 },
         uRes: { value: new T.Vector2(1, 1) }
       },
       depthTest: false,
@@ -102,6 +140,8 @@ export class PostFX {
     this.bright.setSize(qw, qh);
     for (const t of this.blurA) t.setSize(qw, qh);
     for (const t of this.blurB) t.setSize(Math.max(1, qw >> 1), Math.max(1, qh >> 1));
+    for (const t of this.blurC) t.setSize(Math.max(1, qw >> 2), Math.max(1, qh >> 2));
+    if (this.soft) for (const t of this.soft) t.setSize(Math.max(1, w >> 1), Math.max(1, h >> 1));
     this.finalMat.uniforms.uRes.value.set(w, h);
   }
   pass(material, target) {
@@ -129,10 +169,16 @@ export class PostFX {
       this.pass(this.brightMat, this.bright);
       this.blur(this.bright, this.blurA, 1);
       this.blur(this.blurA[1], this.blurB, 1.4);
+      this.blur(this.blurB[1], this.blurC, 1.6);
     }
+    if (this.soft) this.blur(this.scene, this.soft, 1.3);
     const u = this.finalMat.uniforms;
     u.uTime.value += dt;
     u.uStorm.value = this.storm;
+    u.uFocus.value += (this.focus - u.uFocus.value) * Math.min(1, dt * 6);
+    u.uNear.value = camera.near;
+    u.uFar.value = camera.far;
+    u.uWarmth.value = this.warmth;
     this.hurt = Math.max(0, this.hurt - dt * 1.6);
     u.uHurt.value = this.hurt;
     this.pass(this.finalMat, old);

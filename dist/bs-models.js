@@ -5,10 +5,10 @@
 //     whip tails, claws, bone wings, crystal horns), its eyes burn, a crown of horns rises from its head and a
 //     contract sigil turns beneath it — gold for yours, violet for a wild one.
 import * as T from './vendor/three.module.min.js';
-import { BS_GENES, bsOf } from './bsgenes.js?v=0.26.0';
-import { phenotype } from './genetics.js?v=0.26.0';
-import { makeCreature } from './creatures.js?v=0.26.0';
-import { bodyAnchors, applyBeastLook, lookOf } from './beast-look.js?v=0.26.0';
+import { BS_GENES, bsOf } from './bsgenes.js?v=0.27.0';
+import { phenotype } from './genetics.js?v=0.27.0';
+import { makeCreature } from './creatures.js?v=0.27.0';
+import { bodyAnchors, applyBeastLook, lookOf } from './beast-look.js?v=0.27.0';
 
 export const FORM_SCALE = 1.5;
 const geo = {
@@ -273,7 +273,7 @@ export function applyGeneMarks(m, genome, kind = 'creature') {
     const look = lookOf(genome);
     // 0.26: a land beast stands up — rebuilt as a dragon, a wraith or a dryad
     if (phenotype(genome).habitat === 'land' && !m.userData.info?.upright) {
-      const up = makeCreature(genome, { upright: look.plan }),
+      const up = makeCreature(genome, { upright: look.plan, wings: look.wings }),
         mark = m.userData.bsMarked;
       m.clear();
       for (const c of [...up.children]) m.add(c);

@@ -56,6 +56,11 @@ test('Beasts get their look (land dwellers, plants included, stand up); creature
     const m = makeCreature(g);
     applyGeneMarks(m, g, 'beast');
     assert.ok(m.userData.beastLook, fam + genes);
+    if (genes[0] === 'fire')
+      assert.ok(
+        m.userData.limbs.some(l => l.userData.wing),
+        'an ember dragon has wings'
+      );
     assert.equal(!!m.userData.info.upright, phenotype(g).habitat === 'land', fam);
     assert.ok(finite(m));
     animateCreature(m, 1);
