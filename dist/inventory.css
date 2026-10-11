@@ -530,3 +530,98 @@ button.danger {
   border-color: #c96a5a99;
   color: #ffb8a8;
 }
+
+/* 0.29: personality, the skill tree */
+.bx-persona {
+  margin: 6px 0;
+  font-size: 12px;
+  color: #cfe3da;
+}
+.bx-persona b {
+  color: #ffe4b0;
+}
+.bx-persona small {
+  display: block;
+  color: #9fbab7;
+  font-size: 11px;
+}
+.tree-head {
+  margin: 4px 0 10px;
+  font-size: 13px;
+}
+.tree-head .pts {
+  color: #ffd56a;
+}
+.tree-head small {
+  display: block;
+  color: #9fbab7;
+  font-size: 11px;
+}
+.tree-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.tree-col h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #ffe4b0;
+}
+.tree-node {
+  display: block;
+  width: 100%;
+  margin: 0 0 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-align: left;
+  position: relative;
+}
+.tree-node b {
+  display: block;
+  font-size: 13px;
+}
+.tree-node small {
+  display: block;
+  font-size: 11px;
+  color: #a9c4c1;
+  margin-top: 2px;
+}
+.tree-node.have {
+  border-color: #ffd38c99;
+  background: #3a2a1499;
+  opacity: 1;
+}
+.tree-node.next:not(:disabled) {
+  border-color: #9ce8d1;
+  box-shadow: 0 0 10px #9ce8d155;
+}
+.tree-node.locked {
+  opacity: 0.45;
+}
+.tree-node:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  bottom: -7px;
+  width: 2px;
+  height: 6px;
+  background: #d3f4eb33;
+}
+#skill-3 {
+  border-color: #ffd38c88;
+  color: #ffe4b0;
+}
+#skill-3:disabled {
+  opacity: 0.55;
+}
+@media (max-width: 760px), (max-height: 560px) {
+  .tree-cols {
+    gap: 6px;
+  }
+  .tree-node {
+    padding: 6px 7px;
+  }
+  .tree-node small {
+    font-size: 10px;
+  }
+}

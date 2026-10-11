@@ -9,14 +9,15 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.28.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.28.0';
-import { WILD_BEASTS } from './beasts.js?v=0.28.0';
-import { rollDrops } from './species.js?v=0.28.0';
-import { give } from './bag.js?v=0.28.0';
-import { tally } from './stats.js?v=0.28.0';
-import { damageBonus } from './skills.js?v=0.28.0';
-import { remember } from './memories.js?v=0.28.0';
+import { phenotype } from './genetics.js?v=0.29.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.29.0';
+import { WILD_BEASTS } from './beasts.js?v=0.29.0';
+import { rollDrops } from './species.js?v=0.29.0';
+import { give } from './bag.js?v=0.29.0';
+import { tally } from './stats.js?v=0.29.0';
+import { damageBonus } from './skills.js?v=0.29.0';
+import { remember } from './memories.js?v=0.29.0';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.29.0';
 
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;
@@ -154,6 +155,13 @@ export function beastSkills(p) {
     if (out.length === 2) break;
   }
   for (const k of ['dash', 'roar']) if (out.length < 2 && !out.includes(k)) out.push(k);
+  // 0.29: 靈之道 · 覺醒 wakes a third skill — the next one its genes hold, else a skill it does not have yet
+  if (p && p.kind !== 'creature' && perks(p).third) {
+    const more = bsOf(p.genome)
+      .map(g => GENE_SKILL[g])
+      .find(k => k && !out.includes(k));
+    out.push(more || ['tail', 'frost', 'guard', 'heal', 'crystal'].find(k => !out.includes(k)));
+  }
   return out;
 }
 
@@ -162,6 +170,7 @@ export const MAX_LEVEL = 10;
 export const levelCap = p => (p.wildBeast ? p.cap || 3 : MAX_LEVEL);
 export const xpFor = lv => Math.round(30 * Math.pow(lv, 1.5));
 export function normalizeLevel(p) {
+  normalizeTree(p);
   p.level ??= 1;
   p.xp ??= 0;
   p.level = Math.max(1, Math.min(levelCap(p), p.level));
@@ -174,7 +183,8 @@ export function allyPower(s, p) {
   return {
     atk:
       (10 + ph.armor * 0.06 + ph.speed * 0.05 + g.atk + damageBonus(s) + (p.awakened ? 12 : 0) + (p.ancient ? 20 : 0)) *
-      (1 + 0.08 * (p.level - 1)),
+      (1 + 0.08 * (p.level - 1)) *
+      (1 + perks(p).atk),
     def: g.def,
     reach: 2.6 + ph.size * 0.9
   };
@@ -300,8 +310,9 @@ function damageFoe(s, t, base, ev, opts = {}) {
   const c = normalizeCombat(s);
   const theirs = t.genome ? foeStats(t).def : 6,
     open = t.ai?.state === 'recover',
-    crit = (opts.rng || Math.random)() < 0.1;
-  let amount = base * Math.max(0.4, 1 - theirs / 60) * (open ? 1.5 : 1) * (crit ? 1.5 : 1);
+    pk = perks(activeBeast(s)),
+    crit = (opts.rng || Math.random)() < 0.1 + pk.crit;
+  let amount = base * Math.max(0.4, 1 - theirs / 60) * (open ? pk.openMul : 1) * (crit ? 1.5 : 1);
   amount = Math.max(1, Math.round(amount));
   t.hp = (t.hp ?? 60) - amount;
   c.target = t.id || 'boss';
@@ -319,7 +330,7 @@ function damageFoe(s, t, base, ev, opts = {}) {
   if (t.ai && opts.slow) t.ai.slowUntil = s.elapsed + opts.slow;
   if (opts.dot) t.dot = { until: s.elapsed + opts.dot[0], dps: opts.dot[1], color: opts.dotColor };
   // a strike interrupts a foe that is winding up only when it is heavy or a stun
-  if (t.ai && t.ai.state === 'windup' && (opts.heavy || opts.stun)) {
+  if (t.ai && t.ai.state === 'windup' && (opts.heavy || opts.stun || (pk.breaker && opts.combo3))) {
     t.ai.state = 'recover';
     t.ai.until = s.elapsed + 0.8;
     ev.push({ type: 'interrupt', id: t.id });
@@ -345,6 +356,7 @@ function killFoe(s, t, ev) {
   s.wild = s.wild.filter(w => w !== t);
   const drops = t.released ? {} : rollDrops(phenotype(t.genome));
   if (t.beast) drops.crystal = (drops.crystal || 0) + 3;
+  if (p && personality(p)?.loot && Math.random() < 0.5) drops.food = (drops.food || 0) + 1;
   give(s, drops);
   tally(s, t.beast ? 'beastkill' : 'kill');
   let up = 0;
@@ -369,6 +381,7 @@ function inLane(o, dir, len, width, t) {
   return along >= -0.5 && along <= len + 0.5 && side <= width / 2 + 0.5;
 }
 // ---------- your moves ----------
+const pk0 = p => perks(p);
 function ready(s, key) {
   return (normalizeCombat(s).cd[key] || 0) <= s.elapsed;
 }
@@ -383,7 +396,8 @@ export function basicAttack(s, heavy = false, env = {}) {
     ev = [];
   if (!p) return { ok: false, error: '需要出戰的御獸。', events: ev };
   if (!ready(s, 'basic')) return { ok: false, quiet: true, events: ev };
-  const sta = heavy ? 12 : 3;
+  const pk = perks(p),
+    sta = (heavy ? 12 : 3) * (1 - pk.sta);
   if ((p.stamina ?? 100) < sta) return { ok: false, error: '御獸累了，先讓牠喘口氣。', events: ev };
   const target = lockTarget(s);
   let from = allyPos(s);
@@ -399,23 +413,25 @@ export function basicAttack(s, heavy = false, env = {}) {
       ev.push({ type: 'lunge', x: c.ax, z: c.az });
     }
   }
-  const combo = !heavy && c.combo.until > s.elapsed && c.combo.n < 3 ? c.combo.n + 1 : 1,
-    mul = heavy ? 2.0 : [1, 1, 1.15, 1.7][combo],
+  const maxCombo = pk.combo4 ? 4 : 3,
+    combo = !heavy && c.combo.until > s.elapsed && c.combo.n < maxCombo ? c.combo.n + 1 : 1,
+    mul = heavy ? 2.0 : [1, 1, 1.15, 1.7, 1.9][combo],
     pw = allyPower(s, p),
     dir = facing(s, from, target);
   c.combo = { n: heavy ? 0 : combo, until: s.elapsed + COMBO_WINDOW };
-  c.cd.basic = s.elapsed + (heavy ? 1.0 : combo === 3 ? 0.62 : 0.36);
+  c.cd.basic = s.elapsed + (heavy ? 1.0 : combo >= 3 ? 0.62 : 0.36);
   c.facing = dir;
   p.stamina = Math.max(0, (p.stamina ?? 100) - sta);
   ev.push({ type: 'swing', combo, heavy, x: from.x, z: from.z, dir, reach: pw.reach });
-  const knock = heavy ? 3 : combo === 3 ? 2.4 : 0.5;
+  const knock = heavy ? 3 : combo >= 3 ? 2.4 : 0.5;
   let hits = 0;
   for (const t of foesNear(s, pw.reach + 3, from))
     if (inArc(from, dir, pw.reach, 0.95, t)) {
       damageFoe(s, t, pw.atk * mul, ev, {
         knock,
         from,
-        heavy: heavy || combo === 3,
+        heavy: heavy || combo === maxCombo,
+        combo3: combo >= 3,
         canMove: env.canMove,
         rng: env.rng
       });
@@ -436,13 +452,16 @@ export function useSkill(s, slot, env = {}) {
   if (!ready(s, 'skill' + slot)) {
     return { ok: false, error: `${sk.name}冷卻中（${Math.ceil(c.cd['skill' + slot] - s.elapsed)} 秒）。`, events: ev };
   }
-  if ((p.stamina ?? 100) < sk.sta) return { ok: false, error: '御獸累了，先讓牠喘口氣。', events: ev };
+  if ((p.stamina ?? 100) < sk.sta * (1 - perks(p).sta))
+    return { ok: false, error: '御獸累了，先讓牠喘口氣。', events: ev };
   const target = lockTarget(s),
     pw = allyPower(s, p);
+  pw.atk *= 1 + pk0(p).skill;
   let from = allyPos(s);
   const dir = facing(s, from, target);
-  c.cd['skill' + slot] = s.elapsed + sk.cd;
-  p.stamina = Math.max(0, (p.stamina ?? 100) - sk.sta);
+  const pk = perks(p);
+  c.cd['skill' + slot] = s.elapsed + sk.cd * (1 - pk.cd);
+  p.stamina = Math.min(100, Math.max(0, (p.stamina ?? 100) - sk.sta * (1 - pk.sta)) + pk.refund);
   const base = { from, canMove: env.canMove, rng: env.rng };
   const fx = { type: 'skill', skill: key, x: from.x, z: from.z, dir, color: sk.color, range: sk.range };
   switch (sk.shape) {
@@ -560,7 +579,8 @@ export function dodge(s, dx = 0, dz = 0) {
     L = 1;
   }
   c.cd.dodge = s.elapsed + DODGE.cd;
-  c.iframesUntil = s.elapsed + DODGE.iframes;
+  const ip = s.expedition?.mounted ? perks(activeBeast(s)).iframes : 1;
+  c.iframesUntil = s.elapsed + DODGE.iframes * ip;
   return {
     ok: true,
     dx: (dx / L) * DODGE.dist,
@@ -651,7 +671,7 @@ function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
   if (ai.stunUntil > t) return;
   const phase2 = !!def.phase2 && w.hp < w.maxHp * def.phase2,
     quick = phase2 ? 0.75 : 1,
-    onAlly = p && ally && !riding && dist(w, ally) + 2 < dist(w, me),
+    onAlly = p && ally && !riding && (dist(w, ally) + 2 < dist(w, me) || (personality(p)?.taunt && dist(w, ally) < 9)),
     target = onAlly ? ally : me,
     d = dist(w, target);
   if (ai.state === 'approach') {
@@ -782,7 +802,8 @@ export function tickCombat(s, dt, env = {}) {
       st = foeStats(w),
       reach = env.canReach ? env.canReach(w) : true;
     // aggro: your beast draws attacks while it is out and nearer than you
-    const onAlly = p && ally && !riding && dist(w, ally) + 2 < dist(w, me);
+    const onAlly =
+      p && ally && !riding && (dist(w, ally) + 2 < dist(w, me) || (personality(p)?.taunt && dist(w, ally) < 9));
     const target = onAlly ? ally : me;
     if (!reach && !onAlly) {
       ai.state = 'approach';
@@ -889,6 +910,16 @@ export function tickCombat(s, dt, env = {}) {
       ai.next = t + 0.5 + rng() * 0.9;
     }
   }
+  // 0.29: 戰鬥癒合 mends the beast; a gentle one now and then mends you; the stand of a last-stood beast resets
+  if (p && c.engaged) {
+    const pk = perks(p),
+      per = personality(p);
+    if (pk.regen) p.health = Math.min(100, (p.health ?? 100) + pk.regen * dt);
+    if (per?.mends && rng() < dt * 0.08 && s.vitals.health < 100) {
+      s.vitals.health = Math.min(100, s.vitals.health + 4);
+      ev.push({ type: 'mend', name: p.name, x: s.player.x, z: s.player.z });
+    }
+  } else if (p) p.stoodFast = false;
   // 0.28: the two great foes fight the same way as everything else — telegraphed, dodgeable, open after a blow
   const boss = s.expedition?.boss;
   if (
@@ -985,7 +1016,8 @@ function hurt(s, who, dmg, from, ev) {
   if (onBeast && p) {
     const def = geneStats(bsOf(p.genome)).def,
       guard = c.guardUntil > s.elapsed ? 0.3 : 1,
-      amount = Math.max(1, Math.round(dmg * 0.8 * Math.max(0.35, 1 - def / 50) * guard));
+      pk = perks(p),
+      amount = Math.max(1, Math.round(dmg * 0.8 * Math.max(0.35, 1 - def / 50) * guard * (1 - pk.guard)));
     p.health = Math.max(0, (p.health ?? 100) - amount);
     ev.push({
       type: 'hit',
@@ -996,7 +1028,20 @@ function hurt(s, who, dmg, from, ev) {
       guarded: guard < 1
     });
     if (guard < 1 && from && (dangerousFoe(from, s.elapsed) || from.duelBeast || isBoss(s, from)))
-      damageFoe(s, from, allyPower(s, p).atk * 0.8, ev, {});
+      damageFoe(s, from, allyPower(s, p).atk * 0.8 * pk.counter, ev, {});
+    if (p.health - amount <= 0 && pk.lastStand && !p.stoodFast) {
+      p.stoodFast = true;
+      p.health = 1;
+      ev.push({
+        type: 'hit',
+        target: 'ally',
+        x: riding ? s.player.x : c.ax,
+        z: riding ? s.player.z : c.az,
+        amount: 0,
+        guarded: true
+      });
+      return 0;
+    }
     if (p.health <= 0) {
       ev.push({ type: 'ko', name: p.name, id: p.id });
       remember(s, p, '在戰鬥中倒下了，回到契約裡休息。');

@@ -1,21 +1,22 @@
-import { phenotype, clamp } from './genetics.js?v=0.28.0';
-import { NODES, harvest } from './islands.js?v=0.28.0';
-import { restPlace } from './ship.js?v=0.28.0';
-import { dayOf, dayPhase } from './clock.js?v=0.28.0';
-import { remember, rememberFirst } from './memories.js?v=0.28.0';
-import { spend, give, stow } from './bag.js?v=0.28.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.28.0';
-import { islandAt } from './islands.js?v=0.28.0';
-import { hasPerk } from './codex.js?v=0.28.0';
-import { tally } from './stats.js?v=0.28.0';
-import { rollDrops } from './species.js?v=0.28.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.28.0';
-import { WILD_BEASTS } from './beasts.js?v=0.28.0';
-import { hasGear, MASK_OXYGEN } from './gear.js?v=0.28.0';
-import { damageBonus } from './skills.js?v=0.28.0';
-import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.28.0';
-import { ITEM_NAMES } from './items.js?v=0.28.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.28.0';
+import { phenotype, clamp } from './genetics.js?v=0.29.0';
+import { NODES, harvest } from './islands.js?v=0.29.0';
+import { restPlace } from './ship.js?v=0.29.0';
+import { dayOf, dayPhase } from './clock.js?v=0.29.0';
+import { remember, rememberFirst } from './memories.js?v=0.29.0';
+import { spend, give, stow } from './bag.js?v=0.29.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.29.0';
+import { islandAt } from './islands.js?v=0.29.0';
+import { hasPerk } from './codex.js?v=0.29.0';
+import { tally } from './stats.js?v=0.29.0';
+import { rollDrops } from './species.js?v=0.29.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.29.0';
+import { WILD_BEASTS } from './beasts.js?v=0.29.0';
+import { hasGear, MASK_OXYGEN } from './gear.js?v=0.29.0';
+import { damageBonus } from './skills.js?v=0.29.0';
+import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.29.0';
+import { ITEM_NAMES } from './items.js?v=0.29.0';
+import { personality } from './beast-tree.js?v=0.29.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT, duelActive, hitBeast, nearBeast } from './story.js?v=0.29.0';
 // The crystal cave is its own pocket of the world, far outside the basin.
 export const CAVE = { x: 2600, z: -2600, r: 6 };
 // the 深淵潛行者 collection perk lengthens every dive
@@ -120,10 +121,15 @@ export function trainPet(s, id) {
   if (p.bond >= 100) return fail('羈絆已滿。');
   if (!pay(s, { food: 2, crystal: 1 })) return fail('訓練需要 2 口糧與 1 異晶。');
   p.lastTrain = s.elapsed;
-  p.bond = Math.min(100, p.bond + 4);
+  const per = personality(p),
+    gain = Math.round(4 * (per?.feedMul || 1) * (per?.bondMul || 1));
+  p.bond = Math.min(100, p.bond + gain);
   p.stamina = Math.min(100, p.stamina + 15);
   p.health = Math.min(100, p.health + 15);
-  return { ok: true, message: '默契訓練完成：羈絆 +4。' };
+  return {
+    ok: true,
+    message: `默契訓練完成：羈絆 +${gain}。${per?.feedMul > 1 ? `${p.name} 吃得津津有味。` : ''}`
+  };
 }
 export function commandPet(s, id, order = 'follow') {
   normalizeExpansion(s);
@@ -370,7 +376,9 @@ export function tickExpansion(s, dt, safe = false) {
     events = [];
   for (const pet of s.tamed) {
     if (pet !== p) {
-      const k = { island: 1.6, lounge: 1.3, hold: 1.3, hall: 1.4, pen: 1, storage: 1 }[restPlace(s, pet)] || 1;
+      const k =
+        ({ island: 1.6, lounge: 1.3, hold: 1.3, hall: 1.4, pen: 1, storage: 1 }[restPlace(s, pet)] || 1) *
+        (personality(pet)?.restMul || 1);
       pet.stamina = Math.min(100, pet.stamina + dt * 0.7 * k);
       pet.health = Math.min(100, pet.health + dt * 0.45 * k);
     }
@@ -391,7 +399,7 @@ export function tickExpansion(s, dt, safe = false) {
     );
     if (!safe && s.elapsed - e.lastBond >= 60) {
       e.lastBond = s.elapsed;
-      p.bond = Math.min(100, p.bond + 0.75);
+      p.bond = Math.min(100, p.bond + 0.75 * (personality(p)?.bondMul || 1));
     }
     if (p.stamina <= 1 && e.mounted) {
       e.diving = false;
