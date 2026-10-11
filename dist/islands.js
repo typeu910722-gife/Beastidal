@@ -1,7 +1,8 @@
-import { stow, bagRoom, bagFullError } from './bag.js?v=0.23.0';
-import { gatherBonus } from './skills.js?v=0.23.0';
-import { hasPerk } from './codex.js?v=0.23.0';
-import { tally } from './stats.js?v=0.23.0';
+import { stow, bagRoom, bagFullError } from './bag.js?v=0.24.0';
+import { gatherBonus } from './skills.js?v=0.24.0';
+import { harvestBonus } from './weather.js?v=0.24.0';
+import { hasPerk } from './codex.js?v=0.24.0';
+import { tally } from './stats.js?v=0.24.0';
 import {
   groundAt,
   slopeAt,
@@ -11,7 +12,7 @@ import {
   islandOf,
   landNear,
   waterNear
-} from './lake.js?v=0.23.0';
+} from './lake.js?v=0.24.0';
 // 0.15: the world is the inland sea of 沉湖遺城. Islands are real terrain now; the old ids stay so saves carry over.
 export const ISLANDS = LAKE_ISLANDS;
 export const MAINLAND = { id: 'mainland', name: '環湖山麓', x: LAKE_CENTER.x, z: LAKE_CENTER.z, rx: 400, rz: 260 };
@@ -106,7 +107,7 @@ export function harvest(s, id) {
   if (remaining > 0) return { ok: false, error: `此處正在恢復，還需 ${Math.ceil(remaining)} 秒。` };
   if (!bagRoom(s)) return { ok: false, error: bagFullError, full: true };
   const shed = (s.plots?.[n.island] || []).some(st => st.state === 'built' && st.build === 'shed');
-  const amount = n.yield + (hasPerk(s, 'land') ? 1 : 0) + gatherBonus(s) + (shed ? 1 : 0);
+  const amount = n.yield + (hasPerk(s, 'land') ? 1 : 0) + gatherBonus(s) + (shed ? 1 : 0) + harvestBonus(s);
   stow(s, { [n.kind]: amount });
   s.harvested[id] = s.elapsed + 120;
   tally(s, 'harvest');

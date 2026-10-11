@@ -1,8 +1,8 @@
 // The 64 base species (0.21): four families × four forms × four strains. Sea and deep species (32) live in the
 // water, land and plant-mutant species (32) ashore. Each has its own lore, rarity, home waters or shores, and
 // what it leaves behind when it falls. The genome decides which species a creature is (see genetics.js).
-import { FAMILIES, SPECIES, speciesId } from './genetics.js?v=0.23.0';
-import { LANDMARKS, LAKE_CENTER, LAKE_ISLANDS } from './lake.js?v=0.23.0';
+import { FAMILIES, SPECIES, speciesId } from './genetics.js?v=0.24.0';
+import { LANDMARKS, LAKE_CENTER, LAKE_ISLANDS } from './lake.js?v=0.24.0';
 
 export const LORE = {
   // 淺海種
@@ -364,11 +364,14 @@ for (const sp of allSpeciesInfo())
     else z.pool.push({ ...entry, w: 1 });
   }
 // Which species turns up: a rare roll first, then the weighted pool.
-export function pickSpecies(zone, rng = Math.random) {
-  for (const r of zone.rare) if (rng() < r.p) return { ...r, rare: true };
-  const total = zone.pool.reduce((a, p) => a + p.w, 0);
+export function pickSpecies(zone, rng = Math.random, mods = null) {
+  const fam = mods?.family || {},
+    rareMul = mods?.rare ?? 1;
+  for (const r of zone.rare) if (rng() < r.p * rareMul) return { ...r, rare: true };
+  const weights = zone.pool.map(p => p.w * (fam[p.family] ?? 1)),
+    total = weights.reduce((a, b) => a + b, 0);
   let roll = rng() * total;
-  for (const p of zone.pool) if ((roll -= p.w) < 0) return p;
+  for (let i = 0; i < zone.pool.length; i++) if ((roll -= weights[i]) < 0) return zone.pool[i];
   return zone.pool[0];
 }
 // Where a species is found, for the codex (zones listing it).

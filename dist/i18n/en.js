@@ -2687,5 +2687,26 @@ export default {
   '騎乘速度 +30%，騎乘時耐力消耗減半。': 'Riding speed +30%; stamina drains half as fast while riding.',
   魚竿: 'Fishing rod',
   '（御獸在幫忙）': ' (beasts are helping)',
-  '（未製作）': ' (not made)'
+  '（未製作）': ' (not made)',
+  '{0} {1}天來了': '{0} {1} has come',
+  '{0} 天氣轉為{1}{2}': '{0} The weather turned to {1}{2}',
+  下雪: 'Snow',
+  冬: 'Winter',
+  夏: 'Summer',
+  多雲: 'Overcast',
+  '季節：': 'Season: ',
+  小雨: 'Rain',
+  春: 'Spring',
+  '湖面結霜：淺海種少、深淵種多，潛水氧氣 -10 秒，魚咬得慢但大魚多。':
+    'Frost on the lake: fewer shallow species, more deep ones, dive air −10 s, slower bites but bigger fish.',
+  濃霧: 'Fog',
+  '生物繁盛：植生突變更常見，田圃多產，配種更容易突變。':
+    'Life abounds: plant mutants are commoner, gardens yield more, breeding mutates more readily.',
+  秋: 'Autumn',
+  '豐收：採集多 1，稀有生物更常出現，多霧。': 'Harvest: gathering +1, rare creatures appear more often, fog is common.',
+  雷暴: 'Thunderstorm',
+  '雷雨季：魚咬得快，雷暴也多。': 'Storm season: fish bite fast and thunderstorms are frequent.',
+  '，海上危險！': ' — dangerous at sea!',
+  '，湖面飄雪。': ' — snow drifts over the lake.',
+  '，能見度變差。': ' — visibility drops.'
 };

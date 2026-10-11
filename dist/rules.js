@@ -1,17 +1,18 @@
-import { limitError } from './ship.js?v=0.23.0';
-import { dayOf } from './clock.js?v=0.23.0';
-import { normalizeExpansion } from './expansion.js?v=0.23.0';
-import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.23.0';
-import { dockingSpots } from './navigation.js?v=0.23.0';
-import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.23.0';
-import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome, give } from './bag.js?v=0.23.0';
-import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.23.0';
-import { remember } from './memories.js?v=0.23.0';
+import { limitError } from './ship.js?v=0.24.0';
+import { dayOf } from './clock.js?v=0.24.0';
+import { normalizeExpansion } from './expansion.js?v=0.24.0';
+import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.24.0';
+import { dockingSpots } from './navigation.js?v=0.24.0';
+import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.24.0';
+import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome, give } from './bag.js?v=0.24.0';
+import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.24.0';
+import { remember } from './memories.js?v=0.24.0';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
-import { ITEM_NAMES, ITEM_GLYPHS, BASE_RESOURCES, CRAFTS } from './items.js?v=0.23.0';
-import { inheritGenes, addRandomGene } from './bsgenes.js?v=0.23.0';
-import { normalizeGear } from './gear.js?v=0.23.0';
-import { tally } from './stats.js?v=0.23.0';
+import { ITEM_NAMES, ITEM_GLYPHS, BASE_RESOURCES, CRAFTS } from './items.js?v=0.24.0';
+import { inheritGenes, addRandomGene } from './bsgenes.js?v=0.24.0';
+import { normalizeGear } from './gear.js?v=0.24.0';
+import { mutationFactor } from './weather.js?v=0.24.0';
+import { tally } from './stats.js?v=0.24.0';
 export const RESOURCE_NAMES = ITEM_NAMES;
 export const RESOURCE_ICONS = ITEM_GLYPHS;
 export const RECIPES = {
@@ -335,7 +336,7 @@ export function craftBait(s) {
   return { ok: true };
 }
 // Feeding and contracts live in taming.js (0.12).
-export { feed } from './taming.js?v=0.23.0';
+export { feed } from './taming.js?v=0.24.0';
 export function breed(s, aId, bId, rng = Math.random) {
   if ([aId, bId].some(id => s.tamed.find(p => p.id === id)?.ancient)) return { ok: false, error: '遠古御獸無法配對。' };
   normalizeHousing(s);
@@ -355,7 +356,7 @@ export function breed(s, aId, bId, rng = Math.random) {
   genome.bs = inheritGenes(a.genome, b.genome, rng);
   let newGenes = 0;
   for (let i = 0; i < mutations; i++)
-    if (rng() < 0.35 && addRandomGene(genome, rng, phenotype(genome).family)) newGenes++;
+    if (rng() < 0.35 * mutationFactor(s) && addRandomGene(genome, rng, phenotype(genome).family)) newGenes++;
   const egg = {
     id: uid('child'),
     genome,

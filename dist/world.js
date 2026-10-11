@@ -1,31 +1,32 @@
-import { expansionModels } from './expansion-models.js?v=0.23.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.23.0';
-import { normalizeHousing, penId } from './housing.js?v=0.23.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.23.0';
-export { makeCreature } from './creatures.js?v=0.23.0';
-import { makeIslands } from './island-models.js?v=0.23.0';
-import { facilityId } from './facilities.js?v=0.23.0';
+import { expansionModels } from './expansion-models.js?v=0.24.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.24.0';
+import { normalizeHousing, penId } from './housing.js?v=0.24.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.24.0';
+export { makeCreature } from './creatures.js?v=0.24.0';
+import { makeIslands } from './island-models.js?v=0.24.0';
+import { facilityId } from './facilities.js?v=0.24.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.23.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.23.0';
-import { makeLake } from './lake-models.js?v=0.23.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.23.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.23.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.23.0';
-import { PostFX } from './postfx.js?v=0.23.0';
-import { makeHuman, animateHuman } from './human.js?v=0.23.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.23.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.23.0';
-import { buildError } from './rules.js?v=0.23.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.23.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.23.0';
-import { CABIN, FLOORS, POOL_SLOTS, GARDEN_SLOTS } from './cabin.js?v=0.23.0';
-import { makeCabin } from './cabin-models.js?v=0.23.0';
-import { applyGeneMarks, beastHalo, animateMarks } from './bs-models.js?v=0.23.0';
-import { syncPlots } from './land-models.js?v=0.23.0';
-import { plotTargets } from './reclaim.js?v=0.23.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.23.0';
-import { dayPhase } from './clock.js?v=0.23.0';
+import { phenotype, seeded } from './genetics.js?v=0.24.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.24.0';
+import { makeLake } from './lake-models.js?v=0.24.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.24.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.24.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.24.0';
+import { PostFX } from './postfx.js?v=0.24.0';
+import { makeHuman, animateHuman } from './human.js?v=0.24.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.24.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.24.0';
+import { buildError } from './rules.js?v=0.24.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.24.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.24.0';
+import { CABIN, FLOORS, POOL_SLOTS, GARDEN_SLOTS } from './cabin.js?v=0.24.0';
+import { makeCabin } from './cabin-models.js?v=0.24.0';
+import { applyGeneMarks, beastHalo, animateMarks } from './bs-models.js?v=0.24.0';
+import { syncPlots } from './land-models.js?v=0.24.0';
+import { plotTargets } from './reclaim.js?v=0.24.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.24.0';
+import { dayPhase } from './clock.js?v=0.24.0';
+import { weatherAt, season } from './weather.js?v=0.24.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -1138,8 +1139,17 @@ export class OceanWorld {
     const t = this.time;
     const phase = dayPhase(s);
     const night = ((Math.cos(phase * Math.PI * 2 + Math.PI * 0.65) + 1) / 2) * 0.85;
-    const stormTarget = phase > 0.6 && phase < 0.76 ? 0.7 : 0;
+    // 0.24: the sky follows the weather schedule — overcast, rain, fog, thunder, snow — and the season's light
+    const sky = weatherAt(s),
+      stormTarget = sky.storm;
     this.stormLevel += (stormTarget - this.stormLevel) * Math.min(1, dt * 0.12);
+    this.skyFog = (this.skyFog ?? sky.fog) + (sky.fog - (this.skyFog ?? sky.fog)) * Math.min(1, dt * 0.2);
+    // lightning: a flash now and then while it thunders
+    this.lightning = Math.max(0, (this.lightning || 0) - dt * 6);
+    if (sky.kind === 'thunder' && Math.random() < dt / 11) {
+      this.lightning = 1;
+      this.lightningFired = (this.lightningFired || 0) + 1;
+    }
     const storm = this.stormLevel;
     this.water.material.uniforms.uTime.value = t;
     this.water.material.uniforms.uNight.value = night;
@@ -1537,14 +1547,19 @@ export class OceanWorld {
     this.extra.boss.position.set(boss.x, diving ? -4 : 0, boss.z);
     this.extra.boss.rotation.y = Math.atan2(s.player.x - boss.x, s.player.z - boss.z);
     this.animateCreature(this.extra.boss, t);
-    this.extra.rain.visible = !!storm && !diving && !s.inCave && !cabin;
+    this.extra.rain.visible = !!sky.drops && !diving && !s.inCave && !cabin;
     this.extra.rain.position.set(s.player.x, 0, s.player.z);
-    const rain = this.extra.rain.geometry.attributes.position;
+    const rain = this.extra.rain.geometry.attributes.position,
+      rm = this.extra.rain.material;
+    rm.color.set(sky.snow ? 0xffffff : 0xb3d3dc);
+    rm.size = sky.snow ? 0.18 : 0.09;
+    rm.opacity = sky.snow ? 0.9 : sky.kind === 'thunder' ? 0.8 : 0.5;
     for (let i = 0; i < rain.count; i++) {
-      rain.setY(i, (rain.getY(i) - dt * 20 + 20) % 20);
+      rain.setY(i, (rain.getY(i) - dt * (sky.snow ? 5 : 20) + 20) % 20);
+      if (sky.snow) rain.setX(i, rain.getX(i) + Math.sin(t * 1.3 + i) * dt * 0.6);
     }
     rain.needsUpdate = true;
-    this.scene.fog.density = cabin ? 0.008 : diving ? 0.035 : s.inCave ? 0.045 : 0.0013 + storm * 0.006;
+    this.scene.fog.density = cabin ? 0.008 : diving ? 0.035 : s.inCave ? 0.045 : this.skyFog + storm * 0.003;
     if (cabin) {
       // warm lamplight indoors
       this.scene.background.set(0x1a120c);
@@ -1562,6 +1577,22 @@ export class OceanWorld {
       this.scene.environmentIntensity = 0.15;
     } else {
       this.scene.background.copy(atm.fog);
+      // the season's light, and the fog's grey, lie over everything outdoors
+      const tint = this.seasonTint || (this.seasonTint = new T.Color());
+      tint.set(season(s).tint);
+      const k = sky.kind === 'fog' ? 0.06 : 0.1;
+      this.scene.fog.color.lerp(tint, k);
+      this.scene.background.lerp(tint, k);
+      this.ambient.color.lerp(tint, 0.25);
+      if (sky.kind === 'fog') {
+        const grey = this.fogGrey || (this.fogGrey = new T.Color(0xb8c4c8));
+        this.scene.fog.color.lerp(grey, 0.5);
+        this.scene.background.lerp(grey, 0.5);
+      }
+      if (this.lightning > 0) {
+        this.ambient.intensity += 6 * this.lightning;
+        this.sun.intensity += 3 * this.lightning;
+      }
     }
     this.water.material.uniforms.uFogDensity.value = this.scene.fog.density;
     // 0.23: the fishing line, out to the float ahead of you

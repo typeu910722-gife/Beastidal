@@ -1,11 +1,12 @@
 // Fishing (0.23): with a rod in hand, press E on open water (from the boat or a shore) to cast. After a few
 // seconds something bites; press E again within the window to hook it. Deep water gives bigger fish, the
 // fishing skill shortens the wait and improves the catch, and the odd pearl turns up.
-import { groundAt } from './lake.js?v=0.23.0';
-import { hasGear } from './gear.js?v=0.23.0';
-import { give, bagRoom } from './bag.js?v=0.23.0';
-import { tally } from './stats.js?v=0.23.0';
-import { fishBonus, skillLevel } from './skills.js?v=0.23.0';
+import { groundAt } from './lake.js?v=0.24.0';
+import { hasGear } from './gear.js?v=0.24.0';
+import { give, bagRoom } from './bag.js?v=0.24.0';
+import { tally } from './stats.js?v=0.24.0';
+import { fishBonus, skillLevel } from './skills.js?v=0.24.0';
+import { fishingWaitFactor, bigFishFactor } from './weather.js?v=0.24.0';
 
 export const BITE_WINDOW = 1.6;
 export const CATCHES = {
@@ -34,7 +35,7 @@ export function startFishing(s, rng = Math.random) {
   const c = canFishHere(s);
   if (!c.ok) return c;
   const depth = -Math.min(0, groundAt(s.player.x, s.player.z)),
-    wait = (4 + rng() * 6) * (1 - 0.04 * (skillLevel(s, 'fishing') - 1));
+    wait = (4 + rng() * 6) * (1 - 0.04 * (skillLevel(s, 'fishing') - 1)) * fishingWaitFactor(s);
   s.fishing = { at: s.elapsed, biteAt: s.elapsed + wait, depth, hooked: false };
   return { ok: true, message: '拋竿了。等牠咬鉤。' };
 }
@@ -64,7 +65,7 @@ export function reel(s, rng = Math.random) {
     deep = f.depth > 12;
   let total = 0;
   const pool = Object.entries(CATCHES).map(([k, c]) => {
-    const w = c.w * (c.deep ? (deep ? 1.6 : 0.4) : 1) * (c.w < 30 ? 1 + bonus * 4 : 1);
+    const w = c.w * (c.deep ? (deep ? 1.6 : 0.4) * bigFishFactor(s) : 1) * (c.w < 30 ? 1 + bonus * 4 : 1);
     total += w;
     return [k, w];
   });

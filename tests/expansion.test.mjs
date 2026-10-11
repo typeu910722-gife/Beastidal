@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { weatherAt, SLOT } from '../dist/weather.js';
 import { contract, craftContract, feedsNeeded, frenzied, rollTame } from '../dist/taming.js';
 import { createState, feed, placeBuilding, validateSave } from '../dist/rules.js';
 import { makeGenome, crossGenome, phenotype, seeded } from '../dist/genetics.js';
@@ -197,7 +198,10 @@ test('Boat upgrades reduce storm damage; boss rewards and awakening are one-time
     p = s.tamed[0];
   assert.ok(upgradeBoat(s).ok);
   assert.equal(s.expedition.boatLevel, 1);
-  s.elapsed = 0.65 * 1200; // inside the storm window
+  // 0.24: storms follow the weather schedule — find the first thunderstorm
+  s.elapsed = 600;
+  while (weatherAt(s).kind !== 'thunder') s.elapsed += SLOT;
+  s.expedition.lastStorm = -999;
   s.player.x = 70;
   s.player.z = 0;
   const health = s.vitals.health;
