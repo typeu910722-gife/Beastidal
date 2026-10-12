@@ -3328,6 +3328,26 @@ body:not(.landscape-play) #beast-bar {
     0 0 14px #ffd36a99,
     0 4px 10px #000a;
 }
+.ccard.assist {
+  opacity: 1;
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 2px #7fe0ff,
+    0 0 14px #5fd0ff99,
+    0 4px 10px #000a;
+}
+.ccard.assist::after {
+  content: '援護';
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: #1f7fa8;
+  color: #fff;
+  font-size: 10px;
+  line-height: 15px;
+}
 .ccard.tired {
   background:
     repeating-linear-gradient(0deg, #00000008 0 2px, transparent 2px 4px), linear-gradient(170deg, #f1c9b4, #d98c72);

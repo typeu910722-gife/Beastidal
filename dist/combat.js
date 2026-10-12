@@ -9,15 +9,15 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.39.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.39.0';
-import { WILD_BEASTS } from './beasts.js?v=0.39.0';
-import { rollDrops } from './species.js?v=0.39.0';
-import { give } from './bag.js?v=0.39.0';
-import { tally } from './stats.js?v=0.39.0';
-import { damageBonus } from './skills.js?v=0.39.0';
-import { remember } from './memories.js?v=0.39.0';
-import { perks, personality, normalizeTree } from './beast-tree.js?v=0.39.0';
+import { phenotype } from './genetics.js?v=0.40.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.40.0';
+import { WILD_BEASTS } from './beasts.js?v=0.40.0';
+import { rollDrops } from './species.js?v=0.40.0';
+import { give } from './bag.js?v=0.40.0';
+import { tally } from './stats.js?v=0.40.0';
+import { damageBonus } from './skills.js?v=0.40.0';
+import { remember } from './memories.js?v=0.40.0';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.40.0';
 
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;
@@ -28,6 +28,9 @@ const angleTo = (a, b) => Math.atan2(b.x - a.x, b.z - a.z);
 const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
 const frenzied = (w, t) => (w.frenzyUntil || 0) > t;
 export const dangerousFoe = (w, t) => !!w.hostile || frenzied(w, t);
+// 0.40: the sea has two layers. Under water only what swims down there can reach you (and you it); on the surface
+// the deep ones cannot.
+export const onLayer = (s, w) => !!w.under === !!s.expedition?.diving;
 
 // ---------- skills ----------
 export const SKILLS = {
@@ -281,7 +284,9 @@ export function allyPos(s) {
   return { x: c.ax, z: c.az };
 }
 export function foesNear(s, r = ENGAGE, from = s.player) {
-  const out = (s.wild || []).filter(w => dangerousFoe(w, s.elapsed) && !w.dissolving && dist(w, from) < r);
+  const out = (s.wild || []).filter(
+    w => dangerousFoe(w, s.elapsed) && !w.dissolving && onLayer(s, w) && dist(w, from) < r
+  );
   const b = s.expedition?.boss;
   if (b && !b.defeated && !s.inCave && dist(b, from) < r + 4) out.push(b);
   // 嘯岳 during the trial of might
@@ -833,7 +838,7 @@ export function tickCombat(s, dt, env = {}) {
     }
   // foes
   for (const w of [...(s.wild || [])]) {
-    if (!dangerousFoe(w, t) || w.dissolving || dist(w, me) > AI_RANGE) {
+    if (!dangerousFoe(w, t) || w.dissolving || !onLayer(s, w) || dist(w, me) > AI_RANGE) {
       if (w.ai && w.ai.state === 'windup') delete w.ai;
       continue;
     }
@@ -1055,7 +1060,96 @@ export function tickCombat(s, dt, env = {}) {
       ev.push(...r.events.map(e => ({ ...e, auto: true })));
     }
   }
+  stepAssist(s, dt, ev, rng);
   return ev;
+}
+// ---------- 援護召喚 (0.40) ----------
+// While you ride (above all under water, where you cannot get off) a second contract can be torn open for a short
+// assist: that beast swims out beside you, goes for the foe your mount is on and strikes on its own until its time
+// or its stamina runs out, then goes back into its card. One assist at a time, with a cooldown.
+export const ASSIST = { time: 25, every: 1.6, sta: 5, min: 25, stop: 12, cd: 20 };
+export const assistBeast = s => {
+  const a = s.expedition?.assist;
+  return a ? (s.tamed || []).find(p => p.id === a.id) || null : null;
+};
+export function callAssist(s, id) {
+  const e = s.expedition,
+    c = normalizeCombat(s),
+    p = (s.tamed || []).find(x => x.id === id);
+  if (!e?.mounted) return { ok: false, error: '騎乘時才能召喚援護。' };
+  if (!p || p.kind === 'creature') return { ok: false, error: '只有御獸能援護。' };
+  if (p.id === e.activeId) return { ok: false, error: '牠正載著你。' };
+  if (e.assist?.id === id) {
+    dismissAssist(s);
+    return { ok: true, message: `${p.name} 回到契約紙裡。`, back: true };
+  }
+  if (e.diving && phenotype(p.genome).habitat === 'land')
+    return { ok: false, error: `${p.name} 不會游泳，沒辦法下潛援護。` };
+  if ((p.bond || 0) < 30) return { ok: false, error: '羈絆 30 才能援護。' };
+  if ((p.health ?? 100) < 15 || (p.stamina ?? 100) < ASSIST.min)
+    return { ok: false, error: `${p.name} 太累了（援護需要 ${ASSIST.min} 耐力）。` };
+  const left = (c.cd.assist || 0) - s.elapsed;
+  if (left > 0 && !e.assist) return { ok: false, error: `援護契約還在冷卻（${Math.ceil(left)} 秒）。` };
+  const h = s.player.heading || 0;
+  e.assist = {
+    id,
+    until: s.elapsed + ASSIST.time,
+    next: s.elapsed + 0.6,
+    x: s.player.x + Math.cos(h) * 3,
+    z: s.player.z - Math.sin(h) * 3,
+    heading: h
+  };
+  return { ok: true, message: `援護召喚：${p.name} 衝出契約紙，和你一起戰鬥（${ASSIST.time} 秒）。` };
+}
+export function dismissAssist(s) {
+  const e = s.expedition;
+  if (!e?.assist) return;
+  e.assist = null;
+  normalizeCombat(s).cd.assist = s.elapsed + ASSIST.cd;
+}
+function stepAssist(s, dt, ev, rng) {
+  const e = s.expedition,
+    a = e?.assist;
+  if (!a) return;
+  const p = assistBeast(s),
+    t = s.elapsed;
+  if (!p || !e.mounted || t >= a.until || (p.stamina ?? 100) < ASSIST.stop || (p.health ?? 100) < 10) {
+    dismissAssist(s);
+    ev.push({ type: 'assistend', id: p?.id, name: p?.name || '' });
+    return;
+  }
+  const pw = allyPower(s, p),
+    foes = foesNear(s, ENGAGE + 4, a),
+    target = foes.sort((x, y) => dist(x, a) - dist(y, a))[0] || null,
+    speed = 6 + phenotype(p.genome).speed / 30;
+  let goal;
+  if (target) {
+    const ang = angleTo(target, a);
+    goal = { x: target.x + Math.sin(ang) * pw.reach * 0.7, z: target.z + Math.cos(ang) * pw.reach * 0.7 };
+  } else {
+    // no foe: it swims at your side
+    const h = s.player.heading || 0;
+    goal = { x: s.player.x + Math.cos(h) * 3, z: s.player.z - Math.sin(h) * 3 };
+  }
+  const d = dist(a, goal);
+  if (d > 0.3) {
+    const k = Math.min(1, (speed * dt) / d);
+    a.heading = angleTo(a, goal);
+    a.x += (goal.x - a.x) * k;
+    a.z += (goal.z - a.z) * k;
+  } else if (target) a.heading = angleTo(a, target);
+  if (target && t >= a.next && dist(a, target) < pw.reach + 0.8) {
+    a.next = t + ASSIST.every;
+    p.stamina = Math.max(0, (p.stamina ?? 100) - ASSIST.sta);
+    a.heading = angleTo(a, target);
+    ev.push({ type: 'swing', combo: 1, heavy: false, x: a.x, z: a.z, dir: a.heading, reach: pw.reach, assist: true });
+    const before = s.wild.length;
+    damageFoe(s, target, pw.atk * 0.9, ev, { knock: 1, from: a, rng });
+    if (s.wild.length < before && target.hp <= 0) {
+      const up = grantXp(s, p, target.beast ? 15 : 5);
+      if (up) remember(s, p, `援護戰鬥中成長到 Lv${p.level}。`);
+    }
+  }
 }
 // Damage to you or your beast, after dodges, guards and defences.
 function hurt(s, who, dmg, from, ev) {

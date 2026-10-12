@@ -3182,5 +3182,17 @@ export default {
   '點左邊物資艙的物品取出，點右邊背包的物品存入。失去意識時，貨艙物資不會遺失。':
     'Click an item in the hold (left) to take it out, in your bag (right) to store it. Goods in the hold are never lost when you collapse.',
   '點左邊儲物箱的物品取出，點右邊背包的物品存入。在家時，建造會一併使用儲物箱裡的材料。':
-    'Click an item in the storage box (left) to take it out, in your bag (right) to store it. At home, building also uses what is in the box.'
+    'Click an item in the storage box (left) to take it out, in your bag (right) to store it. At home, building also uses what is in the box.',
+  '騎乘時才能召喚援護。': 'You can only call an assist while riding.',
+  '只有御獸能援護。': 'Only beasts can assist.',
+  '牠正載著你。': 'It is carrying you.',
+  '{0} 回到契約紙裡。': '{0} goes back into its contract.',
+  '{0} 不會游泳，沒辦法下潛援護。': '{0} cannot swim, so it cannot dive to assist you.',
+  '羈絆 30 才能援護。': 'Assisting takes bond 30.',
+  '{0} 太累了（援護需要 {1} 耐力）。': '{0} is too tired (an assist takes {1} stamina).',
+  '援護契約還在冷卻（{0} 秒）。': 'The assist contract is still recharging ({0} s).',
+  '援護召喚：{0} 衝出契約紙，和你一起戰鬥（{1} 秒）。':
+    'Assist: {0} bursts out of its contract to fight beside you ({1} s).',
+  '援護戰鬥中成長到 Lv{0}。': 'Grew to Lv{0} while assisting in battle.',
+  '{0} 援護結束，回到契約紙裡休息。': "{0}'s assist is over; it goes back into its contract to rest."
 };

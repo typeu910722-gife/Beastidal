@@ -2,15 +2,15 @@
 // few rare ones found nowhere else. Creatures spawn where the player is heading, keep a modest density, and
 // drift away again when left far behind. Sea and deep species roam the water; land species and plant mutants
 // live on the islands and along the foot of the mountains.
-import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded, familyOf } from './genetics.js?v=0.39.0';
-import { ISLANDS, onIsland, islandAt } from './islands.js?v=0.39.0';
-import { walkable, landNear, waterNear, groundAt } from './lake.js?v=0.39.0';
-import { stepFlee, turnToward } from './physics.js?v=0.39.0';
-import { ZONES, pickSpecies } from './species.js?v=0.39.0';
-import { rollTame } from './taming.js?v=0.39.0';
-import { makeWildBeast, beastsFor, BEAST_SPAWN_P } from './beasts.js?v=0.39.0';
-import { addRandomGene } from './bsgenes.js?v=0.39.0';
-import { spawnMods } from './weather.js?v=0.39.0';
+import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded, familyOf } from './genetics.js?v=0.40.0';
+import { ISLANDS, onIsland, islandAt } from './islands.js?v=0.40.0';
+import { walkable, landNear, waterNear, groundAt } from './lake.js?v=0.40.0';
+import { stepFlee, turnToward } from './physics.js?v=0.40.0';
+import { ZONES, pickSpecies } from './species.js?v=0.40.0';
+import { rollTame } from './taming.js?v=0.40.0';
+import { makeWildBeast, beastsFor, BEAST_SPAWN_P } from './beasts.js?v=0.40.0';
+import { addRandomGene } from './bsgenes.js?v=0.40.0';
+import { spawnMods } from './weather.js?v=0.40.0';
 
 export const WILD_CAP = 40;
 export const DESPAWN_RANGE = 260;
@@ -125,6 +125,63 @@ export function spawnWild(s, r = Math.random) {
   const w = makeWild(s, zone, pickSpecies(zone, r, spawnMods(s)), at.x, at.z, r);
   s.wild.push(w);
   return w;
+}
+// 0.40: under water the sea has its own life. While you dive, sea and deep creatures (now and then a wild beast)
+// appear around you at your depth, drift about down there and stay out of reach of the surface — and the surface
+// ones stay out of yours. When you come up they stay below (only one that follows you comes up with you).
+export const UNDER_CAP = 7;
+const UNDER_RANGE = 90;
+export function spawnUnder(s, r = Math.random) {
+  s.wild ??= [];
+  if (!s.expedition?.diving || s.inCave) {
+    if (s.wild.some(w => w.under)) {
+      for (const w of s.wild) if (w.under && w.follow) delete w.under;
+      s.wild = s.wild.filter(w => !w.under);
+    }
+    return null;
+  }
+  s.wild = s.wild.filter(w => !w.under || w.follow || dist(w, s.player) < UNDER_RANGE);
+  if (s.wild.filter(w => w.under).length >= UNDER_CAP) return null;
+  const depth = s.expedition.depth ?? -3;
+  for (let k = 0; k < 12; k++) {
+    const a = r() * Math.PI * 2,
+      d = 12 + r() * 26,
+      x = s.player.x + Math.sin(a) * d,
+      z = s.player.z + Math.cos(a) * d,
+      g = groundAt(x, z);
+    if (g > -4 || islandAt(x, z, 2)) continue;
+    const zone = ZONES.filter(zn => zn.kind === 'sea').sort(
+      (p, q) => dist(p, { x, z }) / p.r - dist(q, { x, z }) / q.r
+    )[0];
+    if (!zone) return null;
+    const y = Math.max(g + 1.4, Math.min(-2.2, depth + (r() - 0.5) * 7));
+    let w;
+    const kinds = beastsFor('sea');
+    if (kinds.length && r() < 0.1 && !s.wild.some(v => v.under && v.beast))
+      w = {
+        ...makeWildBeast(kinds[Math.floor(r() * kinds.length)], r),
+        id: `ub-${Math.floor(r() * 1e9).toString(36)}`,
+        zone: zone.id,
+        x,
+        z,
+        homeX: x,
+        homeZ: z,
+        heading: r() * 6.28,
+        phase: r() * 6,
+        tame: false
+      };
+    else {
+      w = makeWild(s, zone, pickSpecies(zone, r, spawnMods(s)), x, z, r);
+      w.id = 'u' + w.id;
+    }
+    // (its own count, apart from the surface zones' caps)
+    delete w.zone;
+    w.under = true;
+    w.y = y;
+    s.wild.push(w);
+    return w;
+  }
+  return null;
 }
 // One land beast per island from the start, so the shores are never empty (replaced when tamed).
 export function ensureLandBeasts(s, r = Math.random) {

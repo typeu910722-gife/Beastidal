@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.39.0';
-import { renderAdventure } from './expansion-ui.js?v=0.39.0';
+} from './expansion.js?v=0.40.0';
+import { renderAdventure } from './expansion-ui.js?v=0.40.0';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.39.0';
-import { monologue, markGuide } from './guide.js?v=0.39.0';
-import { climb, demolish, relocate } from './construction.js?v=0.39.0';
+} from './ship.js?v=0.40.0';
+import { monologue, markGuide } from './guide.js?v=0.40.0';
+import { climb, demolish, relocate } from './construction.js?v=0.40.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.39.0';
+} from './housing.js?v=0.40.0';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.39.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.39.0';
-import { lakeMinimap } from './lake-map.js?v=0.39.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.39.0';
+} from './islands.js?v=0.40.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.40.0';
+import { lakeMinimap } from './lake-map.js?v=0.40.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.40.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.39.0';
+} from './cabin.js?v=0.40.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.39.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.39.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.39.0';
-import { QUALITY } from './realism.js?v=0.39.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.39.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.39.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.39.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.39.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.39.0';
-import { CONFIG } from './config.js?v=0.39.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.39.0';
+} from './story.js?v=0.40.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.40.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.40.0';
+import { QUALITY } from './realism.js?v=0.40.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.40.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.40.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.40.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.40.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.40.0';
+import { CONFIG } from './config.js?v=0.40.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.40.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,13 +122,20 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.39.0';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.39.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.39.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.39.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.39.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.39.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.39.0';
+} from './codex.js?v=0.40.0';
+import {
+  ensureLandBeasts,
+  normalizeWildlife,
+  stepLandBeast,
+  spawnWild,
+  spawnUnder,
+  ashore
+} from './wildlife.js?v=0.40.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.40.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.40.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.40.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.40.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.40.0';
 import {
   startFishing,
   tickFishing,
@@ -137,7 +144,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.39.0';
+} from './fishing.js?v=0.40.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -147,10 +154,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.39.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.39.0';
-import { setClimbing } from './lake.js?v=0.39.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.39.0';
+} from './reclaim.js?v=0.40.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.40.0';
+import { setClimbing } from './lake.js?v=0.40.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.40.0';
 import {
   RARITY,
   FRENZY,
@@ -177,7 +184,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.39.0';
+} from './taming.js?v=0.40.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -193,16 +200,18 @@ import {
   normalizeLevel,
   levelCap,
   xpFor,
-  AI_RANGE
-} from './combat.js?v=0.39.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.39.0';
-import { BeastStage } from './beast-stage.js?v=0.39.0';
-import { loadArt, art, artImg } from './art.js?v=0.39.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.39.0';
-import { separateBodies } from './bodies.js?v=0.39.0';
-import { STATUES } from './statues.js?v=0.39.0';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.39.0';
-import { lookOf } from './beast-look.js?v=0.39.0';
+  AI_RANGE,
+  onLayer,
+  callAssist
+} from './combat.js?v=0.40.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.40.0';
+import { BeastStage } from './beast-stage.js?v=0.40.0';
+import { loadArt, art, artImg } from './art.js?v=0.40.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.40.0';
+import { separateBodies } from './bodies.js?v=0.40.0';
+import { STATUES } from './statues.js?v=0.40.0';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.40.0';
+import { lookOf } from './beast-look.js?v=0.40.0';
 import {
   TREE,
   BRANCHES,
@@ -214,8 +223,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.39.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.39.0';
+} from './beast-tree.js?v=0.40.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.40.0';
 import {
   funds,
   normalizeBag,
@@ -235,12 +244,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.39.0';
-import { iconFor } from './icons.js?v=0.39.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.39.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.39.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.39.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.39.0';
+} from './bag.js?v=0.40.0';
+import { iconFor } from './icons.js?v=0.40.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.40.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.40.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.40.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.40.0';
 import {
   homePos,
   facilityPos,
@@ -252,10 +261,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.39.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.39.0';
-export const GAME_VERSION = '0.39.0';
-import { CloudSave } from './cloud-save.js?v=0.39.0';
+} from './fortress.js?v=0.40.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.40.0';
+export const GAME_VERSION = '0.40.0';
+import { CloudSave } from './cloud-save.js?v=0.40.0';
 import {
   readLocal,
   writeLocal,
@@ -272,9 +281,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.39.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.39.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.39.0';
+} from './save-store.js?v=0.40.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.40.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.40.0';
 import {
   RESOURCE_NAMES,
   RECIPES,
@@ -294,8 +303,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.39.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.39.0';
+} from './rules.js?v=0.40.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.40.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -1953,11 +1962,13 @@ const loungeTargets = () =>
           name: b.type === 'pen' ? penLabel(state, penId(b)) : RECIPES[b.type].name
         }))
     : [];
+// 0.40: the creatures on your layer of the sea — diving, only what swims down there; above, only the surface ones
+const nearWild = () => (state.wild || []).filter(w => onLayer(state, w));
 function getAllTargets() {
   if (state.player.mode === 'cabin') return [...cabinPointsWorld(state), ...loungeTargets()];
   if (state.player.mode === 'aboard') return shipPointsWorld(state);
   const arr = state.loot.map(l => ({ ...l, type: 'loot', name: lootNames[l.kind] }));
-  for (const w of state.wild)
+  for (const w of nearWild())
     arr.push({ ...w, type: 'wild', name: w.rescue === 'tangled' ? '受困的小獸' : geneName(w.genome) });
   if (!state.buoyFound) arr.push({ id: 'buoy', x: 17, z: -13, type: 'buoy', name: '失落研究浮標' });
   for (const b of state.buildings)
@@ -2014,7 +2025,7 @@ function getAllTargets() {
   return state.inCave
     ? arr.filter(t => t.type === 'site' || t.type === 'pact')
     : state.expedition.diving
-      ? arr.filter(t => t.type === 'site' || t.type === 'event')
+      ? arr.filter(t => t.type === 'site' || t.type === 'event' || t.type === 'wild')
       : arr;
 }
 function updateNearest() {
@@ -2507,6 +2518,9 @@ function onCombat(events) {
         }
         break;
       }
+      case 'assistend':
+        if (e.name) toast(`${e.name} 援護結束，回到契約紙裡休息。`);
+        break;
       case 'kill': {
         const name = e.beast ? WILD_BEASTS[e.beast]?.name || '野生御獸' : '敵人';
         toast(`擊倒${name}${Object.keys(e.drops || {}).length ? '，掉落 ' + dropText(e.drops) : ''}。`);
@@ -2551,7 +2565,7 @@ function updateHurtIndicator() {
   if (running && lastHealth !== null && h < lastHealth - 0.4) {
     const px = state.player.x,
       pz = state.player.z;
-    const foe = (state.wild || [])
+    const foe = nearWild()
       .filter(w => w.hostile && !w.dissolving)
       .concat(foesNear(state, 40))
       .filter(f => Number.isFinite(f.x))
@@ -2677,9 +2691,9 @@ function repel() {
   audio.splash(1);
   haptic('repel');
   if (state.stats) state.stats.repels++;
-  if (state.wild.some(w => frenzied(w, state.elapsed) && Math.hypot(w.x - state.player.x, w.z - state.player.z) < 9))
+  if (nearWild().some(w => frenzied(w, state.elapsed) && Math.hypot(w.x - state.player.x, w.z - state.player.z) < 9))
     toast('狂暴中的東西驅離不了，只能戰鬥！', true);
-  for (const w of state.wild) {
+  for (const w of nearWild()) {
     if (frenzied(w, state.elapsed)) continue;
     const d = Math.hypot(w.x - px, w.z - pz);
     if (d < 12) {
@@ -3354,7 +3368,7 @@ function beastText(w) {
 }
 // first sightings: a wild 御獸, or a creature carrying 比斯基因, each with the protagonist's reaction the first time
 function checkSightings() {
-  for (const w of state.wild) {
+  for (const w of nearWild()) {
     const d = Math.hypot(w.x - state.player.x, w.z - state.player.z);
     if (d > 24) continue;
     if (w.beast && recordBeast(state, w.beast)) {
@@ -3413,6 +3427,7 @@ function renderContractCards() {
     const st = Math.max(0, Math.min(100, p.stamina ?? 100)),
       hp = Math.max(0, Math.min(100, p.health ?? 100));
     b.classList.toggle('out', p.id === active);
+    b.classList.toggle('assist', p.id === state.expedition?.assist?.id);
     b.classList.toggle('tired', st < 35);
     b.classList.toggle('spent', st < 12 || hp < 15);
     b.querySelector('.st u').style.width = st + '%';
@@ -3424,6 +3439,18 @@ function toggleCard(i) {
   const p = cardsOf(state)[i];
   if (!p) return;
   const out = state.expedition?.activeId === p.id;
+  // 0.40: riding (and above all diving) you cannot get off to switch beasts — another card calls an assist instead
+  if (state.expedition?.mounted && !out) {
+    const r = callAssist(state, p.id);
+    if (r.ok && !r.back) summonResult(r, true);
+    toast(r.ok ? r.message : r.error, !r.ok);
+    if (r.ok) {
+      world.sync(state);
+      save(true);
+      updateUI();
+    }
+    return;
+  }
   const r = summonResult(commandPet(state, p.id, out ? 'home' : 'follow'), !out);
   toast(r.ok ? (out ? `${p.name} 回到契約紙裡休息，耐力會慢慢恢復。` : r.message) : r.error, !r.ok);
   if (r.ok) {
@@ -3475,7 +3502,7 @@ function updateBeastHUD() {
   $('boss-bar').textContent = `深海守望者  ${Math.max(0, Math.ceil(b.hp))} / 480`;
   if ($('boss-bar').hidden) {
     // 0.22: the nearest hostile thing's strength while it is on you
-    const foe = state.wild
+    const foe = nearWild()
       .filter(w => dangerous(w, state.elapsed) && Math.hypot(w.x - state.player.x, w.z - state.player.z) < 18)
       .sort(
         (x, y) =>
@@ -4258,11 +4285,11 @@ function tameAction(w) {
 }
 function contractTarget() {
   if (!running || !state.secret) return null;
-  const t = selectedTarget && state.wild.find(w => w.id === selectedTarget);
+  const t = selectedTarget && nearWild().find(w => w.id === selectedTarget);
   const near = t && Math.hypot(t.x - state.player.x, t.z - state.player.z) <= 12 ? t : null;
   const w =
     near ||
-    state.wild
+    nearWild()
       .filter(
         w => (w.trust > 0 || (w.beast && w.hostile)) && Math.hypot(w.x - state.player.x, w.z - state.player.z) <= 12
       )
@@ -4277,7 +4304,7 @@ function contractNearest() {
     else performContract(w.id);
     return;
   }
-  const any = state.wild.find(
+  const any = nearWild().find(
     w => Math.hypot(w.x - state.player.x, w.z - state.player.z) <= 12 && (w.trust > 0 || w.beast)
   );
   toast(any ? tameAction(any)?.hint || '附近沒有能收服的對象。' : '附近沒有信任你的野生生物或御獸。', true);
@@ -4914,7 +4941,7 @@ function renderHotbar() {
 }
 // throw bait to the nearest wild creature that is not hostile
 function feedNearest() {
-  const w = state.wild
+  const w = nearWild()
     .filter(w => !w.hostile && !w.dissolving && Math.hypot(w.x - state.player.x, w.z - state.player.z) < 11)
     .sort(
       (a, b) =>
@@ -6084,7 +6111,7 @@ function updateCodex(dt) {
   progressTimer -= dt;
   if (progressTimer > 0) return;
   progressTimer = 1;
-  for (const w of state.wild)
+  for (const w of nearWild())
     if (Math.hypot(w.x - state.player.x, w.z - state.player.z) < 18 && recordCreature(state, w.genome)) {
       const e = codexEntries(state).find(e => e.id === phenotype(w.genome).species);
       toast(`📖 圖鑑新增：${e?.name}`);
@@ -6301,7 +6328,7 @@ function drawMap() {
     ctx.fillStyle = b.type === 'pen' ? '#b1c8ee' : '#bce5bc';
     ctx.fillRect(p.x - 2.5, p.y - 2.5, 5, 5);
   }
-  for (const a of state.wild) dot(a.x, a.z, a.hostile ? '#ea947f' : '#84cfca', a.hostile ? 3 : 2.5);
+  for (const a of nearWild()) dot(a.x, a.z, a.hostile ? '#ea947f' : '#84cfca', a.hostile ? 3 : 2.5);
   if (state.lakeEvent) {
     const p = pt(state.lakeEvent.x, state.lakeEvent.z);
     ctx.strokeStyle = '#ecc78e';
@@ -6691,9 +6718,11 @@ function moveWild(dt) {
       toast('狂暴的御獸冷靜下來，退開了。');
     }
     if (w.dissolving) continue;
+    const mine = onLayer(state, w);
     // combat.js moves the foes in a fight (unless the paddle sent one running)
     if (
       running &&
+      mine &&
       dangerous(w, state.elapsed) &&
       !(w.fleeUntil > state.elapsed && !fren) &&
       Math.hypot(w.x - state.player.x, w.z - state.player.z) < AI_RANGE &&
@@ -6723,12 +6752,13 @@ function moveWild(dt) {
     let speed = 0.45 + phenotype(w.genome).speed / 150;
     // a frenzied beast (failed forced contract) hunts you anywhere, 1.2x faster and harder-hitting
     if (
-      fren ||
-      ((state.player.mode === 'boat' || state.expedition.mounted || (state.player.mode === 'foot' && ashore(w))) &&
-        dangerous(w, state.elapsed) &&
-        d < 16 &&
-        (!w.fleeUntil || state.elapsed > w.fleeUntil) &&
-        !panel)
+      mine &&
+      (fren ||
+        ((state.player.mode === 'boat' || state.expedition.mounted || (state.player.mode === 'foot' && ashore(w))) &&
+          dangerous(w, state.elapsed) &&
+          d < 16 &&
+          (!w.fleeUntil || state.elapsed > w.fleeUntil) &&
+          !panel))
     ) {
       tx = state.player.x;
       tz = state.player.z;
@@ -7716,6 +7746,11 @@ function frame(now, manual = false) {
       world.sync(state);
       // 0.21: zone-based spawns — each part of the lake has its own species, a few rare ones only there
       if (spawnWild(state)) world.sync(state);
+      // 0.40: and under water, its own life around you (gone again below when you surface)
+      const before = state.wild.length;
+      spawnUnder(state);
+      if (state.expedition.diving && state.wild.filter(w => w.under).length < 3) spawnUnder(state);
+      if (state.wild.length !== before) world.sync(state);
     }
     if (discoveryTimer > 0) {
       discoveryTimer -= dt;

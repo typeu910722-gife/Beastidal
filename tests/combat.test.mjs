@@ -31,6 +31,9 @@ import {
   MAX_LEVEL
 } from '../dist/combat.js';
 import { discard } from '../dist/bag.js';
+import { onLayer, foesNear, callAssist, ASSIST } from '../dist/combat.js';
+import { spawnUnder } from '../dist/wildlife.js';
+import { groundAt } from '../dist/lake.js';
 import { SPECIAL } from '../dist/combat.js';
 import { tankSlots, tankRoom, TANK_CAP } from '../dist/cabin.js';
 
@@ -303,5 +306,74 @@ test('深海守望者 telegraphs slams, waves and rams; a dodge evades it, and i
     r.events.some(e => e.type === 'bossdown'),
     'the last blow brings it down'
   );
+});
+test('0.40: under water only what swims down there counts; the surface ones stay above', () => {
+  const s = world();
+  out(s, pet('beast'));
+  const top = foe(s, 2, 2),
+    deep = foe(s, -2, 2, { under: true, y: -6 });
+  assert.deepEqual(
+    foesNear(s).map(w => w.id),
+    [top.id]
+  );
+  Object.assign(s.expedition, { mounted: true, diving: true, depth: -6 });
+  assert.equal(onLayer(s, top), false);
+  assert.deepEqual(
+    foesNear(s).map(w => w.id),
+    [deep.id]
+  );
+});
+test('0.40: diving fills the water around you with life, which stays below when you surface', () => {
+  const s = world();
+  // somewhere out over deep water
+  let at = null;
+  for (let x = 40; x < 400 && !at; x += 10) if (groundAt(x, 40) < -12) at = { x, z: 40 };
+  Object.assign(s.player, at);
+  Object.assign(s.expedition, { mounted: true, diving: true, depth: -8 });
+  for (let i = 0; i < 20; i++) spawnUnder(s);
+  const under = s.wild.filter(w => w.under);
+  assert.ok(under.length >= 3, 'creatures appear under water');
+  assert.ok(under.every(w => w.y < -2 && w.y > groundAt(w.x, w.z)));
+  s.expedition.diving = false;
+  spawnUnder(s);
+  assert.equal(s.wild.filter(w => w.under).length, 0);
+});
+test('0.40: the sea is shallow enough to dive (the deepest basin is under 50 m)', () => {
+  let deepest = 0;
+  for (let x = -600; x <= 600; x += 15)
+    for (let z = -600; z <= 600; z += 15) deepest = Math.min(deepest, groundAt(x, z));
+  assert.ok(deepest > -50 && deepest < -25, String(deepest));
+});
+test('0.40: riding, another contract card calls an assist that fights and then goes back', () => {
+  const s = world(),
+    mount = out(s, pet('beast')),
+    help = pet('beast');
+  help.team = true;
+  s.tamed.push(help);
+  Object.assign(s.expedition, { mounted: true, diving: true, depth: -6 });
+  const w = foe(s, 0, 5, { under: true, y: -6 });
+  w.hp = w.maxHp = 900;
+  assert.equal(callAssist(s, mount.id).ok, false);
+  const r = callAssist(s, help.id);
+  assert.ok(r.ok, r.error);
+  let hits = 0;
+  for (let i = 0; i < 200; i++) {
+    s.elapsed += 0.05;
+    hits += tickCombat(s, 0.05, { rng: fixed(0.5) }).filter(e => e.type === 'hit' && e.target === 'foe').length;
+  }
+  assert.ok(hits >= 3, 'the assist strikes on its own');
+  assert.ok(help.stamina < 100);
+  s.elapsed += ASSIST.time;
+  const ev = tickCombat(s, 0.05, { rng: fixed(0.5) });
+  assert.ok(ev.some(e => e.type === 'assistend'));
+  assert.equal(s.expedition.assist, null);
+  assert.equal(callAssist(s, help.id).ok, false, 'cooldown');
+});
+test('0.40: an ancient beast is never in the six (one card only)', () => {
+  const s = world(),
+    x = pet('beast', [], { ancient: true, team: true });
+  s.tamed.push(x);
+  assert.equal(teamOf(s).length, 0);
+  assert.equal(cardsOf(s).filter(p => p.id === x.id).length, 1);
 });
 console.log(`\n${n} combat tests passed`);

@@ -1,37 +1,37 @@
-import { expansionModels } from './expansion-models.js?v=0.39.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.39.0';
-import { normalizeHousing, penId } from './housing.js?v=0.39.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.39.0';
-export { makeCreature } from './creatures.js?v=0.39.0';
-import { makeIslands } from './island-models.js?v=0.39.0';
-import { facilityId } from './facilities.js?v=0.39.0';
+import { expansionModels } from './expansion-models.js?v=0.40.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.40.0';
+import { normalizeHousing, penId } from './housing.js?v=0.40.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.40.0';
+export { makeCreature } from './creatures.js?v=0.40.0';
+import { makeIslands } from './island-models.js?v=0.40.0';
+import { facilityId } from './facilities.js?v=0.40.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.39.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.39.0';
-import { makeLake } from './lake-models.js?v=0.39.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.39.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.39.0';
-import { makeStatues } from './statues.js?v=0.39.0';
-import { animateGarden } from './garden-models.js?v=0.39.0';
-import { ViewModel } from './viewmodel.js?v=0.39.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.39.0';
-import { PostFX } from './postfx.js?v=0.39.0';
-import { makeHuman, animateHuman } from './human.js?v=0.39.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.39.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.39.0';
-import { buildError } from './rules.js?v=0.39.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.39.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.39.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.39.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.39.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.39.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.39.0';
-import { CombatFX } from './combat-fx.js?v=0.39.0';
-import { syncPlots } from './land-models.js?v=0.39.0';
-import { plotTargets } from './reclaim.js?v=0.39.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.39.0';
-import { dayPhase } from './clock.js?v=0.39.0';
-import { weatherAt, season } from './weather.js?v=0.39.0';
+import { phenotype, seeded } from './genetics.js?v=0.40.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.40.0';
+import { makeLake } from './lake-models.js?v=0.40.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.40.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.40.0';
+import { makeStatues } from './statues.js?v=0.40.0';
+import { animateGarden } from './garden-models.js?v=0.40.0';
+import { ViewModel } from './viewmodel.js?v=0.40.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.40.0';
+import { PostFX } from './postfx.js?v=0.40.0';
+import { makeHuman, animateHuman } from './human.js?v=0.40.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.40.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.40.0';
+import { buildError } from './rules.js?v=0.40.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.40.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.40.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.40.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.40.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.40.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.40.0';
+import { CombatFX } from './combat-fx.js?v=0.40.0';
+import { syncPlots } from './land-models.js?v=0.40.0';
+import { plotTargets } from './reclaim.js?v=0.40.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.40.0';
+import { dayPhase } from './clock.js?v=0.40.0';
+import { weatherAt, season } from './weather.js?v=0.40.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -1439,7 +1439,17 @@ export class OceanWorld {
           continue;
         }
         if (m.scale.x !== ud.phenotype.size) m.scale.setScalar(ud.phenotype.size);
-        if (ud.phenotype.habitat === 'land') {
+        if (c.under) {
+          // 0.40: one of the creatures down below — seen only while you dive, swimming at its own depth (a hunter
+          // comes to yours), never through the lakebed
+          m.visible = !!s.expedition?.diving;
+          const hunt =
+            (c.hostile || (c.frenzyUntil || 0) > s.elapsed) && Math.hypot(c.x - s.player.x, c.z - s.player.z) < 24;
+          ud.uy ??= c.y ?? -4;
+          ud.uy += ((hunt ? this.diveY - 0.3 : (c.y ?? -4)) - ud.uy) * Math.min(1, dt * 1.5);
+          m.position.set(c.x, Math.max(groundAt(c.x, c.z) + 1, ud.uy) + Math.sin(t * 0.8 + c.phase) * 0.25, c.z);
+          m.rotation.x = 0;
+        } else if (ud.phenotype.habitat === 'land') {
           // land beasts walk on the island surface (and on the raft when they follow you home)
           m.position.set(c.x, groundAt(c.x, c.z), c.z);
           m.rotation.x = 0;
@@ -1484,6 +1494,18 @@ export class OceanWorld {
       m.visible = true;
       const landPet = m.userData.phenotype.habitat === 'land';
       if (m.userData.perch) m.userData.perch.visible = false;
+      // 0.40: a beast called out of its card to assist you while you ride: it swims where combat.js leads it
+      const assist = s.expedition?.assist;
+      if (assist && c.id === assist.id && s.expedition.mounted) {
+        m.scale.setScalar(phenotype(c.genome).size * 0.8);
+        const ud = m.userData;
+        ud.ay = s.expedition.diving ? this.diveY - 0.2 : 0.05;
+        m.position.set(assist.x, ud.ay + Math.sin(t * 2 + 1) * 0.12, assist.z);
+        m.rotation.y = assist.heading || 0;
+        ud.aswim = (ud.aswim || 0) + dt * 2.2;
+        this.animateCreature(m, ud.aswim);
+        continue;
+      }
       if (c.id === s.expedition?.activeId) {
         // Land beasts can't swim: at sea they ride along on the bow of the boat.
         if (landPet && !foot && !aboard) {

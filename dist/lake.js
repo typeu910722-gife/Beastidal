@@ -1,6 +1,6 @@
 // The inland sea of 沉湖遺城: baked terrain lookups shared by rules, navigation and rendering.
 // Game coordinates are metres with the raft at (0,0); map coordinates are the sketch's units.
-import { HS, Q, ORIGIN, LAIR, FINE, COARSE } from './lake-data.js?v=0.39.0';
+import { HS, Q, ORIGIN, LAIR, FINE, COARSE } from './lake-data.js?v=0.40.0';
 export { HS, ORIGIN };
 
 function decode(g) {
@@ -75,6 +75,16 @@ function flattenIslands(g) {
 }
 flattenIslands(FINE);
 flattenIslands(COARSE);
+// 0.40: the sea is shallow enough to dive. The sketch's basin plunged ~200 m; depths now ease into a soft floor —
+// the shore shelf keeps its slope, the deep basin settles around 35-45 m with its relief kept, just pressed flat.
+export const SEA_SHELF = 32;
+export const shallowSea = d => SEA_SHELF * (1 - Math.exp(-d / SEA_SHELF)) + d * 0.04;
+function shallowBasin(g) {
+  const { data } = g;
+  for (let i = 0; i < data.length; i++) if (data[i] < 0) data[i] = -Math.round(shallowSea(-data[i] / Q) * Q);
+}
+shallowBasin(FINE);
+shallowBasin(COARSE);
 
 export const toGame = (mx, mz) => ({ x: (mx - ORIGIN.x) * HS, z: (mz - ORIGIN.z) * HS });
 export const toMap = (x, z) => ({ mx: x / HS + ORIGIN.x, mz: z / HS + ORIGIN.z });
