@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.34.0';
-import { renderAdventure } from './expansion-ui.js?v=0.34.0';
+} from './expansion.js?v=0.35.0';
+import { renderAdventure } from './expansion-ui.js?v=0.35.0';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.34.0';
-import { monologue, markGuide } from './guide.js?v=0.34.0';
-import { climb, demolish, relocate } from './construction.js?v=0.34.0';
+} from './ship.js?v=0.35.0';
+import { monologue, markGuide } from './guide.js?v=0.35.0';
+import { climb, demolish, relocate } from './construction.js?v=0.35.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.34.0';
+} from './housing.js?v=0.35.0';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.34.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.34.0';
-import { lakeMinimap } from './lake-map.js?v=0.34.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.34.0';
+} from './islands.js?v=0.35.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.35.0';
+import { lakeMinimap } from './lake-map.js?v=0.35.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.35.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.34.0';
+} from './cabin.js?v=0.35.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.34.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.34.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.34.0';
-import { QUALITY } from './realism.js?v=0.34.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.34.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.34.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.34.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.34.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.34.0';
-import { CONFIG } from './config.js?v=0.34.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.34.0';
+} from './story.js?v=0.35.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.35.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.35.0';
+import { QUALITY } from './realism.js?v=0.35.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.35.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.35.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.35.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.35.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.35.0';
+import { CONFIG } from './config.js?v=0.35.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.35.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,13 +122,13 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.34.0';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.34.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.34.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.34.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.34.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.34.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.34.0';
+} from './codex.js?v=0.35.0';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.35.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.35.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.35.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.35.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.35.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.35.0';
 import {
   startFishing,
   tickFishing,
@@ -137,7 +137,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.34.0';
+} from './fishing.js?v=0.35.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -147,10 +147,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.34.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.34.0';
-import { setClimbing } from './lake.js?v=0.34.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.34.0';
+} from './reclaim.js?v=0.35.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.35.0';
+import { setClimbing } from './lake.js?v=0.35.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.35.0';
 import {
   RARITY,
   FRENZY,
@@ -175,7 +175,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.34.0';
+} from './taming.js?v=0.35.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -192,13 +192,13 @@ import {
   levelCap,
   xpFor,
   AI_RANGE
-} from './combat.js?v=0.34.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.34.0';
-import { BeastStage } from './beast-stage.js?v=0.34.0';
-import { loadArt, art, artImg } from './art.js?v=0.34.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.34.0';
-import { separateBodies } from './bodies.js?v=0.34.0';
-import { lookOf } from './beast-look.js?v=0.34.0';
+} from './combat.js?v=0.35.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.35.0';
+import { BeastStage } from './beast-stage.js?v=0.35.0';
+import { loadArt, art, artImg } from './art.js?v=0.35.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.35.0';
+import { separateBodies } from './bodies.js?v=0.35.0';
+import { lookOf } from './beast-look.js?v=0.35.0';
 import {
   TREE,
   BRANCHES,
@@ -210,8 +210,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.34.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.34.0';
+} from './beast-tree.js?v=0.35.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.35.0';
 import {
   funds,
   normalizeBag,
@@ -231,12 +231,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.34.0';
-import { iconFor } from './icons.js?v=0.34.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.34.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.34.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.34.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.34.0';
+} from './bag.js?v=0.35.0';
+import { iconFor } from './icons.js?v=0.35.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.35.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.35.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.35.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.35.0';
 import {
   homePos,
   facilityPos,
@@ -248,10 +248,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.34.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.34.0';
-export const GAME_VERSION = '0.34.0';
-import { CloudSave } from './cloud-save.js?v=0.34.0';
+} from './fortress.js?v=0.35.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.35.0';
+export const GAME_VERSION = '0.35.0';
+import { CloudSave } from './cloud-save.js?v=0.35.0';
 import {
   readLocal,
   writeLocal,
@@ -268,9 +268,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.34.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.34.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.34.0';
+} from './save-store.js?v=0.35.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.35.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.35.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -291,8 +291,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.34.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.34.0';
+} from './rules.js?v=0.35.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.35.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -1510,6 +1510,8 @@ function unstuck() {
   state.inCave = false;
   if (state.ship && !state.skiff) {
     Object.assign(state.player, { mode: 'ship', x: state.ship.x, z: state.ship.z, heading: state.ship.heading });
+    world.yaw = state.ship.heading + Math.PI;
+    world.firstPitch = 0.04;
   } else {
     const w = waterNear(state.boat.x, state.boat.z, 1.5, 200);
     Object.assign(state.boat, { x: w.x, z: w.z });
@@ -1988,7 +1990,21 @@ function updateNearest() {
   if (selected && d(selected) > 130) selected = null;
   if (!selected) {
     const R = t => (t.type === 'shippoint' ? 2.6 : t.type === 'claim' ? 6 : 10);
-    const near = all.filter(t => d(t) < R(t)).sort((a, b) => d(a) - d(b));
+    // 0.35: in first person, what you look at comes first; a creature tagging along never crowds out the rest
+    const fx = -Math.sin(world.yaw),
+      fz = -Math.cos(world.yaw),
+      score = t => {
+        const dd = d(t);
+        let k = 1;
+        if (world.firstPerson && dd > 0.8) {
+          const cos = ((t.x - state.player.x) * fx + (t.z - state.player.z) * fz) / dd;
+          k += Math.acos(clamp(cos, -1, 1)) * 1.6;
+        }
+        if (t.type === 'wild' && (t.rescue === 'freed' || t.rescue === 'friend')) k *= 3;
+        if (t.type === 'pet') k *= 3;
+        return dd * k;
+      };
+    const near = all.filter(t => d(t) < R(t)).sort((a, b) => score(a) - score(b));
     selected = near[0] || null;
   }
   nearest = selected;
@@ -2482,7 +2498,41 @@ function onCombat(events) {
     updateUI();
   }
 }
+// 0.35: in first person you cannot see what bit you — a red arc at the edge of the screen points to it
+let lastHealth = null,
+  hurtFlash = 0;
+function updateHurtIndicator() {
+  const el = $('hurt-dir'),
+    h = state?.vitals?.health;
+  if (!el || !Number.isFinite(h)) return;
+  if (running && lastHealth !== null && h < lastHealth - 0.4) {
+    const px = state.player.x,
+      pz = state.player.z;
+    const foe = (state.wild || [])
+      .filter(w => w.hostile && !w.dissolving)
+      .concat(foesNear(state, 40))
+      .filter(f => Number.isFinite(f.x))
+      .sort((a, b) => Math.hypot(a.x - px, a.z - pz) - Math.hypot(b.x - px, b.z - pz))[0];
+    if (foe && Math.hypot(foe.x - px, foe.z - pz) < 45) {
+      const dx = foe.x - px,
+        dz = foe.z - pz,
+        fx = -Math.sin(world.yaw),
+        fz = -Math.cos(world.yaw),
+        ahead = dx * fx + dz * fz,
+        right = dx * -fz + dz * fx;
+      const a = Math.atan2(right, ahead);
+      el.style.setProperty('--hurt-rot', `${(a * 180) / Math.PI}deg`);
+      el.style.setProperty('--hurt-x', `${50 + Math.sin(a) * 44}%`);
+      el.style.setProperty('--hurt-y', `${50 - Math.cos(a) * 40}%`);
+      hurtFlash = 1;
+    }
+  }
+  lastHealth = h;
+  hurtFlash = Math.max(0, hurtFlash - 0.025);
+  el.style.opacity = hurtFlash.toFixed(2);
+}
 function updateCombatLayer() {
+  updateHurtIndicator();
   const layer = $('combat-layer');
   if (!layer) return;
   const now = performance.now(),
@@ -2513,7 +2563,8 @@ function updateCombatLayer() {
         bar.innerHTML = '<i></i><small></small>';
         layer.appendChild(bar);
       }
-      const sp = world.screenPoint(w.x, gy(w.x, w.z) + 2.4 + phenotype(w.genome).size * 0.8, w.z);
+      // (0.35: 嘯岳 in its frenzy is a foe with no genome — it threw here every frame and froze the game)
+      const sp = world.screenPoint(w.x, gy(w.x, w.z) + 2.4 + (w.genome ? phenotype(w.genome).size * 0.8 : 3), w.z);
       bar.style.display = sp.visible ? '' : 'none';
       bar.style.transform = `translate(${sp.x}px, ${sp.y}px) translate(-50%, -50%)`;
       bar.firstChild.style.width = `${Math.max(0, (w.hp / (w.maxHp || 60)) * 100)}%`;
@@ -3433,7 +3484,12 @@ function shipPoint(id) {
   let r;
   if (id === 'helm') {
     r = takeHelm(state);
-    if (r.ok) markGuide(state, 'helm');
+    if (r.ok) {
+      markGuide(state, 'helm');
+      // 0.35: at the wheel you look out over the bow
+      world.yaw = state.ship.heading + Math.PI;
+      world.firstPitch = 0.04;
+    }
   } else if (id === 'gangway') {
     dock();
     return;
@@ -3770,6 +3826,27 @@ function enterFocus(id) {
       state.player.z = spot.z;
       state.player.heading = Math.atan2(bed.x - spot.x, bed.z - spot.z);
       if (world.firstPerson) world.yaw = Math.atan2(spot.x - bed.x, spot.z - bed.z);
+    }
+  }
+  // 0.35: in first person, turn to face what you are using (its items are clicked where they sit)
+  else if (world.firstPerson) {
+    const items = focusItems(b).filter(i => i.pos),
+      c = items.length
+        ? items.reduce(
+            (a, i) => ({
+              x: a.x + i.pos.x / items.length,
+              y: a.y + i.pos.y / items.length,
+              z: a.z + i.pos.z / items.length
+            }),
+            { x: 0, y: 0, z: 0 }
+          )
+        : world.facilityPoint(b, [0, 1, 0]);
+    if (c) {
+      const dx = c.x - state.player.x,
+        dz = c.z - state.player.z,
+        eye = world.camera.position.y;
+      world.yaw = Math.atan2(-dx, -dz);
+      world.firstPitch = Math.max(-0.9, Math.min(0.4, Math.atan2(eye - c.y, Math.max(0.6, Math.hypot(dx, dz)))));
     }
   }
   world.inside = id;
@@ -4666,8 +4743,7 @@ function renderEggs() {
 function summonResult(r, out) {
   if (r?.ok && out) {
     world.act('summon');
-    const h = world.yaw;
-    world.summonFlash(state.player.x - Math.sin(h) * 3, state.player.z - Math.cos(h) * 3);
+    world.summonFlash();
     audio.note(660, 0.4);
   }
   return r;

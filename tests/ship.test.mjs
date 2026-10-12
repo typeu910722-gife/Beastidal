@@ -133,6 +133,8 @@ test('Fusion is gated by every requirement, costs materials, takes time, and yie
   s.elapsed += 61;
   tickShip(s);
   assert.ok(s.ship);
+  // 0.35: whoever stood on the raft is carried aboard (the raft floor is gone; they used to be left on the water)
+  assert.equal(s.player.mode, 'aboard');
   assert.ok(validateSave(JSON.parse(JSON.stringify(s))));
   const loaded = normalizeShip(JSON.parse(JSON.stringify(s)));
   assert.ok(loaded.ship.cargo);
@@ -147,6 +149,8 @@ function shipState() {
   startFusion(s);
   s.elapsed += 200;
   tickShip(s);
+  // (the tests below start from the shore beside the new ship)
+  Object.assign(s.player, { mode: 'foot', x: 3.6, z: 3.6, level: 0 });
   return s;
 }
 test('Boarding lands on the main deck and only the bridge helm can steer', () => {

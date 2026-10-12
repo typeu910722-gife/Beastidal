@@ -1,36 +1,36 @@
-import { expansionModels } from './expansion-models.js?v=0.34.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.34.0';
-import { normalizeHousing, penId } from './housing.js?v=0.34.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.34.0';
-export { makeCreature } from './creatures.js?v=0.34.0';
-import { makeIslands } from './island-models.js?v=0.34.0';
-import { facilityId } from './facilities.js?v=0.34.0';
+import { expansionModels } from './expansion-models.js?v=0.35.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.35.0';
+import { normalizeHousing, penId } from './housing.js?v=0.35.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.35.0';
+export { makeCreature } from './creatures.js?v=0.35.0';
+import { makeIslands } from './island-models.js?v=0.35.0';
+import { facilityId } from './facilities.js?v=0.35.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.34.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.34.0';
-import { makeLake } from './lake-models.js?v=0.34.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.34.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.34.0';
-import { makeStatues } from './statues.js?v=0.34.0';
-import { animateGarden } from './garden-models.js?v=0.34.0';
-import { ViewModel } from './viewmodel.js?v=0.34.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.34.0';
-import { PostFX } from './postfx.js?v=0.34.0';
-import { makeHuman, animateHuman } from './human.js?v=0.34.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.34.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.34.0';
-import { buildError } from './rules.js?v=0.34.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.34.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.34.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.34.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.34.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.34.0';
-import { CombatFX } from './combat-fx.js?v=0.34.0';
-import { syncPlots } from './land-models.js?v=0.34.0';
-import { plotTargets } from './reclaim.js?v=0.34.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.34.0';
-import { dayPhase } from './clock.js?v=0.34.0';
-import { weatherAt, season } from './weather.js?v=0.34.0';
+import { phenotype, seeded } from './genetics.js?v=0.35.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.35.0';
+import { makeLake } from './lake-models.js?v=0.35.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.35.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.35.0';
+import { makeStatues } from './statues.js?v=0.35.0';
+import { animateGarden } from './garden-models.js?v=0.35.0';
+import { ViewModel } from './viewmodel.js?v=0.35.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.35.0';
+import { PostFX } from './postfx.js?v=0.35.0';
+import { makeHuman, animateHuman } from './human.js?v=0.35.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.35.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.35.0';
+import { buildError } from './rules.js?v=0.35.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.35.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.35.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.35.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.35.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.35.0';
+import { CombatFX } from './combat-fx.js?v=0.35.0';
+import { syncPlots } from './land-models.js?v=0.35.0';
+import { plotTargets } from './reclaim.js?v=0.35.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.35.0';
+import { dayPhase } from './clock.js?v=0.35.0';
+import { weatherAt, season } from './weather.js?v=0.35.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -612,13 +612,15 @@ function makeBoat() {
   g.add(human);
   rod(g, [0.6, 0.85, -0.45], [1.7, 0.15, 0.7], 0.045, colors.wood);
   box(g, colors.wood, 1.63, 0.16, 0.68, 0.27, 0.09, 0.64).rotation.y = -0.65;
-  pole(g, colors.wood, -0.65, 1.5, -1, 0.055, 2.1);
+  const flagpole = pole(g, colors.wood, -0.65, 1.5, -1, 0.055, 2.1);
   const pennant = box(g, 0xd9bd79, -0.32, 2.26, -1, 0.62, 0.36, 0.045);
   for (const x of [-0.75, 0.75]) box(g, 0x427c80, x, 0.46, 0, 0.1, 0.1, 2.3);
   const coil = piece(g, new T.TorusGeometry(0.22, 0.035, 5, 18), 0xcbb894, [0.43, 0.56, -0.77], [1, 1, 1]);
   coil.rotation.x = Math.PI / 2;
-  ball(g, 0xffd5a2, -0.66, 1.08, -1.05, 0.09, 0.13, 0.09, { emissive: 0xffbd6b, emissiveIntensity: 0.8 });
-  halo(g, 0xffd499, -0.66, 1.08, -1.05, 0.6);
+  const lamp = ball(g, 0xffd5a2, -0.66, 1.08, -1.05, 0.09, 0.13, 0.09, { emissive: 0xffbd6b, emissiveIntensity: 0.8 });
+  const glow = halo(g, 0xffd499, -0.66, 1.08, -1.05, 0.6);
+  // 0.35: the stern pole, pennant and lantern stand right at a seated rider's head in first person
+  g.userData.stern = [flagpole, pennant, lamp, glow].filter(Boolean);
   g.userData.human = human;
   g.userData.flag = pennant;
   return g;
@@ -693,7 +695,7 @@ export class OceanWorld {
     this.scene.add(this.camera);
     this.viewmodel = new ViewModel(this.camera);
     // 0.34: a flashlight in the dark (under water, in the garden maze) — a beam where you look, a glow around you
-    this.torch = new T.SpotLight(0xfff0d2, 0, 48, 0.62, 0.55, 1.1);
+    this.torch = new T.SpotLight(0xfff0d2, 0, 48, 0.62, 0.55, 1.5);
     this.torch.position.set(0.3, -0.25, 0);
     this.torch.target.position.set(0, -0.5, -8);
     this.torchGlow = new T.PointLight(0xd8f0ff, 0, 16, 1.2);
@@ -1098,6 +1100,13 @@ export class OceanWorld {
     this.viewmodel.play(name);
   }
   summonFlash(x, z, color = 0xffd27a, y = null) {
+    // 0.35: with no spot given it appears four metres ahead of your eyes, at your feet (on a deck, in a cave, ashore)
+    if (x === undefined) {
+      const c = this.camera.position;
+      x = c.x - Math.sin(this.yaw) * 4;
+      z = c.z - Math.cos(this.yaw) * 4;
+      y = c.y - 1.7;
+    }
     const g = new T.Group(),
       base = y ?? (this.lastState?.inCave ? 0.05 : Math.max(0, groundAt(x, z)) + 0.05);
     g.position.set(x, base, z);
@@ -1106,7 +1115,7 @@ export class OceanWorld {
       new T.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.9,
+        opacity: 0.7,
         side: T.DoubleSide,
         blending: T.AdditiveBlending,
         depthWrite: false
@@ -1118,7 +1127,7 @@ export class OceanWorld {
       new T.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.5,
+        opacity: 0.26,
         side: T.DoubleSide,
         blending: T.AdditiveBlending,
         depthWrite: false
@@ -1135,9 +1144,9 @@ export class OceanWorld {
       f.t += dt;
       const k = f.t / 1.3;
       f.ring.scale.setScalar(1 + k * 3.5);
-      f.ring.material.opacity = 0.9 * (1 - k);
+      f.ring.material.opacity = 0.7 * (1 - k);
       f.beam.scale.set(1 - k * 0.6, 1 + k * 0.4, 1 - k * 0.6);
-      f.beam.material.opacity = 0.5 * (1 - k);
+      f.beam.material.opacity = 0.26 * (1 - k);
       if (k >= 1) {
         this.scene.remove(f.g);
         this.summons.splice(i, 1);
@@ -1256,6 +1265,7 @@ export class OceanWorld {
     const t = this.time;
     const phase = dayPhase(s);
     const night = ((Math.cos(phase * Math.PI * 2 + Math.PI * 0.65) + 1) / 2) * 0.85;
+    this.nightLevel = night;
     // 0.24: the sky follows the weather schedule — overcast, rain, fog, thunder, snow — and the season's light
     const sky = weatherAt(s),
       stormTarget = sky.storm;
@@ -1826,10 +1836,12 @@ export class OceanWorld {
     }
     rain.needsUpdate = true;
     this.scene.fog.density = cabin ? 0.008 : diving ? 0.035 : s.inCave ? 0.016 : this.skyFog + storm * 0.003;
-    const dark = (diving || s.inCave) && !cabin && !opts.title,
+    // 0.35: night outdoors (and fog after dark) is a dark place too — a gentler beam, enough to see the water
+    const nightDark = !cabin && !opts.title && (this.nightLevel || 0) > 0.45,
+      dark = (diving || s.inCave) && !cabin && !opts.title,
       ease = Math.min(1, dt * 4);
-    this.torch.intensity += ((dark ? (diving ? 240 : 160) : 0) - this.torch.intensity) * ease;
-    this.torchGlow.intensity += ((dark ? (diving ? 26 : 18) : 0) - this.torchGlow.intensity) * ease;
+    this.torch.intensity += ((dark ? (diving ? 260 : 130) : nightDark ? 110 : 0) - this.torch.intensity) * ease;
+    this.torchGlow.intensity += ((dark ? (diving ? 22 : 12) : nightDark ? 8 : 0) - this.torchGlow.intensity) * ease;
     if (cabin) {
       // warm lamplight indoors
       this.scene.background.set(0x1a120c);
@@ -1919,6 +1931,10 @@ export class OceanWorld {
     ship.userData.keel.visible = true;
     ship.userData.wheel.rotation.z = helm ? Math.sin(t * 0.5) * 0.6 : 0;
     if (ship.userData.cab) ship.userData.cab.visible = !(helm && this.firstPerson);
+    for (const sm of ship.userData.sails || []) {
+      sm.material.opacity = helm && this.firstPerson ? 0.22 : 1;
+      sm.material.depthWrite = sm.material.opacity > 0.95;
+    }
     const fx = s.ship.cannonFx;
     if (fx && s.elapsed - fx.at < 0.7) {
       this.cannonFx.visible = true;
@@ -2102,10 +2118,12 @@ export class OceanWorld {
         st = this.lastState;
       if (st?.player.mode === 'ship' && !st.expedition?.mounted && st.ship) {
         // at the wheel: stand just behind it, the wheelhouse's front and roof out of the way
-        const h = st.ship.heading || 0;
-        x = st.ship.x + Math.sin(h) * -12.5;
-        z = st.ship.z + Math.cos(h) * -12.5;
-        y += 0.35;
+        // (0.35: eyes over the wheel's rim and a step to starboard, so the wheel sits low right, not dead centre)
+        const h = st.ship.heading || 0,
+          side = 0.75;
+        x = st.ship.x + Math.sin(h) * -12.5 + Math.cos(h) * -side;
+        z = st.ship.z + Math.cos(h) * -12.5 - Math.sin(h) * -side;
+        y += 1.05;
       }
       if (this.onRiding && st) {
         // on the beast's back, high enough that its head and horns stay below the view
@@ -2128,11 +2146,14 @@ export class OceanWorld {
       this.camera.fov = 70;
       this.boat.userData.human.visible = false;
       this.walker.visible = false;
+      const seated = st?.player.mode === 'boat' && !st.expedition?.mounted;
+      for (const m of this.boat.userData.stern || []) m.visible = !seated;
       this.water.material.uniforms.uCamera.value.copy(this.camera.position);
     } else {
       this.camera.fov = 44;
       this.boat.userData.human.visible = !this.onFoot && !this.onRiding && !this.hasShip;
       this.walker.visible = this.onFoot || this.onRiding;
+      for (const m of this.boat.userData.stern || []) m.visible = true;
     }
     if (this.shake > 0) {
       this.camera.position.x += (Math.random() - 0.5) * this.shake;

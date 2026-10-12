@@ -1,6 +1,6 @@
 // Procedural warship "比斯泰德號": keel + five walkable deck bands that can be cut away.
 import * as T from './vendor/three.module.min.js';
-import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.34.0';
+import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.35.0';
 export const LOUNGE_SLOTS = [
   [-2.4, -7],
   [2.4, -7],
@@ -267,7 +267,14 @@ export function makeWarship(mat, halo) {
           pa.setZ(i, (1 - sx * sx) * 0.9);
         }
         sail.computeVertexNormals();
-        add(b, sail, C.cloth, [0, y + yy - h * 0.17, mz + 0.25], [1, 1, 1], { side: T.DoubleSide, roughness: 0.9 });
+        const sm = add(b, sail, C.cloth, [0, y + yy - h * 0.17, mz + 0.25], [1, 1, 1], {
+          side: T.DoubleSide,
+          roughness: 0.9
+        });
+        // 0.35: own material, so the sails can thin out while you steer in first person
+        sm.material = sm.material.clone();
+        sm.material.transparent = true;
+        (g.userData.sails ??= []).push(sm);
       }
       add(b, new T.CircleGeometry(1.1, 24), C.trim, [0, y + h * 0.62, mz + 1.05], [1, 1, 1], {
         side: T.DoubleSide,
@@ -328,7 +335,8 @@ export function makeWarship(mat, halo) {
       y = DECKS[4].y;
     box(b, 0xb08a5a, 0, y - 0.1, -9.5, 7.2, 0.22, 7.4);
     for (const x of [-3.4, 3.4]) for (const z of [-12.9, -6.1]) cyl(b, 0x5a3f27, x, y - 1.4, z, 0.16, 2.8);
-    box(b, C.strake, 0, y + 1.2, -13.1, 7.2, 2.6, 0.2);
+    // 0.35: the back wall sits half a metre behind the helmsman — it joins the group hidden at the wheel
+    const backWall = box(b, C.strake, 0, y + 1.2, -13.1, 7.2, 2.6, 0.2);
     for (const s of [-1, 1]) {
       box(b, C.strake, s * 3.55, y + 0.5, -9.5, 0.2, 1, 7.4);
       box(b, C.strake, s * 3.55, y + 2.35, -9.5, 0.2, 0.3, 7.4);
@@ -346,6 +354,7 @@ export function makeWarship(mat, halo) {
     const cab = new T.Group();
     b.add(cab);
     g.userData.cab = cab;
+    cab.add(backWall);
     for (const s of [-1, 1]) box(cab, C.strake, s * 2.4, y + 1.5, -5.9, 2.4, 2.6, 0.2);
     box(cab, C.strake, 0, y + 2.6, -5.9, 7.2, 0.4, 0.2);
     add(cab, new T.PlaneGeometry(2.4, 1.4), C.glass, [0, y + 1.5, -5.88], [1, 1, 1], {

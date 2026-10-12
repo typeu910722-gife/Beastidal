@@ -1,15 +1,15 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.34.0';
-import { waterNear, groundAt } from './lake.js?v=0.34.0';
-import { onWatcherDown } from './story.js?v=0.34.0';
-import { dayOf } from './clock.js?v=0.34.0';
-import { spend, give, bagRoom } from './bag.js?v=0.34.0';
-import { pens, penId } from './housing.js?v=0.34.0';
-import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.34.0';
-import { normalizeCabin, syncCabin } from './cabin.js?v=0.34.0';
-import { rollDrops } from './species.js?v=0.34.0';
-import { phenotype } from './genetics.js?v=0.34.0';
-import { ITEM_NAMES } from './items.js?v=0.34.0';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.35.0';
+import { waterNear, groundAt } from './lake.js?v=0.35.0';
+import { onWatcherDown } from './story.js?v=0.35.0';
+import { dayOf } from './clock.js?v=0.35.0';
+import { spend, give, bagRoom } from './bag.js?v=0.35.0';
+import { pens, penId } from './housing.js?v=0.35.0';
+import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.35.0';
+import { normalizeCabin, syncCabin } from './cabin.js?v=0.35.0';
+import { rollDrops } from './species.js?v=0.35.0';
+import { phenotype } from './genetics.js?v=0.35.0';
+import { ITEM_NAMES } from './items.js?v=0.35.0';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
@@ -199,8 +199,11 @@ export function tickShip(s) {
     const m = dockMoor(s) || { x: s.boat.x + 8, z: s.boat.z, heading: 0 };
     s.ship = { x: m.x, z: m.z, heading: m.heading, cargo: {}, lounge: [], lastCannon: -999 };
     delete s.shipFusion;
-    if (s.player.mode === 'boat') {
-      Object.assign(s.player, { mode: 'aboard', deck: 3, lx: 2.6, lz: 1 });
+    // 0.35: whoever stood on the raft goes aboard too — the raft's floor is gone, and they were left standing on
+    // open water, unable to move (only the "unstuck" menu got them out)
+    const onRaft = s.player.mode === 'foot' && !s.inCave && !islandAt(s.player.x, s.player.z, 0);
+    if (s.player.mode === 'boat' || onRaft || s.player.mode === 'cabin') {
+      Object.assign(s.player, { mode: 'aboard', deck: 3, lx: 2.6, lz: 1, level: 0 });
     }
     normalizeShip(s);
     events.push('fusion');

@@ -3,7 +3,7 @@
 // hull and the parked boat — so nothing walks or swims through anything else. The player, the hull and the boat
 // do not get shoved; everything else gives way in proportion to its weight, and only where it is allowed to stand
 // (env.canMove: land for land things, water for swimmers, the maze in the cave).
-import { phenotype } from './genetics.js?v=0.34.0';
+import { phenotype } from './genetics.js?v=0.35.0';
 
 // a rough footprint for a creature or beast at its rendered size
 export function bodyRadius(w) {
@@ -41,7 +41,15 @@ export function separateBodies(s, env = {}, iterations = 2) {
   // 嘯岳, wherever it is in your area
   const xb = s.story?.beast;
   if (xb && !!xb.cave === !!s.inCave && (s.story.stage || 0) < 5 && Math.hypot(xb.x - P.x, xb.z - P.z) < NEAR)
-    bodies.push({ ref: xb, x: xb.x, z: xb.z, r: 1.6, mass: s.story.sleeping ? Infinity : 6, land: true });
+    // (0.35: the body is a big cat at 1.7x — curled up asleep it fills a wide circle)
+    bodies.push({
+      ref: xb,
+      x: xb.x,
+      z: xb.z,
+      r: s.story.sleeping ? 3.6 : 2.8,
+      mass: s.story.sleeping ? Infinity : 6,
+      land: true
+    });
   // your partner in a fight (combat.js keeps it at combat.ax / az)
   const c = s.combat;
   if (pet && c?.engaged && !s.expedition?.mounted && Number.isFinite(c.ax))

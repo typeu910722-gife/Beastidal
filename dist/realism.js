@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { groundTexture } from './lake-models.js?v=0.34.0';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.34.0';
+import { groundTexture } from './lake-models.js?v=0.35.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.35.0';
 export const TRAIL = 40,
   SPLASHES = 4;
 
@@ -383,8 +383,9 @@ export class Atmosphere {
     w.sun.color.setRGB(1, 0.6 + 0.3 * warm, 0.4 + 0.42 * warm);
     if (day < 0.05) w.sun.color.setRGB(0.55, 0.65, 0.9);
     w.sun.intensity = (day * 3.1 + (1 - day) * 0.55) * (1 - storm * 0.6);
-    w.ambient.intensity = (0.62 + day * 0.1) * (1 - storm * 0.3);
-    w.ambient.color.copy(this.fog).lerp(day > 0.3 ? DAY_FILL : NIGHT_FILL, 0.3 + 0.25 * (1 - day));
+    // 0.35: first person sits low on the water — nights keep a cool moonlit fill instead of going black
+    w.ambient.intensity = (0.62 + day * 0.1 + (1 - day) * 0.35) * (1 - storm * 0.3);
+    w.ambient.color.copy(this.fog).lerp(day > 0.3 ? DAY_FILL : NIGHT_FILL, 0.3 + 0.5 * (1 - day));
     w.ambient.groundColor.setRGB(0.03, 0.05, 0.05);
     w.scene.environmentIntensity = (0.28 + day * 0.6) * (1 - storm * 0.4);
     if (env) {

@@ -118,6 +118,16 @@ test('Crystal tide and migration add their crates and herd, and take them away a
     [herd[0].id]
   );
 });
+test('The lake-bottom treasure waits until you have a beast that could dive for it', () => {
+  const s = base();
+  s.tamed = s.tamed.filter(p => p.kind === 'creature');
+  for (let i = 0; i < 40; i++) {
+    s.lakeEvent = null;
+    s.elapsed = s.nextEventAt + 1;
+    tickEvents(s, 1, seq(0.99, 0.5, 0.7, 0.2, 0.9, 0.3));
+    assert.notEqual(s.lakeEvent?.kind, 'treasure');
+  }
+});
 test('Treasure: only a dive reaches it, and it pays out once', () => {
   const s = base();
   const ev = startEvent(s, 'treasure', seq(0.4, 0.6, 0.2));

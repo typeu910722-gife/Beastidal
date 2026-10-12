@@ -3172,3 +3172,71 @@ body #drawer.device.bx-full {
 #dive-down-btn[hidden] {
   display: none;
 }
+
+/* 0.35: the build / device buttons sit in the bottom row beside the hotbar at every width (the old
+   centred absolute bar from narrow layouts landed on top of the hotbar slots) */
+#hud .bottom-hud .action-bar {
+  position: static;
+  left: auto;
+  transform: none;
+  max-width: none;
+}
+@media (max-width: 900px) {
+  #hud .hot-slot {
+    width: 44px;
+    height: 50px;
+  }
+  #hud .hot-slot small {
+    display: none;
+  }
+  #hud .bottom-hud .action-bar button {
+    width: 56px;
+    height: 50px;
+  }
+}
+
+/* 0.35: which way the hit came from — an arc on the screen's edge, toward the attacker (up = ahead) */
+#hurt-dir {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 6;
+}
+#hurt-dir i {
+  position: absolute;
+  left: var(--hurt-x, 50%);
+  top: var(--hurt-y, 10%);
+  width: min(34vw, 320px);
+  height: 14vh;
+  transform: translate(-50%, -50%) rotate(var(--hurt-rot, 0deg));
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  border-top: 9px solid #ff3b3bcc;
+  background: radial-gradient(ellipse at 50% 0%, #ff2a2a55, transparent 70%);
+  filter: blur(1px);
+}
+
+/* 0.35: the top of the screen stacks instead of piling up — tutorial / build banner, then the inner voice,
+   then toasts below whatever is showing */
+body:has(#monologue.show) #tutorial {
+  opacity: 0;
+  pointer-events: none;
+}
+body:has(#build-banner:not([hidden])) #monologue {
+  top: 190px;
+}
+body:has(#monologue.show) #toasts,
+body:has(#tutorial:not([hidden])) #toasts,
+body:has(#build-banner:not([hidden])) #toasts {
+  top: 200px;
+}
+body:has(#build-banner:not([hidden])):has(#monologue.show) #toasts {
+  top: 290px;
+}
+
+/* 0.35: the beast bar (ride / dive / attack / skills) moves down to the lower left, off the quest list */
+body:not(.landscape-play) #beast-bar {
+  top: auto;
+  bottom: 96px;
+  left: 24px;
+}
