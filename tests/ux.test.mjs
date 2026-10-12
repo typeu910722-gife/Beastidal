@@ -44,8 +44,13 @@ test('tutorial walks move → salvage → board → build and then hands over', 
   assert.deepEqual(advanceTutorial(s), [1, 2], 'already on the raft: board step completes at once');
   s.expanded = 1;
   assert.deepEqual(advanceTutorial(s), [3]);
+  assert.ok(tutorialActive(s), 'the stash step waits for a deposit');
+  s.storage.food = 5;
+  assert.deepEqual(advanceTutorial(s), [], 'supplies on the desk do not count as a deposit');
+  s.storage.wood = 1;
+  assert.deepEqual(advanceTutorial(s), [4]);
   assert.ok(!tutorialActive(s));
-  assert.equal(TUTORIAL.length, 4);
+  assert.equal(TUTORIAL.length, 5);
 });
 test('old saves without tutorial state never show it', () => {
   const s = createState(6);

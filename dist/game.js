@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.33.0';
-import { renderAdventure } from './expansion-ui.js?v=0.33.0';
+} from './expansion.js?v=0.34.0';
+import { renderAdventure } from './expansion-ui.js?v=0.34.0';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.33.0';
-import { monologue, markGuide } from './guide.js?v=0.33.0';
-import { climb, demolish, relocate } from './construction.js?v=0.33.0';
+} from './ship.js?v=0.34.0';
+import { monologue, markGuide } from './guide.js?v=0.34.0';
+import { climb, demolish, relocate } from './construction.js?v=0.34.0';
 import {
   normalizeHousing,
   penId,
@@ -58,7 +58,7 @@ import {
   renamePen,
   beastCount,
   BEAST_CAPACITY
-} from './housing.js?v=0.33.0';
+} from './housing.js?v=0.34.0';
 import {
   ISLANDS,
   NODES,
@@ -69,10 +69,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.33.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.33.0';
-import { lakeMinimap } from './lake-map.js?v=0.33.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.33.0';
+} from './islands.js?v=0.34.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.34.0';
+import { lakeMinimap } from './lake-map.js?v=0.34.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.34.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -91,7 +91,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.33.0';
+} from './cabin.js?v=0.34.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -103,17 +103,18 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.33.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.33.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.33.0';
-import { QUALITY } from './realism.js?v=0.33.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.33.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.33.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.33.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.33.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.33.0';
-import { CONFIG } from './config.js?v=0.33.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.33.0';
+} from './story.js?v=0.34.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.34.0';
+import { loadProtagonist } from './protagonist.js?v=0.34.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.34.0';
+import { QUALITY } from './realism.js?v=0.34.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.34.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.34.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.34.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.34.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.34.0';
+import { CONFIG } from './config.js?v=0.34.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.34.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -124,13 +125,13 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.33.0';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.33.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.33.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.33.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.33.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.33.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.33.0';
+} from './codex.js?v=0.34.0';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.34.0';
+import { CRAFTS, ITEMS, BASE_RESOURCES, costLabel as itemCost } from './items.js?v=0.34.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.34.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.34.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.34.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.34.0';
 import {
   startFishing,
   tickFishing,
@@ -139,7 +140,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.33.0';
+} from './fishing.js?v=0.34.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -149,10 +150,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.33.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.33.0';
-import { setClimbing } from './lake.js?v=0.33.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.33.0';
+} from './reclaim.js?v=0.34.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.34.0';
+import { setClimbing } from './lake.js?v=0.34.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.34.0';
 import {
   RARITY,
   FRENZY,
@@ -177,7 +178,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.33.0';
+} from './taming.js?v=0.34.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -194,13 +195,13 @@ import {
   levelCap,
   xpFor,
   AI_RANGE
-} from './combat.js?v=0.33.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.33.0';
-import { BeastStage } from './beast-stage.js?v=0.33.0';
-import { loadArt, art, artImg } from './art.js?v=0.33.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.33.0';
-import { separateBodies } from './bodies.js?v=0.33.0';
-import { lookOf } from './beast-look.js?v=0.33.0';
+} from './combat.js?v=0.34.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.34.0';
+import { BeastStage } from './beast-stage.js?v=0.34.0';
+import { loadArt, art, artImg } from './art.js?v=0.34.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.34.0';
+import { separateBodies } from './bodies.js?v=0.34.0';
+import { lookOf } from './beast-look.js?v=0.34.0';
 import {
   TREE,
   BRANCHES,
@@ -212,8 +213,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.33.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.33.0';
+} from './beast-tree.js?v=0.34.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.34.0';
 import {
   funds,
   normalizeBag,
@@ -233,12 +234,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.33.0';
-import { iconFor } from './icons.js?v=0.33.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.33.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.33.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.33.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.33.0';
+} from './bag.js?v=0.34.0';
+import { iconFor } from './icons.js?v=0.34.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.34.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.34.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.34.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.34.0';
 import {
   homePos,
   facilityPos,
@@ -250,10 +251,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.33.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.33.0';
-export const GAME_VERSION = '0.33.0';
-import { CloudSave } from './cloud-save.js?v=0.33.0';
+} from './fortress.js?v=0.34.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.34.0';
+export const GAME_VERSION = '0.34.0';
+import { CloudSave } from './cloud-save.js?v=0.34.0';
 import {
   readLocal,
   writeLocal,
@@ -270,9 +271,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.33.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.33.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.33.0';
+} from './save-store.js?v=0.34.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.34.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.34.0';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -293,8 +294,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.33.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.33.0';
+} from './rules.js?v=0.34.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.34.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -1836,25 +1837,26 @@ function startIntro() {
   $('title-screen').hidden = true;
   $('intro-overlay').hidden = false;
   $('film-fade').hidden = false;
-  $('film-fade').style.opacity = 0;
-  film = new IntroFilm(world.renderer, () => beginGame(true));
-  audio.start();
-  $('sound-btn').textContent = '♫';
+  $('film-fade').style.opacity = 1;
   $('skip-intro').focus();
   updateViewport();
+  // 0.34: give the protagonist's real body up to a few seconds to arrive, so the commute is not played by the
+  // stand-in figure; the skip button works meanwhile
+  Promise.race([loadProtagonist().catch(() => null), new Promise(r => setTimeout(r, 3500))]).then(() => {
+    if (running || $('intro-overlay').hidden) return;
+    $('film-fade').style.opacity = 0;
+    film = new IntroFilm(world.renderer, () => beginGame(true));
+    audio.start();
+    $('sound-btn').textContent = '♫';
+  });
 }
 function initialize() {
   try {
     world = new OceanWorld($('ocean'), state);
-    world.onDegrade = level =>
-      toast(
-        [
-          '',
-          '畫面有點吃力：已關閉景深，保持流暢。',
-          '已簡化泛光與銳化，保持流暢。',
-          '已降低解析度，保持流暢。可在設定改成「平衡」畫質。'
-        ][level] || ''
-      );
+    // one notice, the first time; the later steps are silent (0.34)
+    world.onDegrade = level => {
+      if (level === 1) toast('畫面有點吃力：已自動降低畫面效果，之後會視情況再調低。可在設定選擇畫質。');
+    };
   } catch (e) {
     $('load-text').innerHTML = '3D 畫面無法啟動。請使用支援 WebGL 2 的新版 Chrome、Edge 或 Safari，並開啟硬體加速。';
     document.querySelector('.loading-line').hidden = true;
@@ -1986,7 +1988,16 @@ function updateNearest() {
   if (selected && d(selected) > 130) selected = null;
   if (!selected) {
     const R = t => (t.type === 'shippoint' ? 2.6 : t.type === 'claim' ? 6 : 10);
-    const near = all.filter(t => d(t) < R(t)).sort((a, b) => d(a) - d(b));
+    // 0.34: what you are looking at wins, and on foot a facility beside you outranks a creature that swam up
+    const fx = -Math.sin(world.yaw),
+      fz = -Math.cos(world.yaw),
+      rank = t => {
+        const dx = t.x - state.player.x,
+          dz = t.z - state.player.z,
+          facing = (dx * fx + dz * fz) / (Math.hypot(dx, dz) || 1);
+        return d(t) - (facing > 0.7 ? 3 : 0) + (t.type === 'wild' && state.player.mode === 'foot' ? 8 : 0);
+      };
+    const near = all.filter(t => d(t) < R(t)).sort((a, b) => rank(a) - rank(b));
     selected = near[0] || null;
   }
   nearest = selected;
@@ -2041,7 +2052,7 @@ function updateNearest() {
                                     : selected.beast
                                       ? beastText(selected)
                                       : selected.follow
-                                        ? '信任 100% · 跟著你 · 拿出外出籠按 X 帶牠回船上'
+                                        ? `信任 ${Math.round(selected.trust)}% · 跟著你 · 拿出外出籠按 X 帶牠回船上`
                                         : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
                                   : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
@@ -2197,7 +2208,11 @@ function interact() {
       return;
     }
     if (!state.secret) {
-      toast('牠正警戒地看著你。也許浮標裡有接近牠的方法。');
+      toast(
+        stage === 'friend'
+          ? '（牠跟在我身邊，等我弄懂怎麼和牠締結契約。先去東北方的浮標看看。）'
+          : '牠正警戒地看著你。也許浮標裡有接近牠的方法。'
+      );
       return;
     }
     // a beast that already trusts you fully: E uses a contract scroll
@@ -2597,9 +2612,20 @@ function closePanel() {
   beastStage.clear();
   deviceMode = false;
   $('drawer').hidden = true;
+  document.body.classList.remove('panel-open');
   $('drawer').classList.remove('device');
   document.querySelectorAll('.action-bar button').forEach(b => b.classList.remove('active'));
   if (world) updateDock();
+}
+// 0.34: the build menu only opens where building is possible; elsewhere it says where to go
+function openBuild() {
+  if (!running || paused || film) return;
+  const onFoot = ['foot', 'aboard', 'cabin'].includes(state.player.mode);
+  if (!onFoot || !atHome(state)) {
+    toast(state.ship ? '請回到戰艦上再建造。' : '要回到木筏上才能建造：按 H 返航，靠近後按 Q 登上避難所。', true);
+    return;
+  }
+  openPanel('build');
 }
 function openPanel(name, inDevice = false) {
   if (!running || paused || film) return;
@@ -2618,6 +2644,7 @@ function openPanel(name, inDevice = false) {
   panel = name;
   keys.clear();
   $('drawer').hidden = false;
+  document.body.classList.add('panel-open');
   document
     .querySelectorAll('.action-bar button')
     .forEach(b => b.classList.toggle('active', b.dataset.panel === (inDevice ? 'device' : name)));
@@ -2642,7 +2669,15 @@ function openDevice(app = null) {
   if (!running || paused || film) return;
   normalizeDevice(state);
   if (!state.device.owned) {
-    toast('（那台隨身裝置還放在木筏的書桌上。）', true);
+    const desk = state.buildings.find(b => b.type === 'desk' && !b.stowed);
+    if (desk && state.player.mode === 'foot' && atHome(state)) {
+      const p = facilityPos(state, desk),
+        dx = state.player.x - p.x,
+        dz = state.player.z - p.z,
+        d = Math.hypot(dx, dz) || 1;
+      destination = { x: p.x + (dx / d) * 2.2, z: p.z + (dz / d) * 2.2 };
+      toast('（那台隨身裝置還放在書桌上。走過去按 E 拿起來。）');
+    } else toast('（那台隨身裝置還放在木筏的書桌上。先回木筏，走到書桌旁按 E 拿起來。）', true);
     return;
   }
   if (deviceMode && !app) {
@@ -2674,7 +2709,9 @@ function deviceHome(body) {
 // Beast storage and creature storage: every pet of that kind in one full-width grid, alive and turning; tap one for
 // its details and what you can do. 御獸 (bound by contract) and 生物 (carried home in a cage) each have their own app.
 const beastStage = new BeastStage();
-let beastPick = null;
+let beastPick = null,
+  storageSort = 'name',
+  storageReadyOnly = false;
 // Job picker: rest, or one of the five jobs (the current one highlighted).
 function jobRow(p) {
   return `<div class="job-row"><span>工作</span><button type="button" data-job="" class="${p.job ? '' : 'active'}">休息</button>${Object.entries(
@@ -2923,21 +2960,78 @@ function renderBeastStorage(body, kind = 'beast') {
   }
   // The whole storage at once, no paging: beasts show their contract slots (empty ones included), creatures fill
   // the rows they need plus a few spare cells so the grid never looks closed.
+  // 0.34: sort by name, level / genes or bond; creatures can be narrowed to the ones ready to evolve; beasts show
+  // their three team slots and a ★ on each cell that puts them on (or off) the team without opening the card
+  const shown = (creatures && storageReadyOnly ? pets.filter(x => canEvolve(x.genome)) : pets.slice()).sort((a, b) =>
+    storageSort === 'bond'
+      ? (b.bond || 0) - (a.bond || 0)
+      : storageSort === 'level'
+        ? creatures
+          ? bsOf(b.genome).length - bsOf(a.genome).length
+          : (b.level || 1) - (a.level || 1)
+        : a.name.localeCompare(b.name, 'zh-Hant', { numeric: true })
+  );
   const slots = creatures
-      ? Math.max(pets.length + 2, Math.ceil(pets.length / 6) * 6)
-      : Math.max(pets.length, MAX_CONTRACTS),
+      ? Math.max(shown.length + 2, Math.ceil(shown.length / 6) * 6)
+      : Math.max(shown.length, MAX_CONTRACTS),
     evolvable = creatures ? pets.filter(x => canEvolve(x.genome)).length : 0,
+    team = teamOf(state),
     cell = x =>
-      `<button type="button" class="bx-cell ${creatures ? 'is-creature' : 'is-beast'}${x.team ? ' on-team' : ''}" data-pet="${esc(x.id)}"><canvas width="160" height="160"></canvas><span>${x.team ? '★ ' : ''}${esc(x.name)}</span><em class="kind-badge${creatures && canEvolve(x.genome) ? ' ready' : ''}">${creatures ? (canEvolve(x.genome) ? '可契闊' : `基因 ${bsOf(x.genome).length}/${EVOLVE_GENES}`) : 'Lv' + (x.level || 1)}</em>${x.job ? `<em class="job-badge" title="${JOBS[x.job].name}">${JOBS[x.job].icon}</em>` : ''}${state.expedition?.activeId === x.id ? '<em class="out-badge">同行中</em>' : ''}</button>`;
+      `<button type="button" class="bx-cell ${creatures ? 'is-creature' : 'is-beast'}${x.team ? ' on-team' : ''}" data-pet="${esc(x.id)}"><canvas width="160" height="160"></canvas><span>${x.team ? '★ ' : ''}${esc(x.name)}</span><em class="kind-badge${creatures && canEvolve(x.genome) ? ' ready' : ''}">${creatures ? (canEvolve(x.genome) ? '可契闊' : `基因 ${bsOf(x.genome).length}/${EVOLVE_GENES}`) : 'Lv' + (x.level || 1)}</em>${x.job ? `<em class="job-badge" title="${JOBS[x.job].name}">${JOBS[x.job].icon}</em>` : ''}${state.expedition?.activeId === x.id ? '<em class="out-badge">同行中</em>' : ''}${
+        creatures || x.ancient
+          ? ''
+          : `<em class="team-toggle${x.team ? ' on' : ''}" data-team="${esc(x.id)}" title="${x.team ? '放回御獸艙' : '帶在身上'}">★</em>`
+      }</button>`,
+    tools = `<div class="bx-tools"><span>排序</span>${[
+      ['name', '名稱'],
+      ['level', creatures ? '基因' : '等級'],
+      ['bond', '羈絆']
+    ]
+      .map(
+        ([k, label]) =>
+          `<button type="button" data-sort="${k}" class="${storageSort === k ? 'active' : ''}">${label}</button>`
+      )
+      .join('')}${
+      creatures
+        ? `<button type="button" data-filter="ready" class="${storageReadyOnly ? 'active' : ''}">只看可契闊</button>`
+        : `<span class="bx-team">${Array.from({ length: TEAM_SIZE }, (_, i) =>
+            team[i] ? `<b>★ ${esc(team[i].name)}</b>` : '<b class="free">空位</b>'
+          ).join('')}</span>`
+    }</div>`;
   body.innerHTML = `<p class="bx-head">${
     creatures
       ? `生物 <b>${pets.length}</b> · 可契闊進化 <b>${evolvable}</b> · 倉庫 <b>${beastCount(state)} / ${BEAST_CAPACITY}</b>`
-      : `御獸契約 <b>${ownedBeasts(state).length} / ${MAX_CONTRACTS}</b> · 身上 <b>${teamOf(state).length} / ${TEAM_SIZE}</b>`
-  }</p><div class="bx-grid full">${pets.map(cell).join('')}${'<div class="bx-cell empty"></div>'.repeat(Math.max(0, slots - pets.length))}</div>`;
+      : `御獸契約 <b>${ownedBeasts(state).length} / ${MAX_CONTRACTS}</b> · 身上 <b>${team.length} / ${TEAM_SIZE}</b>`
+  }</p>${tools}<div class="bx-grid full">${shown.map(cell).join('')}${'<div class="bx-cell empty"></div>'.repeat(Math.max(0, slots - shown.length))}</div>`;
   body.querySelectorAll('[data-pet]').forEach(
     b =>
-      (b.onclick = () => {
+      (b.onclick = e => {
+        const star = e.target.closest('[data-team]');
+        if (star) {
+          const r = toggleTeam(state, star.dataset.team);
+          toast(r.ok ? r.message : r.error, !r.ok);
+          if (r.ok) {
+            world.sync(state);
+            save(true);
+          }
+          renderPanel();
+          return;
+        }
         beastPick = b.dataset.pet;
+        renderPanel();
+      })
+  );
+  body.querySelectorAll('[data-sort]').forEach(
+    b =>
+      (b.onclick = () => {
+        storageSort = b.dataset.sort;
+        renderPanel();
+      })
+  );
+  body.querySelectorAll('[data-filter]').forEach(
+    b =>
+      (b.onclick = () => {
+        storageReadyOnly = !storageReadyOnly;
         renderPanel();
       })
   );
@@ -3504,7 +3598,10 @@ function slotItems(kinds, from, note) {
     note
   }));
 }
-const bagItems = () => slotItems(CARRY, state.resources);
+// 0.34: the grids show the base materials and whatever you have ever had, not every one of the 48 kinds
+const shownKinds = () =>
+  CARRY.filter(k => BASE_RESOURCES.includes(k) || k === 'cage' || state.resources[k] || state.storage?.[k]);
+const bagItems = () => slotItems(shownKinds(), state.resources);
 const contractItem = () => ({
   key: 'contract',
   icon: iconFor('contract'),
@@ -3544,7 +3641,7 @@ function renderLocker(body) {
   normalizeBag(state);
   const stored = Object.values(state.storage).reduce((a, b) => a + b, 0);
   body.innerHTML =
-    invBox('box', '儲物箱', `${stored} 件`, slotItems(CARRY, state.storage), { cols: 9, rows: 2 }) +
+    invBox('box', '儲物箱', `${stored} 件`, slotItems(shownKinds(), state.storage), { cols: 9, rows: 2 }) +
     amountBar() +
     invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), { cols: 9, rows: 2 }) +
     `<div class="inv-actions"><button type="button" id="lk-all">材料全部存入</button><button type="button" id="lk-supply">取出補給</button></div><p class="inv-hint">點儲物箱的物品取出，點背包的物品存入。在家時，建造會一併使用儲物箱裡的材料。</p>`;
@@ -3973,10 +4070,20 @@ function renderFocus() {
             : ''
         }</div>`
       : ''
-  }<div class="focus-bar"><div class="focus-bar-text"><strong>${esc(title)}</strong>${hint ? `<small>${esc(hint)}</small>` : ''}</div><button type="button" data-focus-manage>管理</button><button type="button" data-focus-back class="primary">離開</button></div>`;
+  }<div class="focus-bar"><div class="focus-bar-text"><strong>${esc(title)}</strong>${hint ? `<small>${esc(hint)}</small>` : ''}</div>${
+    items.length && b.type !== 'pen'
+      ? `<div class="focus-items">${items
+          .map(
+            i =>
+              `<button type="button" data-item="${esc(i.key)}" class="${i.key === focus.item ? 'active' : ''}">${esc(i.label)}</button>`
+          )
+          .join('')}</div>`
+      : ''
+  }<button type="button" data-focus-manage>管理</button><button type="button" data-focus-back class="primary">離開</button></div>`;
   ui.hidden = false;
   if (gamepadActive) setTimeout(() => focusMenu(0, true), 0);
   ui.querySelectorAll('[data-spot]').forEach(btn => (btn.onclick = () => openFocusItem(btn.dataset.spot)));
+  ui.querySelectorAll('[data-item]').forEach(btn => (btn.onclick = () => openFocusItem(btn.dataset.item)));
   ui.querySelectorAll('[data-focus-act]').forEach(btn => (btn.onclick = () => card.acts[btn.dataset.focusAct].fn()));
   ui.querySelector('[data-focus-close]')?.addEventListener('click', () => openFocusItem(focus.item));
   ui.querySelector('[data-focus-back]').onclick = exitFocus;
@@ -4532,7 +4639,7 @@ function renderPanel() {
         ? page.items
             .map(
               l =>
-                `<article class="journal-entry compact"><small>DAY ${l.day.toString().padStart(2, '0')}</small><h3>${esc(l.title)}</h3><p>${esc(l.text)}</p></article>`
+                `<article class="journal-entry compact"><small>DAY ${l.day.toString().padStart(2, '0')}</small><h3>${esc(l.title)}${l.count > 1 ? ` ×${l.count}` : ''}</h3><p>${esc(l.text)}</p></article>`
             )
             .join('')
         : '<p class="dv-note">還沒有紀錄。</p>') +
@@ -5395,7 +5502,7 @@ function updateUI() {
     ];
     hint = '';
   } else if (state.completed && state.tamed.length) {
-    chapter = 'CHAPTER 02 · 讓家出航';
+    chapter = 'CHAPTER 03 · 讓家出航';
     title = '避難所的極限';
     quests = [
       ['占領一座島嶼', (state.occupied || []).length > 0],
@@ -5406,16 +5513,17 @@ function updateUI() {
     ];
     hint = '';
   } else if (state.completed) {
-    chapter = 'CHAPTER 01 · 已完成';
-    title = '這片海，也可以是家';
+    // 0.34: the first chapter done, the next one has steps of its own instead of "explore freely"
+    chapter = 'CHAPTER 02 · 共生之路';
+    title = '給牠一個能回來的家';
     quests = [
-      ['點亮海上避難所', true],
-      ['自由擴建與探索', false],
-      [state.secret ? `馴化生物 ${state.tamed.length} 隻` : '追尋海下的訊號', state.tamed.length > 0]
+      ['調查研究浮標', !!state.secret],
+      ['建造海洋展示池', np > 0],
+      ['建造工作桌', count(state, 'table') > 0],
+      ['製作外出籠', (state.resources.cage || 0) > 0],
+      ['帶回第一隻生物', state.tamed.length > 0]
     ];
-    hint = state.tamed.some(p => p.generation > 0)
-      ? '你的新生命已經誕生。繼續培育下一代。'
-      : '主線完成後，仍可探索共生與雜交的祕密。';
+    hint = !state.secret ? '東北方的研究浮標在反覆發送紀錄。' : '誘餌在背包裡做；外出籠在工作桌「製作物品」做。';
   } else if (state.salvaged < 3 || state.expanded < 2 || !count(state, 'shelter')) {
     chapter = 'CHAPTER 01 · 重新呼吸';
     title = '先在這片海活下來';
@@ -5431,7 +5539,7 @@ function updateUI() {
     quests = [
       ['建造集水蒸餾器', !!count(state, 'collector')],
       ['建造遠洋訊號塔', !!count(state, 'beacon')],
-      ['完成遮風避雨的家', true]
+      ['點亮海上的家', !!state.completed]
     ];
     hint = '異晶藏在發光研究箱中。箱子會隨海流補充。';
   }
@@ -5449,6 +5557,8 @@ function updateUI() {
   // the bottom bar follows where you are: on the raft, build and the device; at sea, the device and expeditions
   const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin';
   $('build-tool').hidden = !onFoot || !atHome(state);
+  $('device-tool').classList.toggle('missing', !state.device?.owned);
+  $('device-tool').lastElementChild.previousElementSibling.textContent = state.device?.owned ? '裝置' : '去拿裝置';
   $('home-btn').firstChild.textContent = state.ship ? '⌂ 回到戰艦 ' : '⌂ 導航回避難所 ';
   $('adventure-btn').hidden = true; // 0.32: in the ☰ menu now (K still opens it)
   renderHotbar();
@@ -6219,12 +6329,25 @@ function worldLabels() {
   } else if (state.player.mode === 'foot')
     labels.push({ x: state.boat.x, y: 2.7, z: state.boat.z, text: '⛵ 停泊的小艇', className: 'mint' });
   if (nearest) labels = labels.filter(l => !(nearest.type === 'buoy' && l.x === 17));
+  // 0.34: nearer labels first; a label that would sit on another, or on the HUD's corners, is skipped
+  const blocked = ['.left-hud', '#minimap', '#monologue', '#tutorial']
+    .map(sel => document.querySelector(sel))
+    .filter(el => el && !el.hidden && el.offsetParent !== null)
+    .map(el => el.getBoundingClientRect());
+  const placed = [];
   $('world-labels').innerHTML = labels
+    .map(l => ({ ...l, dist: Math.hypot(l.x - state.player.x, l.z - state.player.z) }))
+    .sort((a, b) => a.dist - b.dist)
     .map(l => {
       const p = world.screenPoint(l.x, l.y, l.z);
-      return p.visible
-        ? `<span class="world-tag ${l.className}" style="left:${p.x}px;top:${p.y}px">${l.text}</span>`
-        : '';
+      if (!p.visible) return '';
+      const w = l.text.length * 13 + 24,
+        h = 26,
+        r = { left: p.x - w / 2, right: p.x + w / 2, top: p.y - h / 2, bottom: p.y + h / 2 },
+        hits = o => r.left < o.right && o.left < r.right && r.top < o.bottom && o.top < r.bottom;
+      if (blocked.some(hits) || placed.some(hits)) return '';
+      placed.push(r);
+      return `<span class="world-tag ${l.className}" style="left:${p.x}px;top:${p.y}px">${l.text}</span>`;
     })
     .join('');
 }
@@ -6923,7 +7046,7 @@ function setupEvents() {
       if (inFight() && n < 3) castSkill(n);
       else useHotbar(n);
     }
-    if (k === 'b') openPanel('build');
+    if (k === 'b') openBuild();
     if (k === 'i') openDevice();
     if (k === 'j') openPanel('journal');
     if (k === 'c') openPanel('creatures');

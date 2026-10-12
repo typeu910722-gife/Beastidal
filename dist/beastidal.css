@@ -754,6 +754,13 @@
       0 0 22px #ecc78e66;
   }
 }
+/* 0.34: while a panel is open the centre-screen voices step aside, and a facility's floating card and spots too */
+body.panel-open #discovery,
+body.panel-open #monologue,
+body.panel-open .focus-card,
+body.panel-open .focus-spots {
+  visibility: hidden;
+}
 .tutorial-on #discovery {
   top: 40%;
 }
@@ -1436,6 +1443,28 @@ body.focus-on #beast-bar {
   padding: 8px 18px;
   border-radius: 10px;
   font-size: 14px;
+}
+/* 0.34: the facility's items as chips in the bar, reachable without turning to face them */
+.focus-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.focus-bar .focus-items button {
+  min-height: 32px;
+  padding: 4px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  background: #ffffff10;
+  border: 1px solid #ffffff22;
+}
+.focus-bar .focus-items button.active {
+  border-color: #9ff0d8aa;
+  color: #c8fff0;
+}
+#device-tool.missing {
+  opacity: 0.72;
+  border-style: dashed;
 }
 .focus-spots {
   position: absolute;
@@ -2189,6 +2218,67 @@ body #drawer.device.wide .bx-detail canvas {
 body #drawer.device.wide .bx-actions button {
   flex: 0 1 auto;
   min-width: 150px;
+}
+.bx-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: #9fbab7;
+}
+.bx-tools button {
+  min-height: 30px;
+  padding: 3px 12px;
+  font-size: 12px;
+  border-radius: 8px;
+  background: #ffffff0e;
+  border: 1px solid #ffffff20;
+}
+.bx-tools button.active {
+  border-color: #9ff0d8aa;
+  color: #c8fff0;
+}
+.bx-team {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+.bx-team b {
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 8px;
+  color: #ffd38c;
+  border: 1px solid #ffd38c66;
+  background: #3d2d1088;
+}
+.bx-team b.free {
+  color: #7f9c96;
+  border-style: dashed;
+  background: none;
+}
+.bx-cell .team-toggle {
+  position: absolute;
+  right: 6px;
+  bottom: 24px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-style: normal;
+  font-size: 14px;
+  color: #ffffff66;
+  background: #0a1f26cc;
+  border: 1px solid #ffffff22;
+}
+.bx-cell .team-toggle.on {
+  color: #ffd38c;
+  border-color: #ffd38caa;
+}
+.bx-cell .team-toggle:hover {
+  color: #ffe4b0;
 }
 .bx-cell .out-badge {
   position: absolute;

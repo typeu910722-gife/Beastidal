@@ -1,4 +1,5 @@
-// First-play tutorial: four hands-on steps. Text is keyboard-worded; game.js rewrites it for touch or gamepad.
+// First-play tutorial: five hands-on steps. Text is keyboard-worded; game.js rewrites it for touch or gamepad.
+import { KEEP } from './bag.js?v=0.34.0';
 export const TUTORIAL = [
   {
     id: 'move',
@@ -27,6 +28,13 @@ export const TUTORIAL = [
     text: '按 B 打開建造，選「浮動地基」，點綠色格子放一格。',
     focus: '[data-panel="build"]',
     done: s => s.expanded >= 1
+  },
+  {
+    id: 'stash',
+    title: '存進儲物箱',
+    text: '背包只裝得下 40 件材料（口糧、淡水、誘餌不占格）。走到書桌旁按 E，點「儲物箱」→「材料全部存入」。在家建造會直接用書桌上的材料。',
+    focus: '#home-btn',
+    done: s => Object.entries(s.storage || {}).some(([k, v]) => v > 0 && !KEEP.includes(k))
   }
 ];
 export function startTutorialState(s) {

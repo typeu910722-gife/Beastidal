@@ -1,18 +1,18 @@
-import { limitError } from './ship.js?v=0.33.0';
-import { dayOf } from './clock.js?v=0.33.0';
-import { normalizeExpansion } from './expansion.js?v=0.33.0';
-import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.33.0';
-import { dockingSpots } from './navigation.js?v=0.33.0';
-import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.33.0';
-import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome, give } from './bag.js?v=0.33.0';
-import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.33.0';
-import { remember } from './memories.js?v=0.33.0';
+import { limitError } from './ship.js?v=0.34.0';
+import { dayOf } from './clock.js?v=0.34.0';
+import { normalizeExpansion } from './expansion.js?v=0.34.0';
+import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.34.0';
+import { dockingSpots } from './navigation.js?v=0.34.0';
+import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.34.0';
+import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome, give } from './bag.js?v=0.34.0';
+import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.34.0';
+import { remember } from './memories.js?v=0.34.0';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
-import { ITEM_NAMES, ITEM_GLYPHS, BASE_RESOURCES, CRAFTS } from './items.js?v=0.33.0';
-import { inheritGenes, addRandomGene } from './bsgenes.js?v=0.33.0';
-import { normalizeGear } from './gear.js?v=0.33.0';
-import { mutationFactor } from './weather.js?v=0.33.0';
-import { tally } from './stats.js?v=0.33.0';
+import { ITEM_NAMES, ITEM_GLYPHS, BASE_RESOURCES, CRAFTS } from './items.js?v=0.34.0';
+import { inheritGenes, addRandomGene } from './bsgenes.js?v=0.34.0';
+import { normalizeGear } from './gear.js?v=0.34.0';
+import { mutationFactor } from './weather.js?v=0.34.0';
+import { tally } from './stats.js?v=0.34.0';
 export const RESOURCE_NAMES = ITEM_NAMES;
 export const RESOURCE_ICONS = ITEM_GLYPHS;
 export const RECIPES = {
@@ -207,6 +207,12 @@ export function count(s, t) {
 export const canPay = canAfford;
 export const pay = spend;
 export function log(s, title, text) {
+  // the same note on the same day folds into one entry with a count (0.34)
+  const last = s.log[0];
+  if (last && last.title === title && last.text === text && last.day === dayOf(s)) {
+    last.count = (last.count || 1) + 1;
+    return;
+  }
   s.log.unshift({ day: dayOf(s), title, text });
   s.log = s.log.slice(0, 70);
 }
@@ -336,7 +342,7 @@ export function craftBait(s) {
   return { ok: true };
 }
 // Feeding and contracts live in taming.js (0.12).
-export { feed } from './taming.js?v=0.33.0';
+export { feed } from './taming.js?v=0.34.0';
 export function breed(s, aId, bId, rng = Math.random) {
   if ([aId, bId].some(id => s.tamed.find(p => p.id === id)?.ancient)) return { ok: false, error: '遠古御獸無法配對。' };
   normalizeHousing(s);

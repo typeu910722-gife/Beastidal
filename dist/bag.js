@@ -1,12 +1,14 @@
-// The backpack holds a limited number of things in all. What does not fit waits in the storage of the raft's
+// The backpack holds a limited number of materials in all. What does not fit waits in the storage of the raft's
 // desk: deposit there when the bag is full, and enlarge the bag at the desk with materials. While you are home,
-// building and crafting can draw on the desk's storage as well as the bag.
-import { homePos, nearFacility } from './fortress.js?v=0.33.0';
-import { CARRYABLE } from './items.js?v=0.33.0';
+// building and crafting can draw on the desk's storage as well as the bag. Supplies (food, water, bait) ride
+// in their own pockets and never take a material slot (0.34).
+import { homePos, nearFacility } from './fortress.js?v=0.34.0';
+import { CARRYABLE } from './items.js?v=0.34.0';
 // everything the bag can hold (0.21: the drops and crafted things too)
 export const CARRY = CARRYABLE;
-// supplies you keep on you when depositing
+// supplies you keep on you when depositing; they do not count against the bag
 export const KEEP = ['food', 'water', 'bait'];
+export const MATERIALS = CARRY.filter(k => !KEEP.includes(k));
 export const BAG_LEVELS = [
   { cap: 40 },
   { cap: 60, cost: { wood: 8, fiber: 6 } },
@@ -16,7 +18,7 @@ export const BAG_LEVELS = [
 ];
 const HOME_RANGE = 27;
 
-export const bagUsed = s => CARRY.reduce((n, k) => n + (s.resources[k] || 0), 0);
+export const bagUsed = s => MATERIALS.reduce((n, k) => n + (s.resources[k] || 0), 0);
 export const bagCap = s => BAG_LEVELS[Math.min(s.bagLevel || 0, BAG_LEVELS.length - 1)].cap;
 export const bagRoom = s => Math.max(0, bagCap(s) - bagUsed(s));
 // home is the raft, or the warship once the base has gone to sea (see fortress.js)
@@ -43,7 +45,7 @@ export function normalizeBag(s) {
 export function migrateBag(s) {
   normalizeBag(s);
   let over = bagUsed(s) - bagCap(s);
-  for (const k of [...CARRY.filter(k => !KEEP.includes(k)), ...KEEP]) {
+  for (const k of MATERIALS) {
     if (over <= 0) break;
     const n = Math.min(over, s.resources[k] || 0);
     s.resources[k] -= n;
@@ -70,9 +72,9 @@ export function stow(s, items) {
   const got = {};
   let room = bagRoom(s);
   for (const [k, v] of Object.entries(items)) {
-    const n = Math.max(0, Math.min(v, room));
+    const n = KEEP.includes(k) ? Math.max(0, v) : Math.max(0, Math.min(v, room));
     s.resources[k] = (s.resources[k] || 0) + n;
-    room -= n;
+    if (!KEEP.includes(k)) room -= n;
     if (n) got[k] = n;
   }
   return got;
@@ -84,7 +86,7 @@ export function give(s, items) {
   for (const [k, v] of Object.entries(items)) if (v > (got[k] || 0)) s.storage[k] += v - (got[k] || 0);
   return got;
 }
-export const bagFullError = '背包滿了。回避難所，把物資存到書桌上。';
+export const bagFullError = '背包的材料格滿了。按 H 返航，到書桌的儲物箱「材料全部存入」（口糧、淡水、誘餌不占格）。';
 
 // At the desk: put every material from the bag into storage (food, water and bait stay with you).
 export function deposit(s) {
@@ -107,7 +109,6 @@ export function takeSupplies(s) {
   if (!nearDesk(s)) return { ok: false, error: '請走到木筏的書桌旁。' };
   const want = Object.fromEntries(KEEP.map(k => [k, s.storage[k]]).filter(([, v]) => v > 0));
   if (!Object.keys(want).length) return { ok: false, error: '書桌上沒有補給。' };
-  if (!bagRoom(s)) return { ok: false, error: '背包已經滿了。' };
   const got = stow(s, want);
   let n = 0;
   for (const [k, v] of Object.entries(got)) {
@@ -129,7 +130,7 @@ export function stash(s, k, n = Infinity) {
 export function unstash(s, k, n = Infinity) {
   normalizeBag(s);
   if (!nearDesk(s)) return { ok: false, error: '請走到書桌旁的儲物箱。' };
-  const m = Math.min(n, s.storage[k] || 0, bagRoom(s));
+  const m = Math.min(n, s.storage[k] || 0, KEEP.includes(k) ? Infinity : bagRoom(s));
   if (!(s.storage[k] > 0)) return { ok: false, error: '儲物箱裡沒有這項物品。' };
   if (m <= 0) return { ok: false, error: '背包已經滿了。' };
   s.storage[k] -= m;

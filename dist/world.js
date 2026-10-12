@@ -1,36 +1,36 @@
-import { expansionModels } from './expansion-models.js?v=0.33.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.33.0';
-import { normalizeHousing, penId } from './housing.js?v=0.33.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.33.0';
-export { makeCreature } from './creatures.js?v=0.33.0';
-import { makeIslands } from './island-models.js?v=0.33.0';
-import { facilityId } from './facilities.js?v=0.33.0';
+import { expansionModels } from './expansion-models.js?v=0.34.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.34.0';
+import { normalizeHousing, penId } from './housing.js?v=0.34.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.34.0';
+export { makeCreature } from './creatures.js?v=0.34.0';
+import { makeIslands } from './island-models.js?v=0.34.0';
+import { facilityId } from './facilities.js?v=0.34.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.33.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.33.0';
-import { makeLake } from './lake-models.js?v=0.33.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.33.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.33.0';
-import { makeStatues } from './statues.js?v=0.33.0';
-import { animateGarden } from './garden-models.js?v=0.33.0';
-import { ViewModel } from './viewmodel.js?v=0.33.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.33.0';
-import { PostFX } from './postfx.js?v=0.33.0';
-import { makeHuman, animateHuman } from './human.js?v=0.33.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.33.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.33.0';
-import { buildError } from './rules.js?v=0.33.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.33.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.33.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.33.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.33.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.33.0';
-import { CombatFX } from './combat-fx.js?v=0.33.0';
-import { syncPlots } from './land-models.js?v=0.33.0';
-import { plotTargets } from './reclaim.js?v=0.33.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.33.0';
-import { dayPhase } from './clock.js?v=0.33.0';
-import { weatherAt, season } from './weather.js?v=0.33.0';
+import { phenotype, seeded } from './genetics.js?v=0.34.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.34.0';
+import { makeLake } from './lake-models.js?v=0.34.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.34.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.34.0';
+import { makeStatues } from './statues.js?v=0.34.0';
+import { animateGarden } from './garden-models.js?v=0.34.0';
+import { ViewModel } from './viewmodel.js?v=0.34.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.34.0';
+import { PostFX } from './postfx.js?v=0.34.0';
+import { makeHuman, animateHuman } from './human.js?v=0.34.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.34.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.34.0';
+import { buildError } from './rules.js?v=0.34.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.34.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.34.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.34.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.34.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.34.0';
+import { CombatFX } from './combat-fx.js?v=0.34.0';
+import { syncPlots } from './land-models.js?v=0.34.0';
+import { plotTargets } from './reclaim.js?v=0.34.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.34.0';
+import { dayPhase } from './clock.js?v=0.34.0';
+import { weatherAt, season } from './weather.js?v=0.34.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -814,13 +814,13 @@ export class OceanWorld {
     this.buoy = new T.Group();
     pole(this.buoy, 0x91bbaf, 0, 0.2, 0, 0.85, 0.35);
     pole(this.buoy, 0x526b69, 0, 1, 0, 0.12, 1.7);
-    ball(this.buoy, 0xa6eff2, 0, 2, 0, 0.25, 0.35, 0.25, { emissive: 0x7ad7e9, emissiveIntensity: 1.6 });
+    ball(this.buoy, 0xa6eff2, 0, 2, 0, 0.25, 0.35, 0.25, { emissive: 0x7ad7e9, emissiveIntensity: 0.9 });
     const beaconRing = piece(this.buoy, new T.TorusGeometry(1.2, 0.025, 6, 36), 0x8ebce7, [0, 0.1, 0], [1, 1, 1], {
       emissive: 0x769ade,
       emissiveIntensity: 1
     });
     beaconRing.rotation.x = Math.PI / 2;
-    halo(this.buoy, 0x9dccff, 0, 2, 0, 1.8);
+    this.buoyHalo = halo(this.buoy, 0x9dccff, 0, 2, 0, 1.3);
     this.buoy.position.set(17, 0, -13);
     this.scene.add(this.buoy);
     this.targetRing = new T.Mesh(
@@ -1177,9 +1177,9 @@ export class OceanWorld {
             const cell = new T.Mesh(
               new T.PlaneGeometry(3.35, 3.35),
               new T.MeshBasicMaterial({
-                color: 0x97e4b9,
+                color: 0xb9f3d2,
                 transparent: true,
-                opacity: 0.18,
+                opacity: 0.38,
                 side: T.DoubleSide,
                 depthWrite: false
               })
@@ -1191,7 +1191,7 @@ export class OceanWorld {
             if (this.gridGroup.children.length === 1) this.ghostCell = { x, z };
           }
         }
-      this.distance = Math.max(this.distance, 35);
+      this.distance = Math.max(this.distance, 28);
     }
     this.ghost.visible = !!type;
   }
@@ -1364,6 +1364,11 @@ export class OceanWorld {
     this.updateSpray(dt);
     this.buoy.position.y = waveHeight(17, -13, t, storm, home) * 0.9;
     this.buoy.rotation.z = Math.sin(t * 0.8) * 0.05;
+    // the lamp's glow is a beacon from afar, not a blinding ball up close (0.34)
+    if (this.buoyHalo) {
+      const db = Math.hypot(this.camera.position.x - 17, this.camera.position.z + 13);
+      this.buoyHalo.material.opacity = Math.max(0.08, Math.min(0.75, (db - 4) / 40));
+    }
     for (const l of s.loot) {
       const m = this.objMeshes.get(l.id);
       if (m) {

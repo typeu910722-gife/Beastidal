@@ -115,6 +115,43 @@ export default {
   '這張書桌是醒來時就在的東西，留著吧。': 'This desk was here when you woke up. Better keep it.',
   狀態: 'Status',
   御獸倉庫: 'Beast storage',
+  '背包的材料格滿了。按 H 返航，到書桌的儲物箱「材料全部存入」（口糧、淡水、誘餌不占格）。':
+    'The material slots are full. Press H to head home and use "Store all materials" in the desk\'s storage box (food, water and bait take no slots).',
+  '畫面有點吃力：已自動降低畫面效果，之後會視情況再調低。可在設定選擇畫質。':
+    'The picture is struggling: effects were lowered automatically and may step down further. Pick a quality in Settings.',
+  '信任 {0}% · 跟著你 · 拿出外出籠按 X 帶牠回船上':
+    'Trust {0}% · following you · take out the carry cage and press X to bring it aboard',
+  '（牠跟在我身邊，等我弄懂怎麼和牠締結契約。先去東北方的浮標看看。）':
+    '(It stays by my side, waiting for me to work out how to make a contract with it. The buoy to the north-east first.)',
+  '要回到木筏上才能建造：按 H 返航，靠近後按 Q 登上避難所。':
+    'Building happens on the raft: press H to head home, then Q beside it to board.',
+  '（那台隨身裝置還放在書桌上。走過去按 E 拿起來。）':
+    '(The handheld is still on the desk. Walk over and press E to pick it up.)',
+  '（那台隨身裝置還放在木筏的書桌上。先回木筏，走到書桌旁按 E 拿起來。）':
+    "(The handheld is still on the raft's desk. Go back to the raft, walk up to the desk and press E to pick it up.)",
+  帶在身上: 'Take along',
+  名稱: 'Name',
+  基因: 'Genes',
+  等級: 'Level',
+  只看可契闊: 'Ready to evolve only',
+  空位: 'Free',
+  排序: 'Sort',
+  'CHAPTER 03 · 讓家出航': 'CHAPTER 03 · Set the home sailing',
+  'CHAPTER 02 · 共生之路': 'CHAPTER 02 · The way of symbiosis',
+  給牠一個能回來的家: 'A home it can come back to',
+  建造海洋展示池: 'Build a display pen',
+  建造工作桌: 'Build a work table',
+  製作外出籠: 'Make a carry cage',
+  帶回第一隻生物: 'Bring the first creature home',
+  '東北方的研究浮標在反覆發送紀錄。': 'The research buoy to the north-east keeps sending a record.',
+  '誘餌在背包裡做；外出籠在工作桌「製作物品」做。':
+    'Bait is made in the bag; the carry cage under Craft items at the work table.',
+  點亮海上的家: 'Light the home at sea',
+  去拿裝置: 'Get the device',
+  '牠已經信任你（{0}%），跟著你走了。': 'It trusts you ({0}%) and follows you now. ',
+  存進儲物箱: 'Into the storage box',
+  '背包只裝得下 40 件材料（口糧、淡水、誘餌不占格）。走到書桌旁按 E，點「儲物箱」→「材料全部存入」。在家建造會直接用書桌上的材料。':
+    'The bag holds 40 materials (food, water and bait take no slots). Walk up to the desk, press E, tap "Storage box" → "Store all materials". Building at home draws on the desk\'s materials.',
   生物倉庫: 'Creature storage',
   '還沒有生物。先調查東北方的研究浮標。': 'No creatures yet. Investigate the research buoy to the north-east first.',
   '還沒有生物。餵誘餌建立信任，用外出籠帶回船上，牠們就會住進這裡。':

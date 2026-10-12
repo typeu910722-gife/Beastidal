@@ -6,16 +6,16 @@
 //     bound by trust; hostile ones must be worn down in a fight — the weaker, the better the odds — and stay
 //     modest even bound. A failed contract can send anything into a frenzy: 1.2× speed and bite, hunting you for
 //     10–20 seconds, and nothing frenzied can be repelled.
-import { phenotype, geneName } from './genetics.js?v=0.33.0';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.33.0';
-import { spend, give } from './bag.js?v=0.33.0';
-import { remember } from './memories.js?v=0.33.0';
-import { nearFacility } from './fortress.js?v=0.33.0';
-import { hasPerk } from './codex.js?v=0.33.0';
-import { tally } from './stats.js?v=0.33.0';
-import { bsOf, canEvolve, EVOLVE_GENES } from './bsgenes.js?v=0.33.0';
-import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.33.0';
-import { trustBonus } from './skills.js?v=0.33.0';
+import { phenotype, geneName } from './genetics.js?v=0.34.0';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.34.0';
+import { spend, give } from './bag.js?v=0.34.0';
+import { remember } from './memories.js?v=0.34.0';
+import { nearFacility } from './fortress.js?v=0.34.0';
+import { hasPerk } from './codex.js?v=0.34.0';
+import { tally } from './stats.js?v=0.34.0';
+import { bsOf, canEvolve, EVOLVE_GENES } from './bsgenes.js?v=0.34.0';
+import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.34.0';
+import { trustBonus } from './skills.js?v=0.34.0';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 10, max: 20, below: 60 };
@@ -90,7 +90,8 @@ export function feed(s, id, rng = Math.random) {
     return {
       ok: false,
       error:
-        '牠已經完全信任你了。' + (isWildBeast(w) ? '帶著契約書，在牠旁邊按 X 締結。' : '拿出外出籠，按 X 帶牠回船上。')
+        `牠已經信任你（${Math.round(w.trust)}%），跟著你走了。` +
+        (isWildBeast(w) ? '帶著契約書，在牠旁邊按 X 締結。' : '拿出外出籠，按 X 帶牠回船上。')
     };
   normalizeTaming(s);
   // wild beasts: the friendly ones take rations, the hostile ones take nothing but a fight

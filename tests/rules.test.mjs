@@ -429,6 +429,12 @@ test('The bag has a limit; the desk stores the rest and the bag can be enlarged 
   assert.equal(bagCap(s), 40);
   s.resources.wood = 40 - (bagUsed(s) - s.resources.wood);
   assert.equal(bagRoom(s), 0);
+  // supplies ride in their own pockets: a full bag still takes food, water and bait
+  const food = s.resources.food;
+  give(s, { food: 3, water: 2, bait: 6 });
+  assert.equal(s.resources.food, food + 3);
+  assert.equal(s.storage.food, 0, 'supplies never go home for lack of room');
+  assert.equal(bagRoom(s), 0, 'and they do not change the material count');
   s.loot = [{ id: 'l', kind: 0, x: s.player.x, z: s.player.z }];
   const r = salvage(s, 'l');
   assert.equal(r.ok, false);
