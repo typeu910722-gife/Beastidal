@@ -14,6 +14,7 @@ import { makeHuman, animateHuman } from '../dist/human.js';
 import { facilityId } from '../dist/facilities.js';
 import { DAY, dayOf, hourOf, isNight, nextMorning } from '../dist/clock.js';
 import { spawnRescue, freeRescue, shareFood, tickRescue, RESCUE_ID } from '../dist/rescue.js';
+import { grantFirstBeast } from '../dist/taming.js';
 import { monologue } from '../dist/guide.js';
 import { normalizeStats, tickStats, milestoneRows, statsReport } from '../dist/stats.js';
 import {
@@ -287,5 +288,34 @@ test('The first companion: free the tangled beast, share food, it swims along, t
   spawnRescue(old);
   assert.equal(old.rescue, 'skipped');
   assert.ok(!old.wild.some(w => w.id === RESCUE_ID));
+});
+test('Old saves without the first beast get it once: the waiting net beast, a caged one, or a new one', () => {
+  // an old save that skipped the net
+  const a = createState(21);
+  a.rescue = 'skipped';
+  const g = grantFirstBeast(a);
+  assert.ok(g && g.kind === 'beast' && g.first && (g.genome.bs || []).length >= 3);
+  assert.equal(grantFirstBeast(a), null, 'only once');
+  assert.equal(a.tamed.filter(p => p.first).length, 1);
+  // a 0.35 save where the net beast still waits by the raft
+  const b = createState(22);
+  spawnRescue(b);
+  const w = b.wild.find(x => x.id === RESCUE_ID);
+  w.rescue = 'friend';
+  b.rescue = 'friend';
+  assert.equal(grantFirstBeast(b).id, RESCUE_ID);
+  assert.ok(!b.wild.some(x => x.id === RESCUE_ID));
+  // it was brought home in a cage as a plain creature: it becomes the beast
+  const c = createState(23);
+  c.rescue = 'friend';
+  c.tamed.push({ id: RESCUE_ID, kind: 'creature', name: 'x', genome: w.genome, bond: 40, stamina: 100, health: 100 });
+  const h = grantFirstBeast(c);
+  assert.equal(h.kind, 'beast');
+  assert.equal(c.tamed.length, 1);
+  // a new game still on its way to the net is left alone
+  const d = createState(24);
+  spawnRescue(d);
+  assert.equal(grantFirstBeast(d), null);
+  assert.ok(!d.firstBeastGiven);
 });
 console.log(`${passed} progress tests passed.`);

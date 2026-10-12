@@ -3161,5 +3161,9 @@ export default {
   '（背包滿了，{0} 個放進儲物箱）': ' (bag full: {0} went into storage)',
   '從漂流漁網裡被救出來，吃了你分的口糧，成了你的第一隻御獸。':
     'Freed from a drifting net, it ate the rations you shared and became your first beast.',
-  御獸契約紙: 'Beast contract cards'
+  御獸契約紙: 'Beast contract cards',
+  '{0} 來到你身邊了——左上角是牠的契約紙，點一下（或按 Shift+數字）召喚牠。':
+    '{0} has come to you — its contract card is top left; click it (or press Shift+number) to call it out.',
+  '{0} 成了我的御獸。': '{0} became my beast.',
+  '當年從漁網裡救起的小傢伙，終於成了御獸。': 'The little one I once freed from the net has finally become a beast.'
 };

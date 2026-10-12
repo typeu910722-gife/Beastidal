@@ -6,16 +6,16 @@
 //     bound by trust; hostile ones must be worn down in a fight — the weaker, the better the odds — and stay
 //     modest even bound. A failed contract can send anything into a frenzy: 1.2× speed and bite, hunting you for
 //     10–20 seconds, and nothing frenzied can be repelled.
-import { phenotype, geneName } from './genetics.js?v=0.36.0';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.36.0';
-import { spend, give } from './bag.js?v=0.36.0';
-import { remember } from './memories.js?v=0.36.0';
-import { nearFacility } from './fortress.js?v=0.36.0';
-import { hasPerk } from './codex.js?v=0.36.0';
-import { tally } from './stats.js?v=0.36.0';
-import { bsOf, canEvolve, EVOLVE_GENES, addRandomGene } from './bsgenes.js?v=0.36.0';
-import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.36.0';
-import { trustBonus } from './skills.js?v=0.36.0';
+import { phenotype, geneName, makeGenome } from './genetics.js?v=0.36.1';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.36.1';
+import { spend, give } from './bag.js?v=0.36.1';
+import { remember } from './memories.js?v=0.36.1';
+import { nearFacility } from './fortress.js?v=0.36.1';
+import { hasPerk } from './codex.js?v=0.36.1';
+import { tally } from './stats.js?v=0.36.1';
+import { bsOf, canEvolve, EVOLVE_GENES, addRandomGene } from './bsgenes.js?v=0.36.1';
+import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.36.1';
+import { trustBonus } from './skills.js?v=0.36.1';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 10, max: 20, below: 60 };
@@ -159,20 +159,64 @@ function makePet(s, w, kind, extra = {}) {
 }
 // 0.36: the little beast you freed from the net and fed becomes your first 御獸 there and then — a partner to fight
 // beside you from the first day, long before cages, breeding and contracts.
-export function bondFirstBeast(s, w, rng = Math.random) {
+export function bondFirstBeast(s, w, rng = Math.random, callOut = true) {
   normalizeHousing(s);
   normalizeTaming(s);
   w.genome.bs ??= [];
   for (let i = 0; i < 8 && bsOf(w.genome).length < EVOLVE_GENES; i++) addRandomGene(w.genome, rng, 'sea');
-  const pet = makePet(s, w, 'beast', { evolved: true, first: true, bond: 30, team: true, level: 1, xp: 0 });
+  const pet = makePet(s, w, 'beast', {
+    evolved: true,
+    first: true,
+    bond: 30,
+    team: teamOf(s).length < TEAM_SIZE,
+    level: 1,
+    xp: 0
+  });
   remember(s, pet, '從漂流漁網裡被救出來，吃了你分的口糧，成了你的第一隻御獸。');
   s.tamed.push(pet);
   s.wild = s.wild.filter(c => c !== w);
   s.expedition ??= {};
-  s.expedition.activeId = pet.id;
-  s.expedition.order = 'follow';
+  if (callOut && pet.team && !s.expedition.mounted) {
+    s.expedition.activeId = pet.id;
+    s.expedition.order = 'follow';
+  }
   tally(s, 'contract');
   return pet;
+}
+// 0.36.1: saves from before the first beast came out of the net get it now — the net's beast if it is still around
+// (waiting by the raft, or brought home as a plain creature), else a young one of the same line. Only once.
+export function grantFirstBeast(s, rng = Math.random) {
+  if (s.firstBeastGiven) return null;
+  if (s.tamed.some(p => p.first)) {
+    s.firstBeastGiven = true;
+    return null;
+  }
+  // a new game still on its way to the net: the rescue gives it
+  if (s.rescue === 'tangled' || s.rescue === 'freed') return null;
+  s.firstBeastGiven = true;
+  const home = s.tamed.find(p => p.id === 'wild-rescue');
+  if (home) {
+    home.first = true;
+    if (home.kind === 'creature') {
+      home.genome.bs ??= [];
+      for (let i = 0; i < 8 && bsOf(home.genome).length < EVOLVE_GENES; i++) addRandomGene(home.genome, rng, 'sea');
+      home.kind = 'beast';
+      home.evolved = true;
+      home.level ??= 1;
+      home.xp ??= 0;
+      home.team = teamOf(s).length < TEAM_SIZE;
+      remember(s, home, '當年從漁網裡救起的小傢伙，終於成了御獸。');
+    }
+    return home;
+  }
+  const waiting = s.wild.find(w => w.id === 'wild-rescue');
+  const w = waiting || {
+    id: 'first-beast',
+    x: s.player.x,
+    z: s.player.z,
+    genome: makeGenome(((s.seed || 1) * 7 + 3) >>> 0, 0, 'sea')
+  };
+  return bondFirstBeast(s, w, rng, !s.expedition?.activeId);
 }
 // 外出籠: carry a trusting wild creature (not a wild beast) home. No roll — trust is the whole requirement.
 export function cageCreature(s, id) {
