@@ -1,9 +1,9 @@
 // Live previews of beasts for the device's beast storage: one small offscreen renderer draws every visible beast,
 // slowly turning and swimming, into its own 2D canvas each frame.
 import * as T from './vendor/three.module.min.js';
-import { makeCreature, animateCreature } from './creatures.js?v=0.38.0';
-import { applyGeneMarks } from './bs-models.js?v=0.38.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.38.0';
+import { makeCreature, animateCreature } from './creatures.js?v=0.39.0';
+import { applyGeneMarks } from './bs-models.js?v=0.39.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.39.0';
 
 export class BeastStage {
   constructor() {
@@ -54,6 +54,53 @@ export class BeastStage {
   }
   clear() {
     this.cells = [];
+  }
+  // 0.39: a still portrait of a beast's own model (contract cards). Rendered once per beast and look, then cached.
+  thumb(key, genome, kind, w = 120, h = 160) {
+    this.thumbs ??= new Map();
+    if (this.thumbs.has(key)) return this.thumbs.get(key);
+    if (!this.ensure()) return null;
+    const m = this.model(key, genome, kind);
+    for (const o of this.models.values()) o.mesh.visible = o === m;
+    // turned three-quarters toward you; framed tight on the front half (a portrait, not a full side view)
+    m.mesh.rotation.y = -0.55;
+    if (m.mesh.userData.aura) m.mesh.userData.aura.visible = false;
+    if (m.mesh.userData.saber) animateSabertooth(m.mesh, 1.3);
+    else animateCreature(m.mesh, 1.3);
+    m.mesh.updateMatrixWorld(true);
+    // (only what is drawn: halos, perches and other hidden extras would make the beast tiny in the frame)
+    const box = new T.Box3();
+    m.mesh.traverse(o => {
+      if (!o.isMesh && !o.isSkinnedMesh) return;
+      for (let a = o; a; a = a.parent) if (!a.visible) return;
+      if (o.material?.transparent && o.material.opacity < 0.6) return;
+      box.expandByObject(o);
+    });
+    if (box.isEmpty()) box.setFromObject(m.mesh);
+    const size = box.getSize(new T.Vector3()),
+      aim = box.getCenter(new T.Vector3()),
+      reach = Math.max(size.x, size.z) * 0.18;
+    // a little toward the head (it faces +z before the turn)
+    aim.x += Math.sin(m.mesh.rotation.y) * reach;
+    aim.z += Math.cos(m.mesh.rotation.y) * reach;
+    aim.y += size.y * 0.08;
+    const aspect = w / h,
+      fit = Math.max(size.y * 0.6, (Math.max(size.x, size.z) * 0.5) / aspect);
+    this.camera.aspect = aspect;
+    this.camera.updateProjectionMatrix();
+    const d = fit / Math.tan((this.camera.fov * Math.PI) / 360);
+    this.camera.position.set(aim.x + d * 0.42, aim.y + d * 0.16, aim.z + d * 0.9);
+    this.camera.lookAt(aim);
+    this.renderer.setSize(w, h, false);
+    this.w = w;
+    this.h = h;
+    this.renderer.setClearColor(0x000000, 0);
+    this.renderer.render(this.scene, this.camera);
+    const url = this.renderer.domElement.toDataURL('image/png');
+    m.mesh.rotation.y = 0;
+    if (m.mesh.userData.aura) m.mesh.userData.aura.visible = true;
+    this.thumbs.set(key, url);
+    return url;
   }
   update(dt) {
     if (!this.cells.length || !this.renderer) return;

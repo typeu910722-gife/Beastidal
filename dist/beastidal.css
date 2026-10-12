@@ -3506,3 +3506,34 @@ body.landscape-play.beast-on .supply-row {
   height: 62%;
   margin-top: 2px;
 }
+
+/* 0.39: contract cards show the beast's own model */
+.ccard .cc-pic {
+  position: absolute;
+  inset: 4px 2px 13px;
+  width: calc(100% - 4px);
+  height: calc(100% - 17px);
+  object-fit: cover;
+  object-position: center 40%;
+  border-radius: 3px;
+  background: radial-gradient(circle at 50% 45%, #fff6dc, #d9bf86 80%);
+  pointer-events: none;
+}
+.ccard.myth .cc-pic {
+  background: radial-gradient(circle at 50% 45%, #fff2c4, #c9923a 85%);
+}
+.ccard kbd {
+  z-index: 1;
+  text-shadow: 0 0 3px #fff;
+}
+.ccard b {
+  position: absolute;
+  bottom: 13px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 1;
+  text-shadow:
+    0 0 3px #f5ecd2,
+    0 0 3px #f5ecd2;
+}
