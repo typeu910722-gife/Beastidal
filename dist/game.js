@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.36.3';
-import { renderAdventure } from './expansion-ui.js?v=0.36.3';
+} from './expansion.js?v=0.36.4';
+import { renderAdventure } from './expansion-ui.js?v=0.36.4';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.36.3';
-import { monologue, markGuide } from './guide.js?v=0.36.3';
-import { climb, demolish, relocate } from './construction.js?v=0.36.3';
+} from './ship.js?v=0.36.4';
+import { monologue, markGuide } from './guide.js?v=0.36.4';
+import { climb, demolish, relocate } from './construction.js?v=0.36.4';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.36.3';
+} from './housing.js?v=0.36.4';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.36.3';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.36.3';
-import { lakeMinimap } from './lake-map.js?v=0.36.3';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.36.3';
+} from './islands.js?v=0.36.4';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.36.4';
+import { lakeMinimap } from './lake-map.js?v=0.36.4';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.36.4';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.36.3';
+} from './cabin.js?v=0.36.4';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.36.3';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.36.3';
-import { OceanWorld, IntroFilm } from './world.js?v=0.36.3';
-import { QUALITY } from './realism.js?v=0.36.3';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.36.3';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.36.3';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.36.3';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.36.3';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.36.3';
-import { CONFIG } from './config.js?v=0.36.3';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.36.3';
+} from './story.js?v=0.36.4';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.36.4';
+import { OceanWorld, IntroFilm } from './world.js?v=0.36.4';
+import { QUALITY } from './realism.js?v=0.36.4';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.36.4';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.36.4';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.36.4';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.36.4';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.36.4';
+import { CONFIG } from './config.js?v=0.36.4';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.36.4';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,13 +122,13 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.36.3';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.36.3';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.36.3';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.36.3';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.36.3';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.36.3';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.36.3';
+} from './codex.js?v=0.36.4';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.36.4';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.36.4';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.36.4';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.36.4';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.36.4';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.36.4';
 import {
   startFishing,
   tickFishing,
@@ -137,7 +137,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.36.3';
+} from './fishing.js?v=0.36.4';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -147,10 +147,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.36.3';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.36.3';
-import { setClimbing } from './lake.js?v=0.36.3';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.36.3';
+} from './reclaim.js?v=0.36.4';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.36.4';
+import { setClimbing } from './lake.js?v=0.36.4';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.36.4';
 import {
   RARITY,
   FRENZY,
@@ -176,7 +176,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.36.3';
+} from './taming.js?v=0.36.4';
 import {
   resetCombat,
   normalizeCombat,
@@ -193,14 +193,14 @@ import {
   levelCap,
   xpFor,
   AI_RANGE
-} from './combat.js?v=0.36.3';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.36.3';
-import { BeastStage } from './beast-stage.js?v=0.36.3';
-import { loadArt, art, artImg } from './art.js?v=0.36.3';
-import { loadSculpts } from './sculpt-assets.js?v=0.36.3';
-import { separateBodies } from './bodies.js?v=0.36.3';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.36.3';
-import { lookOf } from './beast-look.js?v=0.36.3';
+} from './combat.js?v=0.36.4';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.36.4';
+import { BeastStage } from './beast-stage.js?v=0.36.4';
+import { loadArt, art, artImg } from './art.js?v=0.36.4';
+import { loadSculpts } from './sculpt-assets.js?v=0.36.4';
+import { separateBodies } from './bodies.js?v=0.36.4';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.36.4';
+import { lookOf } from './beast-look.js?v=0.36.4';
 import {
   TREE,
   BRANCHES,
@@ -212,8 +212,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.36.3';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.36.3';
+} from './beast-tree.js?v=0.36.4';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.36.4';
 import {
   funds,
   normalizeBag,
@@ -233,12 +233,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.36.3';
-import { iconFor } from './icons.js?v=0.36.3';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.36.3';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.36.3';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.36.3';
-import { codexRewards, claimCodex } from './codex.js?v=0.36.3';
+} from './bag.js?v=0.36.4';
+import { iconFor } from './icons.js?v=0.36.4';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.36.4';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.36.4';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.36.4';
+import { codexRewards, claimCodex } from './codex.js?v=0.36.4';
 import {
   homePos,
   facilityPos,
@@ -250,10 +250,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.36.3';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.36.3';
-export const GAME_VERSION = '0.36.3';
-import { CloudSave } from './cloud-save.js?v=0.36.3';
+} from './fortress.js?v=0.36.4';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.36.4';
+export const GAME_VERSION = '0.36.4';
+import { CloudSave } from './cloud-save.js?v=0.36.4';
 import {
   readLocal,
   writeLocal,
@@ -270,9 +270,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.36.3';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.36.3';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.36.3';
+} from './save-store.js?v=0.36.4';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.36.4';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.36.4';
 import {
   RESOURCE_NAMES,
   RESOURCE_ICONS,
@@ -293,8 +293,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.36.3';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.36.3';
+} from './rules.js?v=0.36.4';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.36.4';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -2900,7 +2900,10 @@ function renderBeastStorage(body) {
             .map(m => `<li><small>第 ${m.day} 日</small> ${esc(m.text)}</li>`)
             .join('')}</ul>`
         : ''
-    }</div></div>${jobRow(p)}<div class="bx-actions"><button type="button" class="primary" data-bx="train">默契訓練 · 口糧 2 / 異晶 1</button><button type="button" data-bx="go">${active ? '讓牠回去休息' : '帶牠出發'}</button>${
+    }</div></div>${jobRow(p)}<div class="bx-actions"><button type="button" class="primary" data-bx="train">默契訓練 · 口糧 2 / 異晶 1</button>${
+      // 0.36.4: a 御獸 is called out with its contract card (top left); only creatures are sent along from here
+      p.kind === 'creature' ? `<button type="button" data-bx="go">${active ? '讓牠回去休息' : '帶牠出發'}</button>` : ''
+    }${
       p.kind === 'creature'
         ? `<button type="button" data-bx="evolve" ${canEvolve(p.genome) && state.contracts > 0 ? '' : 'disabled'}>契闊進化 · 契約書 1（基因 ${bsOf(p.genome).length}/${EVOLVE_GENES}）</button>`
         : ''
@@ -2926,12 +2929,11 @@ function renderBeastStorage(body) {
     body
       .querySelectorAll('[data-job]')
       .forEach(b => (b.onclick = () => done(setJob(state, p.id, b.dataset.job || null))));
-    body.querySelector('[data-bx=go]').onclick = () =>
-      done(summonResult(commandPet(state, p.id, active ? 'home' : 'follow'), !active));
     const on = (k, fn) => {
       const b = body.querySelector(`[data-bx=${k}]`);
       if (b) b.onclick = fn;
     };
+    on('go', () => done(commandPet(state, p.id, active ? 'home' : 'follow')));
     on('team', () => done(toggleTeam(state, p.id)));
     on('tree', () => {
       treeOpen = true;
@@ -3999,8 +4001,10 @@ function focusCard(b, item, near) {
         ''
       )}</div><small class="focus-meta">${ABILITIES[ph.ability]} · 游速 ${ph.speed} · 防禦 ${ph.armor} · 親和 ${ph.affinity}</small><form class="focus-rename" hidden><input type="text" maxlength="16" value="${esc(p.name)}" aria-label="新名字" autocomplete="off"><button type="submit">儲存</button></form>`;
     act('默契訓練 · 口糧 2 / 異晶 1', () => focusDone(trainPet(state, p.id)), { primary: true });
-    if (active) act('讓牠回池休息', () => focusDone(commandPet(state, p.id, 'home')));
-    else act('帶牠出發（跟隨）', () => focusDone(summonResult(commandPet(state, p.id, 'follow'), true)));
+    if (p.kind === 'creature') {
+      if (active) act('讓牠回池休息', () => focusDone(commandPet(state, p.id, 'home')));
+      else act('帶牠出發（跟隨）', () => focusDone(commandPet(state, p.id, 'follow')));
+    }
     act('改名', () => {
       const form = $('focus-ui').querySelector('.focus-rename');
       form.hidden = false;
