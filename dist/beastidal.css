@@ -754,6 +754,14 @@
       0 0 22px #ecc78e66;
   }
 }
+.rift-button {
+  color: #e8d6ff;
+  border-color: #9a5cffaa;
+  box-shadow: 0 0 12px #9a5cff44;
+}
+.rift-button:disabled {
+  box-shadow: none;
+}
 /* 0.34: while a panel is open the centre-screen voices step aside, and a facility's floating card and spots too */
 body.panel-open #discovery,
 body.panel-open #monologue,

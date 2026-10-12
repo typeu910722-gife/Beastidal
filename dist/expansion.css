@@ -137,10 +137,10 @@
   padding: 6px 10px;
 }
 /* the mission block steps down while the partner bar is shown */
-body.beast-on .left-hud {
+body.beast-on #hud .left-hud {
   top: 196px;
 }
-body.beast-on.landscape-play .left-hud {
+body.beast-on.landscape-play #hud .left-hud {
   top: 140px;
 }
 .landscape-play #beast-status {

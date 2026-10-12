@@ -4,11 +4,11 @@
 // for a lone visitor; come carrying three 御獸 contracts and their scent tears it awake in a frenzy. Beat it down
 // and it comes back to itself and speaks → 合 a pact of ten contract scrolls → it carries you over the mountains (the
 // hook for chapter two). Nothing here is required to keep playing; every step is reached only by exploring.
-import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.34.0';
-import { spend } from './bag.js?v=0.34.0';
-import { dayOf } from './clock.js?v=0.34.0';
-import { makeGenome } from './genetics.js?v=0.34.0';
-import { CAVE } from './cave-maze.js?v=0.34.0';
+import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.35.0';
+import { spend } from './bag.js?v=0.35.0';
+import { dayOf } from './clock.js?v=0.35.0';
+import { makeGenome } from './genetics.js?v=0.35.0';
+import { CAVE } from './cave-maze.js?v=0.35.0';
 
 export const PACT_ID = 'ancient-xiaoyue';
 export const PACT_NAME = '嘯岳';
@@ -223,6 +223,44 @@ export function sealPact(s) {
   st.beast = null;
   log(s, '嘯岳之契', '這一次，不是綁住牠。是牠選擇了我。牠是第一頭會說話的御獸。');
   return { ok: true, script: 'joined', message: '嘯岳成為你的御獸！' };
+}
+// 0.35 裂縫傳送: with the pact sealed and 嘯岳 out with you, it tears a rift to a marked spot on the chart and
+// carries you through — the skiff too when you are in it. The rift needs time to heal between uses, and it
+// costs the beast stamina. env: { water(x, z), land(x, z) } judge the destination.
+export const RIFT_TELEPORT = { cd: 75, stamina: 25 };
+export const riftReadyIn = s => Math.max(0, (normalizeStory(s).story.riftReadyAt || 0) - s.elapsed);
+export function riftTeleport(s, x, z, active, env = {}) {
+  const st = normalizeStory(s).story;
+  if (st.stage < 5) return fail('還沒有能撕開裂縫的夥伴。');
+  if (active?.id !== PACT_ID) return fail('先派出嘯岳，牠才能為你撕開裂縫。');
+  if (s.inCave) return fail('洞窟裡的裂縫不聽使喚。先回到地面。');
+  const mounted = !!s.expedition?.mounted,
+    mode = s.player.mode;
+  if (!mounted && mode !== 'boat' && mode !== 'foot') return fail('在小艇上、岸上或騎乘時才能傳送。');
+  if (!Number.isFinite(x) || !Number.isFinite(z)) return fail('先在地圖上放一個標記。');
+  const left = riftReadyIn(s);
+  if (left > 0) return fail(`裂縫還在癒合，${Math.ceil(left)} 秒後才能再撕開。`);
+  const pet = pactPet(s);
+  if (!pet) return fail('嘯岳不在你身邊。');
+  if ((pet.stamina ?? 100) < RIFT_TELEPORT.stamina) return fail('嘯岳的精力不夠撕開裂縫。讓牠休息一下。');
+  const water = env.water ? env.water(x, z) : true,
+    land = env.land ? env.land(x, z) : true;
+  if (!mounted && mode === 'boat' && !water) return fail('小艇只能傳送到水面上。在地圖上標記一片水域。');
+  if (!mounted && mode === 'foot' && !land) return fail('步行時只能傳送到站得住的岸上。');
+  if (mounted && !water && !land) return fail('那裡沒有能落腳的地方。');
+  pet.stamina = (pet.stamina ?? 100) - RIFT_TELEPORT.stamina;
+  const from = { x: s.player.x, z: s.player.z };
+  s.player.x = x;
+  s.player.z = z;
+  if (!mounted && mode === 'boat' && s.boat) {
+    s.boat.x = x;
+    s.boat.z = z;
+  }
+  st.riftReadyAt = s.elapsed + RIFT_TELEPORT.cd;
+  st.rifts = (st.rifts || 0) + 1;
+  if (st.rifts === 1)
+    log(s, '裂縫傳送', '嘯岳在空中撕開一道紫色的口子。我走進去，從湖的另一邊走出來。原來裂縫也可以是路。');
+  return { ok: true, from, message: '嘯岳撕開裂縫，你從另一端走了出來。' };
 }
 // The crossing: on the basin shore with Xiaoyue deployed.
 export function canCross(s, active, onShore) {

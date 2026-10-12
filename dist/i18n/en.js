@@ -115,6 +115,27 @@ export default {
   '這張書桌是醒來時就在的東西，留著吧。': 'This desk was here when you woke up. Better keep it.',
   狀態: 'Status',
   御獸倉庫: 'Beast storage',
+  '裂縫在你身邊撕開——嘯岳要衝出來了！': 'A rift tears open beside you — Xiaoyue is about to burst out!',
+  '嘯岳撕開一道裂縫，鑽了進去——牠不見了！': 'Xiaoyue tears a rift open and dives in — it is gone!',
+  '✦ 裂縫傳送 · {0} 秒': '✦ Rift warp · {0} s',
+  '✦ 裂縫傳送': '✦ Rift warp',
+  '嘯岳撕開裂縫，帶你瞬移到標記（精力 {0}，冷卻 {1} 秒）':
+    'Xiaoyue tears a rift and warps you to the marker (stamina {0}, cooldown {1} s)',
+  '先在地圖上放一個標記。': 'Put a marker on the chart first.',
+  '還沒有能撕開裂縫的夥伴。': 'No companion of yours can tear a rift yet.',
+  '先派出嘯岳，牠才能為你撕開裂縫。': 'Send Xiaoyue out first; only then can it tear a rift for you.',
+  '洞窟裡的裂縫不聽使喚。先回到地面。': 'Rifts do not answer inside the cave. Return to the surface first.',
+  '在小艇上、岸上或騎乘時才能傳送。': 'Warping works in the skiff, ashore or while riding.',
+  '裂縫還在癒合，{0} 秒後才能再撕開。': 'The rift is still healing; it can be torn again in {0} s.',
+  '嘯岳不在你身邊。': 'Xiaoyue is not with you.',
+  '嘯岳的精力不夠撕開裂縫。讓牠休息一下。': 'Xiaoyue lacks the stamina to tear a rift. Let it rest a while.',
+  '小艇只能傳送到水面上。在地圖上標記一片水域。': 'The skiff can only warp onto water. Mark open water on the chart.',
+  '步行時只能傳送到站得住的岸上。': 'On foot you can only warp onto ground you can stand on.',
+  '那裡沒有能落腳的地方。': 'There is nowhere to land there.',
+  裂縫傳送: 'Rift warp',
+  '嘯岳在空中撕開一道紫色的口子。我走進去，從湖的另一邊走出來。原來裂縫也可以是路。':
+    'Xiaoyue tore a violet gash in the air. I stepped in and came out on the far side of the lake. So a rift can be a road too.',
+  '嘯岳撕開裂縫，你從另一端走了出來。': 'Xiaoyue tore a rift open and you stepped out of its other end.',
   '背包的材料格滿了。按 H 返航，到書桌的儲物箱「材料全部存入」（口糧、淡水、誘餌不占格）。':
     'The material slots are full. Press H to head home and use "Store all materials" in the desk\'s storage box (food, water and bait take no slots).',
   '畫面有點吃力：已自動降低畫面效果，之後會視情況再調低。可在設定選擇畫質。':

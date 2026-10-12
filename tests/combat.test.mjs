@@ -31,6 +31,7 @@ import {
 } from '../dist/combat.js';
 import { discard } from '../dist/bag.js';
 import { SPECIAL } from '../dist/combat.js';
+import { normalizeStory } from '../dist/story.js';
 import { tankSlots, tankRoom, TANK_CAP } from '../dist/cabin.js';
 
 let n = 0;
@@ -291,5 +292,62 @@ test('深海守望者 telegraphs slams, waves and rams; a dodge evades it, and i
     r.events.some(e => e.type === 'bossdown'),
     'the last blow brings it down'
   );
+});
+test('嘯岳 dives into a rift on a cooldown, cannot be hit inside, and bursts out of a new rift beside you', () => {
+  const s = world();
+  out(s, pet('beast', ['fire']));
+  normalizeStory(s);
+  Object.assign(s.story, { stage: 2, sleeping: false, duel: { frenzy: true } });
+  s.story.beast = { x: 0, z: 6, hp: 500, maxHp: 500, cave: true };
+  s.inCave = true;
+  s.player.mode = 'foot';
+  const xb = s.story.beast,
+    env = { rng: fixed(0), canReach: () => true, canMove: () => true };
+  let ev = [],
+    opened = null;
+  for (let i = 0; i < 200 && !opened; i++) {
+    s.elapsed += 0.05;
+    ev = tickCombat(s, 0.05, env);
+    opened = ev.find(e => e.type === 'rift' && e.phase === 'open');
+  }
+  assert.ok(opened && opened.line, 'it opens a rift where it stands, with a warning');
+  assert.ok(s.elapsed - 100 >= SPECIAL.frenzy.rift.first - 0.1, 'not before the first-use delay');
+  assert.ok(xb.riftUntil > s.elapsed, 'it is inside the rift');
+  const hp = xb.hp;
+  const r = basicAttack(s, true, env);
+  assert.ok(
+    r.events.some(e => e.type === 'dodged' && e.rift),
+    'a blow at the rift finds nothing'
+  );
+  assert.equal(xb.hp, hp);
+  let exit = null;
+  for (let i = 0; i < 60 && !exit; i++) {
+    s.elapsed += 0.05;
+    ev = tickCombat(s, 0.05, env);
+    exit = ev.find(e => e.type === 'rift' && e.phase === 'exit');
+  }
+  assert.ok(exit, 'it surfaces through a second rift');
+  // it surfaces beside whichever of you it was after: you, or your beast standing in for you
+  const ds = [Math.hypot(xb.x, xb.z), Math.hypot(xb.x - s.combat.ax, xb.z - s.combat.az)],
+    [lo, hi] = SPECIAL.frenzy.rift.exit;
+  assert.ok(
+    ds.some(d => d >= lo - 0.5 && d <= hi + 0.5),
+    `the new rift is ${lo}–${hi} m from its target (${ds.map(d => d.toFixed(1)).join(' / ')})`
+  );
+  assert.ok(
+    ev.some(e => e.type === 'telegraph' && e.id === 'duel' && e.move === 'sweep' && e.big),
+    'the burst is telegraphed'
+  );
+  assert.ok(xb.riftUntil > s.elapsed, 'still unreachable until it bursts out');
+  let struck = null;
+  for (let i = 0; i < 40 && !struck; i++) {
+    s.elapsed += 0.05;
+    ev = tickCombat(s, 0.05, env);
+    struck = ev.find(e => e.type === 'strike' && e.id === 'duel');
+  }
+  assert.ok(struck && ev.some(e => e.type === 'rift' && e.phase === 'burst'), 'it bursts out and strikes');
+  assert.equal(xb.riftUntil, 0);
+  assert.ok(xb.ai.riftAt - opened.at > 0 || xb.ai.riftAt > s.elapsed, 'the rift waits on its cooldown');
+  assert.ok(xb.ai.riftAt >= s.elapsed + SPECIAL.frenzy.rift.cd - SPECIAL.frenzy.rift.dive - 2);
 });
 console.log(`\n${n} combat tests passed`);

@@ -19,7 +19,10 @@ import {
   SLEEP_AT,
   PACT_CONTRACTS,
   WAKE_TEAM,
-  FRENZY_HP
+  FRENZY_HP,
+  riftTeleport,
+  riftReadyIn,
+  RIFT_TELEPORT
 } from '../dist/story.js';
 import { tickCombat, basicAttack, resetCombat, combatActive } from '../dist/combat.js';
 import { canWalk } from '../dist/navigation.js';
@@ -235,4 +238,32 @@ test('The crossing needs Xiaoyue deployed on the basin shore, and it closes chap
   const loaded = normalizeStory(JSON.parse(JSON.stringify(s)));
   assert.equal(loaded.story.stage, 6);
 });
+test('裂縫傳送: with the pact sealed and 嘯岳 out, a rift carries you (and the skiff) to the marked spot, then heals', () => {
+  const s = createState(31);
+  normalizeStory(s);
+  s.player.mode = 'boat';
+  s.boat = { x: 0, z: 0, heading: 0 };
+  const env = { water: (x, z) => z >= 0, land: (x, z) => z < 0 };
+  assert.equal(riftTeleport(s, 50, 20, null, env).ok, false, 'no pact, no rift');
+  s.story.stage = 3;
+  s.contracts = PACT_CONTRACTS;
+  assert.ok(sealPact(s).ok);
+  const pet = pactPet(s);
+  assert.equal(riftTeleport(s, 50, 20, null, env).ok, false, 'it must be out with you');
+  assert.equal(riftTeleport(s, 50, -20, pet, env).ok, false, 'the skiff cannot land on the shore');
+  const r = riftTeleport(s, 50, 20, pet, env);
+  assert.ok(r.ok, r.error);
+  assert.deepEqual([s.player.x, s.player.z, s.boat.x, s.boat.z], [50, 20, 50, 20]);
+  assert.equal(pet.stamina, 100 - RIFT_TELEPORT.stamina);
+  assert.ok(riftReadyIn(s) > 0 && riftReadyIn(s) <= RIFT_TELEPORT.cd);
+  assert.equal(riftTeleport(s, 10, 10, pet, env).ok, false, 'the rift is still healing');
+  s.elapsed += RIFT_TELEPORT.cd + 1;
+  s.player.mode = 'foot';
+  assert.equal(riftTeleport(s, 10, 10, pet, env).ok, false, 'on foot only onto walkable ground');
+  assert.ok(riftTeleport(s, 10, -10, pet, env).ok);
+  assert.deepEqual([s.player.x, s.player.z], [10, -10]);
+  assert.deepEqual([s.boat.x, s.boat.z], [50, 20], 'the skiff stays where it was');
+  assert.ok(s.log.some(l => l.title === '裂縫傳送'));
+});
+
 console.log(`story tests: ${n} passed`);

@@ -2,8 +2,8 @@
 // desk: deposit there when the bag is full, and enlarge the bag at the desk with materials. While you are home,
 // building and crafting can draw on the desk's storage as well as the bag. Supplies (food, water, bait) ride
 // in their own pockets and never take a material slot (0.34).
-import { homePos, nearFacility } from './fortress.js?v=0.34.0';
-import { CARRYABLE } from './items.js?v=0.34.0';
+import { homePos, nearFacility } from './fortress.js?v=0.35.0';
+import { CARRYABLE } from './items.js?v=0.35.0';
 // everything the bag can hold (0.21: the drops and crafted things too)
 export const CARRY = CARRYABLE;
 // supplies you keep on you when depositing; they do not count against the bag

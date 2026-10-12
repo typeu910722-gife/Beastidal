@@ -105,6 +105,9 @@ export class CombatFX {
         case 'kill':
           this.ring(e.x, y, e.z, 0xffd38c, 0.6, 4, 0.6, now);
           break;
+        case 'rift':
+          this.rift(e, y, now);
+          break;
       }
     }
   }
@@ -170,6 +173,78 @@ export class CombatFX {
     m.position.set(x, y + 2.5, z);
     this.root.add(m);
     this.fx.push({ obj: m, born: now, life: 0.9, kind: 'fade', mats: [m.material], base: [0.45], rise: 1.5 });
+  }
+  // 0.35: a rift — a jagged gash of dark violet with a burning edge, always facing you (a sprite), that rips
+  // open, hangs trembling, and seals; the ground beneath it glows. Dark in the middle so it reads by day too.
+  riftTexture() {
+    if (this.riftTex) return this.riftTex;
+    const n = 128,
+      c = document.createElement('canvas');
+    c.width = n;
+    c.height = n * 2;
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, n, n * 2);
+    // a lightning-shaped slit: dark core, violet rim, soft outer glow
+    const path = () => {
+      ctx.beginPath();
+      ctx.moveTo(n / 2, 6);
+      const pts = [
+        [0.62, 0.12],
+        [0.46, 0.26],
+        [0.66, 0.4],
+        [0.44, 0.55],
+        [0.6, 0.7],
+        [0.47, 0.84],
+        [0.5, 0.97]
+      ];
+      for (const [px, py] of pts) ctx.lineTo(px * n, py * n * 2);
+      const back = [
+        [0.4, 0.84],
+        [0.34, 0.7],
+        [0.42, 0.55],
+        [0.3, 0.4],
+        [0.38, 0.26],
+        [0.44, 0.12]
+      ];
+      for (const [px, py] of back) ctx.lineTo(px * n, py * n * 2);
+      ctx.closePath();
+    };
+    ctx.shadowColor = 'rgba(170, 110, 255, 0.95)';
+    ctx.shadowBlur = 26;
+    ctx.fillStyle = '#c9a6ff';
+    path();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#9a5cff';
+    path();
+    ctx.fill();
+    ctx.save();
+    ctx.translate(n / 2, n);
+    ctx.scale(0.62, 0.9);
+    ctx.translate(-n / 2, -n);
+    ctx.fillStyle = '#12051f';
+    path();
+    ctx.fill();
+    ctx.restore();
+    this.riftTex = new T.CanvasTexture(c);
+    this.riftTex.colorSpace = T.SRGBColorSpace;
+    return this.riftTex;
+  }
+  rift(e, y, now) {
+    const violet = 0x9a5cff,
+      g = new T.Group(),
+      gash = new T.Sprite(
+        new T.SpriteMaterial({ map: this.riftTexture(), transparent: true, opacity: 1, depthWrite: false, fog: false })
+      ),
+      glow = flat(new T.Mesh(new T.CircleGeometry(2.2, 32), additive(violet, 0.4)), 0.02);
+    gash.position.y = 2.1;
+    gash.scale.set(0.05, 4.4, 1);
+    g.add(gash, glow);
+    g.position.set(e.x, y, e.z);
+    this.root.add(g);
+    const life = e.phase === 'open' ? 1.3 : e.phase === 'exit' ? 1.1 : 0.7;
+    this.fx.push({ obj: g, born: now, life, kind: 'rift', mats: [gash.material, glow.material], base: [1, 0.4], gash });
+    if (e.phase === 'burst') this.ring(e.x, y, e.z, violet, 0.5, 4.6, 0.5, now);
   }
   skill(e, groundY, now) {
     const y = groundY(e.x, e.z) + 0.1;
@@ -339,6 +414,14 @@ export class CombatFX {
         return false;
       }
       if (f.kind === 'ring') f.obj.scale.setScalar(f.r0 + (f.r1 - f.r0) * Math.sqrt(k));
+      if (f.kind === 'rift') {
+        // rips wide fast, trembles, then seals shut
+        const open = k < 0.25 ? k / 0.25 : k > 0.75 ? (1 - k) / 0.25 : 1,
+          flicker = 1 + Math.sin(now * 40) * 0.08;
+        f.gash.scale.set(Math.max(0.05, 2.6 * open * flicker), 4.4, 1);
+        f.mats.forEach((m, i) => (m.opacity = f.base[i] * Math.min(1, open + 0.15)));
+        return true;
+      }
       if (f.grow) f.obj.scale.setScalar(1 + k * f.grow * (f.kind === 'fade' && f.obj.isMesh ? 1 : 1));
       if (f.rise) f.obj.position.y += f.rise * 0.016;
       if (f.kind === 'spikes')

@@ -12,12 +12,12 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./brand/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./style.css?v=0.34.0" />
-    <link rel="stylesheet" href="./mobile.css?v=0.34.0" />
-    <link rel="stylesheet" href="./panels.css?v=0.34.0" />
-    <link rel="stylesheet" href="./expansion.css?v=0.34.0" />
-    <link rel="stylesheet" href="./beastidal.css?v=0.34.0" />
-    <link rel="stylesheet" href="./inventory.css?v=0.34.0" />
+    <link rel="stylesheet" href="./style.css?v=0.35.0" />
+    <link rel="stylesheet" href="./mobile.css?v=0.35.0" />
+    <link rel="stylesheet" href="./panels.css?v=0.35.0" />
+    <link rel="stylesheet" href="./expansion.css?v=0.35.0" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.35.0" />
+    <link rel="stylesheet" href="./inventory.css?v=0.35.0" />
   </head>
   <body>
     <!-- Studio splash (about 7 s, tap or any key to skip): the YZ mark assembles, then the studio name rises. -->
@@ -192,7 +192,8 @@
               <h2>湖域地圖</h2>
             </div>
             <div class="bigmap-tools">
-              <button type="button" id="bigmap-sail" class="small-button">沿路線航行</button
+              <button type="button" id="bigmap-rift" class="small-button rift-button" hidden>✦ 裂縫傳送</button
+              ><button type="button" id="bigmap-sail" class="small-button">沿路線航行</button
               ><button type="button" id="bigmap-clear" class="small-button">清除標記</button
               ><button type="button" id="bigmap-close" class="icon-button" aria-label="關閉地圖">×</button>
             </div>
@@ -335,7 +336,7 @@
         <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
       </section>
     </main>
-    <script type="module" src="./game.js?v=0.34.0"></script>
+    <script type="module" src="./game.js?v=0.35.0"></script>
     <script>
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));

@@ -1,5 +1,5 @@
 // First-play tutorial: five hands-on steps. Text is keyboard-worded; game.js rewrites it for touch or gamepad.
-import { KEEP } from './bag.js?v=0.34.0';
+import { KEEP } from './bag.js?v=0.35.0';
 export const TUTORIAL = [
   {
     id: 'move',

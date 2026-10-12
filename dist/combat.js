@@ -9,15 +9,15 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.34.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.34.0';
-import { WILD_BEASTS } from './beasts.js?v=0.34.0';
-import { rollDrops } from './species.js?v=0.34.0';
-import { give } from './bag.js?v=0.34.0';
-import { tally } from './stats.js?v=0.34.0';
-import { damageBonus } from './skills.js?v=0.34.0';
-import { remember } from './memories.js?v=0.34.0';
-import { perks, personality, normalizeTree } from './beast-tree.js?v=0.34.0';
+import { phenotype } from './genetics.js?v=0.35.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.35.0';
+import { WILD_BEASTS } from './beasts.js?v=0.35.0';
+import { rollDrops } from './species.js?v=0.35.0';
+import { give } from './bag.js?v=0.35.0';
+import { tally } from './stats.js?v=0.35.0';
+import { damageBonus } from './skills.js?v=0.35.0';
+import { remember } from './memories.js?v=0.35.0';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.35.0';
 
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;
@@ -308,6 +308,11 @@ export function lockTarget(s) {
 // ---------- dealing damage ----------
 function damageFoe(s, t, base, ev, opts = {}) {
   const c = normalizeCombat(s);
+  // 0.35: inside its rift 嘯岳 is out of reach
+  if ((t.riftUntil || 0) > s.elapsed) {
+    ev.push({ type: 'dodged', id: t.id || 'boss', rift: true });
+    return 0;
+  }
   const theirs = t.genome ? foeStats(t).def : 6,
     open = t.ai?.state === 'recover',
     pk = perks(activeBeast(s)),
@@ -641,7 +646,18 @@ export const SPECIAL = {
     want: 3.8,
     dmg: 13,
     phase2: 0.5,
+    // 0.35 裂縫遁行: it tears a rift open, dives in, and bursts out of another one beside you
+    rift: { cd: 11, first: 4, dive: 1.2, exit: [4.5, 8.5] },
     moves: {
+      burst: {
+        shape: 'sweep',
+        windup: 0.7,
+        range: 4.6,
+        mul: 1.35,
+        recover: 1.1,
+        special: true,
+        line: '裂縫在你身邊撕開——嘯岳要衝出來了！'
+      },
       swipe: {
         shape: 'bite',
         windup: 1.05,
@@ -678,7 +694,17 @@ export const SPECIAL = {
     speed: 3.1,
     want: 3.6,
     dmg: 9,
+    rift: { cd: 14, first: 5, dive: 1.4, exit: [5, 9] },
     moves: {
+      burst: {
+        shape: 'sweep',
+        windup: 0.85,
+        range: 4.4,
+        mul: 1.3,
+        recover: 1.2,
+        special: true,
+        line: '裂縫在你身邊撕開——嘯岳要衝出來了！'
+      },
       swipe: {
         shape: 'bite',
         windup: 1.3,
@@ -715,8 +741,22 @@ function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
     target = onAlly ? ally : me,
     d = dist(w, target);
   if (ai.state === 'approach') {
+    // 0.35 裂縫遁行: off cooldown it opens a rift where it stands and vanishes into it
+    if (def.rift && t >= ai.next) {
+      ai.riftAt ??= t + def.rift.first;
+      if (t >= ai.riftAt && d < def.range) {
+        ai.riftAt = t + def.rift.cd;
+        Object.assign(ai, { state: 'rift', until: t + def.rift.dive });
+        w.windup = 0;
+        w.riftUntil = ai.until + def.moves.burst.windup + 1; // unreachable until it bursts out
+        ev.push({ type: 'rift', phase: 'open', id, x: w.x, z: w.z, line: '嘯岳撕開一道裂縫，鑽了進去——牠不見了！' });
+        return;
+      }
+    }
     if (t >= ai.next) {
-      const opts = Object.entries(def.moves).filter(([, m]) => d < m.range * 0.92 && (!m.min || d > m.min));
+      const opts = Object.entries(def.moves).filter(
+        ([, m]) => !m.special && d < m.range * 0.92 && (!m.min || d > m.min)
+      );
       if (opts.length) {
         const [name, m] = opts[Math.floor(rng() * opts.length)],
           dir = angleTo(w, target);
@@ -762,12 +802,55 @@ function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
     w.heading = a;
     return;
   }
+  // inside the rift: after the dive it surfaces through a new tear at a random spot beside its target and winds
+  // up a burst there (a red ring on the ground, like any other move)
+  if (ai.state === 'rift' && t >= ai.until) {
+    const m = def.moves.burst,
+      [lo, hi] = def.rift.exit;
+    let spot = null;
+    for (let i = 0; i < 10 && !spot; i++) {
+      const a = rng() * Math.PI * 2,
+        r = lo + rng() * (hi - lo),
+        nx = target.x + Math.sin(a) * r,
+        nz = target.z + Math.cos(a) * r;
+      if (!env.canMove || env.canMove(w, nx, nz)) spot = { x: nx, z: nz };
+    }
+    if (spot) {
+      w.x = spot.x;
+      w.z = spot.z;
+    }
+    const dir = angleTo(w, target);
+    Object.assign(ai, { state: 'windup', move: 'burst', dir, ox: w.x, oz: w.z, start: t, until: t + m.windup * quick });
+    w.windup = ai.until;
+    w.heading = dir;
+    w.riftUntil = ai.until;
+    ev.push({ type: 'rift', phase: 'exit', id, x: w.x, z: w.z });
+    ev.push({
+      type: 'telegraph',
+      id,
+      move: m.shape,
+      x: w.x,
+      z: w.z,
+      dir,
+      range: m.range,
+      width: 0,
+      until: ai.until,
+      start: t,
+      big: true,
+      line: m.line
+    });
+    return;
+  }
   if (ai.state === 'windup' && t >= ai.until) {
     const m = def.moves[ai.move],
       o = { x: ai.ox, z: ai.oz },
       dmg = def.dmg * (m.mul || 1) * (phase2 ? 1.2 : 1) * (def.vessel ? vesselFactor(s) : 1);
     w.windup = 0;
     w.struckAt = t;
+    if (ai.move === 'burst') {
+      w.riftUntil = 0;
+      ev.push({ type: 'rift', phase: 'burst', id, x: w.x, z: w.z });
+    }
     ev.push({ type: 'strike', id, move: m.shape, x: w.x, z: w.z, dir: ai.dir, big: true });
     const test = pt =>
       m.shape === 'bite'
