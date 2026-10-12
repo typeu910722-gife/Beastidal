@@ -8,9 +8,9 @@
 //     for the wraiths; tendril hair crowned with a flower for the dryads; crystal or ice shards; venom sacs.
 // Land beasts are rebuilt upright (creatures.js `upright`): a dragon, a wraith or a dryad, picked by the element.
 import * as T from './vendor/three.module.min.js';
-import { bsOf } from './bsgenes.js?v=0.36.5';
-import { phenotype } from './genetics.js?v=0.36.5';
-import { taper, addMesh, creatureDetail } from './creatures.js?v=0.36.5';
+import { bsOf } from './bsgenes.js?v=0.37.0';
+import { phenotype } from './genetics.js?v=0.37.0';
+import { taper, addMesh, creatureDetail } from './creatures.js?v=0.37.0';
 
 const GENE_ELEMENT = {
   fire: 'ember',

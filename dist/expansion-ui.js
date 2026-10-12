@@ -1,5 +1,5 @@
-import { EXPLORE, STAGES, normalizeExpansion, commandPet, upgradeBoat, awaken } from './expansion.js?v=0.36.5';
-import { objectives, normalizeStory } from './story.js?v=0.36.5';
+import { EXPLORE, STAGES, normalizeExpansion, commandPet, upgradeBoat, awaken } from './expansion.js?v=0.37.0';
+import { objectives, normalizeStory } from './story.js?v=0.37.0';
 let tab = 'beasts',
   page = 0,
   pick = null,

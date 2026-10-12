@@ -1,7 +1,8 @@
 // Loads the baked sculpted bodies (dist/models/sculpt-<plan>.json, made by scripts/bake-sculpt.mjs) and hands
 // them to creatures.js. Without them the standing beasts fall back to their composite bodies.
 import * as T from './vendor/three.module.min.js';
-import { setSculpt } from './creatures.js?v=0.36.5';
+import { setSculpt } from './creatures.js?v=0.37.0';
+import { setXiaoyueSculpt } from './story-models.js?v=0.37.0';
 
 export const SCULPT_PLANS = ['dragon', 'wraith', 'dryad'];
 const bytes = b64 => {
@@ -39,13 +40,50 @@ export function decodeSculpt(d) {
   g.computeBoundingSphere();
   return g;
 }
+// 0.37: 嘯岳's parts — the same packing without the skin weights (each part rides its own rig group)
+export function decodePart(d) {
+  const g = new T.BufferGeometry(),
+    pos = new Int16Array(bytes(d.pos).buffer),
+    nor = new Int8Array(bytes(d.nor).buffer),
+    uv = new Uint16Array(bytes(d.uv).buffer),
+    idx = d.big ? new Uint32Array(bytes(d.idx).buffer) : new Uint16Array(bytes(d.idx).buffer);
+  g.setAttribute(
+    'position',
+    new T.BufferAttribute(
+      Float32Array.from(pos, v => v * d.scale),
+      3
+    )
+  );
+  g.setAttribute(
+    'normal',
+    new T.BufferAttribute(
+      Float32Array.from(nor, v => v / 127),
+      3
+    )
+  );
+  g.setAttribute(
+    'uv',
+    new T.BufferAttribute(
+      Float32Array.from(uv, v => v / 65535),
+      2
+    )
+  );
+  g.setIndex(new T.BufferAttribute(idx, 1));
+  g.computeBoundingSphere();
+  return g;
+}
 export async function loadSculpts(version = '', base = new URL('./', import.meta.url).href) {
-  await Promise.all(
-    SCULPT_PLANS.map(plan =>
-      fetch(`${base}models/sculpt-${plan}.json` + (version ? '?v=' + version : ''))
+  const q = version ? '?v=' + version : '';
+  await Promise.all([
+    ...SCULPT_PLANS.map(plan =>
+      fetch(`${base}models/sculpt-${plan}.json` + q)
         .then(r => (r.ok ? r.json() : null))
         .then(d => d && setSculpt(plan, decodeSculpt(d)))
         .catch(() => null)
-    )
-  );
+    ),
+    fetch(`${base}models/sculpt-xiaoyue.json` + q)
+      .then(r => (r.ok ? r.json() : null))
+      .then(d => d && setXiaoyueSculpt(Object.fromEntries(Object.entries(d.parts).map(([k, v]) => [k, decodePart(v)]))))
+      .catch(() => null)
+  ]);
 }

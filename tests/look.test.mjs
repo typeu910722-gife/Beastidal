@@ -7,7 +7,8 @@ import { lookOf, LOOKS } from '../dist/beast-look.js';
 import { LAKE_ISLANDS, groundAt, walkable, ISLAND_TOP } from '../dist/lake.js';
 import { uprightPrims, setSculpt, SCULPT_BONES } from '../dist/creatures.js';
 import { sculpt } from '../dist/sculpt.js';
-import { decodeSculpt } from '../dist/sculpt-assets.js';
+import { decodeSculpt, decodePart } from '../dist/sculpt-assets.js';
+import { setXiaoyueSculpt, makeSabertooth, animateSabertooth } from '../dist/story-models.js';
 import { readFileSync, existsSync } from 'node:fs';
 
 let n = 0;
@@ -115,5 +116,19 @@ test('Sculpted bodies (0.30): one seamless skinned mesh, bones in place of limb 
     for (let i = 0; i < 4; i++) animateCreature(m, i * 0.25);
     setSculpt(plan, null);
   }
+});
+test('嘯岳 (0.37): a sculpted, muscled body on the same rig — it still breathes, looks, walks and roars', () => {
+  const d = JSON.parse(readFileSync('dist/models/sculpt-xiaoyue.json', 'utf8'));
+  const parts = Object.fromEntries(Object.entries(d.parts).map(([k, v]) => [k, decodePart(v)]));
+  for (const k of ['body', 'fore', 'hind', 'neck', 'head', 'jaw', 'tail', 'tail2'])
+    assert.ok(parts[k]?.attributes.position.count > 200, k);
+  setXiaoyueSculpt(parts);
+  const m = makeSabertooth();
+  assert.ok(m.userData.sculpted && m.userData.legs.length === 4 && m.userData.jaw && m.userData.tail2);
+  for (let i = 0; i < 6; i++) animateSabertooth(m, i * 0.3, { gait: 0.6, roar: i % 2 });
+  assert.ok(finite(m));
+  const stone = makeSabertooth({ stone: true });
+  assert.ok(stone.userData.sculpted && finite(stone));
+  setXiaoyueSculpt(null);
 });
 console.log(`\n${n} look tests passed`);
