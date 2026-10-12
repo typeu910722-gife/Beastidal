@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.37.0';
-import { renderAdventure } from './expansion-ui.js?v=0.37.0';
+} from './expansion.js?v=0.38.0';
+import { renderAdventure } from './expansion-ui.js?v=0.38.0';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.37.0';
-import { monologue, markGuide } from './guide.js?v=0.37.0';
-import { climb, demolish, relocate } from './construction.js?v=0.37.0';
+} from './ship.js?v=0.38.0';
+import { monologue, markGuide } from './guide.js?v=0.38.0';
+import { climb, demolish, relocate } from './construction.js?v=0.38.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.37.0';
+} from './housing.js?v=0.38.0';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.37.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.37.0';
-import { lakeMinimap } from './lake-map.js?v=0.37.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.37.0';
+} from './islands.js?v=0.38.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.38.0';
+import { lakeMinimap } from './lake-map.js?v=0.38.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.38.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.37.0';
+} from './cabin.js?v=0.38.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.37.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.37.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.37.0';
-import { QUALITY } from './realism.js?v=0.37.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.37.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.37.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.37.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.37.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.37.0';
-import { CONFIG } from './config.js?v=0.37.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.37.0';
+} from './story.js?v=0.38.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.38.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.38.0';
+import { QUALITY } from './realism.js?v=0.38.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.38.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.38.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.38.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.38.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.38.0';
+import { CONFIG } from './config.js?v=0.38.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.38.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,13 +122,13 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.37.0';
-import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.37.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.37.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.37.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.37.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.37.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.37.0';
+} from './codex.js?v=0.38.0';
+import { ensureLandBeasts, normalizeWildlife, stepLandBeast, spawnWild, ashore } from './wildlife.js?v=0.38.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.38.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.38.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.38.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.38.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.38.0';
 import {
   startFishing,
   tickFishing,
@@ -137,7 +137,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.37.0';
+} from './fishing.js?v=0.38.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -147,10 +147,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.37.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.37.0';
-import { setClimbing } from './lake.js?v=0.37.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.37.0';
+} from './reclaim.js?v=0.38.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.38.0';
+import { setClimbing } from './lake.js?v=0.38.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.38.0';
 import {
   RARITY,
   FRENZY,
@@ -177,7 +177,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.37.0';
+} from './taming.js?v=0.38.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -194,15 +194,15 @@ import {
   levelCap,
   xpFor,
   AI_RANGE
-} from './combat.js?v=0.37.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.37.0';
-import { BeastStage } from './beast-stage.js?v=0.37.0';
-import { loadArt, art, artImg } from './art.js?v=0.37.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.37.0';
-import { separateBodies } from './bodies.js?v=0.37.0';
-import { STATUES } from './statues.js?v=0.37.0';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.37.0';
-import { lookOf } from './beast-look.js?v=0.37.0';
+} from './combat.js?v=0.38.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.38.0';
+import { BeastStage } from './beast-stage.js?v=0.38.0';
+import { loadArt, art, artImg } from './art.js?v=0.38.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.38.0';
+import { separateBodies } from './bodies.js?v=0.38.0';
+import { STATUES } from './statues.js?v=0.38.0';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.38.0';
+import { lookOf } from './beast-look.js?v=0.38.0';
 import {
   TREE,
   BRANCHES,
@@ -214,8 +214,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.37.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.37.0';
+} from './beast-tree.js?v=0.38.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.38.0';
 import {
   funds,
   normalizeBag,
@@ -235,12 +235,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.37.0';
-import { iconFor } from './icons.js?v=0.37.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.37.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.37.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.37.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.37.0';
+} from './bag.js?v=0.38.0';
+import { iconFor } from './icons.js?v=0.38.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.38.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.38.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.38.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.38.0';
 import {
   homePos,
   facilityPos,
@@ -252,10 +252,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.37.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.37.0';
-export const GAME_VERSION = '0.37.0';
-import { CloudSave } from './cloud-save.js?v=0.37.0';
+} from './fortress.js?v=0.38.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.38.0';
+export const GAME_VERSION = '0.38.0';
+import { CloudSave } from './cloud-save.js?v=0.38.0';
 import {
   readLocal,
   writeLocal,
@@ -272,12 +272,11 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.37.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.37.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.37.0';
+} from './save-store.js?v=0.38.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.38.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.38.0';
 import {
   RESOURCE_NAMES,
-  RESOURCE_ICONS,
   RECIPES,
   createState,
   count,
@@ -295,8 +294,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.37.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.37.0';
+} from './rules.js?v=0.38.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.38.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -924,7 +923,7 @@ function flyResources(rewards, wx, wy, wz) {
   entries.forEach(([k, v], i) => {
     const el = document.createElement('div');
     el.className = 'fly-chip';
-    el.innerHTML = `<span>${RESOURCE_ICONS[k] || '＋'}</span>+${v} ${esc(RESOURCE_NAMES[k])}`;
+    el.innerHTML = `<span class="pop-ico">${iconFor(k)}</span>+${v} ${esc(RESOURCE_NAMES[k])}`;
     el.style.left = sx + 'px';
     el.style.top = sy + 'px';
     document.body.append(el);
@@ -3659,7 +3658,7 @@ function claim(id) {
 function slotItems(kinds, from, note) {
   return kinds.map(k => ({
     key: k,
-    icon: iconFor(k, RESOURCE_ICONS[k]),
+    icon: iconFor(k),
     count: from[k] || 0,
     name: RESOURCE_NAMES[k],
     note
@@ -3678,20 +3677,19 @@ function moved(r) {
   updateUI();
   renderPanel();
 }
+// two containers side by side: a narrower grid each
+const PAIR_GRID = { cols: 5, rows: 4 };
 function renderCargo(body) {
   // 0.20: one hold in the cabin's lower floor holds every kind of goods
   if (!state.ship || state.player.mode !== 'cabin') {
     body.innerHTML = '<p class="dv-note">請到船艙下層的物資艙操作貨櫃。</p>';
     return;
   }
+  // 0.38: the hold on the left, the bag on the right, every slot named
   body.innerHTML =
-    invBox('hold', '物資艙', `${cargoTotal(state)} / ${CARGO_CAPACITY}`, slotItems(CARRY, state.ship.cargo), {
-      cols: 9,
-      rows: 1
-    }) +
+    `<div class="inv-pair">${invBox('hold', '物資艙', `${cargoTotal(state)} / ${CARGO_CAPACITY}`, slotItems(CARRY, state.ship.cargo), PAIR_GRID)}${invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), PAIR_GRID)}</div>` +
     amountBar() +
-    invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), { cols: 9, rows: 2 }) +
-    '<p class="inv-hint">點貨艙的物品取出，點背包的物品存入。失去意識時，貨艙物資不會遺失。</p>';
+    '<p class="inv-hint">點左邊物資艙的物品取出，點右邊背包的物品存入。失去意識時，貨艙物資不會遺失。</p>';
   bindInv(body, {
     refresh: renderPanel,
     onSlot: (grid, key) => {
@@ -3705,10 +3703,9 @@ function renderLocker(body) {
   normalizeBag(state);
   const stored = Object.values(state.storage).reduce((a, b) => a + b, 0);
   body.innerHTML =
-    invBox('box', '儲物箱', `${stored} 件`, slotItems(CARRY, state.storage), { cols: 9, rows: 2 }) +
+    `<div class="inv-pair">${invBox('box', '儲物箱', `${stored} 件`, slotItems(CARRY, state.storage), PAIR_GRID)}${invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), PAIR_GRID)}</div>` +
     amountBar() +
-    invBox('bag', '背包', `${bagUsed(state)} / ${bagCap(state)}`, bagItems(), { cols: 9, rows: 2 }) +
-    `<div class="inv-actions"><button type="button" id="lk-all">材料全部存入</button><button type="button" id="lk-supply">取出補給</button></div><p class="inv-hint">點儲物箱的物品取出，點背包的物品存入。在家時，建造會一併使用儲物箱裡的材料。</p>`;
+    `<div class="inv-actions"><button type="button" id="lk-all">材料全部存入</button><button type="button" id="lk-supply">取出補給</button></div><p class="inv-hint">點左邊儲物箱的物品取出，點右邊背包的物品存入。在家時，建造會一併使用儲物箱裡的材料。</p>`;
   bindInv(body, {
     refresh: renderPanel,
     onSlot: (grid, key) => moved(grid === 'box' ? unstash(state, key, moveAmount()) : stash(state, key, moveAmount()))
@@ -4847,12 +4844,42 @@ function summonResult(r, out) {
 }
 // 0.32: the hotbar — what you can use with a key or a tap, between your vitals and the build and device buttons
 const HOTBAR = [
-  { id: 'food', icon: '🍙', name: '口糧', count: () => state.resources.food || 0, use: () => consume('food') },
-  { id: 'water', icon: '💧', name: '淡水', count: () => state.resources.water || 0, use: () => consume('water') },
-  { id: 'bait', icon: '🐟', name: '誘餌', count: () => state.resources.bait || 0, use: () => feedNearest() },
-  { id: 'contract', icon: '📜', name: '契約書', count: () => state.contracts || 0, use: () => tameNearest('contract') },
-  { id: 'cage', icon: '🧺', name: '外出籠', count: () => state.resources.cage || 0, use: () => tameNearest('cage') },
-  { id: 'rod', icon: '🎣', name: '釣竿', count: () => (hasGear(state, 'rod') ? '∞' : 0), use: () => castOrReel() }
+  {
+    id: 'food',
+    icon: iconFor('food'),
+    name: '口糧',
+    count: () => state.resources.food || 0,
+    use: () => consume('food')
+  },
+  {
+    id: 'water',
+    icon: iconFor('water'),
+    name: '淡水',
+    count: () => state.resources.water || 0,
+    use: () => consume('water')
+  },
+  { id: 'bait', icon: iconFor('bait'), name: '誘餌', count: () => state.resources.bait || 0, use: () => feedNearest() },
+  {
+    id: 'contract',
+    icon: iconFor('contract'),
+    name: '契約書',
+    count: () => state.contracts || 0,
+    use: () => tameNearest('contract')
+  },
+  {
+    id: 'cage',
+    icon: iconFor('cage'),
+    name: '外出籠',
+    count: () => state.resources.cage || 0,
+    use: () => tameNearest('cage')
+  },
+  {
+    id: 'rod',
+    icon: iconFor('rod'),
+    name: '釣竿',
+    count: () => (hasGear(state, 'rod') ? '∞' : 0),
+    use: () => castOrReel()
+  }
 ];
 function useHotbar(i) {
   const slot = HOTBAR[i];
@@ -5180,7 +5207,7 @@ function renderCraft(body) {
     `<div class="reward-grid decor-grid">${Object.entries(CRAFTS)
       .map(
         ([k, c]) =>
-          `<button type="button" class="reward-tile${c.gear && hasGear(state, k) ? ' claimed' : canPay(state, c.cost) ? ' ready' : ''}" data-craft="${k}" ${c.gear && hasGear(state, k) ? 'disabled' : ''}><b><span class="ico">${ITEMS[k].glyph}</span> ${esc(ITEMS[k].name)}${c.gear ? (hasGear(state, k) ? ' · 已擁有' : '') : ' ×' + c.n}</b><small>${esc(ITEMS[k].note || '')}</small><span>${esc(itemCost(c.cost))}</span></button>`
+          `<button type="button" class="reward-tile${c.gear && hasGear(state, k) ? ' claimed' : canPay(state, c.cost) ? ' ready' : ''}" data-craft="${k}" ${c.gear && hasGear(state, k) ? 'disabled' : ''}><b><span class="ico">${iconFor(k)}</span> ${esc(ITEMS[k].name)}${c.gear ? (hasGear(state, k) ? ' · 已擁有' : '') : ' ×' + c.n}</b><small>${esc(ITEMS[k].note || '')}</small><span>${esc(itemCost(c.cost))}</span></button>`
       )
       .join('')}</div>`;
   body.querySelectorAll('[data-craft]').forEach(
@@ -5539,11 +5566,11 @@ function updateUI() {
   $('resources').innerHTML = resourceKeys
     .map(
       k =>
-        `<div class="resource"><span class="r-icon">${RESOURCE_ICONS[k]}</span><b>${state.resources[k]}</b><small>${RESOURCE_NAMES[k]}</small></div>`
+        `<div class="resource"><span class="r-icon">${iconFor(k)}</span><b>${state.resources[k]}</b><small>${RESOURCE_NAMES[k]}</small></div>`
     )
     .join('')
     .concat(
-      `<div class="resource bag-load${bagRoom(state) ? '' : ' full'}" title="背包容量"><span class="r-icon">▤</span><b>${bagUsed(state)}/${bagCap(state)}</b><small>背包</small></div>`
+      `<div class="resource bag-load${bagRoom(state) ? '' : ' full'}" title="背包容量"><span class="r-icon">${iconFor('pack')}</span><b>${bagUsed(state)}/${bagCap(state)}</b><small>背包</small></div>`
     );
   for (const key of ['health', 'food', 'water']) {
     $(key + '-bar').style.width = state.vitals[key] + '%';

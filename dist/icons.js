@@ -1,5 +1,7 @@
 // Item icons for the grid inventories: small, readable SVG pictograms (a log, an ingot, a gem …) instead of
 // typographic glyphs, so a slot reads at a glance like a Minecraft-style inventory.
+import { MORE_ICONS } from './icons-more.js?v=0.38.0';
+
 const svg = body =>
   `<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false" shape-rendering="geometricPrecision">${body}</svg>`;
 export const ICONS = {
@@ -28,6 +30,9 @@ export const ICONS = {
     '<rect x="8" y="5" width="16" height="22" rx="2" fill="#efe0b9"/><rect x="6" y="4" width="20" height="4" rx="2" fill="#c9a86a"/><rect x="6" y="24" width="20" height="4" rx="2" fill="#c9a86a"/><path d="M11 12h10M11 15.5h10M11 19h7" stroke="#8a6a45" stroke-width="1.2"/><circle cx="21" cy="20.5" r="2.4" fill="#b64a3c"/>'
   )
 };
-// Unknown items still get a tidy tile with their glyph.
-export const iconFor = (key, glyph = '?') =>
-  ICONS[key] || svg(`<text x="16" y="22" text-anchor="middle" font-size="16" fill="#e6efe9">${glyph}</text>`);
+Object.assign(ICONS, MORE_ICONS);
+// 0.38: every item has its own drawn icon; anything unknown gets a plain crate, never an emoji
+const CRATE = svg(
+  '<path d="M6 10l10-5 10 5v12l-10 5-10-5z" fill="#8a6a45"/><path d="M6 10l10 5 10-5M16 15v12" stroke="#5e4630" stroke-width="1.4" fill="none"/>'
+);
+export const iconFor = key => ICONS[key] || CRATE;

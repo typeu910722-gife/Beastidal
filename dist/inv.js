@@ -15,7 +15,7 @@ export function invGrid(id, items, { cols = 9, rows = 2, fill = true } = {}) {
   const shown = items.slice(page * per, page * per + per),
     slots = shown.map(
       it =>
-        `<button type="button" class="inv-slot${it.active ? ' active' : ''}${it.count === 0 ? ' zero' : ''}" data-grid="${id}" data-slot="${esc(it.key)}" title="${esc(it.name + (it.note ? ' · ' + it.note : ''))}" aria-label="${esc(it.name)} ${it.count ?? ''}" ${it.disabled ? 'disabled' : ''}>${it.icon}${it.count !== undefined && it.count !== null ? `<b>${it.count}</b>` : ''}</button>`
+        `<button type="button" class="inv-slot${it.active ? ' active' : ''}${it.count === 0 ? ' zero' : ''}" data-grid="${id}" data-slot="${esc(it.key)}" title="${esc(it.name + (it.note ? ' · ' + it.note : ''))}" aria-label="${esc(it.name)} ${it.count ?? ''}" ${it.disabled ? 'disabled' : ''}>${it.icon}${it.count !== undefined && it.count !== null ? `<b>${it.count}</b>` : ''}<small class="inv-name">${esc(it.name)}</small></button>`
     );
   if (fill) while (slots.length < per) slots.push('<span class="inv-slot empty" aria-hidden="true"></span>');
   const turn = turnOf.get(id) || '';

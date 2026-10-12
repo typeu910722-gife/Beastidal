@@ -3178,5 +3178,9 @@ export default {
   中央島上的石像: 'The statue on the central island',
   舊水門旁的石像: 'The statue by the old water gate',
   海底遺跡裡的石像: 'The statue in the sunken ruins',
-  '{0} · 尚未甦醒': '{0} · not yet awake'
+  '{0} · 尚未甦醒': '{0} · not yet awake',
+  '點左邊物資艙的物品取出，點右邊背包的物品存入。失去意識時，貨艙物資不會遺失。':
+    'Click an item in the hold (left) to take it out, in your bag (right) to store it. Goods in the hold are never lost when you collapse.',
+  '點左邊儲物箱的物品取出，點右邊背包的物品存入。在家時，建造會一併使用儲物箱裡的材料。':
+    'Click an item in the storage box (left) to take it out, in your bag (right) to store it. At home, building also uses what is in the box.'
 };

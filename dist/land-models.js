@@ -1,7 +1,7 @@
 // Land buildings and plots drawn (0.23): a stake-marked wild plot, a cleared patch of turf, and the seven
 // buildings — well, garden, shed, watchtower, campfire, stable, pier — in the raft's rough-timber style.
 import * as T from './vendor/three.module.min.js';
-import { groundAt } from './lake.js?v=0.37.0';
+import { groundAt } from './lake.js?v=0.38.0';
 
 const C = {
   wood: 0x8a5a33,
