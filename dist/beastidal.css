@@ -754,6 +754,63 @@
       0 0 22px #ecc78e66;
   }
 }
+/* 0.35 裂縫傳送: the world is pulled into a violet tear — the scene warps and blurs, the gash swallows the view,
+   its edges wheel past, then it lets go on the far side */
+#rift-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 40;
+  overflow: hidden;
+  background: radial-gradient(ellipse 36% 70% at 50% 50%, #e8d6ff 0%, #9a5cff 14%, #3b1278 34%, #12051f 60%, #000 100%);
+  transition: opacity 0.55s ease-in;
+}
+#rift-fade::after {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 14deg,
+    #ffffff26 16deg,
+    transparent 19deg 58deg,
+    #c9a6ff33 60deg,
+    transparent 63deg 131deg,
+    #ffffff1f 133deg,
+    transparent 136deg 214deg,
+    #c9a6ff2e 216deg,
+    transparent 219deg 300deg,
+    #ffffff22 302deg,
+    transparent 305deg
+  );
+  animation: rift-wheel 1.1s linear infinite;
+  mix-blend-mode: screen;
+}
+#rift-fade.in {
+  opacity: 1;
+  animation: rift-pulse 0.5s ease-in-out infinite alternate;
+}
+@keyframes rift-wheel {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes rift-pulse {
+  from {
+    filter: brightness(0.9);
+  }
+  to {
+    filter: brightness(1.3);
+  }
+}
+body.rift-warp #ocean {
+  transition:
+    filter 0.6s ease-in,
+    transform 0.6s ease-in;
+  filter: blur(6px) saturate(1.8) hue-rotate(35deg);
+  transform: scale(1.14);
+}
 .rift-button {
   color: #e8d6ff;
   border-color: #9a5cffaa;

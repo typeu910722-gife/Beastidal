@@ -134,6 +134,8 @@ const ACTIONS = {
   contract: { dur: 1.45, prop: 'scroll', twoHands: true, glow: 0xffd27a, burn: true },
   evolve: { dur: 1.7, prop: 'scroll', twoHands: true, glow: 0xc080ff, burn: true },
   summon: { dur: 1.2, prop: 'scroll', twoHands: true, glow: 0xffe8a0 },
+  // 0.35 裂縫傳送: both hands come up and pull the air apart; the pact's light (the scroll) burns violet between them
+  rift: { dur: 1.4, prop: 'scroll', twoHands: true, glow: 0x9a5cff },
   cage: { dur: 1.0, prop: 'cage' },
   fish: { dur: 0.85, prop: 'rod' }
 };
@@ -253,6 +255,25 @@ export class ViewModel {
         this.light.color.set(a.glow || 0xffd27a);
         this.light.intensity = glow * 1.4;
         if (a.burn && k > 0.72) p.scale.setScalar(Math.max(0.01, (1 + mid * 0.15) * (1 - (k - 0.72) / 0.2)));
+        break;
+      }
+      case 'rift': {
+        // raise both hands together, then tear them apart; the light between them flares and goes out
+        const apart = ease((k - 0.4) / 0.3);
+        R.position.x = lerp(0.17, 0.08, mid) + apart * 0.26;
+        L.position.x = lerp(-0.17, -0.08, mid) - apart * 0.26;
+        R.position.y += mid * 0.1;
+        L.position.y += mid * 0.1;
+        R.rotation.z = -mid * 0.4 - apart * 0.3;
+        L.rotation.z = mid * 0.4 + apart * 0.3;
+        R.position.z -= apart * 0.06;
+        L.position.z -= apart * 0.06;
+        const glow = ease((k - 0.3) / 0.2) * (1 - ease((k - 0.8) / 0.15));
+        p.userData.glow.material.opacity = glow * 0.35;
+        p.position.x = 0;
+        p.scale.setScalar(Math.max(0.01, (1 + mid * 0.2) * (1 - apart)));
+        this.light.color.set(a.glow);
+        this.light.intensity = glow * 2.2;
         break;
       }
       case 'cage': {

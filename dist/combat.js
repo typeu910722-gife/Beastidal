@@ -749,6 +749,9 @@ function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
         Object.assign(ai, { state: 'rift', until: t + def.rift.dive });
         w.windup = 0;
         w.riftUntil = ai.until + def.moves.burst.windup + 1; // unreachable until it bursts out
+        w.diveAt = t; // world.js: the leap into the rift
+        w.diveFor = def.rift.dive;
+        w.burstAt = null;
         ev.push({ type: 'rift', phase: 'open', id, x: w.x, z: w.z, line: '嘯岳撕開一道裂縫，鑽了進去——牠不見了！' });
         return;
       }
@@ -849,6 +852,7 @@ function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
     w.struckAt = t;
     if (ai.move === 'burst') {
       w.riftUntil = 0;
+      w.burstAt = t; // world.js: the leap out
       ev.push({ type: 'rift', phase: 'burst', id, x: w.x, z: w.z });
     }
     ev.push({ type: 'strike', id, move: m.shape, x: w.x, z: w.z, dir: ai.dir, big: true });

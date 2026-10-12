@@ -1090,6 +1090,10 @@ export class OceanWorld {
   act(name) {
     this.viewmodel.play(name);
   }
+  // 0.35 裂縫傳送: 嘯岳 rears and tears the air (see updatePact)
+  pactTear() {
+    this.pactTearAt = this.time;
+  }
   summonFlash(x, z, color = 0xffd27a, y = null) {
     const g = new T.Group(),
       base = y ?? (this.lastState?.inCave ? 0.05 : Math.max(0, groundAt(x, z)) + 0.05);
@@ -1989,12 +1993,40 @@ export class OceanWorld {
     const ground = s.inCave ? 0.2 : groundAt(at.x, at.z),
       y = s.inCave ? ground : Math.max(ground, foot ? ground : -0.9);
     const prev = beast.position.clone();
-    // 0.35 裂縫遁行: inside its rift it is nowhere to be seen, and it reappears where the rift opens, not sliding there
-    const inRift = (st.beast?.riftUntil || 0) > s.elapsed;
-    beast.visible = !inRift;
+    // 0.35 裂縫遁行: it leaps into its rift (the first part of the dive is still visible: a lunge down and in),
+    // is nowhere while inside, and bursts back out of the new rift — springing up to full size — without sliding
+    const xb = st.beast,
+      diveP = xb?.diveAt != null ? (s.elapsed - xb.diveAt) / (xb.diveFor || 1.3) : 2,
+      emergeP = xb?.burstAt != null ? (s.elapsed - xb.burstAt) / 0.45 : 2,
+      inRift = (xb?.riftUntil || 0) > s.elapsed,
+      diving = diveP >= 0 && diveP < 0.6;
+    beast.visible = !inRift || diving;
     if (beast.userData.placed && !inRift) beast.position.lerp(new V(at.x, y, at.z), 1 - Math.exp(-dt * 3));
     else beast.position.set(at.x, y, at.z);
     beast.userData.placed = true;
+    let sizeK = 1,
+      pitch = 0,
+      sink = 0;
+    if (diving) {
+      const k = diveP / 0.6;
+      sizeK = 1 - k * 0.75;
+      pitch = k * 1.1; // nose down into the tear
+      sink = -k * 1.8;
+    } else if (emergeP >= 0 && emergeP < 1) {
+      const k = emergeP;
+      sizeK = 0.3 + 0.7 * k + Math.sin(k * Math.PI) * 0.18; // springs out past full size, then settles
+      pitch = -0.7 * (1 - k); // rearing up out of the rift
+      sink = -1.2 * (1 - k);
+    }
+    // 裂縫傳送: it rears and claws the air open for you
+    if (this.pactTearAt != null) {
+      const k = (t - this.pactTearAt) / 0.9;
+      if (k < 1) {
+        roar = 1;
+        pitch = -0.5 * Math.sin(k * Math.PI);
+        sink = 0.3 * Math.sin(k * Math.PI);
+      } else this.pactTearAt = null;
+    }
     if (beast.position.distanceTo(new V(at.x, y, at.z)) > 30) beast.position.set(at.x, y, at.z);
     const moved = dt ? prev.distanceTo(beast.position) / dt : 0;
     gait = Math.min(1, moved / 3);
@@ -2013,8 +2045,10 @@ export class OceanWorld {
       ? Math.atan2(Math.sin(Math.atan2(dx, dz) - beast.rotation.y), Math.cos(Math.atan2(dx, dz) - beast.rotation.y))
       : 0;
     if (st.duel?.windupAt) roar = 1;
+    if (emergeP >= 0 && emergeP < 1.2) roar = 1;
     if (this.pactTalk) roar = Math.max(roar, 0.35 + 0.25 * Math.sin(t * 9));
-    beast.userData.rig.position.y = st.duel?.windupAt ? -0.25 : 0;
+    beast.userData.rig.position.y = (st.duel?.windupAt ? -0.25 : 0) + sink;
+    beast.userData.rig.rotation.x = pitch;
     if (st.sleeping && s.inCave) {
       // curled low on the dais, facing the way in, breathing slowly
       beast.rotation.y = 0;
@@ -2027,7 +2061,7 @@ export class OceanWorld {
     // in its frenzy the corruption shows: it swells and its eyes burn violet
     const rage = st.duel?.frenzy ? 1 : 0;
     this.pactRage = (this.pactRage || 0) + (rage - (this.pactRage || 0)) * Math.min(1, dt * 3);
-    beast.scale.setScalar(1.7 * (1 + this.pactRage * 0.18));
+    beast.scale.setScalar(1.7 * (1 + this.pactRage * 0.18) * sizeK);
   }
   animateCreature(m, t) {
     animateCreature(m, t);

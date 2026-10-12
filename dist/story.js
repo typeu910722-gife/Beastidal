@@ -248,6 +248,7 @@ export function riftTeleport(s, x, z, active, env = {}) {
   if (!mounted && mode === 'boat' && !water) return fail('小艇只能傳送到水面上。在地圖上標記一片水域。');
   if (!mounted && mode === 'foot' && !land) return fail('步行時只能傳送到站得住的岸上。');
   if (mounted && !water && !land) return fail('那裡沒有能落腳的地方。');
+  if (env.dry) return { ok: true, dry: true }; // the checks only: the game animates first, then moves you
   pet.stamina = (pet.stamina ?? 100) - RIFT_TELEPORT.stamina;
   const from = { x: s.player.x, z: s.player.z };
   s.player.x = x;

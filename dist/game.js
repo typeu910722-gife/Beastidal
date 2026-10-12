@@ -5425,41 +5425,70 @@ function drawBigMap() {
     rb.title = `嘯岳撕開裂縫，帶你瞬移到標記（精力 ${RIFT_TELEPORT.stamina}，冷卻 ${RIFT_TELEPORT.cd} 秒）`;
   }
 }
-// 0.35 裂縫傳送: through 嘯岳's rift to the chart marker — a flash where you were, a flash where you arrive
+// 0.35 裂縫傳送: through 嘯岳's rift to the chart marker. The checks run first; then 嘯岳 rears and claws the air,
+// your hands come up, a tear opens ahead and the view is pulled into it; at the darkest moment you are moved, and
+// the far side opens around you with a second tear and a shock ring.
+let riftWarping = false;
 function riftTeleportTo() {
   const mk = state.marker;
+  if (riftWarping) return;
   if (!mk) {
     toast('先在地圖上放一個標記。', true);
     return;
   }
-  const r = riftTeleport(state, mk.x, mk.z, activePet(state), {
-    water: (x, z) => !islandAt(x, z, 2),
-    land: (x, z) => walkable(x, z)
-  });
-  if (!r.ok) {
-    toast(r.error, true);
+  const env = { water: (x, z) => !islandAt(x, z, 2), land: (x, z) => walkable(x, z) },
+    ground = (x, z) => Math.max(0, groundAt(x, z)),
+    check = riftTeleport(state, mk.x, mk.z, activePet(state), { ...env, dry: true });
+  if (!check.ok) {
+    toast(check.error, true);
     return;
   }
   closeBigMap();
+  keys.clear();
+  riftWarping = true;
   destination = null;
   selectedTarget = null;
   salvaging = null;
   $('salvage-progress').hidden = true;
-  clearMarker(true);
-  normalizeTravel(state);
-  world.summonFlash(r.from.x, r.from.z, 0x9a5cff);
-  world.sync(state);
-  world.summonFlash(state.player.x, state.player.z, 0x9a5cff);
-  world.combatFX?.handle(
-    [{ type: 'rift', phase: 'exit', x: state.player.x, z: state.player.z }],
-    state.elapsed,
-    (x, z) => Math.max(0, groundAt(x, z))
-  );
-  audio.note(220, 0.5);
-  haptic('discover');
-  toast(r.message);
-  save(true);
-  updateUI();
+  // the tear opens a few metres ahead, 嘯岳 rears, the hands rise
+  const yaw = world.yaw || 0,
+    ax = state.player.x - Math.sin(yaw) * 4,
+    az = state.player.z - Math.cos(yaw) * 4;
+  world.combatFX?.handle([{ type: 'rift', phase: 'open', x: ax, z: az }], state.elapsed, ground);
+  world.pactTear();
+  world.act('rift');
+  audio.note(180, 0.7);
+  haptic('storm');
+  document.body.classList.add('rift-warp');
+  $('rift-fade').classList.add('in');
+  setTimeout(() => {
+    const r = riftTeleport(state, mk.x, mk.z, activePet(state), env);
+    if (r.ok) {
+      clearMarker(true);
+      normalizeTravel(state);
+      world.sync(state);
+      world.shake = Math.max(world.shake || 0, 0.6);
+      world.summonFlash(state.player.x, state.player.z, 0x9a5cff);
+      world.combatFX?.handle(
+        [
+          { type: 'rift', phase: 'exit', x: state.player.x - Math.sin(yaw) * 3, z: state.player.z - Math.cos(yaw) * 3 },
+          { type: 'rift', phase: 'burst', x: state.player.x, z: state.player.z }
+        ],
+        state.elapsed,
+        ground
+      );
+      audio.note(90, 0.4);
+      haptic('discover');
+      toast(r.message);
+      save(true);
+      updateUI();
+    } else toast(r.error, true);
+    $('rift-fade').classList.remove('in');
+    setTimeout(() => {
+      document.body.classList.remove('rift-warp');
+      riftWarping = false;
+    }, 650);
+  }, 750);
 }
 function returnHome() {
   if (!running || paused) return;
