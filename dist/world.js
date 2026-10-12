@@ -1,36 +1,37 @@
-import { expansionModels } from './expansion-models.js?v=0.36.2';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.36.2';
-import { normalizeHousing, penId } from './housing.js?v=0.36.2';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.36.2';
-export { makeCreature } from './creatures.js?v=0.36.2';
-import { makeIslands } from './island-models.js?v=0.36.2';
-import { facilityId } from './facilities.js?v=0.36.2';
+import { expansionModels } from './expansion-models.js?v=0.36.3';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.36.3';
+import { normalizeHousing, penId } from './housing.js?v=0.36.3';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.36.3';
+export { makeCreature } from './creatures.js?v=0.36.3';
+import { makeIslands } from './island-models.js?v=0.36.3';
+import { facilityId } from './facilities.js?v=0.36.3';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.36.2';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.36.2';
-import { makeLake } from './lake-models.js?v=0.36.2';
-import { groundAt, LANDMARKS } from './lake.js?v=0.36.2';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.36.2';
-import { makeStatues } from './statues.js?v=0.36.2';
-import { animateGarden } from './garden-models.js?v=0.36.2';
-import { ViewModel } from './viewmodel.js?v=0.36.2';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.36.2';
-import { PostFX } from './postfx.js?v=0.36.2';
-import { makeHuman, animateHuman } from './human.js?v=0.36.2';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.36.2';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.36.2';
-import { buildError } from './rules.js?v=0.36.2';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.36.2';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.36.2';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.36.2';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.36.2';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.36.2';
-import { CombatFX } from './combat-fx.js?v=0.36.2';
-import { syncPlots } from './land-models.js?v=0.36.2';
-import { plotTargets } from './reclaim.js?v=0.36.2';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.36.2';
-import { dayPhase } from './clock.js?v=0.36.2';
-import { weatherAt, season } from './weather.js?v=0.36.2';
+import { phenotype, seeded } from './genetics.js?v=0.36.3';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.36.3';
+import { makeLake } from './lake-models.js?v=0.36.3';
+import { groundAt, LANDMARKS } from './lake.js?v=0.36.3';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.36.3';
+import { makeStatues } from './statues.js?v=0.36.3';
+import { animateGarden } from './garden-models.js?v=0.36.3';
+import { ViewModel } from './viewmodel.js?v=0.36.3';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.36.3';
+import { PostFX } from './postfx.js?v=0.36.3';
+import { makeHuman, animateHuman } from './human.js?v=0.36.3';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.36.3';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.36.3';
+import { buildError } from './rules.js?v=0.36.3';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.36.3';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.36.3';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.36.3';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.36.3';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.36.3';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.36.3';
+import { CombatFX } from './combat-fx.js?v=0.36.3';
+import { syncPlots } from './land-models.js?v=0.36.3';
+import { plotTargets } from './reclaim.js?v=0.36.3';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.36.3';
+import { dayPhase } from './clock.js?v=0.36.3';
+import { weatherAt, season } from './weather.js?v=0.36.3';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -1164,7 +1165,8 @@ export class OceanWorld {
       for (const k of [-8, 0, 8])
         if (Math.hypot(x - (s.ship.x + Math.sin(h) * k), z - (s.ship.z + Math.cos(h) * k)) < 3.8 + r) return false;
     }
-    if (s.inCave) return true;
+    // 0.36.3: in the garden the hedges are walls for beasts too (they used to walk straight through)
+    if (s.inCave) return mazeWalkable(x - GARDEN.x, z - GARDEN.z, Math.min(1.1, 0.45 + r * 0.5));
     const g = groundAt(x, z);
     return onLand ? g > 0.35 : g < -0.6;
   }
@@ -1507,7 +1509,60 @@ export class OceanWorld {
         let fx = s.player.x,
           fz = s.player.z,
           face = s.player.heading;
-        if (!riding && !fight) {
+        // in the maze it walks the way you walked (a trail of your footsteps), never across a hedge
+        if (s.inCave && !riding) {
+          const tr = (this.caveTrail ??= []),
+            last = tr[tr.length - 1];
+          if (!last || Math.hypot(last.x - s.player.x, last.z - s.player.z) > 0.8)
+            tr.push({ x: s.player.x, z: s.player.z });
+          if (tr.length > 80) tr.shift();
+        } else this.caveTrail = null;
+        if (!riding && !fight && s.inCave) {
+          const f = (m.userData.follow ??= { x: s.player.x, z: s.player.z, wait: 0, heading: 0 }),
+            tr = this.caveTrail || [],
+            keep = 2.2 + (m.userData.bodyR ?? 0.6);
+          if (
+            !mazeWalkable(f.x - GARDEN.x, f.z - GARDEN.z, 0.4) ||
+            Math.hypot(f.x - s.player.x, f.z - s.player.z) > 18
+          ) {
+            const back = tr[Math.max(0, tr.length - 4)] || { x: s.player.x, z: s.player.z };
+            f.x = back.x;
+            f.z = back.z;
+          }
+          // the trail point about `keep` metres behind you (counting along the path)
+          let gi = tr.length - 1,
+            acc = 0;
+          while (gi > 0 && acc < keep) {
+            acc += Math.hypot(tr[gi].x - tr[gi - 1].x, tr[gi].z - tr[gi - 1].z);
+            gi--;
+          }
+          // where it is on the trail; it walks the trail forward up to that point (never cutting a corner)
+          let ni = 0,
+            nd = Infinity;
+          tr.forEach((p, k) => {
+            const dd = Math.hypot(p.x - f.x, p.z - f.z);
+            if (dd < nd) {
+              nd = dd;
+              ni = k;
+            }
+          });
+          const aim = !tr.length ? { x: s.player.x, z: s.player.z } : nd > 1.5 ? tr[ni] : tr[Math.min(gi, ni + 1)];
+          const dx = aim.x - f.x,
+            dz = aim.z - f.z,
+            d = Math.hypot(dx, dz),
+            close = Math.hypot(f.x - s.player.x, f.z - s.player.z) < keep * 0.8;
+          if (d > 0.2 && !close) {
+            const step = Math.min(d, (3 + phenotype(c.genome).speed / 40) * dt);
+            f.x += (dx / d) * step;
+            f.z += (dz / d) * step;
+            f.heading = Math.atan2(dx, dz);
+            f.moving = true;
+          } else f.moving = false;
+          fx = f.x;
+          fz = f.z;
+          face = f.moving ? f.heading : Math.atan2(s.player.x - f.x, s.player.z - f.z);
+          m.userData.followMoving = f.moving;
+        } else if (!riding && !fight) {
           const f = (m.userData.follow ??= { x: s.player.x + 2, z: s.player.z + 2, wait: 0, heading: 0 }),
             rad =
               0.4 +

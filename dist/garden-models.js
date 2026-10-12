@@ -3,8 +3,8 @@
 // violet crystal pushing up through the soil, dead trees, drifting spores — and at the heart, a stone dais ringed
 // by broken pillars and roots, where 嘯岳 sleeps. Instanced wherever things repeat.
 import * as T from './vendor/three.module.min.js';
-import { CAVE, MAZE_N, MAZE_CELL, MAZE_HALF, MAZE_WALLS, HALL, HALL_COVER, ENTRANCE } from './cave-maze.js?v=0.36.2';
-import { grainTexture } from './realism.js?v=0.36.2';
+import { CAVE, MAZE_N, MAZE_CELL, MAZE_HALF, MAZE_WALLS, HALL, HALL_COVER, ENTRANCE } from './cave-maze.js?v=0.36.3';
+import { grainTexture } from './realism.js?v=0.36.3';
 
 let seed = 77;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -30,7 +30,7 @@ export function makeGarden() {
   const g = new T.Group();
   g.position.set(CAVE.x, 0, CAVE.z);
   const grain = grainTexture().clone();
-  grain.repeat.set(18, 18);
+  grain.repeat.set(26, 26);
   grain.needsUpdate = true;
   // soil
   const floor = new T.Mesh(
@@ -199,7 +199,7 @@ export function makeGarden() {
   }
   for (let k = 0; k < 11; k++) {
     const a = (k / 11) * Math.PI * 2 + 0.5,
-      far = 12 + rnd() * 6,
+      far = 16 + rnd() * 9,
       pts = [
         new T.Vector3(Math.sin(a) * far, 0.2, Math.cos(a) * far),
         new T.Vector3(Math.sin(a + 0.15) * (far * 0.55), 0.6, Math.cos(a + 0.15) * (far * 0.55)),
@@ -210,13 +210,13 @@ export function makeGarden() {
     g.add(root);
   }
   for (const [x, z] of [
-    [-12.5, -12.5],
-    [12.5, -12.5],
-    [-13, 12],
-    [13, 12],
-    [0, -18.5],
-    [-18.5, 0],
-    [18.5, 0]
+    [-17, -17],
+    [17, -17],
+    [-17.5, 16],
+    [17.5, 16],
+    [0, -25],
+    [-25, 0],
+    [25, 0]
   ]) {
     const spire = new T.Mesh(
       new T.OctahedronGeometry(1, 0),

@@ -1,8 +1,8 @@
-import { CAVE } from './expansion.js?v=0.36.2';
-import { mazeWalkable } from './cave-maze.js?v=0.36.2';
-import { moveAboard, moveShip } from './ship.js?v=0.36.2';
-import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.36.2';
-import { groundAt, waterNear } from './lake.js?v=0.36.2';
+import { CAVE } from './expansion.js?v=0.36.3';
+import { mazeWalkable } from './cave-maze.js?v=0.36.3';
+import { moveAboard, moveShip } from './ship.js?v=0.36.3';
+import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.36.3';
+import { groundAt, waterNear } from './lake.js?v=0.36.3';
 // All travel modes share world coordinates. The boat stays moored while walking.
 export const TILE_SIZE = 3.6;
 const SIDES = [

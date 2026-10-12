@@ -1,26 +1,26 @@
 // The corrupted garden (0.31): the crystal cave grown into a maze of thorn hedges, rotten blooms and sick crystal.
-// A 15 × 15 grid of 6 m cells (90 m across, centred on CAVE); the middle 7 × 7 (42 m) is one open hall where 嘯岳
-// sleeps (0.36: three times the room it had, with stone pillars and fallen walls to hide behind from its blows).
+// A 19 × 19 grid of 8 m cells (152 m across, centred on CAVE); the middle 7 × 7 (56 m) is one open hall where 嘯岳
+// sleeps, with stone pillars and fallen walls to hide behind from its blows (0.36 / 0.36.3: grown twice).
 // The entrance is on the south side (+z). The maze is fixed (seeded), carved with a backtracker and then given a
 // few extra openings so it loops instead of punishing every wrong turn.
 // Coordinates here are local to the cave's centre; add CAVE.x / CAVE.z for the world.
 // the cave is its own pocket of the world, far outside the basin
-export const CAVE = { x: 2600, z: -2600, r: 45 };
-export const MAZE_N = 15;
-export const MAZE_CELL = 6;
-export const MAZE_HALF = (MAZE_N * MAZE_CELL) / 2; // 45
-const MID = (MAZE_N - 1) / 2; // 7: the middle column (the entrance) and row
-export const HALL = { i0: 4, i1: 10, j0: 4, j1: 10, r: 20 }; // the sleeping hall (cells), and its open radius
+export const CAVE = { x: 2600, z: -2600, r: 76 };
+export const MAZE_N = 19;
+export const MAZE_CELL = 8;
+export const MAZE_HALF = (MAZE_N * MAZE_CELL) / 2; // 76
+const MID = (MAZE_N - 1) / 2; // 9: the middle column (the entrance) and row
+export const HALL = { i0: 6, i1: 12, j0: 6, j1: 12, r: 27 }; // the sleeping hall (cells), and its open radius
 // cover in the hall: stone pillars and toppled wall pieces (local x, z, radius). Claws and pounces do not pass
 // through them; the thorns that rise from the ground do.
 export const HALL_COVER = [
   ...[0, 1, 2, 3, 4, 5].map(k => {
     const a = (k / 6) * Math.PI * 2 + Math.PI / 6;
-    return { x: Math.sin(a) * 9.5, z: Math.cos(a) * 9.5, r: 1.1, kind: 'pillar' };
+    return { x: Math.sin(a) * 12.5, z: Math.cos(a) * 12.5, r: 1.4, kind: 'pillar' };
   }),
   ...[0, 1, 2, 3, 4, 5, 6, 7].map(k => {
     const a = (k / 8) * Math.PI * 2 + Math.PI / 8;
-    return { x: Math.sin(a) * 15.5, z: Math.cos(a) * 15.5, r: 1.6, kind: 'wall', a };
+    return { x: Math.sin(a) * 21, z: Math.cos(a) * 21, r: 2, kind: 'wall', a };
   })
 ];
 // does a straight line from a to b (local) pass behind cover?
@@ -84,7 +84,7 @@ function open(i, j, di, dj) {
       if (j < HALL.j1) h[j + 1][i] = false;
     }
   // a few loops
-  for (let k = 0; k < 18; k++) {
+  for (let k = 0; k < 30; k++) {
     const i = 1 + Math.floor(rnd() * (MAZE_N - 2)),
       j = 1 + Math.floor(rnd() * (MAZE_N - 2));
     if (inHall(i, j)) continue;

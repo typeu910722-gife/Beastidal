@@ -135,13 +135,13 @@ test('The cave is a maze: walls block, the entrance leads to the heart', () => {
   assert.ok(canWalk(s, CAVE.x + ENTRANCE.x, CAVE.z + ENTRANCE.z));
   assert.equal(canWalk(s, CAVE.x, CAVE.z), false, 'the dais is solid');
   assert.ok(canWalk(s, SLEEP_AT.x, SLEEP_AT.z + 2));
-  assert.equal(canWalk(s, CAVE.x + 50, CAVE.z), false, 'outside the hedges');
+  assert.equal(canWalk(s, CAVE.x + 80, CAVE.z), false, 'outside the hedges');
 });
 test('0.36: the great hall is wide, and its pillars stand between you and the claws of 嘯岳', () => {
   assert.ok(HALL.i1 - HALL.i0 + 1 >= 7, 'a 7 × 7 cell hall');
-  assert.ok(MAZE_HALF >= 45);
+  assert.ok(MAZE_HALF >= 76);
   // open floor across the hall, the cover itself solid
-  assert.ok(mazeWalkable(0, 6) && mazeWalkable(-12, -4) && mazeWalkable(4, -13));
+  assert.ok(mazeWalkable(0, 6) && mazeWalkable(-16, -4) && mazeWalkable(4, -17));
   for (const c of HALL_COVER) assert.equal(mazeWalkable(c.x, c.z), false);
   // a pillar between the beast and you blocks the line; open floor does not
   const p = HALL_COVER[0];

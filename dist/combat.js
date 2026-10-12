@@ -9,15 +9,15 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.36.2';
-import { bsOf, geneStats } from './bsgenes.js?v=0.36.2';
-import { WILD_BEASTS } from './beasts.js?v=0.36.2';
-import { rollDrops } from './species.js?v=0.36.2';
-import { give } from './bag.js?v=0.36.2';
-import { tally } from './stats.js?v=0.36.2';
-import { damageBonus } from './skills.js?v=0.36.2';
-import { remember } from './memories.js?v=0.36.2';
-import { perks, personality, normalizeTree } from './beast-tree.js?v=0.36.2';
+import { phenotype } from './genetics.js?v=0.36.3';
+import { bsOf, geneStats } from './bsgenes.js?v=0.36.3';
+import { WILD_BEASTS } from './beasts.js?v=0.36.3';
+import { rollDrops } from './species.js?v=0.36.3';
+import { give } from './bag.js?v=0.36.3';
+import { tally } from './stats.js?v=0.36.3';
+import { damageBonus } from './skills.js?v=0.36.3';
+import { remember } from './memories.js?v=0.36.3';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.36.3';
 
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;
@@ -272,6 +272,11 @@ export function allyPos(s) {
   if (!Number.isFinite(c.ax) || dist({ x: c.ax, z: c.az }, s.player) > 16) {
     c.ax = s.player.x - Math.sin(s.player.heading || 0) * 2.4;
     c.az = s.player.z - Math.cos(s.player.heading || 0) * 2.4;
+    // (in the garden, never on the far side of a hedge: then at your heels)
+    if (s.inCave) {
+      c.ax = s.player.x;
+      c.az = s.player.z;
+    }
   }
   return { x: c.ax, z: c.az };
 }
@@ -1027,9 +1032,16 @@ export function tickCombat(s, dt, env = {}) {
     }
     const d = dist(ally, goal);
     if (d > 0.3) {
-      const k = Math.min(1, (speed * dt) / d);
-      c.ax = ally.x + (goal.x - ally.x) * k;
-      c.az = ally.z + (goal.z - ally.z) * k;
+      const k = Math.min(1, (speed * dt) / d),
+        nx = ally.x + (goal.x - ally.x) * k,
+        nz = ally.z + (goal.z - ally.z) * k,
+        can = env.allyCan || (() => true);
+      // 0.36.3: walls stop it (in the garden it used to fight straight through the hedges); slide along them
+      if (can(nx, nz)) {
+        c.ax = nx;
+        c.az = nz;
+      } else if (can(nx, ally.z)) c.ax = nx;
+      else if (can(ally.x, nz)) c.az = nz;
     }
     if (
       target &&
