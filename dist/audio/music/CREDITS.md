@@ -11,5 +11,6 @@ Files were loudness-normalised (−20 LUFS), given a 1.5 s fade-in, and re-encod
 | `sea-night.mp3` | Night and storms | The Ocean and the Moon | HoliznaCC0 | Free Music Archive, mirrored in SoundSafari/CC0-1.0-Music |
 | `deep.mp3` | Diving, caves, the deep-sea guardian | An Ancient Creature Beneath the Sea | HoliznaCC0 | Free Music Archive, mirrored in SoundSafari/CC0-1.0-Music |
 | `island.mp3` | On foot: raft, islands, warship decks | Night in a seashell (album *Poupi's incredible adventures !*, 2018) | Komiku | Free Music Archive, mirrored in SoundSafari/CC0-1.0-Music |
+| `boss.mp3` (0.34) | The corrupted garden maze and boss fights | Action Epic (album *The Binge Watchers : Score 1*, 2017) | Komiku | Free Music Archive, mirrored in SoundSafari/CC0-1.0-Music (chosic.com folder) |
 
 Before a commercial release (Steam / Google Play), re-check each track's licence on its Free Music Archive page and keep a screenshot as a record.

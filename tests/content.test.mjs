@@ -124,6 +124,9 @@ test('Treasure: only a dive reaches it, and it pays out once', () => {
   Object.assign(s.player, { x: ev.x, z: ev.z, mode: 'boat' });
   assert.equal(claimTreasure(s).ok, false);
   s.expedition.diving = true;
+  s.expedition.depth = -1.5;
+  if (ev.ground < -16) assert.equal(claimTreasure(s).ok, false, 'too high above it');
+  s.expedition.depth = ev.ground + 2;
   const c = s.contracts || 0;
   assert.ok(claimTreasure(s).ok);
   assert.equal(s.contracts, c + 1);

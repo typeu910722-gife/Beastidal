@@ -1,5 +1,5 @@
 // Music (CC0 tracks, see audio/music/CREDITS.md) and synthesised water sounds.
-const TRACKS = { title: 'title', day: 'sea-day', night: 'sea-night', deep: 'deep', island: 'island' };
+const TRACKS = { title: 'title', day: 'sea-day', night: 'sea-night', deep: 'deep', island: 'island', boss: 'boss' };
 const PREF_KEY = 'beastidal-sound';
 export const soundPref = {
   get() {

@@ -3111,5 +3111,12 @@ export default {
   '帶誘餌連續餵同一隻野生生物提高信任度，再用外出籠帶回船上；配種出 3 種比斯基因後用契約書契闊進化。生物住進生物倉庫、御獸住進御獸倉庫；展示池用來陳列牠們。':
     'Keep feeding the same wild creature bait to raise its trust, then bring it aboard in a carry cage; once breeding gives it 3 BS genes, evolve it with a contract scroll. Creatures live in the creature storage, beasts in the beast storage; pens are for showing them.',
   '（帶回來的還只是生物，不能出戰。蓋孵化台讓牠們配對，等誰身上出現 3 種比斯基因，再帶著契約書到生物倉庫按「契闊進化」。）':
-    '(What you bring back is only a creature and cannot fight. Build a hatchery to pair them; once one carries 3 BS genes, bring a contract scroll to the creature storage and press Evolve.)'
+    '(What you bring back is only a creature and cannot fight. Build a hatchery to pair them; once one carries 3 BS genes, bring a contract scroll to the creature storage and press Evolve.)',
+  'M 地圖與標記 · 潛水時往哪裡看就往哪裡游，空白鍵上浮、Z 下潛（也可按住畫面上的 ▲▼）':
+    'M map and markers · when diving you swim where you look; Space rises, Z sinks (or hold the on-screen ▲▼)',
+  '深度 {0} m': 'Depth {0} m',
+  '▲ 上浮 空白': '▲ Rise Space',
+  '▼ 下潛 Z': '▼ Sink Z',
+  下潛: 'Sink',
+  '再往下潛（寶藏在深度 {0} m，按住 Z 或 ▼ 下潛）。': 'Dive deeper (the treasure lies at {0} m — hold Z or ▼ to sink).'
 };

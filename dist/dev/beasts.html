@@ -48,13 +48,13 @@
     </div>
     <script type="module">
       import * as T from '../vendor/three.module.min.js';
-      import { makeCreature, animateCreature } from '../creatures.js?v=0.33.0';
-      import { makeGenome } from '../genetics.js?v=0.33.0';
-      import { applyGeneMarks, animateMarks } from '../bs-models.js?v=0.33.0';
-      import { lookOf } from '../beast-look.js?v=0.33.0';
-      import { loadSculpts } from '../sculpt-assets.js?v=0.33.0';
+      import { makeCreature, animateCreature } from '../creatures.js?v=0.34.0';
+      import { makeGenome } from '../genetics.js?v=0.34.0';
+      import { applyGeneMarks, animateMarks } from '../bs-models.js?v=0.34.0';
+      import { lookOf } from '../beast-look.js?v=0.34.0';
+      import { loadSculpts } from '../sculpt-assets.js?v=0.34.0';
       if (new URLSearchParams(location.search).get('composite') !== '1') await loadSculpts();
-      import { makeSky } from '../realism.js?v=0.33.0';
+      import { makeSky } from '../realism.js?v=0.34.0';
       const q = new URLSearchParams(location.search),
         spin = q.get('spin') !== '0';
       const canvas = document.getElementById('c'),

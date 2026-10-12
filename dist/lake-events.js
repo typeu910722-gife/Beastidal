@@ -4,11 +4,11 @@
 //   異晶潮   the lake glows: crystal crates surface near you
 //   御獸遷徙 a herd of one species crosses the lake; calmer around people (easier to tame)
 //   湖心寶藏 a light marks a cache on the lakebed; dive to it
-import { waterNear, groundAt } from './lake.js?v=0.33.0';
-import { makeGenome, allSpecies } from './genetics.js?v=0.33.0';
-import { spend } from './bag.js?v=0.33.0';
-import { tally } from './stats.js?v=0.33.0';
-import { makeWildBeast } from './beasts.js?v=0.33.0';
+import { waterNear, groundAt } from './lake.js?v=0.34.0';
+import { makeGenome, allSpecies } from './genetics.js?v=0.34.0';
+import { spend } from './bag.js?v=0.34.0';
+import { tally } from './stats.js?v=0.34.0';
+import { makeWildBeast } from './beasts.js?v=0.34.0';
 
 export const EVENTS = {
   merchant: { name: '漂流商船', dur: 210, weight: 3, hint: '開船靠近，看看他帶了什麼。' },
@@ -48,8 +48,19 @@ function spot(s, rng, min, max, depth = 4) {
     d = min + rng() * (max - min);
   return waterNear(s.player.x + Math.sin(a) * d, s.player.z + Math.cos(a) * d, depth, 200);
 }
+// 0.34: the lake-bottom treasure lies 15-45 m down, within one breath (the deep trenches go past 200 m)
+function treasureSpot(s, rng) {
+  let first = null;
+  for (let i = 0; i < 24; i++) {
+    const at = spot(s, rng, 70, 150, 15);
+    first ??= at;
+    const g = groundAt(at.x, at.z);
+    if (g <= -15 && g >= -45) return at;
+  }
+  return first;
+}
 export function startEvent(s, kind, rng = Math.random) {
-  const at = spot(s, rng, 70, 150, kind === 'treasure' ? 25 : 4),
+  const at = kind === 'treasure' ? treasureSpot(s, rng) : spot(s, rng, 70, 150, 4),
     ev = { kind, x: at.x, z: at.z, until: s.elapsed + EVENTS[kind].dur, id: 'ev-' + Math.floor(rng() * 1e9) };
   if (kind === 'merchant') {
     const pool = [...TRADES];
@@ -162,6 +173,9 @@ export function claimTreasure(s) {
   if (ev?.kind !== 'treasure' || ev.claimed) return fail('這裡已經沒有寶藏了。');
   if (!s.expedition?.diving) return fail('寶藏沉在湖底，騎御獸潛下去。');
   if (!eventNear(s, 9)) return fail('再靠近光柱一點。');
+  const depth = s.expedition.depth;
+  if (Number.isFinite(depth) && Number.isFinite(ev.ground) && depth - ev.ground > 14)
+    return fail(`再往下潛（寶藏在深度 ${Math.round(-ev.ground)} m，按住 Z 或 ▼ 下潛）。`);
   ev.claimed = true;
   for (const [k, v] of Object.entries(TREASURE)) {
     if (k === 'contract') s.contracts = (s.contracts || 0) + v;

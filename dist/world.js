@@ -1,36 +1,36 @@
-import { expansionModels } from './expansion-models.js?v=0.33.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.33.0';
-import { normalizeHousing, penId } from './housing.js?v=0.33.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.33.0';
-export { makeCreature } from './creatures.js?v=0.33.0';
-import { makeIslands } from './island-models.js?v=0.33.0';
-import { facilityId } from './facilities.js?v=0.33.0';
+import { expansionModels } from './expansion-models.js?v=0.34.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.34.0';
+import { normalizeHousing, penId } from './housing.js?v=0.34.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.34.0';
+export { makeCreature } from './creatures.js?v=0.34.0';
+import { makeIslands } from './island-models.js?v=0.34.0';
+import { facilityId } from './facilities.js?v=0.34.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.33.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.33.0';
-import { makeLake } from './lake-models.js?v=0.33.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.33.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.33.0';
-import { makeStatues } from './statues.js?v=0.33.0';
-import { animateGarden } from './garden-models.js?v=0.33.0';
-import { ViewModel } from './viewmodel.js?v=0.33.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.33.0';
-import { PostFX } from './postfx.js?v=0.33.0';
-import { makeHuman, animateHuman } from './human.js?v=0.33.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.33.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.33.0';
-import { buildError } from './rules.js?v=0.33.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.33.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.33.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.33.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.33.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.33.0';
-import { CombatFX } from './combat-fx.js?v=0.33.0';
-import { syncPlots } from './land-models.js?v=0.33.0';
-import { plotTargets } from './reclaim.js?v=0.33.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.33.0';
-import { dayPhase } from './clock.js?v=0.33.0';
-import { weatherAt, season } from './weather.js?v=0.33.0';
+import { phenotype, seeded } from './genetics.js?v=0.34.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.34.0';
+import { makeLake } from './lake-models.js?v=0.34.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.34.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.34.0';
+import { makeStatues } from './statues.js?v=0.34.0';
+import { animateGarden } from './garden-models.js?v=0.34.0';
+import { ViewModel } from './viewmodel.js?v=0.34.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.34.0';
+import { PostFX } from './postfx.js?v=0.34.0';
+import { makeHuman, animateHuman } from './human.js?v=0.34.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.34.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.34.0';
+import { buildError } from './rules.js?v=0.34.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.34.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.34.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.34.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.34.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.34.0';
+import { CombatFX } from './combat-fx.js?v=0.34.0';
+import { syncPlots } from './land-models.js?v=0.34.0';
+import { plotTargets } from './reclaim.js?v=0.34.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.34.0';
+import { dayPhase } from './clock.js?v=0.34.0';
+import { weatherAt, season } from './weather.js?v=0.34.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -692,6 +692,13 @@ export class OceanWorld {
     // 0.32: the camera carries the first-person hands, so it lives in the scene
     this.scene.add(this.camera);
     this.viewmodel = new ViewModel(this.camera);
+    // 0.34: a flashlight in the dark (under water, in the garden maze) — a beam where you look, a glow around you
+    this.torch = new T.SpotLight(0xfff0d2, 0, 48, 0.62, 0.55, 1.1);
+    this.torch.position.set(0.3, -0.25, 0);
+    this.torch.target.position.set(0, -0.5, -8);
+    this.torchGlow = new T.PointLight(0xd8f0ff, 0, 16, 1.2);
+    this.torchGlow.position.set(0, 0.2, 0.4);
+    this.camera.add(this.torch, this.torch.target, this.torchGlow);
     this.summons = [];
     this.yaw = 0.63;
     this.pitch = 0.64;
@@ -1583,6 +1590,8 @@ export class OceanWorld {
         animateMarks(m, t);
         // under water the beast noses down or up with the direction you swim
         m.rotation.x += ((diving ? -(this.diveDir || 0) * 0.55 : 0) - m.rotation.x) * Math.min(1, dt * 4);
+        // 0.34: in first person under water you are on its back — its body would fill the view as you look down
+        if (riding && diving && this.firstPerson) m.visible = false;
         this.animateCreature(m, t);
         if (m.userData.aura) m.userData.aura.rotation.z = t;
         continue;
@@ -1817,6 +1826,10 @@ export class OceanWorld {
     }
     rain.needsUpdate = true;
     this.scene.fog.density = cabin ? 0.008 : diving ? 0.035 : s.inCave ? 0.016 : this.skyFog + storm * 0.003;
+    const dark = (diving || s.inCave) && !cabin && !opts.title,
+      ease = Math.min(1, dt * 4);
+    this.torch.intensity += ((dark ? (diving ? 240 : 160) : 0) - this.torch.intensity) * ease;
+    this.torchGlow.intensity += ((dark ? (diving ? 26 : 18) : 0) - this.torchGlow.intensity) * ease;
     if (cabin) {
       // warm lamplight indoors
       this.scene.background.set(0x1a120c);
@@ -2133,7 +2146,8 @@ export class OceanWorld {
     this.post.storm = this.stormLevel;
     this.post.focus = this.focusDist || 30;
     // the hands are not in the depth buffer: no depth of field while they are up, or it would blur them
-    this.post.handsUp = this.viewmodel.busy;
+    // (nor in the dark under water or in the maze: what the flashlight finds is close, and must stay sharp)
+    this.post.handsUp = this.viewmodel.busy || this.diveY < -0.5 || !!this.lastState?.inCave;
     this.post.warmth = this.diveY < -0.5 ? 0.3 : 1;
     const frameDt = Math.min(0.1, (now - (this.lastRender || now)) / 1000);
     this.post.render(this.scene, this.camera, frameDt);

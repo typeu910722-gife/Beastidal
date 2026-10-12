@@ -12,12 +12,12 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./brand/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./style.css?v=0.33.0" />
-    <link rel="stylesheet" href="./mobile.css?v=0.33.0" />
-    <link rel="stylesheet" href="./panels.css?v=0.33.0" />
-    <link rel="stylesheet" href="./expansion.css?v=0.33.0" />
-    <link rel="stylesheet" href="./beastidal.css?v=0.33.0" />
-    <link rel="stylesheet" href="./inventory.css?v=0.33.0" />
+    <link rel="stylesheet" href="./style.css?v=0.34.0" />
+    <link rel="stylesheet" href="./mobile.css?v=0.34.0" />
+    <link rel="stylesheet" href="./panels.css?v=0.34.0" />
+    <link rel="stylesheet" href="./expansion.css?v=0.34.0" />
+    <link rel="stylesheet" href="./beastidal.css?v=0.34.0" />
+    <link rel="stylesheet" href="./inventory.css?v=0.34.0" />
   </head>
   <body>
     <!-- Studio splash (about 7 s, tap or any key to skip): the YZ mark assembles, then the studio name rises. -->
@@ -280,6 +280,10 @@
             <button id="ride-btn">騎乘 T</button><button id="dive-btn">潛水 G</button
             ><button id="beast-attack">攻擊 F</button>
           </div>
+          <div id="swim-row" class="swim-row" hidden>
+            <button id="swim-up" type="button">▲ 上浮 空白</button><span id="swim-depth"></span
+            ><button id="swim-down" type="button">▼ 下潛 Z</button>
+          </div>
           <div class="combat-row">
             <button id="skill-1" hidden></button><button id="skill-2" hidden></button
             ><button id="skill-3" hidden></button><button id="dodge-btn" hidden>閃避 空白</button>
@@ -293,7 +297,8 @@
           <div id="joystick" aria-label="拖曳駕艇"><div id="joystick-knob"></div></div>
           <div class="touch-actions">
             <button id="sprint-btn" data-hold aria-pressed="false" aria-label="加速（點一下開關）">加速</button
-            ><button id="repel-btn" aria-label="驅離生物">驅離</button>
+            ><button id="repel-btn" aria-label="驅離生物">驅離</button
+            ><button id="dive-down-btn" aria-label="下潛" hidden>下潛</button>
           </div>
         </div>
         <div id="build-banner" hidden>
@@ -335,7 +340,7 @@
         <small>遊戲已暫停，橫放後即可繼續。</small><button id="rotate-fullscreen" class="primary">嘗試全螢幕</button>
       </section>
     </main>
-    <script type="module" src="./game.js?v=0.33.0"></script>
+    <script type="module" src="./game.js?v=0.34.0"></script>
     <script>
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
