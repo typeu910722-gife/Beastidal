@@ -3424,3 +3424,23 @@ body.landscape-play.beast-on .supply-row {
   height: 44px;
   min-height: 44px;
 }
+
+/* 0.36.5: 嘯岳's pact card and the mythic tier in the codex */
+.ccard.myth {
+  border-color: #e9c46a;
+  background:
+    repeating-linear-gradient(0deg, #00000010 0 2px, transparent 2px 4px),
+    linear-gradient(170deg, #fff1c2, #d9a441 60%, #a8742a);
+  color: #3a2408;
+}
+.ccard.myth .cc-glyph {
+  color: #6a3f0a;
+  text-shadow: 0 0 6px #fff4c0;
+}
+.myth-grid .myth-tile {
+  border-color: #e9c46a88;
+  background: linear-gradient(160deg, #3a2a10cc, #14100acc);
+}
+.myth-grid .myth-tile.ready b {
+  color: #ffe08a;
+}

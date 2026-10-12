@@ -1,8 +1,9 @@
 // Live previews of beasts for the device's beast storage: one small offscreen renderer draws every visible beast,
 // slowly turning and swimming, into its own 2D canvas each frame.
 import * as T from './vendor/three.module.min.js';
-import { makeCreature, animateCreature } from './creatures.js?v=0.36.4';
-import { applyGeneMarks } from './bs-models.js?v=0.36.4';
+import { makeCreature, animateCreature } from './creatures.js?v=0.36.5';
+import { applyGeneMarks } from './bs-models.js?v=0.36.5';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.36.5';
 
 export class BeastStage {
   constructor() {
@@ -32,8 +33,11 @@ export class BeastStage {
   model(key, genome, kind) {
     let m = this.models.get(key);
     if (m) return m;
-    const mesh = makeCreature(genome);
-    if (kind) applyGeneMarks(mesh, genome, kind);
+    // 0.36.5: 嘯岳 is drawn as itself, the sabre-tooth, not from its genome
+    const saber = key.startsWith('ancient-'),
+      mesh = saber ? makeSabertooth() : makeCreature(genome);
+    mesh.userData.saber = saber;
+    if (kind && !saber) applyGeneMarks(mesh, genome, kind);
     mesh.visible = false;
     this.scene.add(mesh);
     mesh.updateMatrixWorld(true);
@@ -68,7 +72,8 @@ export class BeastStage {
       if (!m) continue;
       for (const o of this.models.values()) o.mesh.visible = o === m;
       m.mesh.rotation.y = -0.6 + Math.sin(this.t * 0.35 + m.phase) * 0.7;
-      animateCreature(m.mesh, this.t + m.phase);
+      if (m.mesh.userData.saber) animateSabertooth(m.mesh, this.t + m.phase);
+      else animateCreature(m.mesh, this.t + m.phase);
       const r = m.radius,
         aspect = c.canvas.width / c.canvas.height;
       this.camera.aspect = aspect;

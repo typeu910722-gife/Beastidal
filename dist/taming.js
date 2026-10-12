@@ -6,16 +6,16 @@
 //     bound by trust; hostile ones must be worn down in a fight — the weaker, the better the odds — and stay
 //     modest even bound. A failed contract can send anything into a frenzy: 1.2× speed and bite, hunting you for
 //     10–20 seconds, and nothing frenzied can be repelled.
-import { phenotype, geneName, makeGenome } from './genetics.js?v=0.36.4';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.36.4';
-import { spend, give } from './bag.js?v=0.36.4';
-import { remember } from './memories.js?v=0.36.4';
-import { nearFacility } from './fortress.js?v=0.36.4';
-import { hasPerk } from './codex.js?v=0.36.4';
-import { tally } from './stats.js?v=0.36.4';
-import { bsOf, canEvolve, EVOLVE_GENES, addRandomGene } from './bsgenes.js?v=0.36.4';
-import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.36.4';
-import { trustBonus } from './skills.js?v=0.36.4';
+import { phenotype, geneName, makeGenome } from './genetics.js?v=0.36.5';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.36.5';
+import { spend, give } from './bag.js?v=0.36.5';
+import { remember } from './memories.js?v=0.36.5';
+import { nearFacility } from './fortress.js?v=0.36.5';
+import { hasPerk } from './codex.js?v=0.36.5';
+import { tally } from './stats.js?v=0.36.5';
+import { bsOf, canEvolve, EVOLVE_GENES, addRandomGene } from './bsgenes.js?v=0.36.5';
+import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.36.5';
+import { trustBonus } from './skills.js?v=0.36.5';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 10, max: 20, below: 60 };
@@ -330,6 +330,8 @@ export const CONTRACTS_FULL = `御獸契約已經滿 ${MAX_CONTRACTS} 張了。�
 export const ownedBeasts = s => (s.tamed || []).filter(p => p.kind !== 'creature' && !p.ancient);
 export const contractsFull = s => ownedBeasts(s).length >= MAX_CONTRACTS;
 export const teamOf = s => (s.tamed || []).filter(p => p.kind !== 'creature' && p.team);
+// 0.36.5: the contract cards — 嘯岳's pact card (always carried, not one of the six) and then the team
+export const cardsOf = s => [...(s.tamed || []).filter(p => p.ancient), ...teamOf(s)];
 // Old saves: the first three beasts (the one out first) ride with you.
 export function normalizeTeam(s) {
   const beasts = (s.tamed || []).filter(p => p.kind !== 'creature');

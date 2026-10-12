@@ -21,14 +21,15 @@
       // Renders one key-art portrait (0.30) for dist/art/: ?key=beast-<id> or ?key=look-<element>-<plan>.
       // scripts/render-keyart.mjs drives it and saves window.keyart (a WebP data URL).
       import * as T from '../vendor/three.module.min.js';
-      import { makeCreature, animateCreature } from '../creatures.js?v=0.36.4';
-      import { makeGenome } from '../genetics.js?v=0.36.4';
-      import { applyGeneMarks, animateMarks } from '../bs-models.js?v=0.36.4';
-      import { LOOKS } from '../beast-look.js?v=0.36.4';
-      import { WILD_BEASTS, makeWildBeast } from '../beasts.js?v=0.36.4';
-      import { loadSculpts } from '../sculpt-assets.js?v=0.36.4';
-      import { makeSky } from '../realism.js?v=0.36.4';
-      import { PostFX } from '../postfx.js?v=0.36.4';
+      import { makeCreature, animateCreature } from '../creatures.js?v=0.36.5';
+      import { makeGenome } from '../genetics.js?v=0.36.5';
+      import { applyGeneMarks, animateMarks } from '../bs-models.js?v=0.36.5';
+      import { LOOKS } from '../beast-look.js?v=0.36.5';
+      import { WILD_BEASTS, makeWildBeast } from '../beasts.js?v=0.36.5';
+      import { loadSculpts } from '../sculpt-assets.js?v=0.36.5';
+      import { makeSky } from '../realism.js?v=0.36.5';
+      import { PostFX } from '../postfx.js?v=0.36.5';
+      import { makeSabertooth, animateSabertooth } from '../story-models.js?v=0.36.5';
       await loadSculpts();
       const q = new URLSearchParams(location.search),
         key = q.get('key') || 'beast-flamemaw',
@@ -49,7 +50,11 @@
       let seed = 1;
       for (const ch of key) seed = (seed * 31 + ch.charCodeAt(0)) % 1e9;
       const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-      if (key.startsWith('beast-')) {
+      const myth = key === 'myth-xiaoyue';
+      if (myth) {
+        genome = makeGenome(2718281, 2, 'land');
+        rim = 0xffc46a;
+      } else if (key.startsWith('beast-')) {
         const id = key.slice(6);
         genome = makeWildBeast(id, rnd).genome;
         sea = WILD_BEASTS[id].kind !== 'land';
@@ -78,12 +83,13 @@
       env.add(sky);
       scene.environment = new T.PMREMGenerator(renderer).fromScene(env, 0, 0.1, 100).texture;
       scene.environmentIntensity = 0.35;
-      const m = makeCreature(genome);
-      applyGeneMarks(m, genome, 'beast');
+      // (0.36.5: 嘯岳, the mythic sabre-tooth, is its own model)
+      const m = myth ? makeSabertooth() : makeCreature(genome);
+      if (!myth) applyGeneMarks(m, genome, 'beast');
       if (m.userData.perch) m.userData.perch.visible = false;
       m.rotation.y = -0.55;
       scene.add(m);
-      for (let i = 0; i < 6; i++) animateCreature(m, 1.3 + i * 0.03);
+      for (let i = 0; i < 6; i++) myth ? animateSabertooth(m, 1.3 + i * 0.03) : animateCreature(m, 1.3 + i * 0.03);
       m.updateMatrixWorld(true);
       const box = new T.Box3();
       m.traverse(o => o.isMesh && o.visible && box.expandByObject(o));
@@ -130,7 +136,7 @@
       post.focus = camera.position.distanceTo(centre);
       post.warmth = sea ? 0.4 : 1;
       for (let i = 0; i < 4; i++) {
-        animateMarks(m, 1.3 + i * 0.05);
+        if (!myth) animateMarks(m, 1.3 + i * 0.05);
         post.render(scene, camera, 0.4);
       }
       window.keyart = canvas.toDataURL('image/webp', 0.9);

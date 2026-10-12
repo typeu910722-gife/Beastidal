@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { groundTexture } from './lake-models.js?v=0.36.4';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.36.4';
+import { groundTexture } from './lake-models.js?v=0.36.5';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.36.5';
 export const TRAIL = 40,
   SPLASHES = 4;
 

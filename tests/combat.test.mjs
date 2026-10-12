@@ -14,7 +14,8 @@ import {
   contractsFull,
   teamOf,
   MAX_CONTRACTS,
-  TEAM_SIZE
+  TEAM_SIZE,
+  cardsOf
 } from '../dist/taming.js';
 import {
   beastSkills,
@@ -212,6 +213,17 @@ test('Contracts: at most 10 御獸, at most 6 carried; creatures follow but neve
   assert.equal(toggleTeam(s, c.id).ok, false);
   assert.ok(commandPet(s, c.id, 'follow').ok);
   assert.equal(commandPet(s, c.id, 'ride').ok, false);
+});
+test('0.36.5: the ancient beast has its own contract card, outside the six, and can be called out', () => {
+  const s = world();
+  for (let i = 0; i < 6; i++) s.tamed.push(pet('beast'));
+  normalizeTeam(s);
+  const old = pet('beast', [], { ancient: true, bond: 70 });
+  s.tamed.push(old);
+  const cards = cardsOf(s);
+  assert.equal(cards[0], old, 'its card comes first');
+  assert.equal(cards.length, TEAM_SIZE + 1);
+  assert.ok(commandPet(s, old.id, 'follow').ok);
 });
 test('Letting go: creatures can be released or cooked; a dissolved contract frenzies for 60–80 s and then rots away', () => {
   const s = world();

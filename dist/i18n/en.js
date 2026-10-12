@@ -3165,5 +3165,18 @@ export default {
   '{0} 來到你身邊了——左上角是牠的契約紙，點一下（或按 Shift+數字）召喚牠。':
     '{0} has come to you — its contract card is top left; click it (or press Shift+number) to call it out.',
   '{0} 成了我的御獸。': '{0} became my beast.',
-  '當年從漁網裡救起的小傢伙，終於成了御獸。': 'The little one I once freed from the net has finally become a beast.'
+  '當年從漁網裡救起的小傢伙，終於成了御獸。': 'The little one I once freed from the net has finally become a beast.',
+  神話級御獸: 'Mythic beasts',
+  神話級: 'Mythic',
+  '· 神話級': '· Mythic',
+  '已締約 · 左上角的金色契約紙': 'Bound · the gold contract card, top left',
+  '需要 10 張契約書締約': 'Binding takes 10 contract scrolls',
+  '沉眠在腐化花園中心的遠古劍齒御獸，第一頭會說話的御獸。':
+    'The ancient sabre-tooth asleep at the heart of the corrupted garden — the first beast that speaks.',
+  '神話級 · {0}': 'Mythic · {0}',
+  '異晶洞窟深處，好像有什麼在沉睡。': 'Something seems to sleep deep in the crystal cave.',
+  中央島上的石像: 'The statue on the central island',
+  舊水門旁的石像: 'The statue by the old water gate',
+  海底遺跡裡的石像: 'The statue in the sunken ruins',
+  '{0} · 尚未甦醒': '{0} · not yet awake'
 };
