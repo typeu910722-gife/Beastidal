@@ -1,8 +1,8 @@
-import { CAVE } from './expansion.js?v=0.35.0';
-import { mazeWalkable } from './cave-maze.js?v=0.35.0';
-import { moveAboard, moveShip } from './ship.js?v=0.35.0';
-import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.35.0';
-import { groundAt, waterNear } from './lake.js?v=0.35.0';
+import { CAVE } from './expansion.js?v=0.36.0';
+import { mazeWalkable } from './cave-maze.js?v=0.36.0';
+import { moveAboard, moveShip } from './ship.js?v=0.36.0';
+import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.36.0';
+import { groundAt, waterNear } from './lake.js?v=0.36.0';
 // All travel modes share world coordinates. The boat stays moored while walking.
 export const TILE_SIZE = 3.6;
 const SIDES = [
@@ -31,6 +31,18 @@ export function boatBlocked(s, x, z) {
     )
   );
 }
+// 0.36: the raft's furniture is solid at its real size (measured from the models), with a little room for your eyes
+// so the first-person camera never ends up inside it. The shelter is walked into (the bed is inside).
+const EYE_PAD = 0.22;
+export const SOLID = {
+  collector: { r: 1.15 },
+  beacon: { r: 0.85 },
+  lamp: { r: 0.3 },
+  hatchery: { w: 2.5, d: 1.9 },
+  desk: { w: 1.75, d: 1.1, oz: 0.2 },
+  table: { w: 1.7, d: 1.05 },
+  chair: { w: 0.85, d: 0.8 }
+};
 export function canWalk(s, x, z) {
   if (!Number.isFinite(x) || !Number.isFinite(z)) return false;
   if (s.inCave) return mazeWalkable(x - CAVE.x, z - CAVE.z);
@@ -47,16 +59,20 @@ export function canWalk(s, x, z) {
     return false;
   for (const b of s.buildings) {
     if (b.ship || b.stowed) continue; // aboard the fortress, not on the raft
-    if ((b.level || 0) !== (s.player.level || 0) || !['collector', 'hatchery', 'beacon'].includes(b.type)) continue;
+    if ((b.level || 0) !== (s.player.level || 0) || !SOLID[b.type]) continue;
     const dx = x - b.x * TILE_SIZE,
       dz = z - b.z * TILE_SIZE,
       c = Math.cos(b.rot || 0),
       sn = Math.sin(b.rot || 0),
       lx = dx * c - dz * sn,
       lz = dx * sn + dz * c;
-    if (b.type === 'collector' && Math.hypot(lx, lz) < 1.04) return false;
-    if (b.type === 'hatchery' && Math.abs(lx) < 1.4 && Math.abs(lz) < 1.1) return false;
-    if (b.type === 'beacon' && Math.abs(lx) < 0.79 && Math.abs(lz) < 0.79) return false;
+    const f = SOLID[b.type];
+    if (
+      f.r
+        ? Math.hypot(lx, lz) < f.r + EYE_PAD
+        : Math.abs(lx) < f.w / 2 + EYE_PAD && Math.abs(lz - (f.oz || 0)) < f.d / 2 + EYE_PAD
+    )
+      return false;
   }
   return true;
 }
@@ -139,15 +155,18 @@ export function dockingSpots(s) {
 }
 export function dockOption(s) {
   if (s.player.mode === 'foot') {
-    const spots = [...dockingSpots(s), ...islandDocks()].sort(
-      (a, b) => distance(a.boat, s.boat) - distance(b.boat, s.boat)
-    );
+    // 0.36: on the raft the boat comes round to whichever edge is nearest you — board from anywhere on it;
+    // ashore, the boat's mooring within a few steps
+    const raft = !s.player.level && deckAt(s, s.player.x, s.player.z) && !onLand(s.player.x, s.player.z);
+    const spots = raft
+      ? dockingSpots(s).sort((a, b) => distance(a.foot, s.player) - distance(b.foot, s.player))
+      : [...dockingSpots(s), ...islandDocks()].sort((a, b) => distance(a.boat, s.boat) - distance(b.boat, s.boat));
     const spot = spots[0];
     if (!spot) return null;
     return {
       ...spot,
       mode: 'board',
-      near: !s.player.level && distance(s.player, spot.foot) < 4.4,
+      near: !s.player.level && (raft || distance(s.player, spot.foot) < 8),
       distance: distance(s.player, spot.foot)
     };
   }
@@ -193,8 +212,25 @@ export function moveTravel(s, dx, dz) {
   // Substeps prevent tunneling over deck gaps at low frame rates.
   const steps = Math.max(1, Math.ceil(Math.hypot(dx, dz) / 0.15));
   for (let i = 0; i < steps; i++) {
-    if (allowed(s.player.x + dx / steps, s.player.z)) s.player.x += dx / steps;
-    if (allowed(s.player.x, s.player.z + dz / steps)) s.player.z += dz / steps;
+    const sx = dx / steps,
+      sz = dz / steps,
+      x0 = s.player.x,
+      z0 = s.player.z;
+    if (allowed(s.player.x + sx, s.player.z)) s.player.x += sx;
+    if (allowed(s.player.x, s.player.z + sz)) s.player.z += sz;
+    // 0.36: blocked head-on (a round tank, a corner): slide off at an angle instead of stopping dead
+    if (s.player.mode === 'foot' && s.player.x === x0 && s.player.z === z0)
+      for (const a of [0.6, -0.6, 1.1, -1.1]) {
+        const c = Math.cos(a),
+          n = Math.sin(a),
+          rx = (sx * c - sz * n) * 0.8,
+          rz = (sx * n + sz * c) * 0.8;
+        if (allowed(x0 + rx, z0 + rz)) {
+          s.player.x = x0 + rx;
+          s.player.z = z0 + rz;
+          break;
+        }
+      }
   }
   if (s.player.mode === 'boat' && !s.expedition?.mounted)
     Object.assign(s.boat, { x: s.player.x, z: s.player.z, heading: s.player.heading });

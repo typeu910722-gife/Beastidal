@@ -1,25 +1,25 @@
-import { phenotype, clamp } from './genetics.js?v=0.35.0';
-import { NODES, harvest } from './islands.js?v=0.35.0';
-import { restPlace } from './ship.js?v=0.35.0';
-import { dayOf, dayPhase } from './clock.js?v=0.35.0';
-import { remember, rememberFirst } from './memories.js?v=0.35.0';
-import { spend, give, stow } from './bag.js?v=0.35.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.35.0';
-import { islandAt } from './islands.js?v=0.35.0';
-import { hasPerk } from './codex.js?v=0.35.0';
-import { tally } from './stats.js?v=0.35.0';
-import { rollDrops } from './species.js?v=0.35.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.35.0';
-import { WILD_BEASTS } from './beasts.js?v=0.35.0';
-import { hasGear, MASK_OXYGEN } from './gear.js?v=0.35.0';
-import { damageBonus } from './skills.js?v=0.35.0';
-import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.35.0';
-import { ITEM_NAMES } from './items.js?v=0.35.0';
-import { personality } from './beast-tree.js?v=0.35.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT } from './story.js?v=0.35.0';
+import { phenotype, clamp } from './genetics.js?v=0.36.0';
+import { NODES, harvest } from './islands.js?v=0.36.0';
+import { restPlace } from './ship.js?v=0.36.0';
+import { dayOf, dayPhase } from './clock.js?v=0.36.0';
+import { remember, rememberFirst } from './memories.js?v=0.36.0';
+import { spend, give, stow } from './bag.js?v=0.36.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.36.0';
+import { islandAt } from './islands.js?v=0.36.0';
+import { hasPerk } from './codex.js?v=0.36.0';
+import { tally } from './stats.js?v=0.36.0';
+import { rollDrops } from './species.js?v=0.36.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.36.0';
+import { WILD_BEASTS } from './beasts.js?v=0.36.0';
+import { hasGear, MASK_OXYGEN } from './gear.js?v=0.36.0';
+import { damageBonus } from './skills.js?v=0.36.0';
+import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.36.0';
+import { ITEM_NAMES } from './items.js?v=0.36.0';
+import { personality } from './beast-tree.js?v=0.36.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT } from './story.js?v=0.36.0';
 // The crystal cave is its own pocket of the world, far outside the basin — since 0.31 a corrupted garden maze
 // (cave-maze.js), with 嘯岳 asleep at its heart.
-import { CAVE, ENTRANCE, DEAD_ENDS, mazeWalkable } from './cave-maze.js?v=0.35.0';
+import { CAVE, ENTRANCE, DEAD_ENDS, mazeWalkable } from './cave-maze.js?v=0.36.0';
 export { CAVE };
 const inMaze = (x, z) => ({ x: CAVE.x + x, z: CAVE.z + z });
 const KEY_WALL = inMaze(DEAD_ENDS[0].x, DEAD_ENDS[0].z),
@@ -164,7 +164,7 @@ export function commandPet(s, id, order = 'follow') {
   // a beast never sorted into the team yet (older saves, fresh contracts) joins it while there is room
   if (p.team === undefined && !p.ancient && s.tamed.filter(t => t.kind !== 'creature' && t.team).length < 3)
     p.team = true;
-  if (!p.team && !p.ancient) return fail('這張御獸契約不在身上。先在御獸倉庫把牠「帶在身上」（最多 3 張）。');
+  if (!p.team && !p.ancient) return fail('這張御獸契約不在身上。先在御獸倉庫把牠「帶在身上」（最多 6 張）。');
   if (!['follow', 'gather', 'guard'].includes(order)) return fail('未知指令。');
   if (p.bond < (order === 'guard' ? 30 : 15))
     return fail(order === 'guard' ? '羈絆 30 才能協戰。' : '羈絆 15 才願意跟隨與採集。');

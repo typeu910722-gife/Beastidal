@@ -1,11 +1,11 @@
 // The first companion (the first ten minutes): a small beast is caught in a drifting net near the raft. You can
 // free it and share a little food long before you know how to tame anything; it swims along with you for a
 // while, then waits near the raft (already half-trusting) until you can make a contract with it.
-import { makeGenome } from './genetics.js?v=0.35.0';
+import { makeGenome } from './genetics.js?v=0.36.0';
+import { bondFirstBeast } from './taming.js?v=0.36.0';
 
 export const RESCUE_ID = 'wild-rescue';
 export const RESCUE_AT = { x: 15, z: 17 };
-const COMPANY = 240; // seconds it swims along after sharing food
 const WAIT_AT = { x: 7, z: 9 }; // then it waits beside the raft
 
 const rescued = s => s.wild.find(w => w.id === RESCUE_ID);
@@ -48,10 +48,14 @@ export function shareFood(s) {
   s.resources.food--;
   w.rescue = 'friend';
   s.rescue = 'friend';
-  w.trust = 60;
-  w.follow = true;
-  w.followUntil = s.elapsed + COMPANY;
-  return { ok: true, message: '牠小心地吃完了，然後游到你的船邊。牠決定跟著你一會兒。' };
+  w.trust = 100;
+  // 0.36: it stays — your first 御獸
+  const pet = bondFirstBeast(s, w);
+  return {
+    ok: true,
+    pet,
+    message: `牠小心地吃完了，游到你的船邊，額頭輕輕碰了一下你的手。${pet.name} 成了你的第一隻御獸。`
+  };
 }
 // After a while it stops following and waits by the raft (unless its trust is already full).
 export function tickRescue(s) {

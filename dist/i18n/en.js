@@ -3118,5 +3118,48 @@ export default {
   '▲ 上浮 空白': '▲ Rise Space',
   '▼ 下潛 Z': '▼ Sink Z',
   下潛: 'Sink',
-  '再往下潛（寶藏在深度 {0} m，按住 Z 或 ▼ 下潛）。': 'Dive deeper (the treasure lies at {0} m — hold Z or ▼ to sink).'
+  '再往下潛（寶藏在深度 {0} m，按住 Z 或 ▼ 下潛）。': 'Dive deeper (the treasure lies at {0} m — hold Z or ▼ to sink).',
+  '那裡擺著設施。': 'A facility stands there.',
+  '這張御獸契約不在身上。先在御獸倉庫把牠「帶在身上」（最多 6 張）。':
+    "You are not carrying this beast's contract. Carry it from the beast storage first (up to 6).",
+  '休息室已經沒有空位。先把一座設施收進待安置。': 'The lounge has no free place. Stow a facility first.',
+  '設施已安置到船艙休息室。': 'Facility set up in the cabin lounge.',
+  '浮標裡有 6 份誘餌、3 顆異晶、4 束纖維，和一張展示池藍圖。':
+    'The buoy held 6 bait, 3 crystals, 4 bundles of fibre and a pen blueprint.',
+  '研究紀錄很長——左側的': 'The research notes are long — the ',
+  共生之路: 'Way of Symbiosis',
+  '會一步一步告訴你下一步做什麼。': ' on the left tells you what to do next, one step at a time.',
+  第一隻御獸: 'Your first beast',
+  '我解開了漁網，分給牠一點口糧。牠沒有游走——牠留了下來，成了我的第一隻御獸。':
+    'I untangled the net and shared some rations. It did not swim away — it stayed, and became my first beast.',
+  '左上角是牠的契約紙：點契約紙或按 Shift+1–6 召喚／收回牠，F 讓牠攻擊。':
+    'Its contract card is top left: click it or press Shift+1–6 to call it out or back; F makes it attack.',
+  '石柱替你擋下了這一擊！': 'The pillar took that blow for you!',
+  '{0} 回到契約紙裡休息，耐力會慢慢恢復。': '{0} goes back into its contract to rest; its stamina slowly returns.',
+  '船艙休息室 · 位置 {0}': 'Cabin lounge · place {0}',
+  '收進待安置（空出位置）': 'Stow it (free the place)',
+  '比斯泰德號船艙休息室 · 已用 {0} / {1} 個位置。點設施就會放進空位。':
+    'Beastidal cabin lounge · {0} / {1} places used. Pick a facility to set it in a free place.',
+  '共生之路 · 第 {0} / {1} 步': 'Way of Symbiosis · step {0} / {1}',
+  '共生之路 · 完成': 'Way of Symbiosis · done',
+  '你已經能自己培育、契闊新的御獸了。': 'You can now raise and bind new beasts yourself.',
+  '：口糧 1 + 纖維 1 → 3 份（裝置背包或工作桌）。': ': 1 ration + 1 fibre → 3 (device bag or workbench).',
+  '靠近一隻溫和的野生生物，按': 'Go near a calm wild creature and press ',
+  '投餌。連續餵同一隻，信任到 50%。': ' to throw bait. Keep feeding the same one until its trust reaches 50%.',
+  '到工作桌「製作物品」做': 'At the workbench, Craft items: make a ',
+  '（廢金屬 6 + 纖維 4）。': ' (6 scrap metal + 4 fibre).',
+  '回到信任你的生物旁，按': 'Go back to the creature that trusts you and press ',
+  '用外出籠把牠帶回船上。': ' to bring it aboard in the carry cage.',
+  '再帶回一隻生物——配種需要兩隻。': 'Bring back one more creature — breeding takes two.',
+  '（建造選單）。': ' (build menu).',
+  '在孵化台讓牠們配對。突變會長出': 'Pair them at the hatchery. Mutations grow ',
+  '，集滿 {0} 種的生物就能進化。': '; a creature with {0} of them can evolve.',
+  帶著契約書打開: 'With a contract scroll, open the ',
+  '，按「契闊進化」。': ' and press Evolve.',
+  '牠小心地吃完了，游到你的船邊，額頭輕輕碰了一下你的手。{0} 成了你的第一隻御獸。':
+    'It ate carefully, swam to your boat and touched its forehead to your hand. {0} is your first beast.',
+  '（背包滿了，{0} 個放進儲物箱）': ' (bag full: {0} went into storage)',
+  '從漂流漁網裡被救出來，吃了你分的口糧，成了你的第一隻御獸。':
+    'Freed from a drifting net, it ate the rations you shared and became your first beast.',
+  御獸契約紙: 'Beast contract cards'
 };

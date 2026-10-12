@@ -3,8 +3,8 @@
 // violet crystal pushing up through the soil, dead trees, drifting spores — and at the heart, a stone dais ringed
 // by broken pillars and roots, where 嘯岳 sleeps. Instanced wherever things repeat.
 import * as T from './vendor/three.module.min.js';
-import { CAVE, MAZE_N, MAZE_CELL, MAZE_HALF, MAZE_WALLS, HALL, ENTRANCE } from './cave-maze.js?v=0.35.0';
-import { grainTexture } from './realism.js?v=0.35.0';
+import { CAVE, MAZE_N, MAZE_CELL, MAZE_HALF, MAZE_WALLS, HALL, HALL_COVER, ENTRANCE } from './cave-maze.js?v=0.36.0';
+import { grainTexture } from './realism.js?v=0.36.0';
 
 let seed = 77;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -173,20 +173,36 @@ export function makeGarden() {
   rune.position.y = 0.03;
   rune.userData.spin = 0.08;
   g.add(rune);
-  for (let k = 0; k < 8; k++) {
-    const a = (k / 8) * Math.PI * 2 + 0.2,
-      hgt = 1.2 + rnd() * 3,
-      p = new T.Mesh(new T.CylinderGeometry(0.45, 0.55, hgt, 10), stone);
-    p.position.set(Math.sin(a) * 7.2, hgt / 2, Math.cos(a) * 7.2);
-    p.rotation.z = (rnd() - 0.5) * 0.25;
-    p.castShadow = true;
-    if (Math.abs(Math.sin(a)) > 0.2 || Math.cos(a) < 0) g.add(p); // keep the way in from the south clear
+  // 0.36: the cover in the great hall — broken pillars on the inner ring, toppled wall pieces on the outer
+  for (const c of HALL_COVER) {
+    if (c.kind === 'pillar') {
+      const hgt = 4.5 + rnd() * 2.5,
+        p = new T.Mesh(new T.CylinderGeometry(c.r * 0.85, c.r, hgt, 12), stone);
+      p.position.set(c.x, hgt / 2, c.z);
+      p.rotation.z = (rnd() - 0.5) * 0.12;
+      p.castShadow = p.receiveShadow = true;
+      g.add(p);
+      const cap = new T.Mesh(new T.CylinderGeometry(c.r * 1.15, c.r * 1.05, 0.5, 12), stone);
+      cap.position.set(c.x, hgt + 0.1, c.z);
+      cap.rotation.set((rnd() - 0.5) * 0.4, 0, (rnd() - 0.5) * 0.4);
+      g.add(cap);
+    } else {
+      const w = new T.Mesh(new T.BoxGeometry(c.r * 2.4, 2.4 + rnd() * 0.8, 1.1), stone);
+      w.position.set(c.x, 1.2, c.z);
+      w.rotation.set(0, c.a + Math.PI / 2 + (rnd() - 0.5) * 0.3, (rnd() - 0.5) * 0.12);
+      w.castShadow = w.receiveShadow = true;
+      g.add(w);
+      const rubble = new T.Mesh(new T.DodecahedronGeometry(0.6, 0), stone);
+      rubble.position.set(c.x + (rnd() - 0.5) * 2, 0.35, c.z + (rnd() - 0.5) * 2);
+      g.add(rubble);
+    }
   }
-  for (let k = 0; k < 7; k++) {
-    const a = (k / 7) * Math.PI * 2 + 0.5,
+  for (let k = 0; k < 11; k++) {
+    const a = (k / 11) * Math.PI * 2 + 0.5,
+      far = 12 + rnd() * 6,
       pts = [
-        new T.Vector3(Math.sin(a) * 8.5, 0.2, Math.cos(a) * 8.5),
-        new T.Vector3(Math.sin(a + 0.15) * 5.5, 0.55, Math.cos(a + 0.15) * 5.5),
+        new T.Vector3(Math.sin(a) * far, 0.2, Math.cos(a) * far),
+        new T.Vector3(Math.sin(a + 0.15) * (far * 0.55), 0.6, Math.cos(a + 0.15) * (far * 0.55)),
         new T.Vector3(Math.sin(a + 0.05) * 2.9, 0.3, Math.cos(a + 0.05) * 2.9)
       ],
       root = new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 16, 0.22, 7), bark);
@@ -194,10 +210,13 @@ export function makeGarden() {
     g.add(root);
   }
   for (const [x, z] of [
-    [-6.5, -6.5],
-    [6.5, -6.5],
-    [-6.8, 5.8],
-    [6.8, 5.8]
+    [-12.5, -12.5],
+    [12.5, -12.5],
+    [-13, 12],
+    [13, 12],
+    [0, -18.5],
+    [-18.5, 0],
+    [18.5, 0]
   ]) {
     const spire = new T.Mesh(
       new T.OctahedronGeometry(1, 0),

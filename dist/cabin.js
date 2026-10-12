@@ -3,7 +3,8 @@
 // crystal cave does, and is walked in first person: the beast lounge with a dry side and a pool, a stair up to the
 // bridge, a ladder down to the hold with the cargo stations, and furniture you place freely, ARK-style, with
 // collisions. Pure state logic; cabin-models.js draws it.
-import { spend, give } from './bag.js?v=0.35.0';
+import { spend, give } from './bag.js?v=0.36.0';
+import { loungeBlocks, SLOT_HALF, FORTRESS_FLOOR } from './fortress.js?v=0.36.0';
 
 export const CABIN = { x: -3000, z: 3000 };
 // 0.25: three floors. The hatch comes down into 2F, the 御獸艙 where your beasts roam; a ladder leads down to 1F, the
@@ -165,6 +166,9 @@ export function walkable(s, floor, x, z, pad = PLAYER_R) {
     return false;
   for (const tk of TANKS) if (tk.floor === floor && inBox(x, z, tk.x, tk.z, tk.w, tk.d, tk.rot, pad)) return false;
   for (const p of CABIN_POINTS) if (p.floor === floor && p.w && inBox(x, z, p.x, p.z, p.w, p.d, 0, pad)) return false;
+  // 0.36: the base's facilities stand in the lounge
+  if (floor === FORTRESS_FLOOR)
+    for (const sl of loungeBlocks(s)) if (inBox(x, z, sl.lx, sl.lz, SLOT_HALF * 2, SLOT_HALF * 2, 0, pad)) return false;
   for (const it of itemsOn(s, floor)) {
     const sz = CABIN_ITEMS[it.type].size;
     if (sz[2] > 0.3 && inBox(x, z, it.x, it.z, sz[0], sz[1], it.rot, pad)) return false; // rugs are walked over
@@ -250,6 +254,15 @@ export function placeError(s, type, floor, x, z, rot, ignoreId = null) {
   for (const p of CABIN_POINTS)
     if (p.floor === floor && p.w && corners.some(([px, pz]) => inBox(px, pz, p.x, p.z, p.w, p.d, 0, 0.9)))
       return '會擋住' + p.name.split(' · ')[0] + '。';
+  if (
+    floor === FORTRESS_FLOOR &&
+    loungeBlocks(s).some(
+      sl =>
+        corners.some(([px, pz]) => inBox(px, pz, sl.lx, sl.lz, SLOT_HALF * 2, SLOT_HALF * 2, 0, 0.4)) ||
+        inBox(sl.lx, sl.lz, x, z, w, d, rot, SLOT_HALF)
+    )
+  )
+    return '那裡擺著設施。';
   if (h > 0.3)
     for (const it of itemsOn(s, floor)) {
       if (it.id === ignoreId) continue;

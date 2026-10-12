@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { groundTexture } from './lake-models.js?v=0.35.0';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.35.0';
+import { groundTexture } from './lake-models.js?v=0.36.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.36.0';
 export const TRAIL = 40,
   SPLASHES = 4;
 
@@ -46,8 +46,30 @@ export function loadSettings(mobile) {
   try {
     s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') || {};
   } catch {}
-  if (!QUALITY[s.quality]) s.quality = mobile ? 'balanced' : 'high';
+  if (!QUALITY[s.quality]) {
+    // 0.36: first run — pick from the GPU. Integrated and phone GPUs start balanced, software rendering low; the
+    // player's own choice in the settings is never overridden.
+    const gpu = gpuName();
+    s.quality = /swiftshader|llvmpipe|basic render|software/i.test(gpu)
+      ? 'low'
+      : mobile || /intel|uhd|iris|mali|adreno|powervr|apple gpu|videocore/i.test(gpu)
+        ? 'balanced'
+        : 'high';
+    s.autoQuality = gpu || true;
+  }
   return s;
+}
+function gpuName() {
+  try {
+    const gl =
+      document.createElement('canvas').getContext('webgl2') || document.createElement('canvas').getContext('webgl');
+    const ext = gl?.getExtension('WEBGL_debug_renderer_info');
+    const name = String((ext && gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) || gl?.getParameter(gl.RENDERER) || '');
+    gl?.getExtension('WEBGL_lose_context')?.loseContext();
+    return name;
+  } catch {
+    return '';
+  }
 }
 export function saveSettings(s) {
   try {

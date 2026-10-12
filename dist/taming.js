@@ -6,16 +6,16 @@
 //     bound by trust; hostile ones must be worn down in a fight — the weaker, the better the odds — and stay
 //     modest even bound. A failed contract can send anything into a frenzy: 1.2× speed and bite, hunting you for
 //     10–20 seconds, and nothing frenzied can be repelled.
-import { phenotype, geneName } from './genetics.js?v=0.35.0';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.35.0';
-import { spend, give } from './bag.js?v=0.35.0';
-import { remember } from './memories.js?v=0.35.0';
-import { nearFacility } from './fortress.js?v=0.35.0';
-import { hasPerk } from './codex.js?v=0.35.0';
-import { tally } from './stats.js?v=0.35.0';
-import { bsOf, canEvolve, EVOLVE_GENES } from './bsgenes.js?v=0.35.0';
-import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.35.0';
-import { trustBonus } from './skills.js?v=0.35.0';
+import { phenotype, geneName } from './genetics.js?v=0.36.0';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.36.0';
+import { spend, give } from './bag.js?v=0.36.0';
+import { remember } from './memories.js?v=0.36.0';
+import { nearFacility } from './fortress.js?v=0.36.0';
+import { hasPerk } from './codex.js?v=0.36.0';
+import { tally } from './stats.js?v=0.36.0';
+import { bsOf, canEvolve, EVOLVE_GENES, addRandomGene } from './bsgenes.js?v=0.36.0';
+import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.36.0';
+import { trustBonus } from './skills.js?v=0.36.0';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 10, max: 20, below: 60 };
@@ -157,6 +157,23 @@ function makePet(s, w, kind, extra = {}) {
     ...extra
   };
 }
+// 0.36: the little beast you freed from the net and fed becomes your first 御獸 there and then — a partner to fight
+// beside you from the first day, long before cages, breeding and contracts.
+export function bondFirstBeast(s, w, rng = Math.random) {
+  normalizeHousing(s);
+  normalizeTaming(s);
+  w.genome.bs ??= [];
+  for (let i = 0; i < 8 && bsOf(w.genome).length < EVOLVE_GENES; i++) addRandomGene(w.genome, rng, 'sea');
+  const pet = makePet(s, w, 'beast', { evolved: true, first: true, bond: 30, team: true, level: 1, xp: 0 });
+  remember(s, pet, '從漂流漁網裡被救出來，吃了你分的口糧，成了你的第一隻御獸。');
+  s.tamed.push(pet);
+  s.wild = s.wild.filter(c => c !== w);
+  s.expedition ??= {};
+  s.expedition.activeId = pet.id;
+  s.expedition.order = 'follow';
+  tally(s, 'contract');
+  return pet;
+}
 // 外出籠: carry a trusting wild creature (not a wild beast) home. No roll — trust is the whole requirement.
 export function cageCreature(s, id) {
   normalizeHousing(s);
@@ -261,10 +278,10 @@ export function evolve(s, petId, rng = Math.random) {
 }
 
 // ---------- 0.25: contracts, the team, and letting go ----------
-// A bound beast lives in its 御獸契約 (beast contract). You hold at most ten; three ride with you (the team) and only
+// A bound beast lives in its 御獸契約 (beast contract). You hold at most ten; six ride with you (the team) and only
 // those can be called out. The story's ancient beast is bound by its own pact and does not count.
 export const MAX_CONTRACTS = 10;
-export const TEAM_SIZE = 3;
+export const TEAM_SIZE = 6; // 0.36: up to six contract cards carried; the rest stay aboard
 export const CONTRACTS_FULL = `御獸契約已經滿 ${MAX_CONTRACTS} 張了。先解約一隻，才能再締結新的契約。`;
 export const ownedBeasts = s => (s.tamed || []).filter(p => p.kind !== 'creature' && !p.ancient);
 export const contractsFull = s => ownedBeasts(s).length >= MAX_CONTRACTS;

@@ -268,16 +268,20 @@ test('The first companion: free the tangled beast, share food, it swims along, t
   s.resources.food = 0;
   assert.equal(shareFood(s).ok, false, 'no food to share');
   s.resources.food = 2;
-  assert.ok(shareFood(s).ok);
+  const r = shareFood(s);
+  assert.ok(r.ok);
   assert.equal(s.resources.food, 1);
-  assert.ok(w.follow && w.trust === 60, 'it trusts you enough to follow, and a later contract is safe');
+  // 0.36: it becomes your first 御獸 at once, out with you, ready to fight
+  const pet = s.tamed.find(p => p.id === RESCUE_ID);
+  assert.ok(pet && pet.kind === 'beast' && pet.team, 'your first beast, in the party');
+  assert.ok((pet.genome.bs || []).length >= 3);
+  assert.equal(s.expedition.activeId, RESCUE_ID);
+  assert.ok(!s.wild.some(w => w.id === RESCUE_ID));
   s.elapsed += 300;
   tickRescue(s);
-  assert.equal(w.follow, false, 'after a while it waits near the raft');
-  assert.ok(Math.hypot(w.homeX, w.homeZ) < 15);
   // only once, and never in an old game
   spawnRescue(s);
-  assert.equal(s.wild.filter(w => w.id === RESCUE_ID).length, 1);
+  assert.equal(s.wild.filter(w => w.id === RESCUE_ID).length, 0, 'never put back in the water');
   const old = createState(6);
   old.secret = true;
   spawnRescue(old);

@@ -1,36 +1,36 @@
-import { expansionModels } from './expansion-models.js?v=0.35.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.35.0';
-import { normalizeHousing, penId } from './housing.js?v=0.35.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.35.0';
-export { makeCreature } from './creatures.js?v=0.35.0';
-import { makeIslands } from './island-models.js?v=0.35.0';
-import { facilityId } from './facilities.js?v=0.35.0';
+import { expansionModels } from './expansion-models.js?v=0.36.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.36.0';
+import { normalizeHousing, penId } from './housing.js?v=0.36.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.36.0';
+export { makeCreature } from './creatures.js?v=0.36.0';
+import { makeIslands } from './island-models.js?v=0.36.0';
+import { facilityId } from './facilities.js?v=0.36.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.35.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.35.0';
-import { makeLake } from './lake-models.js?v=0.35.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.35.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.35.0';
-import { makeStatues } from './statues.js?v=0.35.0';
-import { animateGarden } from './garden-models.js?v=0.35.0';
-import { ViewModel } from './viewmodel.js?v=0.35.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.35.0';
-import { PostFX } from './postfx.js?v=0.35.0';
-import { makeHuman, animateHuman } from './human.js?v=0.35.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.35.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.35.0';
-import { buildError } from './rules.js?v=0.35.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.35.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.35.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.35.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.35.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.35.0';
-import { CombatFX } from './combat-fx.js?v=0.35.0';
-import { syncPlots } from './land-models.js?v=0.35.0';
-import { plotTargets } from './reclaim.js?v=0.35.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.35.0';
-import { dayPhase } from './clock.js?v=0.35.0';
-import { weatherAt, season } from './weather.js?v=0.35.0';
+import { phenotype, seeded } from './genetics.js?v=0.36.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.36.0';
+import { makeLake } from './lake-models.js?v=0.36.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.36.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.36.0';
+import { makeStatues } from './statues.js?v=0.36.0';
+import { animateGarden } from './garden-models.js?v=0.36.0';
+import { ViewModel } from './viewmodel.js?v=0.36.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.36.0';
+import { PostFX } from './postfx.js?v=0.36.0';
+import { makeHuman, animateHuman } from './human.js?v=0.36.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.36.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.36.0';
+import { buildError } from './rules.js?v=0.36.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.36.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.36.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.36.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.36.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.36.0';
+import { CombatFX } from './combat-fx.js?v=0.36.0';
+import { syncPlots } from './land-models.js?v=0.36.0';
+import { plotTargets } from './reclaim.js?v=0.36.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.36.0';
+import { dayPhase } from './clock.js?v=0.36.0';
+import { weatherAt, season } from './weather.js?v=0.36.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -689,7 +689,8 @@ export class OceanWorld {
     this.renderer.toneMapping = T.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.0;
     this.post = new PostFX(this.renderer, this.settings.quality);
-    loadProtagonist();
+    // 0.36: the body is seldom seen in first person — fetch it once the game is up, not during the first load
+    setTimeout(() => loadProtagonist(), 6000);
     this.camera = new T.PerspectiveCamera(44, 1, 0.1, 1800);
     // 0.32: the camera carries the first-person hands, so it lives in the scene
     this.scene.add(this.camera);
@@ -903,8 +904,11 @@ export class OceanWorld {
     for (const l of this.cabin.lights) l.visible = false;
     this.scene.add(this.cabin.group);
     // the base's facilities once it has gone to sea, on the main deck (shown and hidden with that deck)
+    // 0.36: the base's facilities stand in the cabin's 2F lounge (the main deck keeps only the wheel)
     this.fortress = new T.Group();
-    this.ship.userData.bands[3].add(this.fortress);
+    this.fortress.position.set(CABIN.x, FLOORS[2].y, CABIN.z);
+    this.fortress.visible = false;
+    this.scene.add(this.fortress);
     this.scene.add(this.ship);
     this.cannonFx = ball(this.scene, 0xffc27a, 0, 0, 0, 1, 1, 1, {
       emissive: 0xff9a40,
@@ -973,7 +977,7 @@ export class OceanWorld {
         if (b.stowed) continue;
         const g = b.ship && b.type === 'pen' ? tankMesh(3.2, 3.2, 1.9) : buildingMesh(b);
         if (b.ship) {
-          // aboard the fortress: on its deck slot, a little smaller, moving with the ship
+          // aboard the fortress: in its lounge slot in the cabin, a little smaller
           const slot = SHIP_SLOTS[b.ship.slot];
           g.position.set(slot.lx, FORTRESS_DECK_Y - 0.45 * FORTRESS_SCALE, slot.lz);
           g.rotation.y = 0;
@@ -1673,7 +1677,7 @@ export class OceanWorld {
       const aboardPen = !!(pen.ship && s.ship),
         k = aboardPen ? FORTRESS_SCALE : 1,
         at = facilityPos(s, pen),
-        floorY = aboardPen ? FORTRESS_DECK_Y - 0.45 * FORTRESS_SCALE : 0;
+        floorY = aboardPen ? FLOORS[2].y + FORTRESS_DECK_Y - 0.45 * FORTRESS_SCALE : 0;
       m.scale.setScalar(phenotype(c.genome).size * 0.22 * k);
       const slot = slots.get(c.penId) || 0;
       slots.set(c.penId, slot + 1);
@@ -1794,6 +1798,7 @@ export class OceanWorld {
     if (s.inCave) animateGarden(this.extra.cave, t);
     this.statues.visible = !s.inCave && !cabin;
     this.cabin.group.visible = cabin;
+    this.fortress.visible = cabin;
     for (const l of this.cabin.lights) l.visible = cabin;
     if (cabin) this.cabin.update(t, s.player.floor | 0);
     this.extra.seabed.visible = diving;
@@ -2055,6 +2060,27 @@ export class OceanWorld {
   }
 
   // Every facility's model: those on the raft and those aboard the fortress.
+  // 0.36: a piece of furniture the first-person camera has ended up inside is not drawn (no looking at the inside of
+  // a tank or a canopy). Facilities do not move, so each mesh's box is measured once per layout.
+  hideAroundEye() {
+    const eye = this.camera.position;
+    if (this.eyeBoxesFor !== this.lastBuildings) {
+      this.eyeBoxesFor = this.lastBuildings;
+      this.eyeBoxes = [];
+      for (const g of this.facilityGroups()) {
+        const fid = String(g.userData.facilityId || '');
+        if (!fid || /:(shelter|stairs|upperfloor):/.test(fid)) continue; // floors, stairs, and the tent you step into
+        g.updateWorldMatrix(true, true);
+        g.traverse(o => {
+          if (!o.isMesh || o.userData.handheld) return;
+          const bb = new T.Box3().setFromObject(o);
+          if (bb.isEmpty() || bb.max.y - bb.min.y > 30) return; // (the beacon's light beam)
+          this.eyeBoxes.push({ o, bb: bb.expandByScalar(0.12) });
+        });
+      }
+    }
+    for (const e of this.eyeBoxes) e.o.visible = !e.bb.containsPoint(eye);
+  }
   facilityGroups() {
     return [...this.home.children, ...this.fortress.children];
   }
@@ -2148,6 +2174,7 @@ export class OceanWorld {
       this.walker.visible = false;
       const seated = st?.player.mode === 'boat' && !st.expedition?.mounted;
       for (const m of this.boat.userData.stern || []) m.visible = !seated;
+      this.hideAroundEye();
       this.water.material.uniforms.uCamera.value.copy(this.camera.position);
     } else {
       this.camera.fov = 44;

@@ -23,7 +23,7 @@ import {
 } from '../dist/story.js';
 import { tickCombat, basicAttack, resetCombat, combatActive } from '../dist/combat.js';
 import { canWalk } from '../dist/navigation.js';
-import { CAVE, ENTRANCE } from '../dist/cave-maze.js';
+import { CAVE, ENTRANCE, HALL, HALL_COVER, coverBetween, mazeWalkable, MAZE_HALF } from '../dist/cave-maze.js';
 
 let n = 0;
 const test = (name, fn) => {
@@ -135,7 +135,18 @@ test('The cave is a maze: walls block, the entrance leads to the heart', () => {
   assert.ok(canWalk(s, CAVE.x + ENTRANCE.x, CAVE.z + ENTRANCE.z));
   assert.equal(canWalk(s, CAVE.x, CAVE.z), false, 'the dais is solid');
   assert.ok(canWalk(s, SLEEP_AT.x, SLEEP_AT.z + 2));
-  assert.equal(canWalk(s, CAVE.x + 40, CAVE.z), false, 'outside the hedges');
+  assert.equal(canWalk(s, CAVE.x + 50, CAVE.z), false, 'outside the hedges');
+});
+test('0.36: the great hall is wide, and its pillars stand between you and the claws of 嘯岳', () => {
+  assert.ok(HALL.i1 - HALL.i0 + 1 >= 7, 'a 7 × 7 cell hall');
+  assert.ok(MAZE_HALF >= 45);
+  // open floor across the hall, the cover itself solid
+  assert.ok(mazeWalkable(0, 6) && mazeWalkable(-12, -4) && mazeWalkable(4, -13));
+  for (const c of HALL_COVER) assert.equal(mazeWalkable(c.x, c.z), false);
+  // a pillar between the beast and you blocks the line; open floor does not
+  const p = HALL_COVER[0];
+  assert.ok(coverBetween(p.x * 0.5, p.z * 0.5, p.x * 1.4, p.z * 1.4));
+  assert.equal(coverBetween(0, 3, 0, 6), false);
 });
 test('Alone it does not stir; carrying three 御獸 contracts tears it awake in a frenzy', () => {
   const s = inGarden(),

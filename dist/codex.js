@@ -1,10 +1,11 @@
 // Creature codex: every species the player has seen up close, tamed or bred, with a sample genome for the portrait.
-import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.35.0';
-import { dayOf } from './clock.js?v=0.35.0';
+import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.36.0';
+import { dayOf } from './clock.js?v=0.36.0';
 
-import { LORE, habitatsOf } from './species.js?v=0.35.0';
-import { BS_GENES, BS_IDS } from './bsgenes.js?v=0.35.0';
-import { WILD_BEASTS, BEAST_IDS } from './beasts.js?v=0.35.0';
+import { LORE, habitatsOf } from './species.js?v=0.36.0';
+import { BS_GENES, BS_IDS } from './bsgenes.js?v=0.36.0';
+import { WILD_BEASTS, BEAST_IDS } from './beasts.js?v=0.36.0';
+import { give } from './bag.js?v=0.36.0';
 export { LORE };
 
 export function normalizeCodex(s) {
@@ -163,7 +164,7 @@ export function claimCodex(s, id) {
   c.claimed.push(id);
   for (const [k, v] of Object.entries(r.give)) {
     if (k === 'contract') s.contracts = (s.contracts || 0) + v;
-    else s.resources[k] = (s.resources[k] || 0) + v;
+    else give(s, { [k]: v }); // 0.36: what the bag cannot hold goes home to storage
   }
   return { ok: true, message: `獲得稱號「${r.name}」${r.perk ? '：' + r.perk : ''}。`, reward: r };
 }

@@ -196,14 +196,14 @@ test('Levels: experience raises a beast, and a wild low-tier beast stops at its 
   assert.equal(wildOne.level, 3);
   assert.equal(grantXp({}, wildOne, 50), 0);
 });
-test('Contracts: at most 10 御獸, at most 3 carried; creatures follow but never ride or fight', () => {
+test('Contracts: at most 10 御獸, at most 6 carried; creatures follow but never ride or fight', () => {
   const s = world();
   for (let i = 0; i < MAX_CONTRACTS; i++) s.tamed.push(pet('beast'));
   assert.ok(contractsFull(s));
   normalizeTeam(s);
   assert.equal(teamOf(s).length, TEAM_SIZE);
   const extra = s.tamed.find(p => !p.team);
-  assert.match(toggleTeam(s, extra.id).error, /3/);
+  assert.match(toggleTeam(s, extra.id).error, /6/);
   assert.match(commandPet(s, extra.id, 'follow').error || '', /身上|帶/);
   assert.ok(toggleTeam(s, teamOf(s)[0].id).ok);
   assert.ok(toggleTeam(s, extra.id).ok);

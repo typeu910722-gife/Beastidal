@@ -4,11 +4,11 @@
 //   異晶潮   the lake glows: crystal crates surface near you
 //   御獸遷徙 a herd of one species crosses the lake; calmer around people (easier to tame)
 //   湖心寶藏 a light marks a cache on the lakebed; dive to it
-import { waterNear, groundAt } from './lake.js?v=0.35.0';
-import { makeGenome, allSpecies } from './genetics.js?v=0.35.0';
-import { spend } from './bag.js?v=0.35.0';
-import { tally } from './stats.js?v=0.35.0';
-import { makeWildBeast } from './beasts.js?v=0.35.0';
+import { waterNear, groundAt } from './lake.js?v=0.36.0';
+import { makeGenome, allSpecies } from './genetics.js?v=0.36.0';
+import { spend, give } from './bag.js?v=0.36.0';
+import { tally } from './stats.js?v=0.36.0';
+import { makeWildBeast } from './beasts.js?v=0.36.0';
 
 export const EVENTS = {
   merchant: { name: '漂流商船', dur: 210, weight: 3, hint: '開船靠近，看看他帶了什麼。' },
@@ -163,7 +163,7 @@ export function trade(s, i) {
   if (!spend(s, o.give)) return fail('材料不夠。');
   for (const [k, v] of Object.entries(o.get)) {
     if (k === 'contract') s.contracts = (s.contracts || 0) + v;
-    else s.resources[k] = (s.resources[k] || 0) + v;
+    else give(s, { [k]: v }); // 0.36: what the bag cannot hold goes home to storage
   }
   o.done = true;
   tally(s, 'event');
@@ -181,7 +181,7 @@ export function claimTreasure(s) {
   ev.claimed = true;
   for (const [k, v] of Object.entries(TREASURE)) {
     if (k === 'contract') s.contracts = (s.contracts || 0) + v;
-    else s.resources[k] = (s.resources[k] || 0) + v;
+    else give(s, { [k]: v }); // 0.36: what the bag cannot hold goes home to storage
   }
   ev.until = Math.min(ev.until, s.elapsed + 8);
   tally(s, 'event');

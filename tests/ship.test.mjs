@@ -45,7 +45,7 @@ import {
 import { monologue } from '../dist/guide.js';
 import { makeWarship } from '../dist/ship-models.js';
 import { MeshStandardMaterial } from '../dist/vendor/three.module.min.js';
-import { enterCabin, leaveCabin, useLadder, finishLadder } from '../dist/cabin.js';
+import { enterCabin, leaveCabin, useLadder, finishLadder, syncCabin, walkable } from '../dist/cabin.js';
 const test = (name, fn) => {
   fn();
   console.log('PASS ' + name);
@@ -360,8 +360,11 @@ test('Fortress: the base goes aboard, works far from the spawn, and survives sav
   assert.ok(boardShip(s).ok);
   const desk = aboard.find(b => b.type === 'desk'),
     deskAt = SHIP_SLOTS[desk.ship.slot];
-  Object.assign(s.player, { mode: 'aboard', deck: 3, lx: deskAt.lx + 1, lz: deskAt.lz });
-  syncAboard(s);
+  // 0.36: the base stands in the cabin's 2F lounge — walk up beside the desk there
+  Object.assign(s.player, { mode: 'cabin', floor: 2, cx: deskAt.lx + (deskAt.lx > 0 ? -2.4 : 2.4), cz: deskAt.lz });
+  syncCabin(s);
+  assert.ok(walkable(s, 2, s.player.cx, s.player.cz), 'room to stand beside it');
+  assert.equal(walkable(s, 2, deskAt.lx, deskAt.lz), false, 'the desk itself is solid');
   assert.ok(atHome(s));
   s.resources.wood = 5;
   assert.ok(deposit(s).ok, 'the desk storage works aboard');
@@ -377,8 +380,8 @@ test('Fortress: the base goes aboard, works far from the spawn, and survives sav
   s.vitals.health = 50;
   const shelter = s.buildings.find(b => b.type === 'shelter' && b.ship),
     bed = SHIP_SLOTS[shelter.ship.slot];
-  Object.assign(s.player, { lx: bed.lx + 1, lz: bed.lz });
-  syncAboard(s);
+  Object.assign(s.player, { mode: 'cabin', floor: 2, cx: bed.lx + (bed.lx > 0 ? -2.4 : 2.4), cz: bed.lz });
+  syncCabin(s);
   tickSystems(s, 1, true);
   assert.equal(tank.waterStored, 2);
   assert.ok(s.vitals.health > 50);
