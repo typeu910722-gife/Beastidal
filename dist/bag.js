@@ -1,18 +1,19 @@
 // The backpack holds a limited number of things in all. What does not fit waits in the storage of the raft's
 // desk: deposit there when the bag is full, and enlarge the bag at the desk with materials. While you are home,
 // building and crafting can draw on the desk's storage as well as the bag.
-import { homePos, nearFacility } from './fortress.js?v=0.40.0';
-import { CARRYABLE } from './items.js?v=0.40.0';
+import { homePos, nearFacility } from './fortress.js?v=0.41.0';
+import { CARRYABLE } from './items.js?v=0.41.0';
 // everything the bag can hold (0.21: the drops and crafted things too)
 export const CARRY = CARRYABLE;
-// supplies you keep on you when depositing
+// supplies you keep a few of when depositing (0.41: the rest goes into storage, so they can never clog the bag)
 export const KEEP = ['food', 'water', 'bait'];
+export const KEEP_AMOUNT = 8;
 export const BAG_LEVELS = [
-  { cap: 40 },
-  { cap: 60, cost: { wood: 8, fiber: 6 } },
-  { cap: 85, cost: { wood: 12, fiber: 8, metal: 4 } },
-  { cap: 115, cost: { wood: 16, metal: 8, crystal: 3 } },
-  { cap: 150, cost: { wood: 22, metal: 12, crystal: 6 } }
+  { cap: 60 },
+  { cap: 90, cost: { wood: 8, fiber: 6 } },
+  { cap: 130, cost: { wood: 12, fiber: 8, metal: 4 } },
+  { cap: 180, cost: { wood: 16, metal: 8, crystal: 3 } },
+  { cap: 240, cost: { wood: 22, metal: 12, crystal: 6 } }
 ];
 const HOME_RANGE = 27;
 
@@ -89,19 +90,31 @@ export function give(s, items) {
 export const bagFullError = '背包滿了。回避難所，把物資存到書桌上。';
 
 // At the desk: put every material from the bag into storage (food, water and bait stay with you).
+function unload(s) {
+  let n = 0;
+  for (const k of CARRY) {
+    const put = Math.max(0, (s.resources[k] || 0) - (KEEP.includes(k) ? KEEP_AMOUNT : 0));
+    if (!put) continue;
+    n += put;
+    s.storage[k] += put;
+    s.resources[k] -= put;
+  }
+  return n;
+}
 export function deposit(s) {
   normalizeBag(s);
   if (!nearDesk(s)) return { ok: false, error: '請走到木筏的書桌旁。' };
-  let n = 0;
-  for (const k of CARRY) {
-    if (KEEP.includes(k) || !s.resources[k]) continue;
-    n += s.resources[k];
-    s.storage[k] += s.resources[k];
-    s.resources[k] = 0;
-  }
+  const n = unload(s);
   return n
     ? { ok: true, message: `存入 ${n} 件物資。背包 ${bagUsed(s)} / ${bagCap(s)}` }
     : { ok: false, error: '背包裡沒有可存放的材料。' };
+}
+// 0.41: coming home (landing on the raft, boarding the warship) unloads the haul into the desk's storage by
+// itself, keeping a few supplies on you, so there is no errand to the desk after every trip. Returns the count.
+export function unloadAtHome(s) {
+  normalizeBag(s);
+  if (!atHome(s) || !s.buildings.some(b => b.type === 'desk' && !b.stowed)) return 0;
+  return unload(s);
 }
 // At the desk: refill the bag with supplies (food, water, bait) from storage, as far as it has room.
 export function takeSupplies(s) {

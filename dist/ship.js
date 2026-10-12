@@ -1,19 +1,21 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.40.0';
-import { waterNear, groundAt } from './lake.js?v=0.40.0';
-import { onWatcherDown } from './story.js?v=0.40.0';
-import { dayOf } from './clock.js?v=0.40.0';
-import { spend, give, bagRoom } from './bag.js?v=0.40.0';
-import { pens, penId } from './housing.js?v=0.40.0';
-import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.40.0';
-import { normalizeCabin, syncCabin } from './cabin.js?v=0.40.0';
-import { rollDrops } from './species.js?v=0.40.0';
-import { phenotype } from './genetics.js?v=0.40.0';
-import { ITEM_NAMES } from './items.js?v=0.40.0';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.41.0';
+import { waterNear, groundAt } from './lake.js?v=0.41.0';
+import { onWatcherDown } from './story.js?v=0.41.0';
+import { dayOf } from './clock.js?v=0.41.0';
+import { spend, give, bagRoom } from './bag.js?v=0.41.0';
+import { pens, penId } from './housing.js?v=0.41.0';
+import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.41.0';
+import { normalizeCabin, syncCabin } from './cabin.js?v=0.41.0';
+import { rollDrops } from './species.js?v=0.41.0';
+import { phenotype } from './genetics.js?v=0.41.0';
+import { ITEM_NAMES } from './items.js?v=0.41.0';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
-export const FUSION_COST = { wood: 160, metal: 120, fiber: 60, crystal: 45, food: 25, water: 25 };
+export const FUSION_COST = { wood: 100, metal: 70, fiber: 40, crystal: 25, food: 15, water: 15 };
+// 0.41: what the raft must have grown to before it can become the warship (the build limits stay higher)
+export const FUSION_NEEDS = { floor: 12, pen: 3 };
 export const FUSION_TIME = 120;
 export const LOUNGE_CAPACITY = 6;
 export const CARGO_CAPACITY = 300;
@@ -153,8 +155,14 @@ export function limitError(s, type) {
 export function fusionChecks(s) {
   const e = s.expedition || {};
   return [
-    ['地基達上限 ' + Math.min(count(s, 'floor'), 20) + ' / 20', count(s, 'floor') >= LIMITS.floor],
-    ['展示池達上限 ' + Math.min(count(s, 'pen'), 5) + ' / 5', count(s, 'pen') >= LIMITS.pen],
+    [
+      '浮動地基 ' + Math.min(count(s, 'floor'), FUSION_NEEDS.floor) + ' / ' + FUSION_NEEDS.floor,
+      count(s, 'floor') >= FUSION_NEEDS.floor
+    ],
+    [
+      '海洋展示池 ' + Math.min(count(s, 'pen'), FUSION_NEEDS.pen) + ' / ' + FUSION_NEEDS.pen,
+      count(s, 'pen') >= FUSION_NEEDS.pen
+    ],
     ['占領島嶼 ' + (s.occupied || []).length + ' / 1', (s.occupied || []).length >= 1],
     ['建造船隻停靠站', count(s, 'dock') >= 1],
     ['帆布避難所', count(s, 'shelter') >= 1],

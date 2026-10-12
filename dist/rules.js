@@ -1,18 +1,18 @@
-import { limitError } from './ship.js?v=0.40.0';
-import { dayOf } from './clock.js?v=0.40.0';
-import { normalizeExpansion } from './expansion.js?v=0.40.0';
-import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.40.0';
-import { dockingSpots } from './navigation.js?v=0.40.0';
-import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.40.0';
-import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome, give } from './bag.js?v=0.40.0';
-import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.40.0';
-import { remember } from './memories.js?v=0.40.0';
+import { limitError } from './ship.js?v=0.41.0';
+import { dayOf } from './clock.js?v=0.41.0';
+import { normalizeExpansion } from './expansion.js?v=0.41.0';
+import { normalizeHousing, freePen, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.41.0';
+import { dockingSpots } from './navigation.js?v=0.41.0';
+import { makeGenome, phenotype, geneName, crossGenome, seeded, genomeValid, clamp } from './genetics.js?v=0.41.0';
+import { canAfford, spend, stow, bagRoom, bagFullError, normalizeBag, atHome, give } from './bag.js?v=0.41.0';
+import { nearFacility, isStructure, freeSlot } from './fortress.js?v=0.41.0';
+import { remember } from './memories.js?v=0.41.0';
 export const SAVE_KEY = 'tidal-rebirth-save-v1';
-import { ITEM_NAMES, ITEM_GLYPHS, BASE_RESOURCES, CRAFTS } from './items.js?v=0.40.0';
-import { inheritGenes, addRandomGene } from './bsgenes.js?v=0.40.0';
-import { normalizeGear } from './gear.js?v=0.40.0';
-import { mutationFactor } from './weather.js?v=0.40.0';
-import { tally } from './stats.js?v=0.40.0';
+import { ITEM_NAMES, ITEM_GLYPHS, BASE_RESOURCES, CRAFTS } from './items.js?v=0.41.0';
+import { inheritGenes, addRandomGene } from './bsgenes.js?v=0.41.0';
+import { normalizeGear } from './gear.js?v=0.41.0';
+import { mutationFactor } from './weather.js?v=0.41.0';
+import { tally } from './stats.js?v=0.41.0';
 export const RESOURCE_NAMES = ITEM_NAMES;
 export const RESOURCE_ICONS = ITEM_GLYPHS;
 export const RECIPES = {
@@ -210,7 +210,10 @@ export function log(s, title, text) {
   s.log.unshift({ day: dayOf(s), title, text });
   s.log = s.log.slice(0, 70);
 }
+// 0.41: kind 5 is the rare drift treasure chest (about 1 in 20 new drifts)
+export const TREASURE_KIND = 5;
 export function lootYield(kind) {
+  if (kind === TREASURE_KIND) return { wood: 12, metal: 10, fiber: 6, crystal: 6, food: 3 };
   return [
     { wood: 5, fiber: 2 },
     { metal: 4, wood: 2 },
@@ -219,6 +222,13 @@ export function lootYield(kind) {
     { wood: 4, metal: 2, fiber: 3 }
   ][kind % 5];
 }
+// 0.41: salvage pays more as you get better at it: +25 % per boat level (the warship counts as level 4), and +10 %
+// for every further drift hauled in a quick run (each within 25 s of the last, up to +40 %).
+export const STREAK_WINDOW = 25;
+export function salvageBonus(s) {
+  const lv = s.ship ? 4 : s.expedition?.boatLevel || 0;
+  return 1 + lv * 0.25 + Math.max(0, Math.min(5, s.streak?.n || 0) - 1) * 0.1;
+}
 export function salvage(s, id) {
   const i = s.loot.findIndex(l => l.id === id);
   if (i < 0) return { ok: false, error: '已回收這件物資。' };
@@ -226,10 +236,15 @@ export function salvage(s, id) {
   if (Math.hypot(l.x - s.player.x, l.z - s.player.z) > 10.5)
     return { ok: false, error: '再靠近一點，打撈距離為 10 公尺。' };
   if (!bagRoom(s)) return { ok: false, error: bagFullError, full: true };
-  const rewards = stow(s, lootYield(l.kind));
+  const quick = s.elapsed - (s.streak?.at ?? -1e9) <= STREAK_WINDOW;
+  s.streak = { n: quick ? (s.streak.n || 1) + 1 : 1, at: s.elapsed };
+  const k = salvageBonus(s),
+    haul = Object.fromEntries(Object.entries(lootYield(l.kind)).map(([r, v]) => [r, Math.round(v * k)])),
+    // a chest is too good to waste: what the bag cannot hold is sent home to the desk
+    rewards = l.kind === TREASURE_KIND ? give(s, haul) : stow(s, haul);
   s.loot.splice(i, 1);
   s.salvaged++;
-  return { ok: true, rewards };
+  return { ok: true, rewards, streak: s.streak.n, treasure: l.kind === TREASURE_KIND };
 }
 export function buildError(s, type, x, z, level = 0) {
   const recipe = RECIPES[type];
@@ -341,7 +356,7 @@ export function craftBait(s) {
   return { ok: true };
 }
 // Feeding and contracts live in taming.js (0.12).
-export { feed } from './taming.js?v=0.40.0';
+export { feed } from './taming.js?v=0.41.0';
 export function breed(s, aId, bId, rng = Math.random) {
   if ([aId, bId].some(id => s.tamed.find(p => p.id === id)?.ancient)) return { ok: false, error: '遠古御獸無法配對。' };
   normalizeHousing(s);
@@ -410,15 +425,23 @@ export function tickSystems(s, dt, safe = false, rng = Math.random) {
   }
   if (s.elapsed - s.lastPassive >= 55) {
     s.lastPassive = s.elapsed;
+    // 0.41: every beast brings something home, onto the desk: its specialty, more with a high affinity
+    normalizeBag(s);
+    const brought = {};
+    const add = (k, n) => {
+      s.storage[k] += n;
+      brought[k] = (brought[k] || 0) + n;
+    };
     for (const pet of s.tamed) {
-      const p = phenotype(pet.genome);
-      // what the beasts bring home goes onto the desk
-      normalizeBag(s);
-      if (p.ability === 0) s.storage.wood += 1 + Math.floor(p.affinity / 40);
-      if (p.ability === 2) s.storage.crystal++;
-      if (p.ability === 3) s.storage.metal++;
+      const p = phenotype(pet.genome),
+        extra = Math.floor(p.affinity / 40);
+      if (p.ability === 0) add('wood', 2 + extra);
+      if (p.ability === 1) add('fiber', 2 + extra);
+      if (p.ability === 2) add('crystal', 1 + Math.floor(extra / 2));
+      if (p.ability === 3) add('metal', 2 + extra);
     }
-    if (s.tamed.length) s.storage.food += Math.ceil(s.tamed.length / 3);
+    if (s.tamed.length) add('food', Math.ceil(s.tamed.length / 2));
+    if (Object.keys(brought).length) events.push({ type: 'income', items: brought });
   }
   const hatched = s.eggs.filter(e => e.readyAt <= s.elapsed);
   s.eggs = s.eggs.filter(e => e.readyAt > s.elapsed);
@@ -431,15 +454,15 @@ export function tickSystems(s, dt, safe = false, rng = Math.random) {
     events.push({ type: 'hatch', pet: p });
     log(s, '誕生：' + p.name, `第 ${p.generation} 代，發生 ${p.mutations} 處新突變。牠繼承了兩個親代的部分基因。`);
   }
-  if (s.elapsed - s.lastLoot > 12 && s.loot.length < 44) {
+  if (s.elapsed - s.lastLoot > 7 && s.loot.length < 50) {
     s.lastLoot = s.elapsed;
     const a = rng() * Math.PI * 2,
-      d = 15 + rng() * 48;
+      d = 12 + rng() * 40;
     s.loot.push({
       id: uid('loot'),
       x: s.player.x + Math.sin(a) * d,
       z: s.player.z + Math.cos(a) * d,
-      kind: Math.floor(rng() * 5),
+      kind: rng() < 0.05 ? TREASURE_KIND : Math.floor(rng() * 5),
       spin: rng() * 6
     });
   }
@@ -494,7 +517,7 @@ export function validateSave(s) {
         Number.isFinite(l.z) &&
         Number.isInteger(l.kind) &&
         l.kind >= 0 &&
-        l.kind <= 4
+        l.kind <= TREASURE_KIND
     )
   )
     return false;

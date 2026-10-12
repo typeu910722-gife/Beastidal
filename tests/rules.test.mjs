@@ -3,7 +3,17 @@ import { facilityId, useFacility } from '../dist/facilities.js';
 import { groundAt, ISLANDS, NODES, islandDocks, islandAt, harvest } from '../dist/islands.js';
 import assert from 'node:assert/strict';
 import { contract, craftContract } from '../dist/taming.js';
-import { normalizeBag, bagCap, bagUsed, bagRoom, deposit, upgradeBag, give } from '../dist/bag.js';
+import {
+  normalizeBag,
+  bagCap,
+  bagUsed,
+  bagRoom,
+  deposit,
+  upgradeBag,
+  give,
+  BAG_LEVELS,
+  unloadAtHome
+} from '../dist/bag.js';
 import { makeGenome, phenotype, crossGenome, genomeValid, seeded, LOCI, dnaCode } from '../dist/genetics.js';
 import {
   createState,
@@ -15,7 +25,8 @@ import {
   tickSystems,
   validateSave,
   useSupply,
-  canPay
+  canPay,
+  TREASURE_KIND
 } from '../dist/rules.js';
 import { makeCreature, IntroFilm } from '../dist/world.js';
 import { Box3 } from '../dist/vendor/three.module.min.js';
@@ -426,8 +437,8 @@ test('The bag has a limit; the desk stores the rest and the bag can be enlarged 
   const s = normalizeBag(createState(9));
   const desk = s.buildings.find(b => b.type === 'desk');
   Object.assign(s.player, { mode: 'foot', x: desk.x * 3.6, z: desk.z * 3.6 });
-  assert.equal(bagCap(s), 40);
-  s.resources.wood = 40 - (bagUsed(s) - s.resources.wood);
+  assert.equal(bagCap(s), BAG_LEVELS[0].cap);
+  s.resources.wood = BAG_LEVELS[0].cap - (bagUsed(s) - s.resources.wood);
   assert.equal(bagRoom(s), 0);
   s.loot = [{ id: 'l', kind: 0, x: s.player.x, z: s.player.z }];
   const r = salvage(s, 'l');
@@ -446,11 +457,56 @@ test('The bag has a limit; the desk stores the rest and the bag can be enlarged 
   s.player.x = desk.x * 3.6;
   s.storage.fiber = 10;
   assert.ok(upgradeBag(s).ok);
-  assert.equal(bagCap(s), 60);
-  assert.equal(s.storage.wood, wood - 8);
+  assert.equal(bagCap(s), BAG_LEVELS[1].cap);
+  assert.equal(s.storage.wood, wood - BAG_LEVELS[1].cost.wood);
   // rewards that do not fit are sent home, never lost
-  s.resources.wood = 60;
+  s.resources.wood = BAG_LEVELS[1].cap;
   give(s, { crystal: 3 });
   assert.equal(s.storage.crystal, 3);
+});
+test('Supplies never clog the bag: depositing keeps 8 of each and stores the rest', () => {
+  const s = normalizeBag(createState(10));
+  const desk = s.buildings.find(b => b.type === 'desk');
+  Object.assign(s.player, { mode: 'foot', x: desk.x * 3.6, z: desk.z * 3.6 });
+  Object.assign(s.resources, { food: 30, water: 25, bait: 5, wood: 0, metal: 0, fiber: 0, crystal: 0 });
+  assert.ok(deposit(s).ok);
+  assert.equal(s.resources.food, 8);
+  assert.equal(s.resources.water, 8);
+  assert.equal(s.resources.bait, 5);
+  assert.ok(bagRoom(s) > 0);
+});
+test('Salvage pays more with boat levels and quick runs; treasure chests are rich; home unloads the haul', () => {
+  const s = normalizeBag(createState(12));
+  const drift = (id, kind) => s.loot.push({ id, kind, x: s.player.x, z: s.player.z });
+  s.loot = [];
+  drift('a', 0);
+  const first = salvage(s, 'a');
+  assert.equal(first.rewards.wood, 5, 'no bonus for the first one of a run');
+  s.elapsed += 10;
+  drift('b', 0);
+  const second = salvage(s, 'b');
+  assert.equal(second.streak, 2);
+  assert.equal(second.rewards.wood, Math.round(5 * 1.1));
+  s.elapsed += 100;
+  s.expedition = { ...(s.expedition || {}), boatLevel: 2 };
+  drift('c', 0);
+  assert.equal(salvage(s, 'c').rewards.wood, Math.round(5 * 1.5), 'the run ended; boat level 2 adds 50 %');
+  for (const k of Object.keys(s.resources)) s.resources[k] = 0;
+  drift('t', TREASURE_KIND);
+  const chest = salvage(s, 't');
+  assert.ok(chest.treasure && chest.rewards.crystal >= 6);
+  assert.ok(validateSave(s), 'a save may hold a chest');
+  // landing at home: the haul goes into the desk's storage, a few supplies stay
+  s.resources.food = 20;
+  const desk = s.buildings.find(b => b.type === 'desk');
+  Object.assign(s.player, { mode: 'foot', x: desk.x * 3.6, z: desk.z * 3.6 });
+  const wood = s.resources.wood;
+  assert.ok(unloadAtHome(s) > 0);
+  assert.equal(s.resources.wood, 0);
+  assert.equal(s.storage.wood, wood);
+  assert.equal(s.resources.food, 8);
+  s.player.x = 300;
+  s.resources.wood = 4;
+  assert.equal(unloadAtHome(s), 0, 'not away from home');
 });
 console.log(`\n${checks} meaningful checks passed.`);

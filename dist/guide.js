@@ -74,10 +74,10 @@ const STEPS = [
   ],
   [
     'floors',
-    s => n(s, 'floor') < 20,
-    s => `（以前老闆總愛說「擴大規模」……這次是為了自己。地基還差 ${20 - n(s, 'floor')} 格，避難所最多撐得起 20 格。）`
+    s => n(s, 'floor') < 12,
+    s => `（以前老闆總愛說「擴大規模」……這次是為了自己。地基還差 ${12 - n(s, 'floor')} 格，就撐得起一艘戰艦的龍骨。）`
   ],
-  ['pens', s => n(s, 'pen') < 5, s => `（夥伴越來越多了。展示池還差 ${5 - n(s, 'pen')} 座，上限是 5 座。）`],
+  ['pens', s => n(s, 'pen') < 3, s => `（夥伴越來越多了。再蓋 ${3 - n(s, 'pen')} 座展示池，讓大家都有地方露臉。）`],
   [
     'boat',
     s => (s.expedition?.boatLevel || 0) < 3,
@@ -135,4 +135,25 @@ export function monologue(s) {
 export function markGuide(s, key) {
   s.guide ??= {};
   s.guide[key] = true;
+}
+
+// 0.41 moments of pride: the first time each milestone is reached, the protagonist notices how far they have come.
+// Only for real progress (never for chores), and each one speaks once per save.
+const PRIDE = [
+  ['shelter', s => n(s, 'shelter') > 0, '（以前租的雅房都沒這麼像樣。這是我親手蓋起來的家。）'],
+  ['companion', s => s.rescue === 'friend', '（牠在船邊打轉，一直不肯走。上班那幾年，從來沒有誰這樣等過我。）'],
+  ['treasure', s => (s.salvaged || 0) >= 30, '（打撈已經是反射動作了。社畜的手速，原來是用在這裡的。）'],
+  ['island', s => (s.occupied || []).length > 0, '（一整座島，是我的。以前的我，連一坪房子都買不起。）'],
+  ['boat', s => (s.expedition?.boatLevel || 0) >= 3, '（這艘小艇現在跑得比誰都快。浪再大，也追不上我了。）'],
+  ['ship', s => !!s.ship, '（那天沒能抵達公司。現在，我有一艘載著整個家的戰艦。）'],
+  ['warden', s => !!s.expedition?.boss?.defeated, '（守望者沉下去了。這片海，從今天起會記住我的名字。）']
+];
+export function pride(s) {
+  s.prideSeen ??= [];
+  for (const [id, when, text] of PRIDE) if (!s.prideSeen.includes(id) && when(s)) return { id, text };
+  return null;
+}
+export function markPride(s, id) {
+  s.prideSeen ??= [];
+  if (!s.prideSeen.includes(id)) s.prideSeen.push(id);
 }

@@ -49,7 +49,11 @@ try {
       B.repel();
       B.step(1 / 30, 30);
     });
-    await page.screenshot({ path: `smoke-${mobile ? 'mobile' : 'desktop'}.png` });
+    // the screenshot is only an artifact for people to look at: a software-rendered frame of the full lake can take
+    // longer than Playwright's default, and that is not a page error
+    await page
+      .screenshot({ path: `smoke-${mobile ? 'mobile' : 'desktop'}.png`, timeout: 90000 })
+      .catch(e => console.warn(`(no ${mobile ? 'mobile' : 'desktop'} screenshot: ${e.message.split('\n')[0]})`));
     await ctx.close();
   }
 } finally {

@@ -15,7 +15,7 @@ import { facilityId } from '../dist/facilities.js';
 import { DAY, dayOf, hourOf, isNight, nextMorning } from '../dist/clock.js';
 import { spawnRescue, freeRescue, shareFood, tickRescue, RESCUE_ID } from '../dist/rescue.js';
 import { grantFirstBeast } from '../dist/taming.js';
-import { monologue } from '../dist/guide.js';
+import { monologue, pride, markPride } from '../dist/guide.js';
 import { normalizeStats, tickStats, milestoneRows, statsReport } from '../dist/stats.js';
 import {
   slotKey,
@@ -317,5 +317,15 @@ test('Old saves without the first beast get it once: the waiting net beast, a ca
   spawnRescue(d);
   assert.equal(grantFirstBeast(d), null);
   assert.ok(!d.firstBeastGiven);
+});
+test('Moments of pride speak once each, only for real progress', () => {
+  const s = createState(8);
+  assert.equal(pride(s), null, 'nothing to be proud of yet');
+  s.buildings.push({ type: 'shelter', x: 0, z: 2 });
+  assert.equal(pride(s).id, 'shelter');
+  markPride(s, 'shelter');
+  assert.equal(pride(s), null);
+  s.occupied = ['palm'];
+  assert.equal(pride(s).id, 'island');
 });
 console.log(`${passed} progress tests passed.`);

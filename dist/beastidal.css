@@ -754,12 +754,6 @@
       0 0 22px #ecc78e66;
   }
 }
-.tutorial-on #discovery {
-  top: 40%;
-}
-.landscape-play.tutorial-on #discovery {
-  top: 46%;
-}
 .landscape-play #toasts {
   top: 126px;
 }
@@ -3556,4 +3550,50 @@ body.landscape-play.beast-on .supply-row {
   text-shadow:
     0 0 3px #f5ecd2,
     0 0 3px #f5ecd2;
+}
+
+/* 0.41: at home the resource counts include the desk's storage */
+.resource.with-desk b {
+  color: #f0ddb5;
+}
+
+/* 0.41: discovery is a slim ribbon up top. It used to sit mid-screen for seconds, covering the build menu, focus
+   cards and the device. Now it never takes input and gets out of the way. */
+#app #discovery {
+  top: 56px;
+  width: auto;
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 8px 34px 9px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0827388c, #082738f0 18%, #082738f0 82%, #0827388c);
+  border: 1px solid #f0ddb53b;
+  box-shadow: 0 8px 26px #0007;
+  z-index: 31;
+  animation: discovery-in 0.35s ease-out;
+}
+@keyframes discovery-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+}
+#app #discovery .eyebrow {
+  display: none;
+}
+#app #discovery h2 {
+  font-size: 18px;
+  margin: 0 0 2px;
+  letter-spacing: 0.06em;
+}
+#app #discovery .discovery-text {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+}
+.landscape-play #app #discovery {
+  top: 48px;
+  padding: 6px 22px 7px;
+}
+body:has(#discovery:not([hidden])) #toasts {
+  top: 124px;
 }

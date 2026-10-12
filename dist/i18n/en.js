@@ -3194,5 +3194,33 @@ export default {
   '援護召喚：{0} 衝出契約紙，和你一起戰鬥（{1} 秒）。':
     'Assist: {0} bursts out of its contract to fight beside you ({1} s).',
   '援護戰鬥中成長到 Lv{0}。': 'Grew to Lv{0} while assisting in battle.',
-  '{0} 援護結束，回到契約紙裡休息。': "{0}'s assist is over; it goes back into its contract to rest."
+  '{0} 援護結束，回到契約紙裡休息。': "{0}'s assist is over; it goes back into its contract to rest.",
+  // 0.41: playtested pacing
+  漂流寶箱: 'Drifting treasure chest',
+  '{0} 件物資自動收進書桌。': '{0} items went into the desk storage by themselves.',
+  '回家了。{0} 件物資自動收進書桌。': 'Home again. {0} items went into the desk storage by themselves.',
+  '漂流寶箱！': 'A treasure chest!',
+  '滿滿一箱：木材、金屬、纖維、異晶全都有。今天運氣真好。':
+    'A full chest: wood, metal, fibre and crystal, all of it. Lucky day.',
+  '連撈 ×{0} · 收穫 +{1}%': 'Salvage run ×{0} · haul +{1}%',
+  回頭看看: 'Looking back',
+  '背包＋書桌': 'Bag + desk',
+  '夥伴們帶回：{0}（收在書桌）': 'Your companions brought back: {0} (in the desk storage)',
+  '（以前老闆總愛說「擴大規模」……這次是為了自己。地基還差 {0} 格，就撐得起一艘戰艦的龍骨。）':
+    '(My old boss loved to say "scale up"... this time it is for me. {0} more floor tiles and they will carry a warship\'s keel.)',
+  '（夥伴越來越多了。再蓋 {0} 座展示池，讓大家都有地方露臉。）':
+    '(The family keeps growing. {0} more display pens, so everyone has a place to be seen.)',
+  '（以前租的雅房都沒這麼像樣。這是我親手蓋起來的家。）':
+    '(The rooms I used to rent were never this decent. I built this home with my own hands.)',
+  '（牠在船邊打轉，一直不肯走。上班那幾年，從來沒有誰這樣等過我。）':
+    '(It circles the boat and will not leave. In all my office years nobody ever waited for me like this.)',
+  '（打撈已經是反射動作了。社畜的手速，原來是用在這裡的。）':
+    '(Salvaging is a reflex now. So that is what all those years of office speed were for.)',
+  '（一整座島，是我的。以前的我，連一坪房子都買不起。）':
+    '(A whole island, and it is mine. The old me could not afford a single square metre.)',
+  '（這艘小艇現在跑得比誰都快。浪再大，也追不上我了。）': '(This skiff outruns anything now. No wave can catch me.)',
+  '（那天沒能抵達公司。現在，我有一艘載著整個家的戰艦。）':
+    '(That day I never made it to the office. Now I have a warship that carries my whole home.)',
+  '（守望者沉下去了。這片海，從今天起會記住我的名字。）':
+    '(The warden has sunk. From today this sea will remember my name.)'
 };
