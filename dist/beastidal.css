@@ -3355,3 +3355,72 @@ body:not(.landscape-play) #beast-bar {
     display: none;
   }
 }
+
+/* ---------------------------------------------------------------- 0.36.2: phones held sideways */
+/* contract cards a little smaller; the beast bar a compact row right under them; the quest list makes way */
+.landscape-play .ccard {
+  width: 38px;
+  height: 50px;
+}
+.landscape-play .ccard b {
+  display: none;
+}
+.landscape-play .ccard .cc-glyph {
+  margin-top: 9px;
+  font-size: 15px;
+}
+.landscape-play .contract-cards {
+  margin: 4px 0 6px;
+}
+body.landscape-play #beast-bar {
+  top: 84px;
+  bottom: auto;
+  left: var(--edge-left);
+  max-width: 46vw;
+  padding: 4px 6px;
+}
+body.landscape-play #beast-status {
+  display: none;
+}
+body.landscape-play #beast-bar button {
+  min-height: 30px;
+  padding: 3px 9px;
+  font-size: 11px;
+}
+body.landscape-play.beast-on .left-hud {
+  top: var(--edge-top, 8px);
+}
+body.landscape-play.beast-on .mission {
+  display: none;
+}
+body.landscape-play.beast-on .supply-row {
+  margin-top: 46px;
+}
+/* the bottom bar sits between the joystick and the action buttons on the right */
+.landscape-play #hud .bottom-hud {
+  left: calc(var(--edge-left) + 158px);
+  right: auto;
+  transform: none;
+  max-width: calc(100vw - var(--edge-left) - 158px - 27vw);
+  gap: 5px;
+  padding: 4px 5px 4px 8px;
+}
+.landscape-play #hud .vitals {
+  width: 112px;
+  min-width: 0;
+}
+.landscape-play #hud .hot-slot {
+  width: 36px;
+  height: 44px;
+}
+.landscape-play #hud .hot-slot small {
+  display: none;
+}
+.landscape-play #hud .hot-slot .hot-icon {
+  font-size: 16px;
+}
+.landscape-play #hud .bottom-hud .action-bar button {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+}
