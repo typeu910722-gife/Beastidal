@@ -3075,3 +3075,62 @@ body.focus-on .contract-btn {
   width: 52px;
   height: 44px;
 }
+
+/* ---------------------------------------------------------------- 0.33: storages fill the screen */
+body #drawer.bx-full,
+body #drawer.device.bx-full {
+  left: 16px;
+  right: 16px;
+  top: 16px;
+  bottom: 16px;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  transform: none;
+  border-radius: 22px;
+}
+#drawer.bx-full .bx-grid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  max-width: none;
+  gap: 10px;
+}
+.bx-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.bx-tabs button {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid #bfe6dc33;
+  background: #0a1f26;
+  color: #cfe7e0;
+  font-size: 14px;
+}
+.bx-tabs button.active {
+  border-color: var(--mint);
+  color: var(--mint);
+  background: #2c564966;
+}
+.bx-tabs b {
+  margin-left: 4px;
+  opacity: 0.8;
+}
+#drawer.bx-full .bx-detail {
+  max-width: 900px;
+  margin: 0 auto;
+}
+@media (max-width: 600px) {
+  body #drawer.bx-full,
+  body #drawer.device.bx-full {
+    left: 6px;
+    right: 6px;
+    top: 6px;
+    bottom: 6px;
+  }
+  #drawer.bx-full .bx-grid {
+    grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  }
+}

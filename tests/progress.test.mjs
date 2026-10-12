@@ -178,7 +178,7 @@ test('raft desk: device must be picked up on foot; desk is fixed; old saves get 
   assert.ok(old.buildings.some(b => b.type === 'desk'));
   assert.deepEqual(
     DEVICE_APPS.map(a => a.id),
-    ['bag', 'beasts', 'journal', 'codex', 'settings']
+    ['bag', 'beasts', 'creatures', 'journal', 'codex', 'settings']
   );
 });
 test('ferocity: deep-sea and hot-tempered beasts look savage, ordinary sea beasts stay docile', () => {

@@ -1,8 +1,8 @@
 // Live previews of beasts for the device's beast storage: one small offscreen renderer draws every visible beast,
 // slowly turning and swimming, into its own 2D canvas each frame.
 import * as T from './vendor/three.module.min.js';
-import { makeCreature, animateCreature } from './creatures.js?v=0.32.0';
-import { applyGeneMarks } from './bs-models.js?v=0.32.0';
+import { makeCreature, animateCreature } from './creatures.js?v=0.33.0';
+import { applyGeneMarks } from './bs-models.js?v=0.33.0';
 
 export class BeastStage {
   constructor() {
@@ -54,8 +54,16 @@ export class BeastStage {
   update(dt) {
     if (!this.cells.length || !this.renderer) return;
     this.t += dt;
-    for (const c of this.cells) {
-      if (!c.canvas.isConnected) continue;
+    // a full storage: draw only the cells on screen, and at most 12 of them a frame (round robin)
+    const vis = this.cells.filter(c => {
+      if (!c.canvas.isConnected) return false;
+      const r = c.canvas.getBoundingClientRect();
+      return r.bottom > 0 && r.top < innerHeight && r.width > 0;
+    });
+    const per = Math.min(vis.length, 12);
+    this.rr = ((this.rr || 0) + per) % Math.max(1, vis.length);
+    for (let i = 0; i < per; i++) {
+      const c = vis[(this.rr + i) % vis.length];
       const m = this.models.get(c.key);
       if (!m) continue;
       for (const o of this.models.values()) o.mesh.visible = o === m;
