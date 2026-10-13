@@ -6,8 +6,8 @@ import {
   upgradeBoat,
   boatUpgradeCost,
   awaken
-} from './expansion.js?v=0.41.0';
-import { objectives, normalizeStory } from './story.js?v=0.41.0';
+} from './expansion.js?v=0.42.0';
+import { objectives, normalizeStory } from './story.js?v=0.42.0';
 let tab = 'beasts',
   page = 0,
   pick = null,

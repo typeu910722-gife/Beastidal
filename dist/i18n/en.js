@@ -3222,5 +3222,6 @@ export default {
   '（那天沒能抵達公司。現在，我有一艘載著整個家的戰艦。）':
     '(That day I never made it to the office. Now I have a warship that carries my whole home.)',
   '（守望者沉下去了。這片海，從今天起會記住我的名字。）':
-    '(The warden has sunk. From today this sea will remember my name.)'
+    '(The warden has sunk. From today this sea will remember my name.)',
+  點一下開始: 'Tap to start'
 };

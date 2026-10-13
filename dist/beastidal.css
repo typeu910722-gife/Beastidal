@@ -1647,6 +1647,43 @@ body.focus-on #beast-bar {
 #splash.done {
   display: none;
 }
+/* held on black until picture and music can start together (see the script in index.html) */
+#splash.wait,
+#splash.wait * {
+  animation-play-state: paused !important;
+}
+.splash-start {
+  position: absolute;
+  bottom: 14vh;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  color: #c9d4d2;
+  font:
+    500 15px/1.6 system-ui,
+    sans-serif;
+  letter-spacing: 0.3em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s;
+}
+.splash-start small {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.45em;
+  color: #6f7f80;
+}
+#splash.ask .splash-start {
+  opacity: 1;
+  animation: start-breathe 2.4s ease-in-out 0.6s infinite;
+  animation-play-state: running !important;
+}
+@keyframes start-breathe {
+  50% {
+    opacity: 0.45;
+  }
+}
 .splash-stage {
   position: relative;
   display: grid;

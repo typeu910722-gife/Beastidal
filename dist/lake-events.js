@@ -4,11 +4,11 @@
 //   異晶潮   the lake glows: crystal crates surface near you
 //   御獸遷徙 a herd of one species crosses the lake; calmer around people (easier to tame)
 //   湖心寶藏 a light marks a cache on the lakebed; dive to it
-import { waterNear, groundAt } from './lake.js?v=0.41.0';
-import { makeGenome, allSpecies } from './genetics.js?v=0.41.0';
-import { spend, give } from './bag.js?v=0.41.0';
-import { tally } from './stats.js?v=0.41.0';
-import { makeWildBeast } from './beasts.js?v=0.41.0';
+import { waterNear, groundAt } from './lake.js?v=0.42.0';
+import { makeGenome, allSpecies } from './genetics.js?v=0.42.0';
+import { spend, give } from './bag.js?v=0.42.0';
+import { tally } from './stats.js?v=0.42.0';
+import { makeWildBeast } from './beasts.js?v=0.42.0';
 
 export const EVENTS = {
   merchant: { name: '漂流商船', dur: 210, weight: 3, hint: '開船靠近，看看他帶了什麼。' },
