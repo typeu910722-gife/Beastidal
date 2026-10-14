@@ -10,6 +10,8 @@ import { sculpt } from '../dist/sculpt.js';
 import { decodeSculpt, decodePart } from '../dist/sculpt-assets.js';
 import { setXiaoyueSculpt, makeSabertooth, animateSabertooth } from '../dist/story-models.js';
 import { readFileSync, existsSync } from 'node:fs';
+import { GrassField, grassy, dressTerrain } from '../dist/terrain-look.js';
+import * as T from '../dist/vendor/three.module.min.js';
 
 let n = 0;
 const test = (name, fn) => {
@@ -130,5 +132,22 @@ test('嘯岳 (0.37): a sculpted, muscled body on the same rig — it still breat
   const stone = makeSabertooth({ stone: true });
   assert.ok(stone.userData.sculpted && finite(stone));
   setXiaoyueSculpt(null);
+});
+test('0.43: a meadow grows on the dry islands around you, never on the water, and is fixed to the world', () => {
+  const isl = LAKE_ISLANDS.find(i => i.id === 'ruins');
+  assert.ok(grassy(isl.x, isl.z) !== null);
+  assert.equal(grassy(0, 0), null, 'no grass on the open water');
+  const field = new GrassField(new T.Scene(), 1),
+    at = new T.Vector3(isl.x, 2, isl.z);
+  for (let i = 0; i < 60; i++) field.update(1 / 60, at, i / 60, 0.3);
+  assert.ok(field.count > 5000, String(field.count));
+  const a = field.buildTile(3, -4).children.map(m => m.count),
+    b = field.buildTile(3, -4).children.map(m => m.count);
+  assert.deepEqual(a, b, 'the same tile grows the same grass every time');
+  field.update(1 / 60, at, 1, 0.3, false);
+  assert.equal(field.group.visible, false);
+  assert.equal(new GrassField(new T.Scene(), 0).count, 0, 'off on request');
+  const m = dressTerrain(new T.MeshStandardMaterial({ vertexColors: true }), 3);
+  assert.equal(typeof m.onBeforeCompile, 'function');
 });
 console.log(`\n${n} look tests passed`);

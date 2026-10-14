@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { groundTexture } from './lake-models.js?v=0.42.0';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.42.0';
+import { groundTexture } from './lake-models.js?v=0.43.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.43.0';
 export const TRAIL = 40,
   SPLASHES = 4;
 
@@ -15,7 +15,9 @@ export const QUALITY = {
     rings: 150,
     segments: 192,
     envSize: 256,
-    envEvery: 1.5
+    envEvery: 1.5,
+    grass: 1,
+    terrainDetail: 4
   },
   balanced: {
     label: '平衡',
@@ -26,7 +28,9 @@ export const QUALITY = {
     rings: 110,
     segments: 144,
     envSize: 128,
-    envEvery: 3
+    envEvery: 3,
+    grass: 0.6,
+    terrainDetail: 3
   },
   low: {
     label: '效能',
@@ -37,7 +41,9 @@ export const QUALITY = {
     rings: 70,
     segments: 96,
     envSize: 64,
-    envEvery: 6
+    envEvery: 6,
+    grass: 0.25,
+    terrainDetail: 2
   }
 };
 const SETTINGS_KEY = 'beastidal-settings-v1';

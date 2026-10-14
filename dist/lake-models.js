@@ -2,12 +2,12 @@
 // Ported from the author's map; positions are scaled by HS, structures by their own factors so they read at
 // human scale next to the raft.
 import * as T from './vendor/three.module.min.js';
-import { HS, ORIGIN, groundAt } from './lake.js?v=0.42.0';
-import { FINE, COARSE, Q } from './lake-data.js?v=0.42.0';
-import { ISLANDS, NODES } from './islands.js?v=0.42.0';
-import { EXPLORE } from './expansion.js?v=0.42.0';
-import { BEAST_HOME } from './story.js?v=0.42.0';
-import { generateLake, VEG, STRIDE } from './lake-gen.js?v=0.42.0';
+import { HS, ORIGIN, groundAt } from './lake.js?v=0.43.0';
+import { FINE, COARSE, Q } from './lake-data.js?v=0.43.0';
+import { ISLANDS, NODES } from './islands.js?v=0.43.0';
+import { EXPLORE } from './expansion.js?v=0.43.0';
+import { BEAST_HOME } from './story.js?v=0.43.0';
+import { generateLake, VEG, STRIDE } from './lake-gen.js?v=0.43.0';
 
 // ---------- the sketch's noise (map units) ----------
 function hash(x, z) {
@@ -269,7 +269,10 @@ export function makeLake() {
         dm.rotation.set(list[i + 7], list[i + 8], list[i + 9]);
         dm.updateMatrix();
         m.setMatrixAt(m.count, dm.matrix);
-        m.setColorAt(m.count, tmpC.setRGB(list[i + 10], list[i + 11], list[i + 12]));
+        tmpC.setRGB(list[i + 10], list[i + 11], list[i + 12]);
+        // (0.43: rocks sit darker — lit from above they glared white against the shaded cliffs)
+        if (fam === 'rocks') tmpC.multiplyScalar(0.5);
+        m.setColorAt(m.count, tmpC);
         m.count++;
       }
       for (const m of meshes) {
@@ -287,7 +290,7 @@ export function makeLake() {
     };
     if (typeof Worker === 'undefined' || typeof window === 'undefined') return local();
     try {
-      const worker = new Worker(new URL('./lake-worker.js?v=0.42.0', import.meta.url), { type: 'module' });
+      const worker = new Worker(new URL('./lake-worker.js?v=0.43.0', import.meta.url), { type: 'module' });
       worker.onmessage = e => {
         apply(e.data);
         worker.terminate();
