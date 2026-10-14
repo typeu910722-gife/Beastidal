@@ -1,38 +1,39 @@
-import { expansionModels } from './expansion-models.js?v=0.43.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.43.0';
-import { normalizeHousing, penId } from './housing.js?v=0.43.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.43.0';
-export { makeCreature } from './creatures.js?v=0.43.0';
-import { makeIslands } from './island-models.js?v=0.43.0';
-import { facilityId } from './facilities.js?v=0.43.0';
+import { expansionModels } from './expansion-models.js?v=0.44.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.44.0';
+import { normalizeHousing, penId } from './housing.js?v=0.44.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.44.0';
+export { makeCreature } from './creatures.js?v=0.44.0';
+import { makeIslands } from './island-models.js?v=0.44.0';
+import { facilityId } from './facilities.js?v=0.44.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.43.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.43.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.43.0';
-import { makeLake } from './lake-models.js?v=0.43.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.43.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.43.0';
-import { makeStatues } from './statues.js?v=0.43.0';
-import { animateGarden } from './garden-models.js?v=0.43.0';
-import { ViewModel } from './viewmodel.js?v=0.43.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.43.0';
-import { PostFX } from './postfx.js?v=0.43.0';
-import { makeHuman, animateHuman } from './human.js?v=0.43.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.43.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.43.0';
-import { buildError } from './rules.js?v=0.43.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS } from './ship-models.js?v=0.43.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.43.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.43.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.43.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.43.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.43.0';
-import { CombatFX } from './combat-fx.js?v=0.43.0';
-import { syncPlots } from './land-models.js?v=0.43.0';
-import { plotTargets } from './reclaim.js?v=0.43.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.43.0';
-import { dayPhase } from './clock.js?v=0.43.0';
-import { weatherAt, season } from './weather.js?v=0.43.0';
+import { phenotype, seeded } from './genetics.js?v=0.44.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.44.0';
+import { surface } from './surfaces.js?v=0.44.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.44.0';
+import { makeLake } from './lake-models.js?v=0.44.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.44.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.44.0';
+import { makeStatues } from './statues.js?v=0.44.0';
+import { animateGarden } from './garden-models.js?v=0.44.0';
+import { ViewModel } from './viewmodel.js?v=0.44.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.44.0';
+import { PostFX } from './postfx.js?v=0.44.0';
+import { makeHuman, animateHuman } from './human.js?v=0.44.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.44.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.44.0';
+import { buildError } from './rules.js?v=0.44.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.44.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.44.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.44.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.44.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.44.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.44.0';
+import { CombatFX } from './combat-fx.js?v=0.44.0';
+import { syncPlots } from './land-models.js?v=0.44.0';
+import { plotTargets } from './reclaim.js?v=0.44.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.44.0';
+import { dayPhase } from './clock.js?v=0.44.0';
+import { weatherAt, season } from './weather.js?v=0.44.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -73,9 +74,42 @@ const boxG = new T.BoxGeometry(1, 1, 1),
   coneG = new T.ConeGeometry(1, 1, 8),
   cylG = new T.CylinderGeometry(1, 1, 1, 12);
 const mats = new Map();
+// 0.43: the raft's woods, ropes, sailcloth and metal get their surfaces (surfaces.js); the colour picks the kind
+const SURFACE = new Map([
+  [colors.wood, ['wood']],
+  [colors.darkWood, ['wood']],
+  [colors.plank, ['wood', { planks: true }]],
+  [colors.rope, ['cloth']],
+  [colors.cloth, ['cloth']],
+  [colors.metal, ['metal']],
+  // the warship's own palette
+  [SHIP_COLORS.hull, ['wood']],
+  [SHIP_COLORS.strake, ['wood']],
+  [SHIP_COLORS.deckDark, ['wood']],
+  [SHIP_COLORS.plank, ['wood', { planks: true }]],
+  [SHIP_COLORS.cloth, ['cloth']],
+  [SHIP_COLORS.rope, ['cloth']],
+  [SHIP_COLORS.iron, ['metal']],
+  [SHIP_COLORS.copper, ['metal']]
+]);
+// colours outside the palettes: the browns of timber are wood (light, broad surfaces are deck boards)
+const hsl = {};
+function guessSurface(color) {
+  if (typeof color !== 'number') return null;
+  new T.Color(color).getHSL(hsl);
+  if (hsl.h > 0.035 && hsl.h < 0.13 && hsl.s > 0.18 && hsl.s < 0.8 && hsl.l > 0.1 && hsl.l < 0.72)
+    return hsl.l > 0.5 ? ['wood', { planks: true }] : ['wood'];
+  if (hsl.s < 0.12 && hsl.l > 0.12 && hsl.l < 0.4) return ['metal'];
+  return null;
+}
 function mat(color, extra = {}) {
   const key = JSON.stringify([color, extra]);
-  if (!mats.has(key)) mats.set(key, new T.MeshStandardMaterial({ color, roughness: 0.72, ...extra }));
+  if (!mats.has(key)) {
+    const m = new T.MeshStandardMaterial({ color, roughness: 0.72, ...extra }),
+      kind = !extra.map && !extra.emissive && !extra.transparent && (SURFACE.get(color) || guessSurface(color));
+    if (kind) surface(m, ...kind);
+    mats.set(key, m);
+  }
   return mats.get(key);
 }
 function piece(parent, geometry, color, pos = [0, 0, 0], scale = [1, 1, 1], extra) {

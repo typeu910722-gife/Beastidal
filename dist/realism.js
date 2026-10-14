@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { groundTexture } from './lake-models.js?v=0.43.0';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.43.0';
+import { groundTexture } from './lake-models.js?v=0.44.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.44.0';
 export const TRAIL = 40,
   SPLASHES = 4;
 
@@ -410,11 +410,13 @@ export class Atmosphere {
     const warm = smooth(0, 0.4, sun.y);
     w.sun.color.setRGB(1, 0.6 + 0.3 * warm, 0.4 + 0.42 * warm);
     if (day < 0.05) w.sun.color.setRGB(0.55, 0.65, 0.9);
-    w.sun.intensity = (day * 3.1 + (1 - day) * 0.55) * (1 - storm * 0.6);
+    w.sun.intensity = (day * 3.5 + (1 - day) * 0.55) * (1 - storm * 0.6);
     // 0.35: first person sits low on the water — nights keep a cool moonlit fill instead of going black
-    w.ambient.intensity = (0.62 + day * 0.1 + (1 - day) * 0.35) * (1 - storm * 0.3);
+    // (0.43: a fuller daylight fill — shadows by day were near black; nights unchanged)
+    w.ambient.intensity = (0.62 + day * 0.38 + (1 - day) * 0.35) * (1 - storm * 0.3);
     w.ambient.color.copy(this.fog).lerp(day > 0.3 ? DAY_FILL : NIGHT_FILL, 0.3 + 0.5 * (1 - day));
-    w.ambient.groundColor.setRGB(0.03, 0.05, 0.05);
+    // light bounced off the ground: warm and green by day, near nothing at night
+    w.ambient.groundColor.setRGB(0.03 + day * 0.09, 0.05 + day * 0.08, 0.05 + day * 0.03);
     w.scene.environmentIntensity = (0.28 + day * 0.6) * (1 - storm * 0.4);
     if (env) {
       this.envTimer -= dt;

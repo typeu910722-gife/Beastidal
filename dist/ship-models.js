@@ -1,6 +1,7 @@
 // Procedural warship "比斯泰德號": keel + five walkable deck bands that can be cut away.
+import { surface } from './surfaces.js?v=0.44.0';
 import * as T from './vendor/three.module.min.js';
-import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.43.0';
+import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.44.0';
 export const LOUNGE_SLOTS = [
   [-2.4, -7],
   [2.4, -7],
@@ -10,7 +11,7 @@ export const LOUNGE_SLOTS = [
   [2.5, 9]
 ];
 const V = T.Vector3;
-const C = {
+export const SHIP_COLORS = {
   hull: 0x3d2c20,
   strake: 0x6a4a31,
   copper: 0x8d5b38,
@@ -25,6 +26,7 @@ const C = {
   glow: 0x9affdf,
   red: 0x9e3b32
 };
+const C = SHIP_COLORS;
 export function makeWarship(mat, halo) {
   const g = new T.Group(),
     bands = [0, 1, 2, 3, 4].map(() => new T.Group()),
@@ -93,7 +95,18 @@ export function makeWarship(mat, halo) {
     geo.computeVertexNormals();
     const m = new T.Mesh(
       geo,
-      new T.MeshStandardMaterial({ vertexColors: true, roughness: 0.62, metalness: 0.08, side: T.DoubleSide, ...extra })
+      // (0.43: the hull's planking, running fore and aft)
+      surface(
+        new T.MeshStandardMaterial({
+          vertexColors: true,
+          roughness: 0.62,
+          metalness: 0.08,
+          side: T.DoubleSide,
+          ...extra
+        }),
+        'wood',
+        { planks: true, axis: 2 }
+      )
     );
     m.castShadow = true;
     m.receiveShadow = true;

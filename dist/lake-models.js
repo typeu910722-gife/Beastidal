@@ -2,12 +2,12 @@
 // Ported from the author's map; positions are scaled by HS, structures by their own factors so they read at
 // human scale next to the raft.
 import * as T from './vendor/three.module.min.js';
-import { HS, ORIGIN, groundAt } from './lake.js?v=0.43.0';
-import { FINE, COARSE, Q } from './lake-data.js?v=0.43.0';
-import { ISLANDS, NODES } from './islands.js?v=0.43.0';
-import { EXPLORE } from './expansion.js?v=0.43.0';
-import { BEAST_HOME } from './story.js?v=0.43.0';
-import { generateLake, VEG, STRIDE } from './lake-gen.js?v=0.43.0';
+import { HS, ORIGIN, groundAt } from './lake.js?v=0.44.0';
+import { FINE, COARSE, Q } from './lake-data.js?v=0.44.0';
+import { ISLANDS, NODES } from './islands.js?v=0.44.0';
+import { EXPLORE } from './expansion.js?v=0.44.0';
+import { BEAST_HOME } from './story.js?v=0.44.0';
+import { generateLake, VEG, STRIDE } from './lake-gen.js?v=0.44.0';
 
 // ---------- the sketch's noise (map units) ----------
 function hash(x, z) {
@@ -113,34 +113,138 @@ function jitter(g, amt, seed) {
 const W = new T.Color(1, 1, 1),
   BARK = new T.Color(0.48, 0.36, 0.26),
   BARK2 = new T.Color(0.62, 0.52, 0.42);
-function conifer(v) {
-  const t = new T.CylinderGeometry(0.12, 0.22, 1.6, 5);
-  t.translate(0, 0.8, 0);
-  const parts = [[t, BARK]],
-    n = 3 + v;
-  for (let i = 0; i < n; i++) {
-    const y = 1.2 + i * 1.15,
-      r = 1.15 - i * 0.22,
-      c = new T.ConeGeometry(r, 1.9, 7 + v);
-    c.translate(0, y + 0.9, 0);
-    jitter(c, 0.18, i + v * 9);
-    parts.push([c, new T.Color(1 - i * 0.06, 1 - i * 0.03, 1)]);
+// 0.43: fuller trees. Each crown carries its own ambient occlusion in the vertex colours (darker inside and
+// underneath, lighter at the tips) so it reads as a mass of foliage rather than a faceted solid; the needles hang in
+// ragged, drooping tiers and the broadleaf crown is a cluster of lumpy leaf masses.
+function shade(g, base, center, radius, low, high) {
+  const p = g.attributes.position,
+    c = new Float32Array(p.count * 3);
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i) - center.x,
+      y = p.getY(i),
+      z = p.getZ(i) - center.z,
+      out = Math.min(1, Math.hypot(x, z) / radius),
+      up = Math.min(1, Math.max(0, (y - low) / (high - low))),
+      k = 0.42 + 0.38 * out + 0.32 * up + (hash(i, 77) - 0.5) * 0.12;
+    c[i * 3] = base.r * k;
+    c[i * 3 + 1] = base.g * k;
+    c[i * 3 + 2] = base.b * k;
   }
-  return merge(parts);
+  g.setAttribute('color', new T.BufferAttribute(c, 3));
+  return g;
+}
+function lumpy(g, amt, seed, freq = 2.2) {
+  const p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i),
+      y = p.getY(i),
+      z = p.getZ(i),
+      n =
+        Math.sin(x * freq + seed) * Math.sin(y * freq * 1.3 + seed * 2.1) * Math.sin(z * freq * 0.9 + seed * 0.7) +
+        (hash(Math.round(x * 40) + seed, Math.round(z * 40) + Math.round(y * 40)) - 0.5) * 0.4,
+      k = 1 + n * amt;
+    p.setXYZ(i, x * k, y * (1 + n * amt * 0.6), z * k);
+  }
+  g.computeVertexNormals();
+  return g;
+}
+function merge2(parts) {
+  // like merge(), but each part may bring its own per-vertex colours
+  const pos = [],
+    norm = [],
+    col = [];
+  for (const [g, c] of parts) {
+    const ng = g.index ? g.toNonIndexed() : g,
+      p = ng.attributes.position.array,
+      n = ng.attributes.normal.array,
+      cc = ng.attributes.color?.array;
+    for (let i = 0; i < p.length; i += 3) {
+      pos.push(p[i], p[i + 1], p[i + 2]);
+      norm.push(n[i], n[i + 1], n[i + 2]);
+      if (cc) col.push(cc[i], cc[i + 1], cc[i + 2]);
+      else col.push(c.r, c.g, c.b);
+    }
+  }
+  const b = new T.BufferGeometry();
+  b.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+  b.setAttribute('normal', new T.Float32BufferAttribute(norm, 3));
+  b.setAttribute('color', new T.Float32BufferAttribute(col, 3));
+  return b;
+}
+const CENTER = new T.Vector3();
+// normals pointing out from the middle of a leaf mass (blended with its faceted ones, tilted up a little): foliage
+// then shades as one soft, round mass instead of showing every facet
+function softNormals(g, up = 0.3) {
+  const p = g.attributes.position,
+    n = g.attributes.normal;
+  for (let i = 0; i < p.count; i++) {
+    let x = p.getX(i),
+      y = p.getY(i) + up,
+      z = p.getZ(i);
+    const l = Math.hypot(x, y, z) || 1;
+    x = x / l + n.getX(i) * 0.25;
+    y = y / l + n.getY(i) * 0.25;
+    z = z / l + n.getZ(i) * 0.25;
+    const m = Math.hypot(x, y, z) || 1;
+    n.setXYZ(i, x / m, y / m, z / m);
+  }
+  return g;
+}
+function conifer(v) {
+  const t = new T.CylinderGeometry(0.1, 0.24, 2.2, 7);
+  t.translate(0, 1.1, 0);
+  const parts = [[t, BARK]],
+    n = 5 + v,
+    top = 1.0 + n * 0.86 + 1.6;
+  for (let i = 0; i < n; i++) {
+    const y = 1.0 + i * 0.86,
+      r = 1.35 * (1 - i / (n + 0.6)) + 0.18,
+      c = new T.ConeGeometry(r, 1.55, 14, 2, true);
+    // the skirt of each tier droops at the tips, raggedly
+    const p = c.attributes.position;
+    for (let k = 0; k < p.count; k++) {
+      const yy = p.getY(k);
+      if (yy < -0.7) {
+        const a = Math.atan2(p.getZ(k), p.getX(k)),
+          tip = 0.75 + 0.5 * Math.abs(Math.sin(a * 3.5 + i + v)) + (hash(k, i + v) - 0.5) * 0.3;
+        p.setXYZ(k, p.getX(k) * tip, yy - 0.18 * tip, p.getZ(k) * tip);
+      }
+    }
+    c.rotateY(i * 0.7 + v);
+    c.computeVertexNormals();
+    softNormals(c, 0.5);
+    c.translate(0, y + 0.78, 0);
+    parts.push([shade(c, W, CENTER, 1.5, 0.6, top), W]);
+  }
+  return merge2(parts);
 }
 function broadleaf(v) {
-  const t = new T.CylinderGeometry(0.14, 0.3, 1.9, 6);
-  t.translate(0, 0.95, 0);
-  const parts = [[t, BARK2]],
-    lobes = 3 + v;
+  const t = new T.CylinderGeometry(0.12, 0.3, 2.3, 7);
+  t.translate(0, 1.15, 0);
+  const parts = [[t, BARK2]];
+  // two or three boughs reaching out from the trunk into the crown
+  for (let b = 0; b < 3; b++) {
+    const bough = new T.CylinderGeometry(0.05, 0.1, 1.3, 5);
+    bough.translate(0, 0.65, 0);
+    bough.rotateZ(0.7);
+    bough.rotateY(b * 2.1 + v);
+    bough.translate(0, 1.9, 0);
+    parts.push([bough, BARK2]);
+  }
+  const lobes = 7 + v,
+    low = 1.6,
+    high = 4.6;
   for (let i = 0; i < lobes; i++) {
     const k = hash(i, v),
-      c = new T.IcosahedronGeometry(1.1 + k * 0.5, 1);
-    jitter(c, 0.35, i * 3 + v);
-    c.translate((hash(i, v + 3) - 0.5) * 1.4, 2.2 + hash(v, i) * 0.9, (hash(i + 2, v) - 0.5) * 1.4);
-    parts.push([c, new T.Color(0.9 + k * 0.2, 1, 0.85)]);
+      a = (i / lobes) * Math.PI * 2 + k,
+      ring = i === 0 ? 0 : 0.75 + hash(v, i) * 0.55,
+      c = new T.IcosahedronGeometry(0.85 + k * 0.45, 2);
+    lumpy(c, 0.22, i * 3 + v * 11);
+    softNormals(c, 0.35);
+    c.translate(Math.cos(a) * ring, 2.7 + hash(i + 7, v) * 1.2 + (i === 0 ? 0.8 : 0), Math.sin(a) * ring);
+    parts.push([shade(c, new T.Color(0.95 + k * 0.1, 1, 0.88), CENTER, 1.9, low, high), W]);
   }
-  return merge(parts);
+  return merge2(parts);
 }
 function deadTree(v) {
   const t = new T.CylinderGeometry(0.08, 0.26, 3.2, 5);
@@ -215,6 +319,28 @@ export function makeLake() {
 
   // ---------- vegetation & rocks (instanced, same sampling as the sketch) ----------
   const vegMat = new T.MeshStandardMaterial({ vertexColors: true, roughness: 1 });
+  // 0.43: the trees move in the wind (the crown more than the trunk, each on its own phase)
+  const sway = { uTime: { value: 0 }, uWind: { value: 0.3 } };
+  vegMat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, sway);
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nuniform float uTime;uniform float uWind;')
+      .replace(
+        '#include <begin_vertex>',
+        `#include <begin_vertex>
+#ifdef USE_INSTANCING
+ {
+  vec2 root=vec2(instanceMatrix[3][0],instanceMatrix[3][2]);
+  float h=max(0.,position.y-1.2);
+  float ph=dot(root,vec2(.11,.07))+uTime*1.1;
+  float g=sin(ph)*.7+sin(ph*2.7+1.3)*.3;
+  transformed.x+=g*uWind*h*h*.012;
+  transformed.z+=sin(ph*1.3+.8)*uWind*h*h*.006;
+ }
+#endif`
+      );
+  };
+  vegMat.customProgramCacheKey = () => 'veg-sway';
   const dm = new T.Object3D();
   const makeInst = (geos, count) =>
     geos.map(g => {
@@ -233,9 +359,10 @@ export function makeLake() {
   const families = { conifers, leafs, deads, rocks, reeds, kelps };
   // open ground around places people walk to: no tree grows through a ruin, a claim stone or a harvest spot
   const clearings = [
-    ...ISLANDS.map(i => [i.x, i.z, 14]),
+    // (0.43: wider, now that the islands grow groves: the ruins and claim stones stand in the open)
+    ...ISLANDS.map(i => [i.x, i.z, 30]),
     ...NODES.map(n => [n.x, n.z, 5]),
-    ...EXPLORE.filter(e => !e.cave && !e.deep).map(e => [e.x, e.z, 6]),
+    ...EXPLORE.filter(e => !e.cave && !e.deep).map(e => [e.x, e.z, 12]),
     [BEAST_HOME.x, BEAST_HOME.z, 20],
     ...[
       [12, -21],
@@ -290,7 +417,7 @@ export function makeLake() {
     };
     if (typeof Worker === 'undefined' || typeof window === 'undefined') return local();
     try {
-      const worker = new Worker(new URL('./lake-worker.js?v=0.43.0', import.meta.url), { type: 'module' });
+      const worker = new Worker(new URL('./lake-worker.js?v=0.44.0', import.meta.url), { type: 'module' });
       worker.onmessage = e => {
         apply(e.data);
         worker.terminate();
@@ -596,7 +723,9 @@ export function makeLake() {
     ready,
     shafts,
     gate,
+    sway,
     update(t, diving) {
+      sway.uTime.value = t;
       for (const s of shafts) s.visible = diving;
       for (let i = 0; i < shafts.length; i++) shafts[i].material.opacity = 0.045 + 0.03 * Math.sin(t * 0.8 + i * 1.7);
     }

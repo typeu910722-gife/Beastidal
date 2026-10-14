@@ -2,8 +2,8 @@
 // rock, reed and kelp stand — as plain arrays. Runs in a Web Worker (lake-worker.js) so start-up never freezes;
 // falls back to the main thread where workers are unavailable. Same sketch noise and colour rules as before,
 // computed in three.js's linear working colour space so the result matches what the renderer used to build.
-import { HS, ORIGIN, groundAt } from './lake.js?v=0.43.0';
-import { FINE, COARSE, Q } from './lake-data.js?v=0.43.0';
+import { HS, ORIGIN, groundAt } from './lake.js?v=0.44.0';
+import { FINE, COARSE, Q } from './lake-data.js?v=0.44.0';
 
 function hash(x, z) {
   const s = Math.sin(x * 127.1 + z * 311.7) * 43758.5453;
@@ -258,9 +258,12 @@ function vegetation(clearings) {
       );
       continue;
     }
-    if (h < 2.3 || h > 44 || sl > 0.85 || cleared(gx(mx), gz(mz))) continue;
+    // (0.43: trees grow on the islands again — since 0.26 pressed them under 4.6 m, nothing reached the old 11.5 m
+    // treeline and the islands stood bare; the beach band stays open)
+    if (h < 0.5 || h > 44 || sl > 0.85 || cleared(gx(mx), gz(mz))) continue;
     const density = ss(0.85, 0.3, sl) * (0.25 + 0.9 * cluster) * (h < 30 ? 1 : ss(44, 30, h));
-    if (r1 > density * 0.28) continue;
+    // (the islands' groves a little thicker than the mountainside)
+    if (r1 > density * (h < 6 ? 0.5 : 0.28)) continue;
     const tilt = sl * 0.25 * (r2 - 0.5);
     if (h > 36 || (h > 26 && r3 < 0.2 && sl > 0.5)) {
       if (r2 < 0.5) {
@@ -271,8 +274,9 @@ function vegetation(clearings) {
     }
     const broad = (moist > 0.5 && h < 14 && r3 < 0.75) || (h < 6 && r3 < 0.55);
     if (broad) {
-      const s = 0.7 + r2 * r2 * 1.3;
-      setHSL(col, 0.22 + r2 * 0.09, 0.45 + r3 * 0.2, 0.22 + r1 * 0.14);
+      // (island trees are smaller than the old mountainside giants, and a deeper, less candy green)
+      const s = (0.7 + r2 * r2 * 1.3) * (h < 6 ? 0.62 : 1);
+      setHSL(col, 0.22 + r2 * 0.07, 0.3 + r3 * 0.14, 0.17 + r1 * 0.1);
       add(
         'leafs',
         mx,
@@ -286,8 +290,8 @@ function vegetation(clearings) {
         tilt
       );
     } else {
-      const s = 0.55 + r2 * r2 * 1.6;
-      setHSL(col, 0.3 + r2 * 0.1, 0.32 + r3 * 0.2, 0.14 + r1 * 0.1);
+      const s = (0.55 + r2 * r2 * 1.6) * (h < 6 ? 0.7 : 1);
+      setHSL(col, 0.3 + r2 * 0.08, 0.24 + r3 * 0.14, 0.11 + r1 * 0.08);
       add(
         'conifers',
         mx,
