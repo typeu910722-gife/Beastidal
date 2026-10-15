@@ -3223,5 +3223,104 @@ export default {
     '(That day I never made it to the office. Now I have a warship that carries my whole home.)',
   '（守望者沉下去了。這片海，從今天起會記住我的名字。）':
     '(The warden has sunk. From today this sea will remember my name.)',
-  點一下開始: 'Tap to start'
+  點一下開始: 'Tap to start',
+  // 0.46 適應期的裂痕: echoes, the laptop's parts, the end of chapter one
+  '嗶。嗶。嗶。——很規律的電子音，像是從很遠的地方傳來。':
+    'Beep. Beep. Beep. — a steady electronic tone, as if from very far away.',
+  '（又是那個聲音。這片湖上沒有任何會發出這種聲音的東西。）':
+    '(That sound again. Nothing on this lake makes a sound like that.)',
+  陌生的女聲: "A stranger's voice (a woman)",
+  '「血壓九十、六十，血氧九十四。……他今天眉頭皺了一下，你有看到嗎？」':
+    '"Blood pressure ninety over sixty, oxygen ninety-four. …He frowned a little today — did you see?"',
+  '（醒來的時候，額頭上好像還留著一隻手的溫度。）': '(When I wake, my forehead still seems warm from a hand.)',
+  媽媽: 'Mom',
+  '「醫生說再這樣下去，費用……慈愛那邊的人說，他們全部負擔。一毛都不用我們出。」':
+    '"The doctor says if this goes on, the bills… The people from Compassion say they\'ll cover all of it. We won\'t pay a cent."',
+  '（媽……？轉生之後，我已經很久沒有想起她的聲音了。）':
+    "(Mom…? Since I was reborn I haven't once remembered her voice.)",
+  溫和的男聲: 'A gentle voice (a man)',
+  '「這是家屬同意書，第三頁請簽在這裡。參與者編號 0412。請放心，NW 計畫只是讓他在電腦模擬的世界裡，過沒有痛苦的生活。」':
+    '"This is the family consent form — please sign here, on page three. Participant number 0412. Rest assured, the NW Project only lets him live a life without pain in a computer-simulated world."',
+  '（0412。筆電開機畫面的角落，好像也有這串數字。）':
+    "(0412. That number was in the corner of the laptop's boot screen too.)",
+  '「這是他本週的狀態報告。您看這張——他在湖邊笑得很開心。模擬世界裡，他交到朋友了。」':
+    '"Here is his status report for the week. Look at this one — he\'s laughing by the lake. He\'s made friends in the simulation."',
+  '（我在湖邊笑……有人在看著我嗎？還是只是夢？）':
+    '(Laughing by the lake… Is someone watching me? Or is it only a dream?)',
+  冰冷的聲音: 'A cold voice',
+  '「0412 號載體，適應率 71%，意識錨定穩定。原體維持基本生命徵象即可，不需要治療。家屬端報告照常生成。」':
+    '"Carrier 0412: adaptation 71%, consciousness anchor stable. Keep the original body on basic life signs only — no treatment needed. Family reports to be generated as usual."',
+  '（載體。原體。……這不是醫院的聲音。這個聲音，離我很近。）':
+    "(Carrier. Original body. …That isn't a hospital voice. That voice is close to me.)",
+  '「他們說你的手指今天動了一下。報告上寫著『神經反應改善』。媽媽每天都來，你一定要醒過來喔。」':
+    '"They say your finger moved today. The report says \'improved neural response\'. Mom comes every day — you have to wake up, okay?"',
+  '（我的手指……我低頭看自己的手。它一直都在動啊。）':
+    "(My finger… I look down at my hand. It's been moving all along.)",
+  '「0412 號適應期即將結束。準備開放新生之界接入。——別讓他知道山的另一邊是真的。」':
+    '"0412\'s adaptation period is nearly over. Prepare to open access to the New World. — Don\'t let him find out the far side of the mountains is real."',
+  '（山的另一邊。嘯岳說過，牠能越過群山。）': '(The far side of the mountains. Xiaoyue said it could cross them.)',
+  電源模組: 'Power module',
+  記憶晶片: 'Memory chip',
+  棕櫚環礁的漂流者寶箱: "The castaway's chest on Palm Atoll",
+  訊號天線: 'Signal antenna',
+  沉城遺島的御獸文明石碑: 'The beast-civilisation stele on the Sunken City isle',
+  '磁碟修復完成 · 可讀取 98%。': 'Disk repair complete · 98% readable.',
+  '系統標頭：NWP-0412 · 適應期監測 · 終端已連線。':
+    'System header: NWP-0412 · adaptation monitoring · terminal connected.',
+  '[已還原郵件] 寄件人：慈愛組織 · 家屬關懷專員': '[Recovered mail] From: Compassion · Family Care Officer',
+  '主旨：關於令郎參與 NW 計畫之說明': "Subject: About your son's participation in the NW Project",
+  '「……本計畫以電腦模擬環境，使病患在無痛狀態下延續生活。醫療費用由本會全額負擔，':
+    '"…This project uses a computer-simulated environment so that the patient may go on living free of pain. All medical costs are borne by our organisation,',
+  '並每週提供狀態報告予家屬……」（以下無法讀取）':
+    'and a status report is provided to the family each week…" (the rest is unreadable)',
+  '訊息狀態：已讀。': 'Message status: read.',
+  'GPS：衛星訊號 0。本地網路「NWP-LAKE」已連線。': 'GPS: 0 satellites. Local network "NWP-LAKE" connected.',
+  '星圖比對：觀測資料吻合，誤差 0.00%。非模擬資料。':
+    'Star chart check: observations match, error 0.00%. Not simulated data.',
+  '回聲 ·': 'Echo ·',
+  '零件湊齊了，回書桌修好它。': 'All the parts are here — go back to the desk and fix it.',
+  '找到筆電的{0}（{1}/3）。{2}': "Found the laptop's {0} ({1}/3). {2}",
+  筆電零件: 'Laptop part',
+  '筆電已經修好了。': 'The laptop is already fixed.',
+  '還缺：{0}。': 'Still missing: {0}.',
+  筆電修好了: 'The laptop works again',
+  '磁碟救回來了，但裡面的東西不對勁：一封寄給家屬的信、一則「已讀」的訊息、一張和這片天空完全吻合的星圖。壞掉的電腦連星星都在亂講——應該吧。':
+    'The disk is saved, but what\'s on it is wrong: a letter to a family, a message marked "read", a star chart that matches this sky exactly. A broken computer gets even the stars wrong — I suppose.',
+  '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先以誘餌建立信任，用外出籠帶回船上，讓兩個個體配對出比斯基因，最後以契約書契闊進化。紀錄末尾的署名：研究員 K.——NWP 前導觀……（以下毀損）':
+    "The buoy's research notes say that crystal gives all sea life one shared genetic language. Win trust with bait, bring them aboard in a carry cage, pair two to breed BS genes, and evolve them with a contract scroll. Signed at the end: Researcher K. — NWP advance obs… (the rest is damaged)",
+  '（箱底壓著一塊不屬於這裡的電源模組。）':
+    "(At the bottom of the chest lies a power module that doesn't belong here.)",
+  'NWP-0412 · 終端': 'NWP-0412 · terminal',
+  '（壞掉的電腦連星星都在亂講……應該吧。）': '(A broken computer gets even the stars wrong… I suppose.)',
+  '；': '; ',
+  '（電源鍵按不太下去。還缺零件：{0}。）': '(The power button barely presses. Parts still missing: {0}.)',
+  '裝上零件，修好筆電': 'Fit the parts and fix the laptop',
+  '筆電重新開機了。螢幕上跳出一行又一行還原的資料……':
+    'The laptop boots. Line after line of recovered data scrolls up the screen…',
+  '破舊筆電 · 已修復': 'Battered laptop · repaired',
+  'NWP-0412 · 適應期監測': 'NWP-0412 · adaptation monitoring',
+  '（訊息……已讀？我明明沒有寄出去。是誰讀的？）': '(The message… read? I never sent it. Who read it?)',
+  '……一定是壞掉了': '…It must be broken',
+  '回聲 {0}/{1}': 'Echoes {0}/{1}',
+  只是夢而已: 'Only a dream',
+  '睡著的時候聽見的聲音。不是這片湖上的聲音。': 'Voices heard in sleep. Not voices from this lake.',
+  '還有 {0} 段沒有聽見。': '{0} more not yet heard.',
+  '山的另一側沒有海。是一片望不見盡頭的大陸——平原、河流，地平線上有城市的燈火。':
+    'There is no sea on the other side. There is a continent without end — plains, rivers, and city lights on the horizon.',
+  '天上那道紫色的裂縫緩緩合上，像有人拉上了布幕。':
+    'The purple rift in the sky slowly closes, like someone drawing a curtain.',
+  廣播: 'Broadcast',
+  '「恭喜您完成適應期。歡迎來到——新生之界。」':
+    '"Congratulations on completing your adaptation period. Welcome to — the New World."',
+  '「這裡沒有病痛，沒有債務，沒有失去。您的家人一切安好。慈愛組織，與您同在。」':
+    '"Here there is no sickness, no debt, no loss. Your family is well. Compassion is with you."',
+  '……我的家人？': '…My family?',
+  '這個聲音。研究員那個會發光的盒子裡，也有一模一樣的聲音。':
+    "That voice. The researcher's glowing box had exactly the same voice in it.",
+  '築山的人想擋住的是裂縫。可是說話的這些人……他們把湖當成了籠子的門。':
+    'Those who built the mountains wanted to keep the rift out. But these voices… they use the lake as the door of a cage.',
+  '還不是時候。等你準備好了，我們再下去。': "Not yet. When you're ready, we'll go down.",
+  '第一章 完 · 適應期結束': 'End of Chapter One · The Adaptation Period Ends',
+  '山外不是海，是一片大陸。天上的聲音叫它「新生之界」，還說我的家人一切安好——它怎麼會知道我有家人？第二章 · 新生之界——敬請期待。':
+    'Beyond the mountains is not a sea but a continent. The voice in the sky called it "the New World", and said my family is well — how would it know I have a family? Chapter Two · The New World — coming soon.'
 };

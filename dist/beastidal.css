@@ -2610,6 +2610,13 @@ body.focus-on .contract-btn {
   margin-right: 4px;
 }
 /* 0.16 嘯岳之契: dialogue cards and the story checklist */
+/* 0.46: voices from the hospital room, heard in sleep */
+.echo-line {
+  font-style: italic;
+  color: #c9d3dc;
+  border-left: 2px solid #6f8090;
+  padding-left: 10px;
+}
 .pact-line {
   font-size: 17px;
   line-height: 1.9;
