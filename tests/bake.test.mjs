@@ -57,4 +57,16 @@ test('Skipped parts, lone meshes and hidden parts are handled', () => {
   assert.equal(meshes.find(m => m.userData.baked)?.userData.baked, 2);
 });
 
+test('A group hidden for now (like the town) keeps all its parts', () => {
+  const g = new T.Group(),
+    a = new T.MeshStandardMaterial();
+  g.visible = false;
+  for (let i = 0; i < 4; i++) box(g, a, i, 0, 0);
+  bakeStatic(g);
+  const meshes = [];
+  g.traverse(o => o.isMesh && meshes.push(o));
+  assert.equal(meshes.length, 1);
+  assert.equal(meshes[0].userData.baked, 4);
+});
+
 console.log(`\n${n} bake tests passed.`);

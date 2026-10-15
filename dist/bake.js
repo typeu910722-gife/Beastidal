@@ -19,7 +19,8 @@ export function bakeStatic(root, { skip = new Set() } = {}) {
     if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || o.morphTargetInfluences || !o.geometry) return;
     if (Array.isArray(o.material) || skipped(o)) return;
     // hidden parts stay hidden: they are simply dropped
-    for (let p = o; p; p = p.parent) if (!p.visible) return (o.userData.bakeDrop = true);
+    // (only inside `root`: the root itself may be hidden for now, like the town until you get there)
+    for (let p = o; p && p !== root; p = p.parent) if (!p.visible) return (o.userData.bakeDrop = true);
     const key = o.material.uuid + '|' + (o.castShadow ? 1 : 0) + (o.receiveShadow ? 1 : 0);
     if (!buckets.has(key))
       buckets.set(key, { material: o.material, cast: o.castShadow, receive: o.receiveShadow, list: [] });

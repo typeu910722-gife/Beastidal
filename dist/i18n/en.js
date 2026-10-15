@@ -3845,5 +3845,19 @@ export default {
   '要往下走多深？': 'How deep will you go?',
   '核心碎片 {0} / 3': 'Core shards {0} / 3',
   '三塊碎片都到齊了。再靠近裂縫一次。': 'All three shards are here. Go up to the rift once more.',
-  '裂縫 · {0} · 第 {1} / {2} 波': 'The rift · {0} · wave {1} / {2}'
+  '裂縫 · {0} · 第 {1} / {2} 波': 'The rift · {0} · wave {1} / {2}',
+  // optimisation round 2
+  '引路人 · 晴': 'The guide · Qing',
+  北: 'N',
+  東北: 'NE',
+  東: 'E',
+  東南: 'SE',
+  南: 'S',
+  西南: 'SW',
+  西: 'W',
+  西北: 'NW',
+  'CHAPTER 03 · 裂縫之外': 'CHAPTER 03 · Beyond the Rift',
+  'CHAPTER 02 · 新生之界': 'CHAPTER 02 · The New World',
+  '（夜裡）': ' (at night)',
+  '下一步：{0} · {1} {2} m{3}': 'Next: {0} · {1} {2} m{3}'
 };

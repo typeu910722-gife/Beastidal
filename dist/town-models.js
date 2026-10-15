@@ -2,8 +2,8 @@
 // meal still steaming — and nobody. At the plaza's heart 慈愛組織's statue: two open hands holding up a sun.
 // Layout and rules: town.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT } from './town.js?v=0.52.0';
-import { grainTexture } from './realism.js?v=0.52.0';
+import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT } from './town.js?v=0.53.0';
+import { grainTexture } from './realism.js?v=0.53.0';
 
 let seed = 412;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;

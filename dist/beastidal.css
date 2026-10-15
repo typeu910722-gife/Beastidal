@@ -3748,3 +3748,83 @@ body:has(#discovery:not([hidden])) #toasts {
   min-height: 4.5em;
   font-size: 12px;
 }
+
+/* optimisation round 2: the next story goal, and feedback in the rift trial */
+.quest-item.goal {
+  color: #f3d58a;
+  font-weight: 600;
+}
+.world-tag.goal {
+  color: #1d1a12;
+  background: #f3d58a;
+  border-color: #f3d58a;
+  font-weight: 700;
+  animation: goal-bob 1.6s ease-in-out infinite;
+}
+@keyframes goal-bob {
+  50% {
+    transform: translate(-50%, calc(-100% - 6px));
+  }
+}
+.trial-unit {
+  position: relative;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 8px;
+}
+.trial-unit.foe {
+  grid-template-columns: 1fr;
+}
+.trial-pic {
+  width: 38px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.trial-unit.hit .trial-pic,
+.trial-unit.hit b {
+  animation: trial-flash 0.35s ease-out;
+}
+.trial-dmg {
+  position: absolute;
+  right: 0;
+  top: -4px;
+  font-style: normal;
+  font-weight: 800;
+  color: #ff8a7a;
+  text-shadow: 0 1px 2px #000;
+  animation: trial-float 0.9s ease-out forwards;
+}
+.trial-side:last-child .trial-dmg {
+  color: #f3d58a;
+}
+@keyframes trial-float {
+  from {
+    opacity: 1;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+@keyframes trial-flash {
+  0% {
+    filter: brightness(2.2);
+  }
+  100% {
+    filter: none;
+  }
+}
+.trial.shake {
+  animation: trial-shake 0.3s;
+}
+@keyframes trial-shake {
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}

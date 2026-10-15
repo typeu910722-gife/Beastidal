@@ -2,9 +2,9 @@
 // deer on their circles, the flock on its figure of eight, far hills that never come nearer, and the shell itself:
 // invisible, except for a ripple of hexagons where you touch it and its seams at sunset. Rules: dome.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, DOME_R, domeHeight, riverX, RIVER_HALF, BRIDGE, TREES, DEER, birdAt, deerAt } from './dome.js?v=0.52.0';
-import { grainTexture } from './realism.js?v=0.52.0';
-import { OUTPOST, RIFT } from './chapter3.js?v=0.52.0';
+import { TOWN, DOME_R, domeHeight, riverX, RIVER_HALF, BRIDGE, TREES, DEER, birdAt, deerAt } from './dome.js?v=0.53.0';
+import { grainTexture } from './realism.js?v=0.53.0';
+import { OUTPOST, RIFT } from './chapter3.js?v=0.53.0';
 
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.9, ...extra });
 const SIZE = 640,
