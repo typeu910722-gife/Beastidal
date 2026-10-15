@@ -1,8 +1,17 @@
 name = "beastidal"
+main = "worker/community.js"
 compatibility_date = "2025-09-01"
 
+# the game itself; anything that is not a file here (the /api/ routes) goes to the Worker
 [assets]
 directory = "./dist"
+binding = "ASSETS"
+
+# the online message stele (docs/COMMUNITY.md)
+[[d1_databases]]
+binding = "DB"
+database_name = "beastidal-community"
+database_id = "c635848b-f798-4c54-9b0e-31939831f61e"
 
 [[routes]]
 pattern = "beastidal.yzprojecttw.com"

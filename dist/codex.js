@@ -1,11 +1,11 @@
 // Creature codex: every species the player has seen up close, tamed or bred, with a sample genome for the portrait.
-import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.59.1';
-import { dayOf } from './clock.js?v=0.59.1';
+import { phenotype, allSpecies, FAMILY_NAMES } from './genetics.js?v=0.60.0';
+import { dayOf } from './clock.js?v=0.60.0';
 
-import { LORE, habitatsOf } from './species.js?v=0.59.1';
-import { BS_GENES, BS_IDS } from './bsgenes.js?v=0.59.1';
-import { WILD_BEASTS, BEAST_IDS } from './beasts.js?v=0.59.1';
-import { give } from './bag.js?v=0.59.1';
+import { LORE, habitatsOf } from './species.js?v=0.60.0';
+import { BS_GENES, BS_IDS } from './bsgenes.js?v=0.60.0';
+import { WILD_BEASTS, BEAST_IDS } from './beasts.js?v=0.60.0';
+import { give } from './bag.js?v=0.60.0';
 export { LORE };
 
 export function normalizeCodex(s) {

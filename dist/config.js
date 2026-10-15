@@ -11,5 +11,5 @@ export const CONFIG = {
   // 0.48: the online message stele. Leave empty to keep the other residents simulated (works offline). Set it to the
   // site's own origin (e.g. 'https://beastidal.yzprojecttw.com') once worker/community.js is deployed with its D1
   // database — see docs/COMMUNITY.md.
-  communityUrl: ''
+  communityUrl: 'https://beastidal.yzprojecttw.com'
 };

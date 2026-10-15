@@ -1,5 +1,7 @@
 # 線上留言碑（選用）
 
+> 0.60：已設定完成。D1 資料庫 `beastidal-community`（`c635848b-…`）在 Cloudflare 後台建好並套用了資料表，`wrangler.toml` 已加上 Worker 和資料庫，`communityUrl` 指向 `https://beastidal.yzprojecttw.com`。部署 `main` 後即上線。本機（localhost）測試時遊戲會自動改用模擬居民，不會寫進正式留言碑。
+
 0.48 的留言碑預設是**模擬**的：其他居民的留言、共鳴和回應都由 `dist/comms.js` 產生，離線、下載版、沒有伺服器都能玩。
 
 想讓留言碑變成真正的玩家互傳，需要在 Cloudflare 部署 `worker/community.js` 和一個 D1 資料庫。完成後，其他玩家的留言會出現在每個人的留言碑上；沒有網路或伺服器出錯時，遊戲會自動退回模擬。
