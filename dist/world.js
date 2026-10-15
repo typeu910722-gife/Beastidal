@@ -1,45 +1,45 @@
-import { expansionModels } from './expansion-models.js?v=0.56.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.56.0';
-import { normalizeHousing, penId } from './housing.js?v=0.56.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.56.0';
-export { makeCreature } from './creatures.js?v=0.56.0';
-import { makeIslands } from './island-models.js?v=0.56.0';
-import { facilityId } from './facilities.js?v=0.56.0';
+import { expansionModels } from './expansion-models.js?v=0.57.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.57.0';
+import { normalizeHousing, penId } from './housing.js?v=0.57.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.57.0';
+export { makeCreature } from './creatures.js?v=0.57.0';
+import { makeIslands } from './island-models.js?v=0.57.0';
+import { facilityId } from './facilities.js?v=0.57.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.56.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.56.0';
-import { surface } from './surfaces.js?v=0.56.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.56.0';
-import { makeLake } from './lake-models.js?v=0.56.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.56.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.56.0';
-import { makeStatues } from './statues.js?v=0.56.0';
-import { animateGarden } from './garden-models.js?v=0.56.0';
-import { ViewModel } from './viewmodel.js?v=0.56.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.56.0';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.56.0';
-import { bakeStatic } from './bake.js?v=0.56.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.56.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.56.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.56.0';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.56.0';
-import { PostFX } from './postfx.js?v=0.56.0';
-import { makeHuman, animateHuman } from './human.js?v=0.56.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.56.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.56.0';
-import { buildError } from './rules.js?v=0.56.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.56.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.56.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.56.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.56.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.56.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.56.0';
-import { CombatFX } from './combat-fx.js?v=0.56.0';
-import { syncPlots } from './land-models.js?v=0.56.0';
-import { plotTargets } from './reclaim.js?v=0.56.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.56.0';
-import { dayPhase } from './clock.js?v=0.56.0';
-import { weatherAt, season } from './weather.js?v=0.56.0';
+import { phenotype, seeded } from './genetics.js?v=0.57.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.57.0';
+import { surface } from './surfaces.js?v=0.57.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.57.0';
+import { makeLake } from './lake-models.js?v=0.57.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.57.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.57.0';
+import { makeStatues } from './statues.js?v=0.57.0';
+import { animateGarden } from './garden-models.js?v=0.57.0';
+import { ViewModel } from './viewmodel.js?v=0.57.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.57.0';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.57.0';
+import { bakeStatic } from './bake.js?v=0.57.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.57.0';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.57.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.57.0';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.57.0';
+import { PostFX } from './postfx.js?v=0.57.0';
+import { makeHuman, animateHuman } from './human.js?v=0.57.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.57.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.57.0';
+import { buildError } from './rules.js?v=0.57.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.57.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.57.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.57.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.57.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.57.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.57.0';
+import { CombatFX } from './combat-fx.js?v=0.57.0';
+import { syncPlots } from './land-models.js?v=0.57.0';
+import { plotTargets } from './reclaim.js?v=0.57.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.57.0';
+import { dayPhase } from './clock.js?v=0.57.0';
+import { weatherAt, season } from './weather.js?v=0.57.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -1989,18 +1989,30 @@ export class OceanWorld {
       }
     }
     // 0.54: in town the camera stops short of walls, buildings and lamp posts instead of looking out from inside them
-    if (s.inTown && !opts.title) {
+    // (0.57: ashore on the lake too, against the islands' structures)
+    const ashore = foot && !s.inTown && !s.inCave && !cabin && !opts.title;
+    if ((s.inTown || ashore) && !opts.title) {
       const cp = this.camera.position,
         ex = cp.x - look.x,
         ey = cp.y - pivotY,
         ez = cp.z - look.z;
       let free = camDist;
-      for (let d = 1.2; d < camDist; d += 0.3) {
-        const k = d / camDist;
-        if (townCameraBlocked(look.x + ex * k, pivotY + ey * k, look.z + ez * k)) {
-          free = Math.max(1.8, d - 0.5);
-          break;
+      if (s.inTown) {
+        for (let d = 1.2; d < camDist; d += 0.3) {
+          const k = d / camDist;
+          if (townCameraBlocked(look.x + ex * k, pivotY + ey * k, look.z + ez * k)) {
+            free = Math.max(1.8, d - 0.5);
+            break;
+          }
         }
+      } else {
+        // a dozen rays a second is plenty; the ease below smooths between them
+        this.camRayT = (this.camRayT || 0) - dt;
+        if (this.camRayT <= 0 || this.camRayHit == null) {
+          this.camRayT = 0.08;
+          this.camRayHit = this.cameraRay(look.x, pivotY, look.z, ex / camDist, ey / camDist, ez / camDist, camDist);
+        }
+        if (this.camRayHit < camDist) free = Math.max(1.8, this.camRayHit - 0.5);
       }
       // pull in at once, ease back out
       const was = this.camEase ?? camDist;
@@ -2299,6 +2311,40 @@ export class OceanWorld {
     }
   }
   // 0.48: a trail of a resident's glowing footprints, and the shell's ripple where you touched it (local coordinates)
+  // 0.57: how far the orbit camera can sit from the player before it would be inside an island's structure
+  // (houses, piers, ruins, rocks — not the terrain, which has its own clamp, and not grass or leaves)
+  cameraRay(x, y, z, dx, dy, dz, far) {
+    if (!this.camSolids) {
+      this.camSolids = [];
+      this.camRaycaster = new T.Raycaster();
+      for (const root of [this.islandModels.group, this.lake.group, this.statues])
+        root?.traverse(o => {
+          if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh) return;
+          const m = Array.isArray(o.material) ? o.material[0] : o.material;
+          if (!m || m.transparent || m.side === T.DoubleSide) return;
+          if ((o.geometry.attributes.position?.count || 0) > 20000) return; // terrain-sized
+          if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere();
+          o.updateWorldMatrix(true, false);
+          const c = o.geometry.boundingSphere.center.clone().applyMatrix4(o.matrixWorld);
+          this.camSolids.push({
+            o,
+            x: c.x,
+            z: c.z,
+            r: o.geometry.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis()
+          });
+        });
+    }
+    // only what lies within reach of this ray (the islands do not move)
+    const near = [];
+    for (const c of this.camSolids)
+      if (Math.hypot(c.x - x, c.z - z) < far + c.r && c.o.visible && c.o.parent?.visible !== false) near.push(c.o);
+    if (!near.length) return far;
+    const r = this.camRaycaster;
+    r.set(r.ray.origin.set(x, y, z), r.ray.direction.set(dx, dy, dz));
+    r.far = far;
+    const hit = r.intersectObjects(near, false)[0];
+    return hit ? hit.distance : far;
+  }
   showTrace(lx, lz, heading) {
     showTrace(this.dome, lx, lz, heading);
   }

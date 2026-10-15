@@ -4,8 +4,8 @@
 // By default the other residents are simulated (they post over the days and answer you); with CONFIG.communityUrl
 // set, the stele also shows real players' posts through community.js. This module is pure data and rules, so the
 // Cloudflare Worker (worker/community.js) uses the very same lists to validate posts.
-import { dayOf } from './clock.js?v=0.56.0';
-import { graduated, GRADUATE } from './chapter2.js?v=0.56.0';
+import { dayOf } from './clock.js?v=0.57.0';
+import { graduated, GRADUATE } from './chapter2.js?v=0.57.0';
 
 export const TEMPLATES = {
   beware: '小心{0}',
