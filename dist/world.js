@@ -1,45 +1,45 @@
-import { expansionModels } from './expansion-models.js?v=0.58.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.58.0';
-import { normalizeHousing, penId } from './housing.js?v=0.58.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.58.0';
-export { makeCreature } from './creatures.js?v=0.58.0';
-import { makeIslands } from './island-models.js?v=0.58.0';
-import { facilityId } from './facilities.js?v=0.58.0';
+import { expansionModels } from './expansion-models.js?v=0.59.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.59.0';
+import { normalizeHousing, penId } from './housing.js?v=0.59.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.59.0';
+export { makeCreature } from './creatures.js?v=0.59.0';
+import { makeIslands } from './island-models.js?v=0.59.0';
+import { facilityId } from './facilities.js?v=0.59.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.58.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.58.0';
-import { surface } from './surfaces.js?v=0.58.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.58.0';
-import { makeLake } from './lake-models.js?v=0.58.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.58.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.58.0';
-import { makeStatues } from './statues.js?v=0.58.0';
-import { animateGarden } from './garden-models.js?v=0.58.0';
-import { ViewModel } from './viewmodel.js?v=0.58.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.58.0';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.58.0';
-import { bakeStatic } from './bake.js?v=0.58.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.58.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.58.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.58.0';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.58.0';
-import { PostFX } from './postfx.js?v=0.58.0';
-import { makeHuman, animateHuman } from './human.js?v=0.58.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.58.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.58.0';
-import { buildError } from './rules.js?v=0.58.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.58.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.58.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.58.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.58.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.58.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.58.0';
-import { CombatFX } from './combat-fx.js?v=0.58.0';
-import { syncPlots } from './land-models.js?v=0.58.0';
-import { plotTargets } from './reclaim.js?v=0.58.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.58.0';
-import { dayPhase } from './clock.js?v=0.58.0';
-import { weatherAt, season } from './weather.js?v=0.58.0';
+import { phenotype, seeded } from './genetics.js?v=0.59.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.59.0';
+import { surface } from './surfaces.js?v=0.59.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.59.0';
+import { makeLake } from './lake-models.js?v=0.59.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.59.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.59.0';
+import { makeStatues } from './statues.js?v=0.59.0';
+import { animateGarden } from './garden-models.js?v=0.59.0';
+import { ViewModel } from './viewmodel.js?v=0.59.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.59.0';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.59.0';
+import { bakeStatic } from './bake.js?v=0.59.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.59.0';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.59.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.59.0';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.59.0';
+import { PostFX } from './postfx.js?v=0.59.0';
+import { makeHuman, animateHuman } from './human.js?v=0.59.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.59.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.59.0';
+import { buildError } from './rules.js?v=0.59.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.59.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.59.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.59.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.59.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.59.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.59.0';
+import { CombatFX } from './combat-fx.js?v=0.59.0';
+import { syncPlots } from './land-models.js?v=0.59.0';
+import { plotTargets } from './reclaim.js?v=0.59.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.59.0';
+import { dayPhase } from './clock.js?v=0.59.0';
+import { weatherAt, season } from './weather.js?v=0.59.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -613,26 +613,6 @@ function buildingMesh(b) {
 // The protagonist (see human.js): jointed, with a face, hands and procedural walk / idle / sit poses.
 // dressed: swap in the rigged character model once it has loaded (the intro film keeps the procedural figure,
 // whose limbs it poses directly)
-// 0.54: 晴 wears 慈愛組織's white: the dark office suit of the female model, recoloured in its shader (skin keeps
-// its colour; anything grey or black turns to white cloth)
-function whiteUniform(root) {
-  root.traverse(o => {
-    if (!o.isMesh || !/body/i.test(o.material?.name || '')) return;
-    o.material = o.material.clone();
-    o.material.onBeforeCompile = sh => {
-      sh.fragmentShader = sh.fragmentShader.replace(
-        '#include <map_fragment>',
-        `#include <map_fragment>
-        float hi = max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b)),
-          lo = min(diffuseColor.r, min(diffuseColor.g, diffuseColor.b)),
-          lum = dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114));
-        float cloth = 1.0 - smoothstep(0.03, 0.09, hi - lo);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.86, 0.86, 0.83) * (0.78 + lum * 0.9), cloth);`
-      );
-    };
-    o.material.customProgramCacheKey = () => 'white-uniform';
-  });
-}
 export function character(dressed = true, look = 'male') {
   const h = makeHuman();
   return dressed ? dressHuman(h, look) : h;
@@ -2087,15 +2067,27 @@ export class OceanWorld {
     this.town.visible = town;
     if (town && !this.guide) {
       this.guide = character(false);
-      this.guide.userData.onDressed = whiteUniform;
-      dressHuman(this.guide, 'female');
+      // her sun badge rides on the chest bone, left of the placket, once the body has loaded
+      this.guide.userData.onDressed = root => {
+        const g = this.guide,
+          spine = g.userData.model?.bones.Spine2;
+        if (!spine) return;
+        g.updateMatrixWorld(true);
+        const at = g.worldToLocal(spine.getWorldPosition(new T.Vector3()));
+        spine.add(badge);
+        badge.position.copy(spine.worldToLocal(g.localToWorld(new T.Vector3(0.085, at.y + 0.06, at.z + 0.14))));
+        badge.quaternion.copy(
+          spine.getWorldQuaternion(new T.Quaternion()).invert().multiply(g.getWorldQuaternion(new T.Quaternion()))
+        );
+        badge.scale.setScalar(1 / spine.getWorldScale(new T.Vector3()).x);
+      };
+      dressHuman(this.guide, 'guide');
       // her sun badge, over the heart
       const badge = new T.Mesh(
         new T.CircleGeometry(0.035, 20),
         new T.MeshStandardMaterial({ color: 0xffd36b, emissive: 0xc08a20, emissiveIntensity: 0.8, metalness: 0.7 })
       );
-      badge.position.set(0.075, 1.3, 0.135);
-      badge.rotation.x = -0.25;
+      badge.position.set(0.085, 1.28, 0.14);
       this.guide.add(badge);
       this.guide.position.set(GUIDE_WORLD.x, 0, GUIDE_WORLD.z);
       this.scene.add(this.guide);
