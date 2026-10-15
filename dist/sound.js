@@ -249,3 +249,49 @@ export class NewWorldAmbience {
     src.stop(t + len + 0.01);
   }
 }
+
+// 0.58: a blow landing — a short crack of filtered noise over a low thump, pitched by how hard it was.
+// kind: 'hit' (yours lands), 'crit', 'hurt' (you or yours take it), 'kill'
+export function playImpact(ctx, out, kind = 'hit') {
+  const t = ctx.currentTime,
+    big = kind === 'crit' || kind === 'kill',
+    src = ctx.createBufferSource();
+  src.buffer = noise(ctx);
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.Q.value = 0.9;
+  bp.frequency.setValueAtTime(kind === 'hurt' ? 900 : big ? 2600 : 1800, t);
+  bp.frequency.exponentialRampToValueAtTime(kind === 'hurt' ? 260 : 500, t + 0.12);
+  const g = ctx.createGain(),
+    v = kind === 'kill' ? 0.5 : big ? 0.42 : kind === 'hurt' ? 0.36 : 0.3;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(v, t + 0.004);
+  g.gain.exponentialRampToValueAtTime(0.0008, t + (big ? 0.22 : 0.13));
+  src.connect(bp).connect(g).connect(out);
+  src.start(t, Math.random() * 0.5);
+  src.stop(t + 0.3);
+  const o = ctx.createOscillator(),
+    og = ctx.createGain(),
+    f0 = kind === 'kill' ? 140 : kind === 'hurt' ? 95 : big ? 170 : 130;
+  o.type = 'sine';
+  o.frequency.setValueAtTime(f0, t);
+  o.frequency.exponentialRampToValueAtTime(f0 * 0.35, t + (kind === 'kill' ? 0.4 : 0.14));
+  og.gain.setValueAtTime(big ? 0.45 : 0.32, t);
+  og.gain.exponentialRampToValueAtTime(0.001, t + (kind === 'kill' ? 0.45 : 0.17));
+  o.connect(og).connect(out);
+  o.start(t);
+  o.stop(t + 0.5);
+  // a crit rings a little after the crack
+  if (kind === 'crit') {
+    const r = ctx.createOscillator(),
+      rg = ctx.createGain();
+    r.type = 'triangle';
+    r.frequency.value = 1320;
+    rg.gain.setValueAtTime(0.0001, t + 0.03);
+    rg.gain.exponentialRampToValueAtTime(0.06, t + 0.04);
+    rg.gain.exponentialRampToValueAtTime(0.0005, t + 0.35);
+    r.connect(rg).connect(out);
+    r.start(t + 0.03);
+    r.stop(t + 0.4);
+  }
+}

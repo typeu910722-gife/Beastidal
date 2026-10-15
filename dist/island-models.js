@@ -1,8 +1,8 @@
-import { surface } from './surfaces.js?v=0.57.0';
+import { surface } from './surfaces.js?v=0.58.0';
 import * as T from './vendor/three.module.min.js';
-import { bakeStatic } from './bake.js?v=0.57.0';
-import { ISLANDS, NODES } from './islands.js?v=0.57.0';
-import { groundAt, slopeAt } from './lake.js?v=0.57.0';
+import { bakeStatic } from './bake.js?v=0.58.0';
+import { ISLANDS, NODES } from './islands.js?v=0.58.0';
+import { groundAt, slopeAt } from './lake.js?v=0.58.0';
 const material = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.85, ...extra });
 const trunk = surface(material(0x8e7952), 'wood'),
   leaf = material(0x4c8263, { side: T.DoubleSide }),

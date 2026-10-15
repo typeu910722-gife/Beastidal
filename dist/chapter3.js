@@ -3,10 +3,10 @@
 // between 比斯泰德 and our world, 慈愛組織 sends minds across it, and K. was looking for the way back. Then the first
 // layer of the rift — a trial for your beasts (a short auto-battle: you choose the tactic each round) — and at its
 // core, a glimpse of the hospital room on the other side. See docs/STORY.md.
-import { dayOf } from './clock.js?v=0.57.0';
-import { give } from './bag.js?v=0.57.0';
-import { allyPower, grantXp, normalizeLevel } from './combat.js?v=0.57.0';
-import { toLocal, outsideDome } from './dome.js?v=0.57.0';
+import { dayOf } from './clock.js?v=0.58.0';
+import { give } from './bag.js?v=0.58.0';
+import { allyPower, grantXp, normalizeLevel } from './combat.js?v=0.58.0';
+import { toLocal, outsideDome } from './dome.js?v=0.58.0';
 
 // Places outside the shell (local to the town's plaza; the tear is due south at the shell).
 export const OUTPOST = { x: 42, z: 352 };
