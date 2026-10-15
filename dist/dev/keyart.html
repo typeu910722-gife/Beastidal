@@ -21,15 +21,15 @@
       // Renders one key-art portrait (0.30) for dist/art/: ?key=beast-<id> or ?key=look-<element>-<plan>.
       // scripts/render-keyart.mjs drives it and saves window.keyart (a WebP data URL).
       import * as T from '../vendor/three.module.min.js';
-      import { makeCreature, animateCreature } from '../creatures.js?v=0.61.11';
-      import { makeGenome } from '../genetics.js?v=0.61.11';
-      import { applyGeneMarks, animateMarks } from '../bs-models.js?v=0.61.11';
-      import { LOOKS } from '../beast-look.js?v=0.61.11';
-      import { WILD_BEASTS, makeWildBeast } from '../beasts.js?v=0.61.11';
-      import { loadSculpts } from '../sculpt-assets.js?v=0.61.11';
-      import { makeSky } from '../realism.js?v=0.61.11';
-      import { PostFX } from '../postfx.js?v=0.61.11';
-      import { makeSabertooth, animateSabertooth } from '../story-models.js?v=0.61.11';
+      import { makeCreature, animateCreature } from '../creatures.js?v=0.61.12';
+      import { makeGenome } from '../genetics.js?v=0.61.12';
+      import { applyGeneMarks, animateMarks } from '../bs-models.js?v=0.61.12';
+      import { LOOKS } from '../beast-look.js?v=0.61.12';
+      import { WILD_BEASTS, makeWildBeast } from '../beasts.js?v=0.61.12';
+      import { loadSculpts } from '../sculpt-assets.js?v=0.61.12';
+      import { makeSky } from '../realism.js?v=0.61.12';
+      import { PostFX } from '../postfx.js?v=0.61.12';
+      import { makeSabertooth, animateSabertooth } from '../story-models.js?v=0.61.12';
       await loadSculpts();
       const q = new URLSearchParams(location.search),
         key = q.get('key') || 'beast-flamemaw',

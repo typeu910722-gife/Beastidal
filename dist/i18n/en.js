@@ -3876,5 +3876,8 @@ export default {
   '嘯岳（狂暴） {0} / {1}': 'Xiaoyue (frenzied) {0} / {1}',
   '狂怒！': 'Enraged!',
   '嘯岳狂怒了——攻勢更快、更重。': 'Xiaoyue is enraged — faster, heavier blows.',
-  '牠狂怒了——攻勢更快、更重。': 'It is enraged — faster, heavier blows.'
+  '牠狂怒了——攻勢更快、更重。': 'It is enraged — faster, heavier blows.',
+  擊破: 'Broken',
+  止息: 'Stilled',
+  擊退: 'Repelled'
 };
