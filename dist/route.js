@@ -1,8 +1,8 @@
 // Route guidance (0.19): a water route from here to a map marker that steers round islands and shallows.
 // A* over a 5 m grid of the basin (navigable = deep enough for the vessel), then pulled straight wherever the
 // line of sight stays on water. Pure functions over lake.js, so the map UI and tests share them.
-import { groundAt, HS, ORIGIN } from './lake.js?v=0.61.3';
-import { FINE } from './lake-data.js?v=0.61.3';
+import { groundAt, HS, ORIGIN } from './lake.js?v=0.61.4';
+import { FINE } from './lake-data.js?v=0.61.4';
 
 export const CELL = 5;
 // the baked basin in game metres

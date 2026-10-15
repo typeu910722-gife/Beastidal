@@ -2,12 +2,12 @@
 // takes a while — faster with the building skill, and much faster when beasts with the right job (lumber or
 // forage) are working — and yields the wood and fibre cut away. On a cleared plot you raise one of seven land
 // buildings that change the island: a well, a garden, a shed, a watchtower, a campfire, a stable or a pier.
-import { ISLANDS } from './islands.js?v=0.61.3';
-import { landNear } from './lake.js?v=0.61.3';
-import { spend, give } from './bag.js?v=0.61.3';
-import { tally } from './stats.js?v=0.61.3';
-import { buildSpeed } from './skills.js?v=0.61.3';
-import { gardenBonus } from './weather.js?v=0.61.3';
+import { ISLANDS } from './islands.js?v=0.61.4';
+import { landNear } from './lake.js?v=0.61.4';
+import { spend, give } from './bag.js?v=0.61.4';
+import { tally } from './stats.js?v=0.61.4';
+import { buildSpeed } from './skills.js?v=0.61.4';
+import { gardenBonus } from './weather.js?v=0.61.4';
 
 export const PLOTS_PER_ISLAND = 6;
 export const CLEAR_TIME = 30;
