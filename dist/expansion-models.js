@@ -1,9 +1,9 @@
 import * as T from './vendor/three.module.min.js';
-import { EXPLORE } from './expansion.js?v=0.61.6';
-import { makeGarden } from './garden-models.js?v=0.61.6';
-import { makeCreature } from './creatures.js?v=0.61.6';
-import { makeGenome } from './genetics.js?v=0.61.6';
-import { groundAt } from './lake.js?v=0.61.6';
+import { EXPLORE } from './expansion.js?v=0.61.7';
+import { makeGarden } from './garden-models.js?v=0.61.7';
+import { makeCreature } from './creatures.js?v=0.61.7';
+import { makeGenome } from './genetics.js?v=0.61.7';
+import { groundAt } from './lake.js?v=0.61.7';
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.65, ...extra });
 function m(g, geo, c, x, y, z, s = [1, 1, 1], extra = {}) {
   const mesh = new T.Mesh(geo, mat(c, extra));

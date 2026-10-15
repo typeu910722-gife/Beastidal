@@ -4571,10 +4571,10 @@ body.syncing #travel-status {
   left: 100px;
 }
 /* the riding and diving buttons and the small strike button step back while the big ones are out */
+body.syncing #ride-btn,
+body.syncing #dive-btn,
 body.syncing.touch-device #sprint-btn,
 body.syncing.touch-device #repel-btn,
-body.syncing.touch-device #ride-btn,
-body.syncing.touch-device #dive-btn,
 body.syncing.touch-device #beast-attack,
 body.syncing.touch-device #dodge-btn {
   display: none;
