@@ -9,16 +9,40 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.60.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.60.0';
-import { WILD_BEASTS } from './beasts.js?v=0.60.0';
-import { rollDrops } from './species.js?v=0.60.0';
-import { give } from './bag.js?v=0.60.0';
-import { tally } from './stats.js?v=0.60.0';
-import { damageBonus } from './skills.js?v=0.60.0';
-import { remember } from './memories.js?v=0.60.0';
-import { perks, personality, normalizeTree } from './beast-tree.js?v=0.60.0';
+import { phenotype } from './genetics.js?v=0.61.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.61.0';
+import { WILD_BEASTS } from './beasts.js?v=0.61.0';
+import { rollDrops } from './species.js?v=0.61.0';
+import { give } from './bag.js?v=0.61.0';
+import { tally } from './stats.js?v=0.61.0';
+import { damageBonus } from './skills.js?v=0.61.0';
+import { remember } from './memories.js?v=0.61.0';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.61.0';
 
+// 0.61 契合 (sync): when a fight starts and your beast is out beside you (not ridden), you sink into it — the view
+// moves behind its eyes and you fight as it: you move it, aim it, time its blows and dodge for it. Your own body
+// stands entranced where you left it and nothing goes for it while the bond holds; if your beast falls, the bond
+// breaks and you are on your own. Foes hold their guard: outside a 破綻 (the moment after their own strike) they
+// shrug off half of what you deal, so trading blows on the spot loses — read the telegraph, dodge, punish. A dodge
+// that slips a blow at the last instant (完美閃避) opens a 反擊 window; a blow timed to the end of the last one
+// (節奏) hits harder, while mashing through the recovery breaks the rhythm.
+export const SYNC = {
+  enter: 0.75, // seconds of the bond forming (game.js draws it), before you control the beast
+  linger: 2.2, // seconds after the last foe before the bond lets go
+  speed: 6.4, // how fast the beast moves under you
+  tether: 15, // how far it may range from your body
+  dealt: 0.3, // your blows, inside your beast (fights last long enough to be read)
+  guard: 0.25, // what a great foe (wild beast, boss, 嘯岳) takes outside a 破綻
+  guardSmall: 0.45, // what a lesser foe takes outside a 破綻
+  hurt: 2.2, // foes hit your beast harder while you are inside it
+  hurtBig: 3.6, // and a great foe harder still (trading blows with one on the spot loses)
+  perfect: 0.22, // a dodge this close before the blow lands is perfect
+  counter: 1.6, // seconds of 反擊 after a perfect dodge
+  counterMul: 1.5, // (instead of, not on top of, the 破綻 bonus)
+  beat: [0, 0.32], // seconds after the recovery ends in which the next blow keeps the rhythm
+  beatMul: 1.25,
+  aimHalf: 0.62 // a foe within this angle of your aim draws the blow onto it
+};
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;
 export const COMBO_WINDOW = 0.95;
@@ -303,6 +327,61 @@ export function combatActive(s) {
   if ((s.inCave && !s.story?.duel) || s.inTown || s.player.mode === 'cabin' || s.player.mode === 'aboard') return false;
   return !!activeBeast(s) && foesNear(s).length > 0;
 }
+// ---------- 契合 ----------
+export const syncOn = s => !!s.combat?.sync && !s.expedition?.mounted && !!activeBeast(s);
+// in control (the bond has formed)
+export const syncLive = s => syncOn(s) && s.elapsed >= s.combat.sync.at + SYNC.enter;
+export function startSync(s) {
+  const c = normalizeCombat(s),
+    p = activeBeast(s);
+  if (!p || s.expedition?.mounted || c.sync) return null;
+  const from = allyPos(s),
+    f = foesNear(s, ENGAGE + 4, from).sort((a, b) => dist(a, from) - dist(b, from))[0];
+  c.sync = { at: s.elapsed, quiet: 0 };
+  c.aim = f ? angleTo(from, f) : s.player.heading || 0;
+  c.facing = c.aim;
+  return { type: 'sync-on', name: p.name, id: p.id, x: from.x, z: from.z };
+}
+export function endSync(s, why = 'done') {
+  const c = normalizeCombat(s);
+  if (!c.sync) return null;
+  c.sync = null;
+  c.counterUntil = 0;
+  const p = (s.tamed || []).find(t => t.id === s.expedition?.activeId);
+  return { type: 'sync-off', why, name: p?.name || '' };
+}
+// Move the beast you are inside: (dx, dz) is a direction in the world (length ≤ 1), aim the way you look.
+export function moveSync(s, dx, dz, dt, aim, can = () => true) {
+  const c = normalizeCombat(s);
+  if (!syncLive(s)) return;
+  if (Number.isFinite(aim)) c.aim = aim;
+  const L = Math.hypot(dx, dz);
+  const a = allyPos(s);
+  if (L > 0.05) {
+    const k = (Math.min(1, L) * SYNC.speed * dt) / L;
+    let nx = a.x + dx * k,
+      nz = a.z + dz * k;
+    // the bond stretches only so far from your body
+    const off = Math.hypot(nx - s.player.x, nz - s.player.z);
+    if (off > SYNC.tether) {
+      nx = s.player.x + ((nx - s.player.x) / off) * SYNC.tether;
+      nz = s.player.z + ((nz - s.player.z) / off) * SYNC.tether;
+    }
+    if (can(nx, nz)) {
+      c.ax = nx;
+      c.az = nz;
+    } else if (can(nx, a.z)) c.ax = nx;
+    else if (can(a.x, nz)) c.az = nz;
+  }
+  c.facing = c.aim;
+}
+// What a blow does to a foe that still holds its guard (not in a 破綻), while you are inside your beast.
+const guardOf = (s, t) =>
+  !syncOn(s) || t.ai?.state === 'recover' || (t.ai?.stunUntil || 0) > s.elapsed
+    ? 1
+    : t.beast || t.duelBeast || isBoss(s, t)
+      ? SYNC.guard
+      : SYNC.guardSmall;
 const isBoss = (s, t) => t === s.expedition?.boss;
 // the foe your beast goes for: the one you last hit if still close, else the nearest
 export function lockTarget(s) {
@@ -322,11 +401,32 @@ function damageFoe(s, t, base, ev, opts = {}) {
     open = t.ai?.state === 'recover',
     pk = perks(activeBeast(s)),
     crit = (opts.rng || Math.random)() < 0.1 + pk.crit;
-  let amount = base * Math.max(0.4, 1 - theirs / 60) * (open ? pk.openMul : 1) * (crit ? 1.5 : 1);
+  const counter = syncOn(s) && (c.counterUntil || 0) > s.elapsed,
+    guarded = !counter && guardOf(s, t) < 1;
+  let amount =
+    base *
+    Math.max(0.4, 1 - theirs / 60) *
+    (open && !counter ? pk.openMul : 1) *
+    (crit ? 1.5 : 1) *
+    (counter ? SYNC.counterMul : guardOf(s, t)) *
+    (opts.beat ? SYNC.beatMul : 1) *
+    (syncOn(s) ? SYNC.dealt : 1);
   amount = Math.max(1, Math.round(amount));
   t.hp = (t.hp ?? 60) - amount;
   c.target = t.id || 'boss';
-  ev.push({ type: 'hit', target: 'foe', id: t.id || 'boss', x: t.x, z: t.z, amount, crit, weak: open });
+  ev.push({
+    type: 'hit',
+    target: 'foe',
+    id: t.id || 'boss',
+    x: t.x,
+    z: t.z,
+    amount,
+    crit: crit || counter,
+    weak: open,
+    guarded,
+    counter,
+    beat: !!opts.beat
+  });
   if (opts.knock && !isBoss(s, t) && opts.from) {
     const a = angleTo(opts.from, t),
       nx = t.x + Math.sin(a) * opts.knock,
@@ -338,7 +438,8 @@ function damageFoe(s, t, base, ev, opts = {}) {
   }
   if (t.ai && opts.stun) t.ai.stunUntil = s.elapsed + opts.stun;
   if (t.ai && opts.slow) t.ai.slowUntil = s.elapsed + opts.slow;
-  if (opts.dot) t.dot = { until: s.elapsed + opts.dot[0], dps: opts.dot[1], color: opts.dotColor };
+  if (opts.dot)
+    t.dot = { until: s.elapsed + opts.dot[0], dps: opts.dot[1] * (syncOn(s) ? SYNC.dealt : 1), color: opts.dotColor };
   // a strike interrupts a foe that is winding up only when it is heavy or a stun
   if (t.ai && t.ai.state === 'windup' && (opts.heavy || opts.stun || (pk.breaker && opts.combo3))) {
     t.ai.state = 'recover';
@@ -398,6 +499,17 @@ function ready(s, key) {
 }
 // Facing: riding, where you steer; otherwise toward the locked foe.
 function facing(s, from, target) {
+  if (syncOn(s)) {
+    // inside your beast you aim it yourself; a foe close to where you look draws the blow onto it
+    const c = normalizeCombat(s),
+      aim = Number.isFinite(c.aim) ? c.aim : s.player.heading || 0,
+      near = foesNear(s, ENGAGE, from)
+        .map(f => ({ f, off: Math.abs(wrap(angleTo(from, f) - aim)), d: dist(from, f) }))
+        .filter(o => o.off < SYNC.aimHalf && o.d < 14)
+        .sort((a, b) => a.off * 4 + a.d * 0.1 - (b.off * 4 + b.d * 0.1))[0];
+    if (near) c.target = near.f.id || 'boss';
+    return near ? angleTo(from, near.f) : aim;
+  }
   if (s.expedition?.mounted || !target) return s.player.heading || 0;
   return angleTo(from, target);
 }
@@ -406,14 +518,20 @@ export function basicAttack(s, heavy = false, env = {}) {
     p = activeBeast(s),
     ev = [];
   if (!p) return { ok: false, error: '需要出戰的御獸。', events: ev };
-  if (!ready(s, 'basic')) return { ok: false, quiet: true, events: ev };
+  if (!ready(s, 'basic')) {
+    // pressing again before the last blow has finished breaks the rhythm
+    if (syncOn(s)) c.fumble = true;
+    return { ok: false, quiet: true, events: ev };
+  }
+  const beat = syncOn(s) && !heavy && !c.fumble && c.combo.n > 0 && s.elapsed - (c.cd.basic || 0) <= SYNC.beat[1];
+  c.fumble = false;
   const pk = perks(p),
     sta = (heavy ? 12 : 3) * (1 - pk.sta);
   if ((p.stamina ?? 100) < sta) return { ok: false, error: '御獸累了，先讓牠喘口氣。', events: ev };
   const target = lockTarget(s);
   let from = allyPos(s);
-  // not riding: the beast closes in on its target before it swings
-  if (!s.expedition?.mounted && target) {
+  // not riding (and not inside it — then you close in yourself): the beast closes in on its target before it swings
+  if (!s.expedition?.mounted && !syncOn(s) && target) {
     const d = dist(from, target),
       reach = allyPower(s, p).reach;
     if (d > reach * 0.85 && d < 13) {
@@ -433,18 +551,21 @@ export function basicAttack(s, heavy = false, env = {}) {
   c.cd.basic = s.elapsed + (heavy ? 1.0 : combo >= 3 ? 0.62 : 0.36);
   c.facing = dir;
   p.stamina = Math.max(0, (p.stamina ?? 100) - sta);
-  ev.push({ type: 'swing', combo, heavy, x: from.x, z: from.z, dir, reach: pw.reach });
-  const knock = heavy ? 3 : combo >= 3 ? 2.4 : 0.5;
+  ev.push({ type: 'swing', combo, heavy, beat, sync: syncOn(s), x: from.x, z: from.z, dir, reach: pw.reach });
+  // (inside your beast a combo's last blow neither knocks back nor breaks a windup — only a heavy blow does)
+  const inside = syncOn(s),
+    knock = heavy ? 3 : combo >= 3 && !inside ? 2.4 : inside ? 0.25 : 0.5;
   let hits = 0;
   for (const t of foesNear(s, pw.reach + 3, from))
     if (inArc(from, dir, pw.reach, 0.95, t)) {
       damageFoe(s, t, pw.atk * mul, ev, {
         knock,
         from,
-        heavy: heavy || combo === maxCombo,
-        combo3: combo >= 3,
+        heavy: heavy || (combo === maxCombo && !inside),
+        combo3: combo >= 3 && !inside,
         canMove: env.canMove,
-        rng: env.rng
+        rng: env.rng,
+        beat
       });
       hits++;
     }
@@ -577,21 +698,35 @@ export function useSkill(s, slot, env = {}) {
   return { ok: true, skill: key, events: ev };
 }
 // A quick dash with a moment of invulnerability. Returns the offset; the caller moves the player (and boat).
-export function dodge(s, dx = 0, dz = 0) {
+export function dodge(s, dx = 0, dz = 0, can = () => true) {
   const c = normalizeCombat(s);
   if (!ready(s, 'dodge')) return { ok: false, quiet: true };
+  const inside = syncLive(s),
+    from = inside ? allyPos(s) : s.player;
   let L = Math.hypot(dx, dz);
   if (L < 0.1) {
     // no direction held: hop back from the nearest threat
-    const f = foesNear(s, ENGAGE).sort((a, b) => dist(a, s.player) - dist(b, s.player))[0];
-    const a = f ? angleTo(f, s.player) : (s.player.heading || 0) + Math.PI;
+    const f = foesNear(s, ENGAGE, from).sort((a, b) => dist(a, from) - dist(b, from))[0];
+    const a = f ? angleTo(f, from) : (inside ? (c.aim ?? 0) : s.player.heading || 0) + Math.PI;
     dx = Math.sin(a);
     dz = Math.cos(a);
     L = 1;
   }
   c.cd.dodge = s.elapsed + DODGE.cd;
-  const ip = s.expedition?.mounted ? perks(activeBeast(s)).iframes : 1;
+  c.dodgeAt = s.elapsed;
+  const ip = s.expedition?.mounted || inside ? perks(activeBeast(s)).iframes : 1;
   c.iframesUntil = s.elapsed + DODGE.iframes * ip;
+  if (inside) {
+    // your beast leaps aside (in a few steps, so it does not go through a wall)
+    for (let i = 1; i <= 6; i++) {
+      const nx = c.ax + ((dx / L) * DODGE.dist) / 6,
+        nz = c.az + ((dz / L) * DODGE.dist) / 6;
+      if (Math.hypot(nx - s.player.x, nz - s.player.z) > SYNC.tether || !can(nx, nz)) break;
+      c.ax = nx;
+      c.az = nz;
+    }
+    return { ok: true, dx: 0, dz: 0, sync: true, events: [{ type: 'dodge', x: c.ax, z: c.az, sync: true }] };
+  }
   return {
     ok: true,
     dx: (dx / L) * DODGE.dist,
@@ -712,6 +847,15 @@ export const SPECIAL = {
     }
   }
 };
+// A blow aimed at your beast lands just after you dodged it: 完美閃避, and a moment to strike back (反擊).
+function perfectDodge(s, ev, w) {
+  const c = normalizeCombat(s);
+  if (!syncOn(s) || s.elapsed - (c.dodgeAt ?? -9) > SYNC.perfect) return false;
+  c.counterUntil = s.elapsed + SYNC.counter;
+  c.dodgeAt = -9;
+  ev.push({ type: 'perfect', id: w.id || 'boss', x: c.ax, z: c.az });
+  return true;
+}
 // a warship or a better boat takes the edge off the watcher's blows
 const vesselFactor = s => Math.max(0.35, 1 - (s.ship ? 0.6 : (s.expedition?.boatLevel || 0) * 0.15));
 function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
@@ -721,7 +865,11 @@ function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
   if (ai.stunUntil > t) return;
   const phase2 = !!def.phase2 && w.hp < w.maxHp * def.phase2,
     quick = phase2 ? 0.75 : 1,
-    onAlly = p && ally && !riding && (dist(w, ally) + 2 < dist(w, me) || (personality(p)?.taunt && dist(w, ally) < 9)),
+    onAlly =
+      p &&
+      ally &&
+      !riding &&
+      (syncOn(s) || dist(w, ally) + 2 < dist(w, me) || (personality(p)?.taunt && dist(w, ally) < 9)),
     target = onAlly ? ally : me,
     d = dist(w, target);
   if (ai.state === 'approach') {
@@ -788,8 +936,10 @@ function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
     // 0.36: a pillar or a fallen wall between you and the blow takes it (the thorns rise from the ground: no cover)
     const covered = pt => m.shape !== 'sweep' && !!env.cover?.(o, pt);
     const victims = [];
-    if (test(me) && !covered(me)) victims.push('player');
+    // (while the bond holds, nothing reaches your entranced body)
+    if (test(me) && !covered(me) && !syncOn(s)) victims.push('player');
     if (p && ally && !riding && test(ally) && !covered(ally)) victims.push('ally');
+    if (onAlly && perfectDodge(s, ev, w) && victims.includes('ally')) victims.splice(victims.indexOf('ally'), 1);
     if (test(me) && covered(me)) ev.push({ type: 'covered', id });
     for (const v of victims) hurt(s, v, dmg, w, ev);
     // a roar that lands leaves your beast reeling
@@ -824,6 +974,15 @@ export function tickCombat(s, dt, env = {}) {
     me = { x: s.player.x, z: s.player.z };
   const ally = p ? allyPos(s) : null;
   c.engaged = combatActive(s);
+  // 0.61: the bond forms when a fight starts with your beast beside you, and lets go when it is over or it falls
+  const put = e => e && ev.push(e);
+  if (c.sync) {
+    if (!p || riding) put(endSync(s, p ? 'ride' : 'ko'));
+    else if (!c.engaged) {
+      c.sync.quiet += dt;
+      if (c.sync.quiet > SYNC.linger) put(endSync(s, 'done'));
+    } else c.sync.quiet = 0;
+  } else if (env.sync && c.engaged && p && !riding) put(startSync(s));
   // damage over time
   for (const w of s.wild || [])
     if (w.dot && w.dot.until > t) {
@@ -856,7 +1015,10 @@ export function tickCombat(s, dt, env = {}) {
       reach = env.canReach ? env.canReach(w) : true;
     // aggro: your beast draws attacks while it is out and nearer than you
     const onAlly =
-      p && ally && !riding && (dist(w, ally) + 2 < dist(w, me) || (personality(p)?.taunt && dist(w, ally) < 9));
+      p &&
+      ally &&
+      !riding &&
+      (syncOn(s) || dist(w, ally) + 2 < dist(w, me) || (personality(p)?.taunt && dist(w, ally) < 9));
     const target = onAlly ? ally : me;
     if (!reach && !onAlly) {
       ai.state = 'approach';
@@ -941,8 +1103,9 @@ export function tickCombat(s, dt, env = {}) {
             : ai.move === 'sweep'
               ? inRing(o, m.range, pt, 0.2)
               : inLane(o, ai.dir, m.range, m.width, pt);
-        if (test(me)) victims.push('player');
+        if (test(me) && !syncOn(s)) victims.push('player');
         if (p && ally && !riding && test(ally)) victims.push('ally');
+        if (onAlly && perfectDodge(s, ev, w) && victims.includes('ally')) victims.splice(victims.indexOf('ally'), 1);
         for (const v of victims) hurt(s, v, dmg, w, ev);
         if (ai.move === 'charge') {
           const nx = o.x + Math.sin(ai.dir) * m.range,
@@ -960,7 +1123,7 @@ export function tickCombat(s, dt, env = {}) {
     }
     if (ai.state === 'recover' && t >= ai.until) {
       ai.state = 'approach';
-      ai.next = t + 0.5 + rng() * 0.9;
+      ai.next = t + (syncOn(s) ? 0.25 + rng() * 0.6 : 0.5 + rng() * 0.9);
     }
   }
   // 0.29: 戰鬥癒合 mends the beast; a gentle one now and then mends you; the stand of a last-stood beast resets
@@ -995,7 +1158,7 @@ export function tickCombat(s, dt, env = {}) {
     sh.x += sh.vx * dt;
     sh.z += sh.vz * dt;
     if (sh.side === 'foe') {
-      if (dist(sh, me) < 1.3) {
+      if (dist(sh, me) < 1.3 && !syncOn(s)) {
         hurt(s, 'player', sh.dmg, null, ev);
         ev.push({ type: 'impact', x: sh.x, z: sh.z, color: sh.color });
         return false;
@@ -1023,8 +1186,9 @@ export function tickCombat(s, dt, env = {}) {
     ev.push({ type: 'erupt', x: z.x, z: z.z, r: z.r, color: z.color });
     return false;
   });
-  // your beast, when you are not riding it: keeps beside you, and in a fight goes for the target on its own
-  if (p && ally && !riding) {
+  // your beast, when you are not riding it (nor inside it): keeps beside you, and in a fight goes for the target on
+  // its own
+  if (p && ally && !riding && !syncOn(s)) {
     const target = c.engaged ? lockTarget(s) : null,
       pw = allyPower(s, p),
       speed = 4.2 + phenotype(p.genome).speed / 40;
@@ -1156,10 +1320,12 @@ function hurt(s, who, dmg, from, ev) {
   const c = normalizeCombat(s),
     p = activeBeast(s),
     riding = !!s.expedition?.mounted;
-  if (c.iframesUntil > s.elapsed && (who === 'player' || riding)) {
-    ev.push({ type: 'evade' });
+  const inside = who === 'ally' && syncOn(s);
+  if (c.iframesUntil > s.elapsed && (who === 'player' || riding || inside)) {
+    ev.push({ type: 'evade', sync: inside });
     return 0;
   }
+  if (inside) dmg *= from && (from.beast || from.duelBeast || isBoss(s, from)) ? SYNC.hurtBig : SYNC.hurt;
   // riding, the beast under you takes the blow
   const onBeast = who === 'ally' || (riding && p);
   if (onBeast && p) {

@@ -3860,5 +3860,15 @@ export default {
   'CHAPTER 02 · 新生之界': 'CHAPTER 02 · The New World',
   '（夜裡）': ' (at night)',
   '下一步：{0} · {1} {2} m{3}': 'Next: {0} · {1} {2} m{3}',
-  '管理區 · 非請勿入': 'Administration · Staff Only'
+  '管理區 · 非請勿入': 'Administration · Staff Only',
+  契合: 'Bond',
+  '反擊！': 'Counter!',
+  節奏: 'Rhythm',
+  反擊: 'Counter',
+  '契合中斷——{0}倒下了。小心，現在牠們會衝著你來！':
+    'The bond breaks — {0} is down. Careful: now they are coming for you!',
+  完美閃避: 'Perfect dodge',
+  契合中: 'Bonded',
+  '戰鬥一開始，你的意識會沉進御獸體內，用牠的眼睛作戰：WASD／搖桿移動牠，滑鼠或拖曳畫面轉向，F 攻擊、1／2 技能、空白鍵閃避。敵人出手前地上會亮起紅色預警——在最後一刻閃開是「完美閃避」，接著的攻擊是「反擊」。敵人沒露出破綻時只吃得到一部分傷害；攻擊要等上一擊收招再按（節奏），亂按反而變慢。御獸倒下時契合會中斷，牠們就會衝著你來。':
+    'When a fight starts, your mind sinks into your beast and you fight through its eyes: WASD / the stick moves it, the mouse or a drag turns it, F strikes, 1 / 2 use skills, Space dodges. Before a foe strikes, a red warning lights up on the ground — slip it at the last instant for a Perfect dodge, and your next blow is a Counter. A foe that is not open (no 破綻) takes only part of your damage; strike when the last blow has finished (Rhythm) — mashing only slows you down. If your beast falls the bond breaks, and they come for you.'
 };

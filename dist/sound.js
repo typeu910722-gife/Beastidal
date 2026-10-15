@@ -18,45 +18,80 @@ export const soundPref = {
 
 // Streams each track through an <audio> element (no full decode in memory) and crossfades with Web Audio gains,
 // which also works on iOS where element.volume is ignored.
+// 0.61: two decks, both unlocked in the first tap (iOS only lets a media element play from inside a user gesture,
+// so a track first started later — the battle theme in 嘯岳's den — stayed silent). A track is loaded onto the idle
+// deck and faded in while the other fades out; a play() the browser still refuses is retried on the next tap.
+const SILENCE =
+  'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YSADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==';
 export class MusicPlayer {
   constructor(ctx, out, version = '') {
     this.ctx = ctx;
     this.out = out;
     this.version = version;
-    this.players = new Map();
     this.current = null;
     this.volume = 0.42;
-  }
-  player(mood) {
-    if (!this.players.has(mood)) {
+    this.decks = [0, 1].map(() => {
       const a = new Audio();
-      a.src = `./audio/music/${TRACKS[mood]}.mp3${this.version ? '?v=' + this.version : ''}`;
       a.loop = true;
       a.preload = 'auto';
-      const g = this.ctx.createGain();
+      a.setAttribute('playsinline', '');
+      const g = ctx.createGain();
       g.gain.value = 0;
-      this.ctx.createMediaElementSource(a).connect(g).connect(this.out);
-      this.players.set(mood, { a, g, mood });
-    }
-    return this.players.get(mood);
+      ctx.createMediaElementSource(a).connect(g).connect(out);
+      return { a, g, mood: null, timer: 0 };
+    });
+    this.live = null; // the deck that is (or should be) playing
+    this.blocked = false;
+  }
+  src(mood) {
+    return `./audio/music/${TRACKS[mood]}.mp3${this.version ? '?v=' + this.version : ''}`;
+  }
+  // call from inside a user gesture: play a moment of silence on both decks so the browser trusts them from now on
+  unlock() {
+    for (const d of this.decks)
+      if (!d.mood) {
+        d.a.src = SILENCE;
+        d.a
+          .play()
+          .then(() => d.mood || d.a.pause())
+          .catch(() => {});
+      }
+    this.retry();
+  }
+  // the browser refused to start the live track: try again (from a gesture)
+  retry() {
+    if (!this.blocked || !this.live) return;
+    this.blocked = false;
+    this.live.a.play().catch(() => (this.blocked = true));
   }
   play(mood) {
     if (mood === this.current || (mood && !TRACKS[mood])) return;
     const now = this.ctx.currentTime;
-    if (this.current) {
-      const old = this.players.get(this.current);
+    this.current = mood;
+    const old = this.live;
+    if (old) {
       old.g.gain.cancelScheduledValues(now);
       old.g.gain.setTargetAtTime(0, now, 1.1);
-      setTimeout(() => {
-        if (this.current !== old.mood) old.a.pause();
+      clearTimeout(old.timer);
+      old.timer = setTimeout(() => {
+        if (this.live !== old) old.a.pause();
       }, 6500);
     }
-    this.current = mood;
-    if (!mood) return;
-    const p = this.player(mood);
-    p.a.play().catch(() => {});
-    p.g.gain.cancelScheduledValues(now);
-    p.g.gain.setTargetAtTime(this.volume, now + 0.2, 1.6);
+    if (!mood) {
+      this.live = null;
+      return;
+    }
+    // the idle deck takes the new track (or the old deck, if it was this track and has not stopped yet)
+    const d = this.decks.find(x => x !== old && x.mood === mood) || this.decks.find(x => x !== old) || this.decks[0];
+    clearTimeout(d.timer);
+    if (d.mood !== mood) {
+      d.a.src = this.src(mood);
+      d.mood = mood;
+    }
+    this.live = d;
+    d.a.play().catch(() => (this.blocked = true));
+    d.g.gain.cancelScheduledValues(now);
+    d.g.gain.setTargetAtTime(this.volume, now + 0.2, 1.6);
   }
   stop() {
     this.play(null);

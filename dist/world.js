@@ -1,45 +1,46 @@
-import { expansionModels } from './expansion-models.js?v=0.60.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.60.0';
-import { normalizeHousing, penId } from './housing.js?v=0.60.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.60.0';
-export { makeCreature } from './creatures.js?v=0.60.0';
-import { makeIslands } from './island-models.js?v=0.60.0';
-import { facilityId } from './facilities.js?v=0.60.0';
+import { expansionModels } from './expansion-models.js?v=0.61.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.61.0';
+import { normalizeHousing, penId } from './housing.js?v=0.61.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.61.0';
+export { makeCreature } from './creatures.js?v=0.61.0';
+import { makeIslands } from './island-models.js?v=0.61.0';
+import { facilityId } from './facilities.js?v=0.61.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.60.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.60.0';
-import { surface } from './surfaces.js?v=0.60.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.60.0';
-import { makeLake } from './lake-models.js?v=0.60.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.60.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.60.0';
-import { makeStatues } from './statues.js?v=0.60.0';
-import { animateGarden } from './garden-models.js?v=0.60.0';
-import { ViewModel } from './viewmodel.js?v=0.60.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.60.0';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.60.0';
-import { bakeStatic } from './bake.js?v=0.60.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.60.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.60.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.60.0';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.60.0';
-import { PostFX } from './postfx.js?v=0.60.0';
-import { makeHuman, animateHuman } from './human.js?v=0.60.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.60.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.60.0';
-import { buildError } from './rules.js?v=0.60.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.60.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.60.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.60.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.60.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.60.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.60.0';
-import { CombatFX } from './combat-fx.js?v=0.60.0';
-import { syncPlots } from './land-models.js?v=0.60.0';
-import { plotTargets } from './reclaim.js?v=0.60.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.60.0';
-import { dayPhase } from './clock.js?v=0.60.0';
-import { weatherAt, season } from './weather.js?v=0.60.0';
+import { phenotype, seeded } from './genetics.js?v=0.61.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.61.0';
+import { surface } from './surfaces.js?v=0.61.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.61.0';
+import { makeLake } from './lake-models.js?v=0.61.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.61.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.61.0';
+import { makeStatues } from './statues.js?v=0.61.0';
+import { animateGarden } from './garden-models.js?v=0.61.0';
+import { ViewModel } from './viewmodel.js?v=0.61.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.61.0';
+import { SYNC } from './combat.js?v=0.61.0';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.61.0';
+import { bakeStatic } from './bake.js?v=0.61.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.61.0';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.61.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.61.0';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.61.0';
+import { PostFX } from './postfx.js?v=0.61.0';
+import { makeHuman, animateHuman } from './human.js?v=0.61.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.61.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.61.0';
+import { buildError } from './rules.js?v=0.61.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.61.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.61.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.61.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.61.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.61.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.61.0';
+import { CombatFX } from './combat-fx.js?v=0.61.0';
+import { syncPlots } from './land-models.js?v=0.61.0';
+import { plotTargets } from './reclaim.js?v=0.61.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.61.0';
+import { dayPhase } from './clock.js?v=0.61.0';
+import { weatherAt, season } from './weather.js?v=0.61.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -1023,7 +1024,10 @@ export class OceanWorld {
     yawDelta *= k;
     pitchDelta *= k * (this.settings.invertY ? -1 : 1);
     this.yaw += yawDelta;
-    if (this.firstPerson && !this.placement)
+    this.lastLook = performance.now();
+    // 0.61: behind your beast's eyes, looking up and down is its own
+    if (this.syncK > 0.5) this.syncPitch = Math.max(-0.5, Math.min(0.6, (this.syncPitch || 0) + pitchDelta));
+    else if (this.firstPerson && !this.placement)
       this.firstPitch = Math.max(-1.15, Math.min(1.15, (this.firstPitch || 0) + pitchDelta));
     else this.pitch = Math.max(this.lookUpFree ? -0.62 : 0.06, Math.min(1.25, this.pitch + pitchDelta));
   }
@@ -2501,7 +2505,59 @@ export class OceanWorld {
         const open = g.userData.facilityId === this.inside && !this.firstPerson;
         for (const m of g.userData.roof) m.visible = !open;
       }
-    if (this.firstPerson && !this.placement && !this.titleMode) {
+    // 0.61 契合: the view slides from over your shoulder into your beast's eyes as the bond forms, and back out
+    const st0 = this.lastState,
+      sy = st0?.combat?.sync && !st0.expedition?.mounted && !this.placement && !this.titleMode ? st0.combat.sync : null,
+      syPm = sy ? this.petMeshes.get(st0.expedition?.activeId) : null,
+      nowR = performance.now(),
+      rdt = Math.min(0.1, (nowR - (this.lastRenderAt || nowR)) / 1000);
+    this.lastRenderAt = nowR;
+    if (syPm) {
+      if (this.syncPm && this.syncPm !== syPm) this.syncPm.visible = true;
+      this.syncPm = syPm;
+      this.syncK = Math.max(this.syncK || 0, Math.min(1, (st0.elapsed - sy.at) / SYNC.enter));
+    } else this.syncK = Math.max(0, (this.syncK || 0) - rdt / 0.5);
+    const pmS = this.syncPm;
+    if (this.syncK > 0 && pmS) {
+      if (!pmS.userData.eye) {
+        // where its eyes are: near the top of its body, toward the front
+        const vis = pmS.visible;
+        pmS.visible = true;
+        pmS.updateMatrixWorld(true);
+        const box = new T.Box3().setFromObject(pmS),
+          sc = pmS.scale.y || 1;
+        pmS.userData.eye = {
+          up: ((box.max.y - pmS.position.y) / sc) * 0.82,
+          fwd: (Math.max(box.max.x - box.min.x, box.max.z - box.min.z) / 2 / sc) * 0.62
+        };
+        pmS.visible = vis;
+      }
+      const eye = pmS.userData.eye,
+        sc = pmS.scale.y || 1,
+        fx = -Math.sin(this.yaw),
+        fz = -Math.cos(this.yaw),
+        pch = this.syncPitch || 0,
+        ex = pmS.position.x + fx * eye.fwd * sc,
+        ey = pmS.position.y + Math.max(1.35, eye.up * sc),
+        ez = pmS.position.z + fz * eye.fwd * sc,
+        k = this.syncK * this.syncK * (3 - 2 * this.syncK);
+      const from = this.camera.position.clone(),
+        aim = from.clone().add(this.camera.getWorldDirection(new T.Vector3()).multiplyScalar(10)),
+        to = new T.Vector3(ex + fx * Math.cos(pch) * 10, ey - Math.sin(pch) * 10, ez + fz * Math.cos(pch) * 10);
+      this.camera.position.lerpVectors(from, new T.Vector3(ex, ey, ez), k);
+      this.camera.lookAt(aim.lerp(to, k));
+      this.camera.fov = 44 + (74 - 44) * k;
+      // its own body would fill the view
+      pmS.visible = k < 0.55;
+      this.boat.userData.human.visible = !this.onFoot && !this.onRiding && !this.hasShip;
+      this.walker.visible = this.onFoot || this.onRiding;
+      for (const m of this.boat.userData.stern || []) m.visible = true;
+      this.water.material.uniforms.uCamera.value.copy(this.camera.position);
+    } else if (this.firstPerson && !this.placement && !this.titleMode) {
+      if (pmS) {
+        pmS.visible = true;
+        this.syncPm = null;
+      }
       // 0.32: first person everywhere — on foot, on deck, at the helm, in the boat, on a beast's back, under water
       let x = this.playerAnchor.x,
         z = this.playerAnchor.z,
@@ -2550,6 +2606,10 @@ export class OceanWorld {
       this.hideAroundEye();
       this.water.material.uniforms.uCamera.value.copy(this.camera.position);
     } else {
+      if (pmS) {
+        pmS.visible = true;
+        this.syncPm = null;
+      }
       this.camera.fov = 44;
       this.boat.userData.human.visible = !this.onFoot && !this.onRiding && !this.hasShip;
       this.walker.visible = this.onFoot || this.onRiding;
