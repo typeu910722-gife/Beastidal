@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.61.10';
-import { renderAdventure } from './expansion-ui.js?v=0.61.10';
+} from './expansion.js?v=0.61.11';
+import { renderAdventure } from './expansion-ui.js?v=0.61.11';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.61.10';
-import { monologue, markGuide, pride, markPride } from './guide.js?v=0.61.10';
-import { climb, demolish, relocate } from './construction.js?v=0.61.10';
+} from './ship.js?v=0.61.11';
+import { monologue, markGuide, pride, markPride } from './guide.js?v=0.61.11';
+import { climb, demolish, relocate } from './construction.js?v=0.61.11';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.61.10';
+} from './housing.js?v=0.61.11';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.61.10';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.61.10';
-import { lakeMinimap } from './lake-map.js?v=0.61.10';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.61.10';
+} from './islands.js?v=0.61.11';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.61.11';
+import { lakeMinimap } from './lake-map.js?v=0.61.11';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.61.11';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.61.10';
+} from './cabin.js?v=0.61.11';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.61.10';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.61.10';
-import { OceanWorld, IntroFilm } from './world.js?v=0.61.10';
-import { QUALITY } from './realism.js?v=0.61.10';
-import { MusicPlayer, WaterRush, NewWorldAmbience, playSplash, playImpact, soundPref } from './sound.js?v=0.61.10';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.61.10';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.61.10';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.61.10';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.61.10';
-import { CONFIG } from './config.js?v=0.61.10';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.61.10';
+} from './story.js?v=0.61.11';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.61.11';
+import { OceanWorld, IntroFilm } from './world.js?v=0.61.11';
+import { QUALITY } from './realism.js?v=0.61.11';
+import { MusicPlayer, WaterRush, NewWorldAmbience, playSplash, playImpact, soundPref } from './sound.js?v=0.61.11';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.61.11';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.61.11';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.61.11';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.61.11';
+import { CONFIG } from './config.js?v=0.61.11';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.61.11';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,7 +122,7 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.61.10';
+} from './codex.js?v=0.61.11';
 import {
   ensureLandBeasts,
   normalizeWildlife,
@@ -130,12 +130,12 @@ import {
   spawnWild,
   spawnUnder,
   ashore
-} from './wildlife.js?v=0.61.10';
-import { CRAFTS, ITEMS, ITEM_NAMES, costLabel as itemCost } from './items.js?v=0.61.10';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.61.10';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.61.10';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.61.10';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.61.10';
+} from './wildlife.js?v=0.61.11';
+import { CRAFTS, ITEMS, ITEM_NAMES, costLabel as itemCost } from './items.js?v=0.61.11';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.61.11';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.61.11';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.61.11';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.61.11';
 import {
   startFishing,
   tickFishing,
@@ -144,7 +144,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.61.10';
+} from './fishing.js?v=0.61.11';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -154,10 +154,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.61.10';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.61.10';
-import { setClimbing } from './lake.js?v=0.61.10';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.61.10';
+} from './reclaim.js?v=0.61.11';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.61.11';
+import { setClimbing } from './lake.js?v=0.61.11';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.61.11';
 import {
   RARITY,
   FRENZY,
@@ -184,7 +184,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.61.10';
+} from './taming.js?v=0.61.11';
 import {
   resetCombat,
   normalizeCombat,
@@ -209,8 +209,8 @@ import {
   AI_RANGE,
   onLayer,
   callAssist
-} from './combat.js?v=0.61.10';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.61.10';
+} from './combat.js?v=0.61.11';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.61.11';
 import {
   ECHOES,
   LAPTOP_PARTS,
@@ -220,7 +220,7 @@ import {
   missingParts,
   normalizeEchoes,
   repairLaptop
-} from './echoes.js?v=0.61.10';
+} from './echoes.js?v=0.61.11';
 import {
   TOWN_NAME,
   BUILDINGS as TOWN_BUILDINGS,
@@ -240,7 +240,7 @@ import {
   TOWN_HINTS,
   toWorld as townWorld,
   normalizeTown
-} from './town.js?v=0.61.10';
+} from './town.js?v=0.61.11';
 import {
   TEMPLATES,
   WORDS,
@@ -258,9 +258,9 @@ import {
   guideWarning,
   noteTrace,
   normalizeComms
-} from './comms.js?v=0.61.10';
-import { Community } from './community.js?v=0.61.10';
-import { storyPanel } from './storynav.js?v=0.61.10';
+} from './comms.js?v=0.61.11';
+import { Community } from './community.js?v=0.61.11';
+import { storyPanel } from './storynav.js?v=0.61.11';
 import {
   outsidePoints,
   tearShell,
@@ -281,7 +281,7 @@ import {
   bridgeReady,
   crossBridge,
   RIFT
-} from './chapter3.js?v=0.61.10';
+} from './chapter3.js?v=0.61.11';
 import {
   readNotice,
   searchDiner,
@@ -293,15 +293,15 @@ import {
   AFTER_FORGET,
   GRADUATED_TEXT,
   domeCracked
-} from './chapter2.js?v=0.61.10';
-import { tickDome, nearShell, toLocal as domeLocal, countryWalkable, DOME_R } from './dome.js?v=0.61.10';
-import { BeastStage } from './beast-stage.js?v=0.61.10';
-import { loadArt, art, artImg } from './art.js?v=0.61.10';
-import { loadSculpts } from './sculpt-assets.js?v=0.61.10';
-import { separateBodies } from './bodies.js?v=0.61.10';
-import { STATUES } from './statues.js?v=0.61.10';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.61.10';
-import { lookOf } from './beast-look.js?v=0.61.10';
+} from './chapter2.js?v=0.61.11';
+import { tickDome, nearShell, toLocal as domeLocal, countryWalkable, DOME_R } from './dome.js?v=0.61.11';
+import { BeastStage } from './beast-stage.js?v=0.61.11';
+import { loadArt, art, artImg } from './art.js?v=0.61.11';
+import { loadSculpts } from './sculpt-assets.js?v=0.61.11';
+import { separateBodies } from './bodies.js?v=0.61.11';
+import { STATUES } from './statues.js?v=0.61.11';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.61.11';
+import { lookOf } from './beast-look.js?v=0.61.11';
 import {
   TREE,
   BRANCHES,
@@ -313,8 +313,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.61.10';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.61.10';
+} from './beast-tree.js?v=0.61.11';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.61.11';
 import {
   funds,
   normalizeBag,
@@ -335,12 +335,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.61.10';
-import { iconFor } from './icons.js?v=0.61.10';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.61.10';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.61.10';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.61.10';
-import { codexRewards, claimCodex } from './codex.js?v=0.61.10';
+} from './bag.js?v=0.61.11';
+import { iconFor } from './icons.js?v=0.61.11';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.61.11';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.61.11';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.61.11';
+import { codexRewards, claimCodex } from './codex.js?v=0.61.11';
 import {
   homePos,
   facilityPos,
@@ -352,10 +352,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.61.10';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.61.10';
-export const GAME_VERSION = '0.61.10';
-import { CloudSave } from './cloud-save.js?v=0.61.10';
+} from './fortress.js?v=0.61.11';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.61.11';
+export const GAME_VERSION = '0.61.11';
+import { CloudSave } from './cloud-save.js?v=0.61.11';
 import {
   readLocal,
   writeLocal,
@@ -372,7 +372,7 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.61.10';
+} from './save-store.js?v=0.61.11';
 import {
   normalizeTravel,
   canWalk,
@@ -380,8 +380,8 @@ import {
   switchVessel,
   moveTravel,
   dockingSpots
-} from './navigation.js?v=0.61.10';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.61.10';
+} from './navigation.js?v=0.61.11';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.61.11';
 import {
   RESOURCE_NAMES,
   RECIPES,
@@ -402,8 +402,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.61.10';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.61.10';
+} from './rules.js?v=0.61.11';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.61.11';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -2524,7 +2524,7 @@ function bagFullNotice() {
 }
 function autoPickup() {
   if (!running || paused || panel || buildType || salvaging || world.settings.autoPickup === false) return;
-  if (syncOn(state)) return; // 0.61.10: inside your beast in a fight, not reeling in drift
+  if (syncOn(state)) return; // 0.61.11: inside your beast in a fight, not reeling in drift
   if (!bagRoom(state)) return;
   const px = state.player.x,
     pz = state.player.z;
@@ -2686,6 +2686,9 @@ function syncFx(kind, e = {}) {
   } else if (kind === 'ko') {
     el.className = 'sfx-ko';
     life = 1600;
+  } else if (kind === 'phase2') {
+    el.className = 'sfx-phase2';
+    life = 1200;
   } else if (kind === 'slash') {
     el.className = `sfx-slash c${e.combo || 1}${e.heavy ? ' heavy' : ''}${e.beat ? ' beat' : ''}`;
     el.innerHTML = '<i></i><i></i><i></i>';
@@ -2842,6 +2845,18 @@ function onCombat(events) {
         audio.bond(false);
         if (e.why === 'ko') toast(`契合中斷——${e.name || '御獸'}倒下了。小心，現在牠們會衝著你來！`, true);
         break;
+      case 'phase2': {
+        // a boss (or 嘯岳) turns: a roar, the screen pulses red, a beat of stillness
+        hitStop = Math.max(hitStop, 0.45);
+        world.shake = Math.max(world.shake || 0, 0.8);
+        popNumber(e.x, e.z, '狂怒！', 'crit');
+        if (syncOn(state)) syncFx('phase2');
+        audio.screech();
+        audio.crash();
+        haptic('hit');
+        toast(e.id === 'duel' ? '嘯岳狂怒了——攻勢更快、更重。' : '牠狂怒了——攻勢更快、更重。');
+        break;
+      }
       case 'perfect': {
         hitStop = Math.max(hitStop, 0.32);
         popNumber(e.x, e.z, '完美閃避', 'weak');
@@ -2903,7 +2918,7 @@ function onCombat(events) {
         break;
       }
       case 'ko':
-        // 0.61.10: the moment the bond is torn out of you — time drags, the colour drains
+        // 0.61.11: the moment the bond is torn out of you — time drags, the colour drains
         if (normalizeCombat(state).sync) {
           hitStop = Math.max(hitStop, 0.6);
           syncFx('ko');
@@ -4425,7 +4440,7 @@ function updateBeastHUD() {
     b.defeated || state.inCave || state.inTown || Math.hypot(b.x - state.player.x, b.z - state.player.z) > 35;
   $('boss-bar').textContent = `深海守望者  ${Math.max(0, Math.ceil(b.hp))} / 480`;
   let hpFrac = b.hp / 480;
-  // 0.61.10: 嘯岳 in the garden's heart had no strength shown at all — you fought it blind
+  // 0.61.11: 嘯岳 in the garden's heart had no strength shown at all — you fought it blind
   const xb = state.story?.duel && state.inCave && state.story.beast;
   if (xb) {
     $('boss-bar').hidden = false;
@@ -8223,7 +8238,7 @@ function setupEvents() {
   addEventListener('resize', () => bigMapOpen && drawBigMap());
   $('interact-btn').onclick = interact;
   $('repel-btn').onclick = actionKey;
-  // 0.61.10: inside your beast — tap to strike, hold for a heavy blow; dodge the way the stick points
+  // 0.61.11: inside your beast — tap to strike, hold for a heavy blow; dodge the way the stick points
   {
     let held = 0;
     const atk = $('sync-attack');
@@ -8325,7 +8340,7 @@ function setupEvents() {
     if (k === 't' && !syncOn(state)) beastAction('ride');
     if (k === 'g' && !syncOn(state)) beastAction('dive');
     if (k === 'f') attackHold = performance.now();
-    // 0.61.10: inside your beast, the everyday keys (pick up, contract, sail home, change view, dock) wait for the fight
+    // 0.61.11: inside your beast, the everyday keys (pick up, contract, sail home, change view, dock) wait for the fight
     const bonded = syncOn(state);
     if (k === 'e' && !bonded) interact();
     if (k === 'x' && !bonded) contractNearest();

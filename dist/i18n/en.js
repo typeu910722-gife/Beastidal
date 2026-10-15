@@ -3873,5 +3873,8 @@ export default {
     'When a fight starts, your mind sinks into your beast and you fight through its eyes: WASD / the stick moves it, the mouse or a drag turns it, F strikes, 1 / 2 use skills, Space dodges. Before a foe strikes, a red warning lights up on the ground — slip it at the last instant for a Perfect dodge, and your next blow is a Counter. A foe that is not open (no 破綻) takes only part of your damage; strike when the last blow has finished (Rhythm) — mashing only slows you down. If your beast falls the bond breaks, and they come for you.',
   閃: 'Now',
   '攻擊（按住重擊）': 'Strike (hold for a heavy blow)',
-  '嘯岳（狂暴） {0} / {1}': 'Xiaoyue (frenzied) {0} / {1}'
+  '嘯岳（狂暴） {0} / {1}': 'Xiaoyue (frenzied) {0} / {1}',
+  '狂怒！': 'Enraged!',
+  '嘯岳狂怒了——攻勢更快、更重。': 'Xiaoyue is enraged — faster, heavier blows.',
+  '牠狂怒了——攻勢更快、更重。': 'It is enraged — faster, heavier blows.'
 };

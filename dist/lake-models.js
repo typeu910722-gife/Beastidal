@@ -2,13 +2,13 @@
 // Ported from the author's map; positions are scaled by HS, structures by their own factors so they read at
 // human scale next to the raft.
 import * as T from './vendor/three.module.min.js';
-import { HS, ORIGIN, groundAt } from './lake.js?v=0.61.10';
-import { FINE, COARSE, Q } from './lake-data.js?v=0.61.10';
-import { ISLANDS, NODES } from './islands.js?v=0.61.10';
-import { EXPLORE } from './expansion.js?v=0.61.10';
-import { BEAST_HOME } from './story.js?v=0.61.10';
-import { generateLake, VEG, STRIDE } from './lake-gen.js?v=0.61.10';
-import { surface } from './surfaces.js?v=0.61.10';
+import { HS, ORIGIN, groundAt } from './lake.js?v=0.61.11';
+import { FINE, COARSE, Q } from './lake-data.js?v=0.61.11';
+import { ISLANDS, NODES } from './islands.js?v=0.61.11';
+import { EXPLORE } from './expansion.js?v=0.61.11';
+import { BEAST_HOME } from './story.js?v=0.61.11';
+import { generateLake, VEG, STRIDE } from './lake-gen.js?v=0.61.11';
+import { surface } from './surfaces.js?v=0.61.11';
 
 // ---------- the sketch's noise (map units) ----------
 function hash(x, z) {
@@ -418,7 +418,7 @@ export function makeLake() {
     };
     if (typeof Worker === 'undefined' || typeof window === 'undefined') return local();
     try {
-      const worker = new Worker(new URL('./lake-worker.js?v=0.61.10', import.meta.url), { type: 'module' });
+      const worker = new Worker(new URL('./lake-worker.js?v=0.61.11', import.meta.url), { type: 'module' });
       worker.onmessage = e => {
         apply(e.data);
         worker.terminate();

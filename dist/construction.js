@@ -1,8 +1,8 @@
-import { RECIPES, buildError } from './rules.js?v=0.61.10';
-import { findFacility } from './facilities.js?v=0.61.10';
-import { penId, used } from './housing.js?v=0.61.10';
-import { give } from './bag.js?v=0.61.10';
-import { atHome } from './bag.js?v=0.61.10';
+import { RECIPES, buildError } from './rules.js?v=0.61.11';
+import { findFacility } from './facilities.js?v=0.61.11';
+import { penId, used } from './housing.js?v=0.61.11';
+import { give } from './bag.js?v=0.61.11';
+import { atHome } from './bag.js?v=0.61.11';
 const fail = error => ({ ok: false, error });
 export function climb(s, b) {
   if (

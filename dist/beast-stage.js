@@ -1,9 +1,9 @@
 // Live previews of beasts for the device's beast storage: one small offscreen renderer draws every visible beast,
 // slowly turning and swimming, into its own 2D canvas each frame.
 import * as T from './vendor/three.module.min.js';
-import { makeCreature, animateCreature } from './creatures.js?v=0.61.10';
-import { applyGeneMarks } from './bs-models.js?v=0.61.10';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.61.10';
+import { makeCreature, animateCreature } from './creatures.js?v=0.61.11';
+import { applyGeneMarks } from './bs-models.js?v=0.61.11';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.61.11';
 
 export class BeastStage {
   constructor() {

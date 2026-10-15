@@ -4594,3 +4594,38 @@ body.syncing.touch-device #dodge-btn {
   box-shadow: inset 0 0 200px 80px rgba(120, 0, 0, 0.75);
   animation: sfx-fade 1.6s ease-in forwards;
 }
+
+/* 0.61.11: a foe enrages — the edges flare red twice */
+.sfx-phase2 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 160px 40px #e0203cb0;
+  animation: sfx-phase2 1.2s ease-out forwards;
+}
+@keyframes sfx-phase2 {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* 0.61.11: inside your beast the top of the screen is the foe's — its bar, its wind-ups — so notices ride low,
+   just above your own bars, for the few seconds they show */
+body.syncing #app #discovery {
+  top: auto;
+  bottom: 172px;
+}
+body.syncing.landscape-play #app #discovery {
+  bottom: 138px;
+}
