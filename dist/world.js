@@ -1,44 +1,45 @@
-import { expansionModels } from './expansion-models.js?v=0.51.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.51.0';
-import { normalizeHousing, penId } from './housing.js?v=0.51.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.51.0';
-export { makeCreature } from './creatures.js?v=0.51.0';
-import { makeIslands } from './island-models.js?v=0.51.0';
-import { facilityId } from './facilities.js?v=0.51.0';
+import { expansionModels } from './expansion-models.js?v=0.52.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.52.0';
+import { normalizeHousing, penId } from './housing.js?v=0.52.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.52.0';
+export { makeCreature } from './creatures.js?v=0.52.0';
+import { makeIslands } from './island-models.js?v=0.52.0';
+import { facilityId } from './facilities.js?v=0.52.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.51.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.51.0';
-import { surface } from './surfaces.js?v=0.51.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.51.0';
-import { makeLake } from './lake-models.js?v=0.51.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.51.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.51.0';
-import { makeStatues } from './statues.js?v=0.51.0';
-import { animateGarden } from './garden-models.js?v=0.51.0';
-import { ViewModel } from './viewmodel.js?v=0.51.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.51.0';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.51.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.51.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.51.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.51.0';
-import { townWalkable, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.51.0';
-import { PostFX } from './postfx.js?v=0.51.0';
-import { makeHuman, animateHuman } from './human.js?v=0.51.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.51.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.51.0';
-import { buildError } from './rules.js?v=0.51.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.51.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.51.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.51.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.51.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.51.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.51.0';
-import { CombatFX } from './combat-fx.js?v=0.51.0';
-import { syncPlots } from './land-models.js?v=0.51.0';
-import { plotTargets } from './reclaim.js?v=0.51.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.51.0';
-import { dayPhase } from './clock.js?v=0.51.0';
-import { weatherAt, season } from './weather.js?v=0.51.0';
+import { phenotype, seeded } from './genetics.js?v=0.52.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.52.0';
+import { surface } from './surfaces.js?v=0.52.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.52.0';
+import { makeLake } from './lake-models.js?v=0.52.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.52.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.52.0';
+import { makeStatues } from './statues.js?v=0.52.0';
+import { animateGarden } from './garden-models.js?v=0.52.0';
+import { ViewModel } from './viewmodel.js?v=0.52.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.52.0';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.52.0';
+import { bakeStatic } from './bake.js?v=0.52.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.52.0';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.52.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.52.0';
+import { townWalkable, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.52.0';
+import { PostFX } from './postfx.js?v=0.52.0';
+import { makeHuman, animateHuman } from './human.js?v=0.52.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.52.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.52.0';
+import { buildError } from './rules.js?v=0.52.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.52.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.52.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.52.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.52.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.52.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.52.0';
+import { CombatFX } from './combat-fx.js?v=0.52.0';
+import { syncPlots } from './land-models.js?v=0.52.0';
+import { plotTargets } from './reclaim.js?v=0.52.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.52.0';
+import { dayPhase } from './clock.js?v=0.52.0';
+import { weatherAt, season } from './weather.js?v=0.52.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -823,6 +824,7 @@ export class OceanWorld {
       LANDMARKS.greatGate.z
     );
     this.pactStatue.rotation.y = Math.PI;
+    bakeStatic(this.pactStatue);
     this.scene.add(this.pactStatue);
     // lake events: the merchant's boat, and a pillar of light over a lakebed cache
     this.eventMerchant = makeMerchant();
@@ -872,15 +874,15 @@ export class OceanWorld {
     // 0.47: 慈光港, the town past the mountains, and 晴 waiting in white before the welcome centre
     this.town = makeTown();
     this.town.visible = false;
+    // the town stands still: merge it (the soup's steam and the statue's turning halo keep moving)
+    bakeStatic(this.town, { skip: new Set([...this.town.userData.steam, this.town.userData.halo]) });
     this.scene.add(this.town);
     // 0.48: the open country under the dome, and the far hills that travel with you
     this.dome = makeDome();
     this.dome.group.visible = this.dome.hills.visible = false;
     this.scene.add(this.dome.group, this.dome.hills);
-    this.guide = character(true, 'female');
-    this.guide.position.set(GUIDE_WORLD.x, 0, GUIDE_WORLD.z);
-    this.guide.visible = false;
-    this.scene.add(this.guide);
+    // (晴 herself is made the first time you reach the town: her model is a 2.7 MB download nobody on the lake needs)
+    this.guide = null;
     this.walkPhase = 0;
     this.moveSpeed = 0;
     this.playerAnchor = new V();
@@ -1960,7 +1962,12 @@ export class OceanWorld {
     // 0.47: in town the lake and everything on it is out of sight, the sky stays
     const town = !!s.inTown && !cabin;
     this.town.visible = town;
-    this.guide.visible = town && !guideGone(s);
+    if (town && !this.guide) {
+      this.guide = character(true, 'female');
+      this.guide.position.set(GUIDE_WORLD.x, 0, GUIDE_WORLD.z);
+      this.scene.add(this.guide);
+    }
+    if (this.guide) this.guide.visible = town && !guideGone(s);
     this.dome.group.visible = this.dome.hills.visible = town;
     // the projected sky under the dome has no rift (0.48)
     this.sky.material.uniforms.uRift.value = this.water.material.uniforms.uRift.value = town && !domeCracked(s) ? 0 : 1;
@@ -1997,7 +2004,9 @@ export class OceanWorld {
       m.scale.setScalar(s.expedition.collected.includes(site.id) ? 0.65 : 1);
     }
     const boss = s.expedition.boss;
-    this.extra.boss.visible = !boss.defeated && !s.inCave && !town && !cabin;
+    // far off across the lake it is out of sight anyway (and fifty draw calls)
+    this.extra.boss.visible =
+      !boss.defeated && !s.inCave && !town && !cabin && Math.hypot(boss.x - s.player.x, boss.z - s.player.z) < 260;
     // 0.28: it rears out of the water as it winds up, faces where it will strike, and sinks back after
     const bai = boss.ai,
       rear =
