@@ -4425,3 +4425,95 @@ body.syncing #contract-btn,
 body.syncing #travel-status {
   display: none !important;
 }
+
+/* 0.61: marks over the view inside your beast — a foe winding up at it, the foe your blows go to */
+#sync-fx > .sync-mark {
+  inset: auto;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  --k: 1;
+  --a: 0deg;
+}
+.sync-mark i {
+  position: absolute;
+  left: -30px;
+  top: -30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 122, 58, 0.9);
+  box-shadow: 0 0 10px rgba(255, 90, 40, 0.6);
+  transform: scale(var(--k));
+}
+.sync-mark b {
+  position: absolute;
+  left: -20px;
+  top: -16px;
+  width: 40px;
+  text-align: center;
+  font:
+    900 26px/32px 'Noto Sans TC',
+    sans-serif;
+  color: #ff5a3c;
+  text-shadow:
+    0 0 6px rgba(0, 0, 0, 0.8),
+    0 0 14px rgba(255, 90, 40, 0.8);
+}
+.sync-mark.now i {
+  border-color: #fff;
+  box-shadow:
+    0 0 18px #9ff0ff,
+    inset 0 0 12px #9ff0ff;
+}
+.sync-mark.now b {
+  color: #e9fbff;
+  text-shadow: 0 0 14px #2bd2ff;
+}
+/* out of sight: an arrow at the edge of the screen, pointing toward it */
+.sync-mark.edge i {
+  border: none;
+  box-shadow: none;
+  transform: rotate(var(--a));
+}
+.sync-mark.edge i::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 0;
+  border: 12px solid transparent;
+  border-bottom: 22px solid #ff5a3c;
+  filter: drop-shadow(0 0 6px rgba(255, 90, 40, 0.9));
+}
+.sync-mark.edge.now i::before {
+  border-bottom-color: #fff;
+}
+.sync-mark.edge b {
+  top: -14px;
+  font-size: 18px;
+}
+/* the foe your blows go to: four corner brackets */
+.sync-mark.lock i {
+  border: none;
+  box-shadow: none;
+  background:
+    linear-gradient(#e9fbff, #e9fbff) 0 0 / 14px 2px,
+    linear-gradient(#e9fbff, #e9fbff) 0 0 / 2px 14px,
+    linear-gradient(#e9fbff, #e9fbff) 100% 0 / 14px 2px,
+    linear-gradient(#e9fbff, #e9fbff) 100% 0 / 2px 14px,
+    linear-gradient(#e9fbff, #e9fbff) 0 100% / 14px 2px,
+    linear-gradient(#e9fbff, #e9fbff) 0 100% / 2px 14px,
+    linear-gradient(#e9fbff, #e9fbff) 100% 100% / 14px 2px,
+    linear-gradient(#e9fbff, #e9fbff) 100% 100% / 2px 14px;
+  background-repeat: no-repeat;
+  border-radius: 0;
+  opacity: 0.8;
+}
+.sync-mark.lock.edge i {
+  background: none;
+}
+.sync-mark.lock.edge i::before {
+  border-bottom-color: rgba(233, 251, 255, 0.7);
+  filter: none;
+}
