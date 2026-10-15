@@ -121,8 +121,11 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 24px;
-  background: #511f32e8;
+  background: linear-gradient(90deg, #a3394fe8 var(--hp, 100%), #3a1624e0 var(--hp, 100%));
   border: 1px solid #ce9789;
+  min-width: 220px;
+  text-align: center;
+  text-shadow: 0 1px 2px #0009;
   border-radius: 6px;
   font-size: 14px;
   color: #f5d8c4;
@@ -270,4 +273,16 @@ body.beast-on.landscape-play .left-hud {
 #combat-layer .foe-hp.open small {
   color: #ffd56a;
   font-weight: 800;
+}
+/* 0.61.9: inside your beast the foe's bar drops below where notices pop up, so a notice never hides it */
+body.syncing #boss-bar {
+  top: 132px;
+  min-width: 300px;
+  font-size: 15px;
+}
+.landscape-play body.syncing #boss-bar,
+body.syncing.landscape-play #boss-bar {
+  top: 118px;
+  min-width: 240px;
+  font-size: 12px;
 }

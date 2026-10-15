@@ -9,15 +9,15 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.61.8';
-import { bsOf, geneStats } from './bsgenes.js?v=0.61.8';
-import { WILD_BEASTS } from './beasts.js?v=0.61.8';
-import { rollDrops } from './species.js?v=0.61.8';
-import { give } from './bag.js?v=0.61.8';
-import { tally } from './stats.js?v=0.61.8';
-import { damageBonus } from './skills.js?v=0.61.8';
-import { remember } from './memories.js?v=0.61.8';
-import { perks, personality, normalizeTree } from './beast-tree.js?v=0.61.8';
+import { phenotype } from './genetics.js?v=0.61.9';
+import { bsOf, geneStats } from './bsgenes.js?v=0.61.9';
+import { WILD_BEASTS } from './beasts.js?v=0.61.9';
+import { rollDrops } from './species.js?v=0.61.9';
+import { give } from './bag.js?v=0.61.9';
+import { tally } from './stats.js?v=0.61.9';
+import { damageBonus } from './skills.js?v=0.61.9';
+import { remember } from './memories.js?v=0.61.9';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.61.9';
 
 // 0.61 契合 (sync): when a fight starts and your beast is out beside you (not ridden), you sink into it — the view
 // moves behind its eyes and you fight as it: you move it, aim it, time its blows and dodge for it. Your own body

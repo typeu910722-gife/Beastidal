@@ -1,4 +1,4 @@
-// Through your beast's eyes (0.61.8). While you are bonded (契合), its forelimbs and the ridge of its snout sit at the
+// Through your beast's eyes (0.61.9). While you are bonded (契合), its forelimbs and the ridge of its snout sit at the
 // bottom of the view in its own colours: they breathe and sway as it moves, rake across the screen with each blow of
 // a combo (right, left, right, left; both at once on a held heavy blow), snap the jaws up on a skill, lurch aside on
 // a dodge and jerk back when it is struck. They hang off the camera and draw on top of the world, like the hands.
@@ -23,7 +23,7 @@ function part(parent, geo, m, pos = [0, 0, 0], rot = [0, 0, 0], scale = [1, 1, 1
   return o;
 }
 // a forelimb: a forearm tapering to the wrist and flattened like a real one, a ridge of fur tufts along its top, a
-// broad paw with a knuckle over each of three long hooked claws (0.61.8: the plain tube read as a sausage)
+// broad paw with a knuckle over each of three long hooked claws (0.61.9: the plain tube read as a sausage)
 function makeLimb(side, hide, pale, claw, dark) {
   const g = new T.Group();
   part(g, new T.CylinderGeometry(0.05, 0.095, 0.55, 12), hide, [0, 0, 0.27], [Math.PI / 2, 0, 0], [1.25, 1, 0.8]);
@@ -86,7 +86,7 @@ export class BeastView {
     this.glow = new T.PointLight(0xffffff, 0, 1.4, 2);
     this.glow.position.set(0, -0.15, -0.5);
     this.root.add(this.glow);
-    // 0.61.8: what a skill throws out of it, in the skill's colour — a gout of breath from the snout (flame, frost,
+    // 0.61.9: what a skill throws out of it, in the skill's colour — a gout of breath from the snout (flame, frost,
     // venom, a roar), crackling streaks (thunder), motes rising round the paws (hardening, regrowth)
     const puff = document.createElement('canvas');
     puff.width = puff.height = 64;

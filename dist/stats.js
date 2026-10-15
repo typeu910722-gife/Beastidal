@@ -1,8 +1,8 @@
 // Local play statistics. Nothing leaves the device: the player can copy the JSON and send it in by hand.
 // Used to tune pacing (how long each milestone takes) without any analytics service.
-import { GUIDE_IDS, guideDone } from './guide.js?v=0.61.8';
-import { dayOf } from './clock.js?v=0.61.8';
-import { learnFrom } from './skills.js?v=0.61.8';
+import { GUIDE_IDS, guideDone } from './guide.js?v=0.61.9';
+import { dayOf } from './clock.js?v=0.61.9';
+import { learnFrom } from './skills.js?v=0.61.9';
 
 export const MILESTONE_NAMES = {
   salvage: '打撈 3 件物資',

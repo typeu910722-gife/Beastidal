@@ -10,7 +10,7 @@
 // Personality: each beast is born with one, read from its genome so it never changes. It nudges how it fights and
 // lives with you (and what it says on the card): brave, cautious, curious, lazy, loyal, hot-tempered, gentle,
 // greedy.
-import { seeded, dnaCode } from './genetics.js?v=0.61.8';
+import { seeded, dnaCode } from './genetics.js?v=0.61.9';
 
 export const TREE = {
   fang: {
