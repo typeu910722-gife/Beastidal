@@ -4,11 +4,11 @@
 // for a lone visitor; come carrying three 御獸 contracts and their scent tears it awake in a frenzy. Beat it down
 // and it comes back to itself and speaks → 合 a pact of ten contract scrolls → it carries you over the mountains (the
 // hook for chapter two). Nothing here is required to keep playing; every step is reached only by exploring.
-import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.45.0';
-import { spend } from './bag.js?v=0.45.0';
-import { dayOf } from './clock.js?v=0.45.0';
-import { makeGenome } from './genetics.js?v=0.45.0';
-import { CAVE } from './cave-maze.js?v=0.45.0';
+import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.60.0';
+import { spend } from './bag.js?v=0.60.0';
+import { dayOf } from './clock.js?v=0.60.0';
+import { makeGenome } from './genetics.js?v=0.60.0';
+import { CAVE } from './cave-maze.js?v=0.60.0';
 
 export const PACT_ID = 'ancient-xiaoyue';
 export const PACT_NAME = '嘯岳';
@@ -162,12 +162,17 @@ export const SCRIPT = {
     ['嘯岳', '這座湖是牢，也是盾。山外沒有路……但我能越過去。'],
     ['嘯岳', '等你準備好，帶我到湖岸的山腳下。我會讓你看看，那些人到底在擋什麼。']
   ],
+  // 0.46: over the ridge lies not a sea but a continent — and a gentle voice that has been waiting for you
   cross: [
     ['', '嘯岳背起你，躍上山脊。風很冷，冷得像那天早上的雨。'],
-    ['', '山的另一側沒有海。只有一片被撕開的天空，紫色的裂縫從地平線一直延伸到頭頂。'],
-    ['嘯岳', '看清楚了嗎？築山的人不是要困住我們——是要把那東西擋在外面。'],
-    ['嘯岳', '研究員想要的不是我。他想要的是一條路。'],
-    ['嘯岳', '還不是時候。等你準備好了，我們再出發。']
+    ['', '山的另一側沒有海。是一片望不見盡頭的大陸——平原、河流，地平線上有城市的燈火。'],
+    ['', '天上那道紫色的裂縫緩緩合上，像有人拉上了布幕。'],
+    ['廣播', '「恭喜您完成適應期。歡迎來到——新生之界。」'],
+    ['廣播', '「這裡沒有病痛，沒有債務，沒有失去。您的家人一切安好。慈愛組織，與您同在。」'],
+    ['你', '……我的家人？'],
+    ['嘯岳', '這個聲音。研究員那個會發光的盒子裡，也有一模一樣的聲音。'],
+    ['嘯岳', '築山的人想擋住的是裂縫。可是說話的這些人……他們把湖當成了籠子的門。'],
+    ['嘯岳', '還不是時候。等你準備好了，我們再下去。']
   ]
 };
 export const nearBeast = (s, r = 9) =>
@@ -238,8 +243,8 @@ export function finishCrossing(s) {
     st.stage = 6;
     log(
       s,
-      '第一章 完 · 沉湖之誓',
-      '山外沒有海，只有被撕開的天空。築山的人不是要困住我們，而是要把裂縫擋在外面。第二章 · 裂縫之外——敬請期待。'
+      '第一章 完 · 適應期結束',
+      '山外不是海，是一片大陸。天上的聲音叫它「新生之界」，還說我的家人一切安好——它怎麼會知道我有家人？第二章 · 新生之界——敬請期待。'
     );
   }
   return { ok: true };

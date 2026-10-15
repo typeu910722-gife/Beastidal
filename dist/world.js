@@ -1,39 +1,45 @@
-import { expansionModels } from './expansion-models.js?v=0.45.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.45.0';
-import { normalizeHousing, penId } from './housing.js?v=0.45.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.45.0';
-export { makeCreature } from './creatures.js?v=0.45.0';
-import { makeIslands } from './island-models.js?v=0.45.0';
-import { facilityId } from './facilities.js?v=0.45.0';
+import { expansionModels } from './expansion-models.js?v=0.60.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.60.0';
+import { normalizeHousing, penId } from './housing.js?v=0.60.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.60.0';
+export { makeCreature } from './creatures.js?v=0.60.0';
+import { makeIslands } from './island-models.js?v=0.60.0';
+import { facilityId } from './facilities.js?v=0.60.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.45.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.45.0';
-import { surface } from './surfaces.js?v=0.45.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.45.0';
-import { makeLake } from './lake-models.js?v=0.45.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.45.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.45.0';
-import { makeStatues } from './statues.js?v=0.45.0';
-import { animateGarden } from './garden-models.js?v=0.45.0';
-import { ViewModel } from './viewmodel.js?v=0.45.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.45.0';
-import { PostFX } from './postfx.js?v=0.45.0';
-import { makeHuman, animateHuman } from './human.js?v=0.45.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.45.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.45.0';
-import { buildError } from './rules.js?v=0.45.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.45.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.45.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.45.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.45.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.45.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.45.0';
-import { CombatFX } from './combat-fx.js?v=0.45.0';
-import { syncPlots } from './land-models.js?v=0.45.0';
-import { plotTargets } from './reclaim.js?v=0.45.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.45.0';
-import { dayPhase } from './clock.js?v=0.45.0';
-import { weatherAt, season } from './weather.js?v=0.45.0';
+import { phenotype, seeded } from './genetics.js?v=0.60.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.60.0';
+import { surface } from './surfaces.js?v=0.60.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.60.0';
+import { makeLake } from './lake-models.js?v=0.60.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.60.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.60.0';
+import { makeStatues } from './statues.js?v=0.60.0';
+import { animateGarden } from './garden-models.js?v=0.60.0';
+import { ViewModel } from './viewmodel.js?v=0.60.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.60.0';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.60.0';
+import { bakeStatic } from './bake.js?v=0.60.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.60.0';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.60.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.60.0';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.60.0';
+import { PostFX } from './postfx.js?v=0.60.0';
+import { makeHuman, animateHuman } from './human.js?v=0.60.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.60.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.60.0';
+import { buildError } from './rules.js?v=0.60.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.60.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.60.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.60.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.60.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.60.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.60.0';
+import { CombatFX } from './combat-fx.js?v=0.60.0';
+import { syncPlots } from './land-models.js?v=0.60.0';
+import { plotTargets } from './reclaim.js?v=0.60.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.60.0';
+import { dayPhase } from './clock.js?v=0.60.0';
+import { weatherAt, season } from './weather.js?v=0.60.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -630,11 +636,34 @@ function makeBoat() {
     bevelThickness: 0.07,
     bevelSize: 0.06,
     bevelSegments: 2,
-    steps: 1,
+    steps: 16,
     curveSegments: 16
   });
   hullGeo.rotateX(Math.PI / 2);
-  piece(g, hullGeo, 0x427c80, [0, 0.68, 0]);
+  // 0.56: paint the hull: red antifouling below the waterline, a cream boot stripe, teal planks in two shades
+  {
+    hullGeo.computeBoundingBox();
+    const bb = hullGeo.boundingBox,
+      pos = hullGeo.attributes.position,
+      col = new Float32Array(pos.count * 3),
+      c = new T.Color(),
+      teal = new T.Color(0x427c80),
+      light = new T.Color(0x4f8d90),
+      red = new T.Color(0x7a3b2e),
+      cream = new T.Color(0xe8dcbc);
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i),
+        k = (y - bb.min.y) / (bb.max.y - bb.min.y || 1),
+        // planks counted from the gunwale down, each a shade off its neighbour
+        plank = Math.floor((bb.max.y - y) / 0.1) % 2;
+      if (k < 0.3) c.copy(red);
+      else if (k < 0.38) c.copy(cream);
+      else c.copy(plank ? light : teal);
+      col.set([c.r, c.g, c.b], i * 3);
+    }
+    hullGeo.setAttribute('color', new T.BufferAttribute(col, 3));
+  }
+  piece(g, hullGeo, 0xffffff, [0, 0.68, 0], [1, 1, 1], { vertexColors: true, roughness: 0.6 });
   for (let j = -2; j <= 2; j++) box(g, j % 2 ? 0xbe9866 : 0x9f8a6a, j * 0.25, 0.29, 0, 0.23, 0.09, 2.3);
   for (const z of [-0.9, 0.8]) box(g, 0xb99868, 0, 0.62, z, 1.36, 0.11, 0.32);
   const pts = outline.getPoints(70).map(p => new V(p.x, 0.72, p.y));
@@ -818,6 +847,7 @@ export class OceanWorld {
       LANDMARKS.greatGate.z
     );
     this.pactStatue.rotation.y = Math.PI;
+    bakeStatic(this.pactStatue);
     this.scene.add(this.pactStatue);
     // lake events: the merchant's boat, and a pillar of light over a lakebed cache
     this.eventMerchant = makeMerchant();
@@ -864,6 +894,18 @@ export class OceanWorld {
     this.walker = character();
     this.walker.visible = false;
     this.scene.add(this.walker);
+    // 0.47: 慈光港, the town past the mountains, and 晴 waiting in white before the welcome centre
+    this.town = makeTown();
+    this.town.visible = false;
+    // the town stands still: merge it (the soup's steam and the statue's turning halo keep moving)
+    bakeStatic(this.town, { skip: new Set([...this.town.userData.steam, this.town.userData.halo]) });
+    this.scene.add(this.town);
+    // 0.48: the open country under the dome, and the far hills that travel with you
+    this.dome = makeDome();
+    this.dome.group.visible = this.dome.hills.visible = false;
+    this.scene.add(this.dome.group, this.dome.hills);
+    // (晴 herself is made the first time you reach the town: her model is a 2.7 MB download nobody on the lake needs)
+    this.guide = null;
     this.walkPhase = 0;
     this.moveSpeed = 0;
     this.playerAnchor = new V();
@@ -1128,7 +1170,7 @@ export class OceanWorld {
   }
   groundFn(s) {
     const diving = !!s.expedition?.diving;
-    return (x, z) => (diving ? this.diveY : s.inCave ? 0 : Math.max(0, groundAt(x, z)));
+    return (x, z) => (diving ? this.diveY : s.inCave ? 0 : s.inTown ? domeGround(x, z) : Math.max(0, groundAt(x, z)));
   }
   // 0.25: what combat.js reported this frame — effects, the swing animation, recoil and shake
   combatEvents(s, events) {
@@ -1158,7 +1200,13 @@ export class OceanWorld {
       y = c.y - 1.7;
     }
     const g = new T.Group(),
-      base = y ?? (this.lastState?.inCave ? 0.05 : Math.max(0, groundAt(x, z)) + 0.05);
+      base =
+        y ??
+        (this.lastState?.inCave
+          ? 0.05
+          : this.lastState?.inTown
+            ? domeGround(x, z) + 0.05
+            : Math.max(0, groundAt(x, z)) + 0.05);
     g.position.set(x, base, z);
     const ring = new T.Mesh(
       new T.RingGeometry(0.6, 0.85, 48),
@@ -1212,6 +1260,7 @@ export class OceanWorld {
     }
     // 0.36.3: in the garden the hedges are walls for beasts too (they used to walk straight through)
     if (s.inCave) return mazeWalkable(x - GARDEN.x, z - GARDEN.z, Math.min(1.1, 0.45 + r * 0.5));
+    if (s.inTown) return townWalkable(x, z, Math.min(1.1, 0.45 + r * 0.5), domeCracked(s));
     const g = groundAt(x, z);
     return onLand ? g > 0.35 : g < -0.6;
   }
@@ -1357,8 +1406,9 @@ export class OceanWorld {
     this.lookUpFree = diving;
     if (!diving && this.pitch < 0.06) this.pitch += (0.06 - this.pitch) * Math.min(1, dt * 5);
     // a dive follows the lakebed down into the sunken city; ashore you stand on the terrain itself
-    const ground = s.inCave || cabin ? 0 : groundAt(s.player.x, s.player.z),
-      onTerrain = foot && !s.player.level && !s.inCave && ground > 0.05;
+    const ground =
+        s.inCave || cabin ? 0 : s.inTown ? domeGround(s.player.x, s.player.z) : groundAt(s.player.x, s.player.z),
+      onTerrain = foot && !s.player.level && !s.inCave && (s.inTown || ground > 0.05);
     // the dive follows the depth the player swims to (game.js clamps it between the lakebed and the surface)
     this.diveY = diving
       ? (this.diveY || 0) + ((s.expedition.depth ?? -3) - (this.diveY || 0)) * Math.min(1, dt * 7)
@@ -1519,6 +1569,12 @@ export class OceanWorld {
           m.position.z += Math.cos(c.heading || 0) * k;
         }
         if (ud.hitAt && s.elapsed - ud.hitAt < 0.16) m.rotation.x += 0.3 * (1 - (s.elapsed - ud.hitAt) / 0.16);
+        // 0.58: a struck body squashes and springs back (the line above resets the scale each frame)
+        if (ud.hitAt && s.elapsed - ud.hitAt < 0.22) {
+          const q = Math.sin((1 - (s.elapsed - ud.hitAt) / 0.22) * Math.PI) * 0.14,
+            z = ud.phenotype.size;
+          m.scale.set(z * (1 + q), z * (1 - q * 0.8), z * (1 + q));
+        }
         if (c.ai?.state === 'recover') m.rotation.z = Math.sin(t * 9) * 0.06;
         else m.rotation.z = 0;
         if (c.dissolving) {
@@ -1847,6 +1903,26 @@ export class OceanWorld {
     } else if (this.placement) this.follow.set(1.8, 0, 1.8);
     else if (helm) this.follow.set(s.ship.x, 7, s.ship.z);
     else this.follow.set(s.player.x, this.baseY + (foot || aboard ? 0.8 : 0), s.player.z);
+    // 0.54: talking to 晴 or 嘯岳 in town, the camera comes in and frames you both
+    let talk = null;
+    if (opts.talking && foot) {
+      const near = [];
+      if (this.guide?.visible) near.push(this.guide.position);
+      near.push(townPoint(XIAOYUE_WAITS));
+      for (const p of near) {
+        const d = Math.hypot(p.x - s.player.x, p.z - s.player.z);
+        if (d < 7 && (!talk || d < talk.d)) talk = { x: p.x, z: p.z, d };
+      }
+    }
+    this.talkActive = !!talk;
+    this.talkK = (this.talkK || 0) + ((talk ? 1 : 0) - (this.talkK || 0)) * Math.min(1, dt * 2.5);
+    if (talk) this.talkAt = talk;
+    if (this.talkK > 0.01 && this.talkAt) {
+      const k = this.talkK * this.talkK * (3 - 2 * this.talkK);
+      this.follow.x += ((this.talkAt.x - s.player.x) / 2) * k;
+      this.follow.z += ((this.talkAt.z - s.player.z) / 2) * k;
+      this.follow.y += 0.5 * k;
+    }
     this.look.lerp(this.follow, 1 - Math.exp(-dt * 3.5) || 1);
     const dist = s.inCave
       ? 12
@@ -1856,15 +1932,25 @@ export class OceanWorld {
           ? Math.min(20, this.distance * 0.55)
           : helm && !opts.title
             ? Math.max(44, this.distance * 1.2)
-            : this.distance * (foot && !this.placement && !opts.title ? 0.7 : 1);
+            : this.distance * (foot && !this.placement && !opts.title ? 0.7 : 1) * (1 - 0.55 * (this.talkK || 0));
     // 0.25.1: in thick weather the camera comes in close enough that the fog never swallows you; the distance
     // still fades out, so the fog keeps its look
     const fogCap =
       opts.title || s.inCave || cabin || diving
         ? Infinity
         : Math.max(22, 0.45 / Math.max(1e-4, (this.skyFog || 0) + storm * 0.003));
-    const yaw = this.yaw,
-      pitch = this.pitch,
+    // 0.54: in a conversation the camera swings round to a three-quarter view of you both
+    let yaw = this.yaw;
+    if (this.talkK > 0.01 && this.talkAt) {
+      const vx = s.player.x - this.talkAt.x,
+        vz = s.player.z - this.talkAt.z,
+        n = Math.hypot(vx, vz) || 1,
+        side = Math.sin(this.yaw) * vz - Math.cos(this.yaw) * vx > 0 ? 1 : -1,
+        want = Math.atan2((vx / n) * 0.7 + (vz / n) * side, (vz / n) * 0.7 - (vx / n) * side),
+        k = this.talkK * this.talkK * (3 - 2 * this.talkK);
+      yaw += Math.atan2(Math.sin(want - yaw), Math.cos(want - yaw)) * k;
+    }
+    const pitch = this.pitch,
       camDist = Math.min(dist, fogCap),
       _focus = (this.focusDist = camDist),
       look = this.look;
@@ -1879,14 +1965,56 @@ export class OceanWorld {
           look.z + Math.cos(yaw) * Math.cos(pitch) * d
         );
     place(camDist);
+    // 0.56: the sun's shadow map covers less ground when the camera is close, so close-ups get crisp shadows
+    {
+      const span = Math.round(Math.max(16, Math.min(45, camDist * 1.8)) / 2) * 2,
+        sc = this.sun.shadow.camera;
+      if (span !== sc.right) {
+        Object.assign(sc, { left: -span, right: span, top: span, bottom: -span });
+        sc.updateProjectionMatrix();
+      }
+    }
+    // 0.54: in town the camera stops short of walls, buildings and lamp posts instead of looking out from inside them
+    // (0.57: ashore on the lake too, against the islands' structures)
+    const ashore = foot && !s.inTown && !s.inCave && !cabin && !opts.title;
+    if ((s.inTown || ashore) && !opts.title) {
+      const cp = this.camera.position,
+        ex = cp.x - look.x,
+        ey = cp.y - pivotY,
+        ez = cp.z - look.z;
+      let free = camDist;
+      if (s.inTown) {
+        for (let d = 1.2; d < camDist; d += 0.3) {
+          const k = d / camDist;
+          if (townCameraBlocked(look.x + ex * k, pivotY + ey * k, look.z + ez * k)) {
+            free = Math.max(1.8, d - 0.5);
+            break;
+          }
+        }
+      } else {
+        // a dozen rays a second is plenty; the ease below smooths between them
+        this.camRayT = (this.camRayT || 0) - dt;
+        if (this.camRayT <= 0 || this.camRayHit == null) {
+          this.camRayT = 0.08;
+          this.camRayHit = this.cameraRay(look.x, pivotY, look.z, ex / camDist, ey / camDist, ez / camDist, camDist);
+        }
+        if (this.camRayHit < camDist) free = Math.max(1.8, this.camRayHit - 0.5);
+      }
+      // pull in at once, ease back out
+      const was = this.camEase ?? camDist;
+      this.camEase = free < was ? free : Math.min(free, was + dt * 6);
+      if (this.camEase < camDist) {
+        place(this.camEase);
+        // squeezed in close, rise to look over your shoulder rather than into your back
+        this.camera.position.y += Math.max(0, 4 - this.camEase) * 0.4;
+      }
+    } else this.camEase = null;
     // never let the orbit camera sink into a hillside, the lakebed or (above water) the surface: when the player
     // looks up, the camera slides in closer along its line of sight instead of being pushed off that line
     if (!s.inCave && !cabin) {
+      const gAt = s.inTown ? domeGround : groundAt;
       const floorAt = () =>
-        Math.max(
-          groundAt(this.camera.position.x, this.camera.position.z) + 1.4,
-          diving || aboard || helm ? -Infinity : 0.9
-        );
+        Math.max(gAt(this.camera.position.x, this.camera.position.z) + 1.4, diving || aboard || helm ? -Infinity : 0.9);
       let floor = floorAt();
       if (this.camera.position.y < floor && Math.sin(pitch) < -0.02) {
         place(Math.max(2.2, (floor - pivotY) / Math.sin(pitch)));
@@ -1909,7 +2037,14 @@ export class OceanWorld {
       this.targetRing.visible = true;
       this.targetRing.position.set(
         this.target.x,
-        Math.max(this.baseY, s.inCave ? this.baseY : groundAt(this.target.x, this.target.z)) + 0.43,
+        Math.max(
+          this.baseY,
+          s.inCave
+            ? this.baseY
+            : s.inTown
+              ? domeGround(this.target.x, this.target.z)
+              : groundAt(this.target.x, this.target.z)
+        ) + 0.43,
         this.target.z
       );
       this.targetRing.scale.setScalar(this.target.type === 'wild' ? 1.7 : 1);
@@ -1919,31 +2054,86 @@ export class OceanWorld {
       this.navMarker.visible = true;
       this.navMarker.position.set(
         opts.destination.x,
-        Math.max(this.baseY, s.inCave ? this.baseY : groundAt(opts.destination.x, opts.destination.z)) + 0.38,
+        Math.max(this.baseY, s.inCave || s.inTown ? this.baseY : groundAt(opts.destination.x, opts.destination.z)) +
+          0.38,
         opts.destination.z
       );
       this.navMarker.scale.setScalar(1 + Math.sin(t * 4) * 0.15);
     } else this.navMarker.visible = false;
     this.extra.cave.visible = !!s.inCave;
     if (s.inCave) animateGarden(this.extra.cave, t);
-    this.statues.visible = !s.inCave && !cabin;
+    // 0.47: in town the lake and everything on it is out of sight, the sky stays
+    const town = !!s.inTown && !cabin;
+    this.town.visible = town;
+    if (town && !this.guide) {
+      this.guide = character(false);
+      // her sun badge rides on the chest bone, left of the placket, once the body has loaded
+      this.guide.userData.onDressed = root => {
+        const g = this.guide,
+          spine = g.userData.model?.bones.Spine2;
+        if (!spine) return;
+        g.updateMatrixWorld(true);
+        const at = g.worldToLocal(spine.getWorldPosition(new T.Vector3()));
+        spine.add(badge);
+        badge.position.copy(spine.worldToLocal(g.localToWorld(new T.Vector3(0.085, at.y + 0.06, at.z + 0.14))));
+        badge.quaternion.copy(
+          spine.getWorldQuaternion(new T.Quaternion()).invert().multiply(g.getWorldQuaternion(new T.Quaternion()))
+        );
+        badge.scale.setScalar(1 / spine.getWorldScale(new T.Vector3()).x);
+      };
+      dressHuman(this.guide, 'guide');
+      // her sun badge, over the heart
+      const badge = new T.Mesh(
+        new T.CircleGeometry(0.035, 20),
+        new T.MeshStandardMaterial({ color: 0xffd36b, emissive: 0xc08a20, emissiveIntensity: 0.8, metalness: 0.7 })
+      );
+      badge.position.set(0.085, 1.28, 0.14);
+      this.guide.add(badge);
+      this.guide.position.set(GUIDE_WORLD.x, 0, GUIDE_WORLD.z);
+      this.scene.add(this.guide);
+    }
+    if (this.guide) this.guide.visible = town && !guideGone(s);
+    if (!town) this.outsideDome = false;
+    this.dome.group.visible = this.dome.hills.visible = town;
+    // the projected sky under the dome has no rift (0.48)
+    this.sky.material.uniforms.uRift.value = this.water.material.uniforms.uRift.value = town && !domeCracked(s) ? 0 : 1;
+    if (town) {
+      const lp = domeLocal(s.player.x, s.player.z);
+      animateDome(this.dome, t, dt, {
+        player: { x: s.player.x, z: s.player.z, lx: lp.x, lz: lp.z },
+        seams: Math.max(duskSeams(s), domeCracked(s) ? 0.3 : 0),
+        cracked: domeCracked(s),
+        outside: Math.hypot(lp.x, lp.z) > DOME_R
+      });
+      this.outsideDome = domeCracked(s) && Math.hypot(lp.x, lp.z) > DOME_R + 2;
+      animateTown(this.town, t, night > 0.5);
+      // 晴 turns to face you as you come near
+      const g = this.guide,
+        near = Math.hypot(s.player.x - g.position.x, s.player.z - g.position.z) < 14,
+        want = near ? Math.atan2(s.player.x - g.position.x, s.player.z - g.position.z) : 0;
+      g.rotation.y += Math.atan2(Math.sin(want - g.rotation.y), Math.cos(want - g.rotation.y)) * Math.min(1, dt * 2);
+      animateHuman(g, dt, { speed: 0 });
+    }
+    this.statues.visible = !s.inCave && !town && !cabin;
     this.cabin.group.visible = cabin;
     this.fortress.visible = cabin;
     for (const l of this.cabin.lights) l.visible = cabin;
     if (cabin) this.cabin.update(t, s.player.floor | 0);
     this.extra.seabed.visible = diving;
     this.sky.visible = !diving && !s.inCave && !cabin;
-    this.water.visible = !diving && !s.inCave && !cabin;
-    this.islandModels.group.visible = !s.inCave && !cabin;
-    this.lake.group.visible = !s.inCave && !cabin;
+    this.water.visible = !diving && !s.inCave && !town && !cabin;
+    this.islandModels.group.visible = !s.inCave && !town && !cabin;
+    this.lake.group.visible = !s.inCave && !town && !cabin;
     this.lake.update(t, diving);
     for (const site of EXPLORE) {
       const m = this.extra.sites.get(site.id);
-      m.visible = !!site.cave === !!s.inCave && (!site.deep || diving);
+      m.visible = !!site.cave === !!s.inCave && !town && (!site.deep || diving);
       m.scale.setScalar(s.expedition.collected.includes(site.id) ? 0.65 : 1);
     }
     const boss = s.expedition.boss;
-    this.extra.boss.visible = !boss.defeated && !s.inCave && !cabin;
+    // far off across the lake it is out of sight anyway (and fifty draw calls)
+    this.extra.boss.visible =
+      !boss.defeated && !s.inCave && !town && !cabin && Math.hypot(boss.x - s.player.x, boss.z - s.player.z) < 260;
     // 0.28: it rears out of the water as it winds up, faces where it will strike, and sinks back after
     const bai = boss.ai,
       rear =
@@ -2006,6 +2196,15 @@ export class OceanWorld {
         const grey = this.fogGrey || (this.fogGrey = new T.Color(0xb8c4c8));
         this.scene.fog.color.lerp(grey, 0.5);
         this.scene.background.lerp(grey, 0.5);
+      }
+      // 0.54: under the real sky outside the dome, the air is thick with the rift's violet haze
+      this.outsideK = (this.outsideK || 0) + ((this.outsideDome ? 1 : 0) - (this.outsideK || 0)) * Math.min(1, dt);
+      if (this.outsideK > 0.01) {
+        const haze = this.riftHaze || (this.riftHaze = new T.Color(0x5e4a78));
+        this.scene.fog.color.lerp(haze, 0.3 * this.outsideK);
+        this.scene.background.lerp(haze, 0.25 * this.outsideK);
+        this.ambient.color.lerp(haze, 0.2 * this.outsideK);
+        this.scene.fog.density += 0.0015 * this.outsideK;
       }
       if (this.lightning > 0) {
         this.ambient.intensity += 6 * this.lightning;
@@ -2109,6 +2308,47 @@ export class OceanWorld {
       this.ambient.color.lerp(TIDE_TINT, k);
     }
   }
+  // 0.48: a trail of a resident's glowing footprints, and the shell's ripple where you touched it (local coordinates)
+  // 0.57: how far the orbit camera can sit from the player before it would be inside an island's structure
+  // (houses, piers, ruins, rocks — not the terrain, which has its own clamp, and not grass or leaves)
+  cameraRay(x, y, z, dx, dy, dz, far) {
+    if (!this.camSolids) {
+      this.camSolids = [];
+      this.camRaycaster = new T.Raycaster();
+      for (const root of [this.islandModels.group, this.lake.group, this.statues])
+        root?.traverse(o => {
+          if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh) return;
+          const m = Array.isArray(o.material) ? o.material[0] : o.material;
+          if (!m || m.transparent || m.side === T.DoubleSide) return;
+          if ((o.geometry.attributes.position?.count || 0) > 20000) return; // terrain-sized
+          if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere();
+          o.updateWorldMatrix(true, false);
+          const c = o.geometry.boundingSphere.center.clone().applyMatrix4(o.matrixWorld);
+          this.camSolids.push({
+            o,
+            x: c.x,
+            z: c.z,
+            r: o.geometry.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis()
+          });
+        });
+    }
+    // only what lies within reach of this ray (the islands do not move)
+    const near = [];
+    for (const c of this.camSolids)
+      if (Math.hypot(c.x - x, c.z - z) < far + c.r && c.o.visible && c.o.parent?.visible !== false) near.push(c.o);
+    if (!near.length) return far;
+    const r = this.camRaycaster;
+    r.set(r.ray.origin.set(x, y, z), r.ray.direction.set(dx, dy, dz));
+    r.far = far;
+    const hit = r.intersectObjects(near, false)[0];
+    return hit ? hit.distance : far;
+  }
+  showTrace(lx, lz, heading) {
+    showTrace(this.dome, lx, lz, heading);
+  }
+  domeRipple(lx, lz, y) {
+    domeRipple(this.dome, lx, lz, y, this.time);
+  }
   startCinematic(s) {
     const az = 2.4, // the rift's bearing in the sky shader
       from = this.camera.position.clone(),
@@ -2136,7 +2376,10 @@ export class OceanWorld {
       roar = 0;
     // 0.31: before the pact it lies in the garden at the cave's heart — asleep, raging, or awake and calm
     if (st.beast && (st.stage || 0) < 5 && !!st.beast.cave === !!s.inCave) at = { x: st.beast.x, z: st.beast.z };
-    else if (pet) {
+    else if (pet && s.inTown) {
+      // 0.47: it will not come into the town; it waits outside the gate
+      if (s.expedition?.activeId === PACT_ID) at = townPoint(XIAOYUE_WAITS);
+    } else if (pet) {
       if (s.expedition?.activeId === PACT_ID && !s.inCave) {
         // pads along a few metres behind you, ashore or swimming beside the boat
         const h = s.player.heading || 0;
@@ -2145,8 +2388,8 @@ export class OceanWorld {
     }
     beast.visible = !!at;
     if (!at) return;
-    const ground = s.inCave ? 0.2 : groundAt(at.x, at.z),
-      y = s.inCave ? ground : Math.max(ground, foot ? ground : -0.9);
+    const ground = s.inCave ? 0.2 : s.inTown ? domeGround(at.x, at.z) : groundAt(at.x, at.z),
+      y = s.inCave || s.inTown ? ground : Math.max(ground, foot ? ground : -0.9);
     const prev = beast.position.clone();
     if (beast.userData.placed) beast.position.lerp(new V(at.x, y, at.z), 1 - Math.exp(-dt * 3));
     else beast.position.set(at.x, y, at.z);

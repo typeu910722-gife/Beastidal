@@ -1,9 +1,9 @@
 # Model credits
 
-## protagonist.glb and protagonist-female.glb
+## protagonist.glb, protagonist-female.glb and guide-qing.glb
 
-- The two office workers are `Business_Male_06` and `Business_Female_04` from the **Microsoft Rocketbox Avatar
-  Library** (https://github.com/microsoft/Microsoft-Rocketbox), released under the MIT License, Copyright (c) 2020
+- The two office workers are `Business_Male_06` and `Business_Female_04`, and 晴 (the guide, `guide-qing.glb`) is
+  the nurse `Medical_Female_01`, from the **Microsoft Rocketbox Avatar Library** (https://github.com/microsoft/Microsoft-Rocketbox), released under the MIT License, Copyright (c) 2020
   Microsoft.
 - Changes for this game:
   - converted from FBX to GLB;

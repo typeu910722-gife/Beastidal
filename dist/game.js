@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.45.0';
-import { renderAdventure } from './expansion-ui.js?v=0.45.0';
+} from './expansion.js?v=0.60.0';
+import { renderAdventure } from './expansion-ui.js?v=0.60.0';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.45.0';
-import { monologue, markGuide, pride, markPride } from './guide.js?v=0.45.0';
-import { climb, demolish, relocate } from './construction.js?v=0.45.0';
+} from './ship.js?v=0.60.0';
+import { monologue, markGuide, pride, markPride } from './guide.js?v=0.60.0';
+import { climb, demolish, relocate } from './construction.js?v=0.60.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.45.0';
+} from './housing.js?v=0.60.0';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.45.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.45.0';
-import { lakeMinimap } from './lake-map.js?v=0.45.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.45.0';
+} from './islands.js?v=0.60.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.60.0';
+import { lakeMinimap } from './lake-map.js?v=0.60.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.60.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.45.0';
+} from './cabin.js?v=0.60.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.45.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.45.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.45.0';
-import { QUALITY } from './realism.js?v=0.45.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.45.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.45.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.45.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.45.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.45.0';
-import { CONFIG } from './config.js?v=0.45.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.45.0';
+} from './story.js?v=0.60.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.60.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.60.0';
+import { QUALITY } from './realism.js?v=0.60.0';
+import { MusicPlayer, WaterRush, NewWorldAmbience, playSplash, playImpact, soundPref } from './sound.js?v=0.60.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.60.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.60.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.60.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.60.0';
+import { CONFIG } from './config.js?v=0.60.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.60.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,7 +122,7 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.45.0';
+} from './codex.js?v=0.60.0';
 import {
   ensureLandBeasts,
   normalizeWildlife,
@@ -130,12 +130,12 @@ import {
   spawnWild,
   spawnUnder,
   ashore
-} from './wildlife.js?v=0.45.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.45.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.45.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.45.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.45.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.45.0';
+} from './wildlife.js?v=0.60.0';
+import { CRAFTS, ITEMS, ITEM_NAMES, costLabel as itemCost } from './items.js?v=0.60.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.60.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.60.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.60.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.60.0';
 import {
   startFishing,
   tickFishing,
@@ -144,7 +144,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.45.0';
+} from './fishing.js?v=0.60.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -154,10 +154,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.45.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.45.0';
-import { setClimbing } from './lake.js?v=0.45.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.45.0';
+} from './reclaim.js?v=0.60.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.60.0';
+import { setClimbing } from './lake.js?v=0.60.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.60.0';
 import {
   RARITY,
   FRENZY,
@@ -184,7 +184,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.45.0';
+} from './taming.js?v=0.60.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -203,15 +203,99 @@ import {
   AI_RANGE,
   onLayer,
   callAssist
-} from './combat.js?v=0.45.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.45.0';
-import { BeastStage } from './beast-stage.js?v=0.45.0';
-import { loadArt, art, artImg } from './art.js?v=0.45.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.45.0';
-import { separateBodies } from './bodies.js?v=0.45.0';
-import { STATUES } from './statues.js?v=0.45.0';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.45.0';
-import { lookOf } from './beast-look.js?v=0.45.0';
+} from './combat.js?v=0.60.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.60.0';
+import {
+  ECHOES,
+  LAPTOP_PARTS,
+  RESTORED_LINES,
+  echoOnWake,
+  heardEchoes,
+  missingParts,
+  normalizeEchoes,
+  repairLaptop
+} from './echoes.js?v=0.60.0';
+import {
+  TOWN_NAME,
+  BUILDINGS as TOWN_BUILDINGS,
+  GUIDE_SCRIPT,
+  BOARD_LINES,
+  enterTown,
+  leaveTown,
+  meetGuide,
+  useRoom,
+  takeRation,
+  readStele,
+  STELE_POSTS,
+  readLetter,
+  lookDiner,
+  lookAdmin,
+  townPoints,
+  TOWN_HINTS,
+  toWorld as townWorld,
+  normalizeTown
+} from './town.js?v=0.60.0';
+import {
+  TEMPLATES,
+  WORDS,
+  PLAYER_TEMPLATES,
+  POSTS_PER_DAY,
+  REMOVED,
+  phrase,
+  stelePosts,
+  postsToday,
+  writePost,
+  resonate as resonatePost,
+  sendDrift,
+  driftReply,
+  tickComms,
+  guideWarning,
+  noteTrace,
+  normalizeComms
+} from './comms.js?v=0.60.0';
+import { Community } from './community.js?v=0.60.0';
+import { storyPanel } from './storynav.js?v=0.60.0';
+import {
+  outsidePoints,
+  tearShell,
+  noteOutside,
+  readK,
+  startTrial,
+  trialRound,
+  finishTrial,
+  canSeal,
+  seeCore,
+  tornOpen,
+  started as chapterThreeStarted,
+  TACTICS,
+  WAVE_COUNT,
+  LAYERS,
+  layerOpen,
+  qingConfession,
+  bridgeReady,
+  crossBridge,
+  RIFT
+} from './chapter3.js?v=0.60.0';
+import {
+  readNotice,
+  searchDiner,
+  enterAdmin,
+  choose as chooseEnding,
+  guideGone,
+  normalizeChapter2,
+  DINER_FIND,
+  AFTER_FORGET,
+  GRADUATED_TEXT,
+  domeCracked
+} from './chapter2.js?v=0.60.0';
+import { tickDome, nearShell, toLocal as domeLocal, countryWalkable, DOME_R } from './dome.js?v=0.60.0';
+import { BeastStage } from './beast-stage.js?v=0.60.0';
+import { loadArt, art, artImg } from './art.js?v=0.60.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.60.0';
+import { separateBodies } from './bodies.js?v=0.60.0';
+import { STATUES } from './statues.js?v=0.60.0';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.60.0';
+import { lookOf } from './beast-look.js?v=0.60.0';
 import {
   TREE,
   BRANCHES,
@@ -223,8 +307,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.45.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.45.0';
+} from './beast-tree.js?v=0.60.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.60.0';
 import {
   funds,
   normalizeBag,
@@ -245,12 +329,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.45.0';
-import { iconFor } from './icons.js?v=0.45.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.45.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.45.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.45.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.45.0';
+} from './bag.js?v=0.60.0';
+import { iconFor } from './icons.js?v=0.60.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.60.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.60.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.60.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.60.0';
 import {
   homePos,
   facilityPos,
@@ -262,10 +346,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.45.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.45.0';
-export const GAME_VERSION = '0.45.0';
-import { CloudSave } from './cloud-save.js?v=0.45.0';
+} from './fortress.js?v=0.60.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.60.0';
+export const GAME_VERSION = '0.60.0';
+import { CloudSave } from './cloud-save.js?v=0.60.0';
 import {
   readLocal,
   writeLocal,
@@ -282,9 +366,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.45.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.45.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.45.0';
+} from './save-store.js?v=0.60.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.60.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.60.0';
 import {
   RESOURCE_NAMES,
   RECIPES,
@@ -305,8 +389,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.45.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.45.0';
+} from './rules.js?v=0.60.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.60.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -458,6 +542,7 @@ const audio = {
       src.start();
       this.music = new MusicPlayer(this.ctx, this.mus, GAME_VERSION);
       this.rush = new WaterRush(this.ctx, this.amb);
+      this.newWorld = new NewWorldAmbience(this.ctx, this.amb);
     }
     this.ctx.resume();
     this.on = true;
@@ -468,6 +553,10 @@ const audio = {
     if (this.ctx) this.gain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.3);
     this.music?.stop();
     this.rush?.set(0);
+    this.newWorld?.set({});
+  },
+  impact(kind) {
+    if (this.on && this.ctx) playImpact(this.ctx, this.sfx, kind);
   },
   splash(strength = 1, quiet = false) {
     if (this.on && this.ctx) playSplash(this.ctx, this.sfx, quiet ? strength * 0.6 : strength);
@@ -706,7 +795,8 @@ function updateDock() {
   }
   const spot = dockOption(state),
     foot = state.player.mode === 'foot';
-  $('dock-btn').hidden = !running || paused || !!panel || !!buildType || !!salvaging || (!foot && !spot?.near);
+  $('dock-btn').hidden =
+    !running || paused || !!panel || !!buildType || !!salvaging || !!state.inTown || (!foot && !spot?.near);
   $('dock-label').textContent = foot
     ? spot?.near
       ? '登艇出海'
@@ -724,6 +814,10 @@ function updateDock() {
   $('joystick').setAttribute('aria-label', foot ? '拖曳移動角色' : '拖曳駕艇');
 }
 function dock() {
+  if (state.inTown) {
+    toast('這裡沒有水。要回湖區，到城門外找嘯岳。');
+    return;
+  }
   if (state.inCave) {
     toast('請先離開洞窟。');
     return;
@@ -1533,6 +1627,7 @@ function unstuck() {
   e.diving = false;
   e.depth = 0;
   state.inCave = false;
+  state.inTown = false;
   if (state.ship && !state.skiff) {
     Object.assign(state.player, { mode: 'ship', x: state.ship.x, z: state.ship.z, heading: state.ship.heading });
     world.yaw = state.ship.heading + Math.PI;
@@ -1947,7 +2042,10 @@ function initialize() {
       repel,
       openSettings,
       openPanel,
-      closePanel
+      closePanel,
+      goToTown,
+      backToLake,
+      townAction
     };
   $('load-screen').hidden = true;
   $('title-screen').hidden = false;
@@ -1973,6 +2071,11 @@ const loungeTargets = () =>
 // 0.40: the creatures on your layer of the sea — diving, only what swims down there; above, only the surface ones
 const nearWild = () => (state.wild || []).filter(w => onLayer(state, w));
 function getAllTargets() {
+  // 0.47: in 慈光港 only the town's own places
+  if (state.inTown)
+    return [...townPoints(state), ...outsidePoints(state).map(p => ({ ...p, ...townWorld(p) }))]
+      .filter(p => !(p.id === 'guide' && guideGone(state)))
+      .map(p => ({ ...p, type: 'town' }));
   if (state.player.mode === 'cabin') return [...cabinPointsWorld(state), ...loungeTargets()];
   if (state.player.mode === 'aboard') return shipPointsWorld(state);
   const arr = state.loot.map(l => ({ ...l, type: 'loot', name: lootNames[l.kind] }));
@@ -2073,88 +2176,93 @@ function updateNearest() {
   if (inRange) {
     $('context-title').textContent = selected.name;
     $('context-subtitle').textContent = P(
-      selected.type === 'shippoint'
-        ? (state.player.mode === 'cabin' ? FLOORS[state.player.floor | 0] : DECKS[state.player.deck] || DECKS[3]).name +
+      selected.type === 'town'
+        ? TOWN_HINTS[selected.id][0]
+        : selected.type === 'shippoint'
+          ? (state.player.mode === 'cabin' ? FLOORS[state.player.floor | 0] : DECKS[state.player.deck] || DECKS[3])
+              .name +
             ' · 按 E ' +
             selected.verb
-        : selected.type === 'plot'
-          ? plotText(selected)
-          : selected.type === 'claim'
-            ? (state.occupied || []).includes(selected.claimId)
-              ? '你的領地 · 御獸在此休息'
-              : '派出羈絆 30 的夥伴 · 按 E 插旗占領'
-            : selected.type === 'event'
-              ? state.lakeEvent?.kind === 'merchant'
-                ? '湖上事件 · 開船靠近按 E 交易'
-                : '湖上事件 · 潛到光柱下按 E 打開'
-              : selected.type === 'pact'
-                ? duelActive(state)
-                  ? '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開'
-                  : '遠古御獸 · 按 E 交談'
-                : selected.type === 'site'
-                  ? '探索點 · 靠近按 E 調查'
-                  : selected.type === 'facility'
-                    ? '點擊建築或按 E 開啟設施'
-                    : selected.type === 'node'
-                      ? (state.harvested?.[selected.id] || 0) > state.elapsed
-                        ? '資源恢復中 · 兩分鐘再生'
-                        : '登島後走近 4 公尺內採集'
-                      : selected.type === 'loot'
-                        ? `${Math.round(d(selected))}m · 可打撈物資`
-                        : selected.type === 'buoy'
-                          ? '訊號微弱 · 有人留下了紀錄'
-                          : selected.rescue === 'tangled'
-                            ? '被漂流漁網纏住了 · 按 E 解開'
-                            : selected.rescue === 'freed'
-                              ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
-                              : selected.rescue === 'friend' && !state.secret
-                                ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
-                                : state.secret
-                                  ? frenzied(selected, state.elapsed)
-                                    ? '狂暴中！驅離不了，按 F 讓夥伴攻擊'
-                                    : selected.beast
-                                      ? beastText(selected)
-                                      : selected.follow
-                                        ? '信任 100% · 跟著你 · 拿出外出籠按 X 帶牠回船上'
-                                        : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
-                                  : '未知生命 · 調查浮標，或按空白鍵驅離'
+          : selected.type === 'plot'
+            ? plotText(selected)
+            : selected.type === 'claim'
+              ? (state.occupied || []).includes(selected.claimId)
+                ? '你的領地 · 御獸在此休息'
+                : '派出羈絆 30 的夥伴 · 按 E 插旗占領'
+              : selected.type === 'event'
+                ? state.lakeEvent?.kind === 'merchant'
+                  ? '湖上事件 · 開船靠近按 E 交易'
+                  : '湖上事件 · 潛到光柱下按 E 打開'
+                : selected.type === 'pact'
+                  ? duelActive(state)
+                    ? '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開'
+                    : '遠古御獸 · 按 E 交談'
+                  : selected.type === 'site'
+                    ? '探索點 · 靠近按 E 調查'
+                    : selected.type === 'facility'
+                      ? '點擊建築或按 E 開啟設施'
+                      : selected.type === 'node'
+                        ? (state.harvested?.[selected.id] || 0) > state.elapsed
+                          ? '資源恢復中 · 兩分鐘再生'
+                          : '登島後走近 4 公尺內採集'
+                        : selected.type === 'loot'
+                          ? `${Math.round(d(selected))}m · 可打撈物資`
+                          : selected.type === 'buoy'
+                            ? '訊號微弱 · 有人留下了紀錄'
+                            : selected.rescue === 'tangled'
+                              ? '被漂流漁網纏住了 · 按 E 解開'
+                              : selected.rescue === 'freed'
+                                ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
+                                : selected.rescue === 'friend' && !state.secret
+                                  ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
+                                  : state.secret
+                                    ? frenzied(selected, state.elapsed)
+                                      ? '狂暴中！驅離不了，按 F 讓夥伴攻擊'
+                                      : selected.beast
+                                        ? beastText(selected)
+                                        : selected.follow
+                                          ? '信任 100% · 跟著你 · 拿出外出籠按 X 帶牠回船上'
+                                          : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
+                                    : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
     $('context-verb').textContent =
-      selected.type === 'shippoint'
-        ? selected.verb
-        : selected.type === 'plot'
-          ? selected.state === 'wild'
-            ? '開墾'
-            : selected.state === 'cleared'
-              ? '建造'
-              : '查看'
-          : selected.type === 'claim'
-            ? (state.occupied || []).includes(selected.claimId)
-              ? '查看'
-              : '占領'
-            : selected.type === 'event'
-              ? state.lakeEvent?.kind === 'merchant'
-                ? '交易'
-                : '打開'
-              : selected.type === 'pact'
-                ? '交談'
-                : selected.type === 'site'
-                  ? '調查'
-                  : selected.type === 'facility'
-                    ? '操作'
-                    : selected.type === 'node'
-                      ? '採集'
-                      : selected.type === 'loot'
-                        ? '打撈'
-                        : selected.type === 'buoy'
-                          ? '調查'
-                          : selected.rescue === 'tangled'
-                            ? '解開'
-                            : selected.rescue === 'freed'
-                              ? '餵食'
-                              : state.secret
-                                ? '投餌'
-                                : '觀察';
+      selected.type === 'town'
+        ? TOWN_HINTS[selected.id][1]
+        : selected.type === 'shippoint'
+          ? selected.verb
+          : selected.type === 'plot'
+            ? selected.state === 'wild'
+              ? '開墾'
+              : selected.state === 'cleared'
+                ? '建造'
+                : '查看'
+            : selected.type === 'claim'
+              ? (state.occupied || []).includes(selected.claimId)
+                ? '查看'
+                : '占領'
+              : selected.type === 'event'
+                ? state.lakeEvent?.kind === 'merchant'
+                  ? '交易'
+                  : '打開'
+                : selected.type === 'pact'
+                  ? '交談'
+                  : selected.type === 'site'
+                    ? '調查'
+                    : selected.type === 'facility'
+                      ? '操作'
+                      : selected.type === 'node'
+                        ? '採集'
+                        : selected.type === 'loot'
+                          ? '打撈'
+                          : selected.type === 'buoy'
+                            ? '調查'
+                            : selected.rescue === 'tangled'
+                              ? '解開'
+                              : selected.rescue === 'freed'
+                                ? '餵食'
+                                : state.secret
+                                  ? '投餌'
+                                  : '觀察';
   }
   $('target-card').hidden = !selected || inRange || !!panel || !!buildType;
   if (selected && !inRange && !panel) {
@@ -2222,6 +2330,10 @@ function interact() {
     gather(t.id);
     return;
   }
+  if (t.type === 'town') {
+    townAction(t.id);
+    return;
+  }
   if (t.type === 'loot') {
     startSalvage(t);
   } else if (t.type === 'buoy') {
@@ -2231,7 +2343,7 @@ function interact() {
     log(
       state,
       '隱藏航線：共生計畫',
-      '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先以誘餌建立信任，用外出籠帶回船上，讓兩個個體配對出比斯基因，最後以契約書契闊進化。'
+      '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先以誘餌建立信任，用外出籠帶回船上，讓兩個個體配對出比斯基因，最後以契約書契闊進化。紀錄末尾的署名：研究員 K.——NWP 前導觀……（以下毀損）'
     );
     selectedTarget = null;
     world.sync(state);
@@ -2381,6 +2493,8 @@ function finishSalvage() {
     if (r.treasure) {
       discover('漂流寶箱！', '滿滿一箱：木材、金屬、纖維、異晶全都有。今天運氣真好。');
       audio.note(1180, 0.5);
+      // 0.46: the first chest also holds the laptop's power module
+      if (r.part) setTimeout(() => discover('筆電零件', r.part + '（箱底壓著一塊不屬於這裡的電源模組。）'), 4000);
     } else if (r.streak >= 2) toast(`連撈 ×${r.streak} · 收穫 +${Math.min(4, r.streak - 1) * 10}%`);
     selectedTarget = null;
     world.sync(state);
@@ -2492,11 +2606,12 @@ function onCombat(events) {
           );
           if (!e.dot) {
             hitStop = Math.max(hitStop, e.crit || e.weak ? 0.075 : 0.045);
-            audio.note(e.crit ? 980 : 720, 0.06);
+            audio.impact(e.crit || e.weak ? 'crit' : 'hit');
             haptic('pickup');
           }
         } else {
           popNumber(e.x, e.z, '-' + e.amount + (e.guarded ? ' 硬化' : ''), e.target === 'ally' ? 'ally' : 'hurt');
+          audio.impact('hurt');
           $('damage-flash').style.opacity = e.target === 'player' ? '.5' : '.3';
           if (world.post) world.post.hurt = e.target === 'player' ? 1 : 0.5;
           haptic('hit');
@@ -2537,6 +2652,7 @@ function onCombat(events) {
         if (e.name) toast(`${e.name} 援護結束，回到契約紙裡休息。`);
         break;
       case 'kill': {
+        audio.impact('kill');
         const name = e.beast ? WILD_BEASTS[e.beast]?.name || '野生御獸' : '敵人';
         toast(`擊倒${name}${Object.keys(e.drops || {}).length ? '，掉落 ' + dropText(e.drops) : ''}。`);
         if (e.levelUp) {
@@ -3094,7 +3210,7 @@ function decorateDevice(body) {
   if (!deviceMode) return;
   const app = DEVICE_APPS.find(a => a.id === (panel === 'device' ? null : deviceAppFor()));
   $('drawer-eyebrow').innerHTML =
-    `<span>無訊號</span><span>${deviceClock()}</span><span>▮ ${Math.round(state.device.battery ?? 64)}%</span>`;
+    `<span>${state.echoes?.repaired ? 'NWP-LAKE' : '無訊號'}</span><span>${deviceClock()}</span><span>▮ ${Math.round(state.device.battery ?? 64)}%</span>`;
   $('drawer-title').textContent = panel === 'device' ? '隨身裝置' : app ? app.name : $('drawer-title').textContent;
   // (a beast's details bring their own way back to the grid)
   if (panel !== 'device' && !body.querySelector('.bx-back')) {
@@ -3123,6 +3239,7 @@ function handleExploration(id) {
     return;
   }
   toast(r.ok ? r.message : r.error, !r.ok);
+  if (r.part) setTimeout(() => discover('筆電零件', r.part), 1200);
   if (r.ok) {
     destination = null;
     selectedTarget = null;
@@ -3144,6 +3261,21 @@ function beastAction(action, heavy = false) {
   }
 }
 // ---------- 嘯岳之契: dialogue cards, trials, pact and the crossing ----------
+function playLines(lines, title, then) {
+  let i = 0;
+  const next = () => {
+    if (i >= lines.length) {
+      closeModal();
+      then?.();
+      return;
+    }
+    const [who, line] = lines[i++];
+    modal(title, who || '……', `<p class="pact-line">${esc(line)}</p>`, [
+      { label: i < lines.length ? '繼續' : '……', primary: true, action: next }
+    ]);
+  };
+  next();
+}
 function playScript(name, then) {
   const lines = SCRIPT[name] || [];
   let i = 0;
@@ -3285,6 +3417,11 @@ function crossMountains() {
     return;
   }
   closePanel();
+  // 0.47: once chapter one is over, the crossing goes straight down to 慈光港
+  if ((state.story?.stage || 0) >= 6) {
+    goToTown();
+    return;
+  }
   world.startCinematic(state);
   setTimeout(
     () =>
@@ -3293,9 +3430,530 @@ function crossMountains() {
         world.cinematic = null;
         save(true);
         updateUI();
-        discover('第一章 完 · 沉湖之誓', '第二章 · 裂縫之外——敬請期待');
+        discover('第一章 完 · 適應期結束', '第二章 · 新生之界');
+        setTimeout(
+          () =>
+            modal(
+              '第二章 · 新生之界',
+              '山下的城市',
+              '<p class="pact-line">地平線上的燈火，是一座港城。嘯岳低頭看著你。</p>',
+              [
+                { label: '下山，前往新生之界', primary: true, action: () => (closeModal(), goToTown()) },
+                { label: '還不是時候', action: closeModal }
+              ]
+            ),
+          4200
+        );
       }),
     2600
+  );
+}
+// 0.48: the message stele — residents' posts, writing your own from set phrases, drifting letters, old carvings.
+// Real players' posts join in when CONFIG.communityUrl points at the community Worker.
+// local test servers (localhost, file://) keep the simulated residents instead of writing to the live stele
+const localHost =
+  typeof location === 'undefined' ||
+  /^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname) ||
+  location.protocol === 'file:';
+const community = new Community({ url: localHost ? '' : CONFIG.communityUrl || '' });
+let steleTab = 'posts',
+  steleT = 'hear',
+  steleW = 'dream',
+  remotePosts = [],
+  remoteAt = -1e9;
+function refreshRemote() {
+  if (!community.enabled || performance.now() - remoteAt < 60000) return;
+  remoteAt = performance.now();
+  community
+    .list()
+    .then(list => {
+      remotePosts = list.map(p => ({ ...p, remote: true }));
+      if (!$('modal-shade').hidden && $('modal-body').querySelector('.stele')) openStele(steleTab);
+    })
+    .catch(() => {});
+}
+function chooser() {
+  return (
+    `<div class="stele-pick">${PLAYER_TEMPLATES.map(k => `<button type="button" data-st="${k}" class="${k === steleT ? 'active' : ''}">${esc(TEMPLATES[k].replace('{0}', '＿'))}</button>`).join('')}</div>` +
+    `<div class="stele-pick words">${Object.entries(WORDS)
+      .map(
+        ([k, w]) =>
+          `<button type="button" data-sw="${k}" class="${k === steleW ? 'active' : ''}">${esc(w.text)}</button>`
+      )
+      .join('')}</div>` +
+    `<p class="stele-preview">「${esc(phrase(steleT, steleW))}」</p>`
+  );
+}
+function openStele(tab = steleTab) {
+  steleTab = tab;
+  normalizeComms(state);
+  refreshRemote();
+  const tabs = [
+    ['posts', '留言'],
+    ['write', '刻字'],
+    ['drift', '漂流信'],
+    ['old', '舊刻痕']
+  ];
+  let body = `<div class="stele"><div class="tabs">${tabs.map(([k, l]) => `<button type="button" data-tab="${k}" class="${k === tab ? 'active' : ''}">${l}</button>`).join('')}</div>`;
+  if (tab === 'posts') {
+    const mine = stelePosts(state),
+      all = [...mine, ...remotePosts].slice(0, 14),
+      done = normalizeComms(state).resonated;
+    body += all.length
+      ? all
+          .map(
+            p =>
+              `<article class="stele-post${p.mine ? ' mine' : ''}${p.removed ? ' removed' : ''}"><small>${esc(p.who)}${p.mine ? ' · 你' : ''}${p.remote ? ' · 居民' : ''}</small><p>${esc(p.graduated ? GRADUATED_TEXT : p.removed ? REMOVED : phrase(p.t, p.w))}</p>${p.mine || p.removed ? `<span class="stele-res">共鳴 ${p.res || 0}</span>` : `<button type="button" data-res="${esc(p.id)}" ${done.includes(p.id) ? 'disabled' : ''}>共鳴 ${p.res || 0}</button>`}</article>`
+          )
+          .join('')
+      : '<p class="dv-note">石碑上還沒有留言。</p>';
+    if (community.enabled) body += '<p class="dv-note">（線上：其他居民的留言會出現在這裡。）</p>';
+  } else if (tab === 'write') {
+    const left = POSTS_PER_DAY - postsToday(state);
+    body +=
+      chooser() +
+      `<button type="button" class="primary full-button" id="stele-write" ${left > 0 ? '' : 'disabled'}>刻下留言 · 今天還能刻 ${left} 則</button>`;
+  } else if (tab === 'drift') {
+    const r = driftReply(state);
+    if (r?.reply)
+      body += `<article class="stele-post reply"><small>回信 · ${esc(r.reply[0])}</small><p class="pact-line">${esc(r.reply[1])}</p><small>你寄出的：「${esc(r.sent)}」</small></article>`;
+    else if (r?.waiting) body += `<p class="dv-note">上一封漂流信還在漂。回音大約在第 ${r.back} 天到。</p>`;
+    body +=
+      '<p class="dv-note">把一句話放進瓶子，漂給隨便一位居民。</p>' +
+      chooser() +
+      `<button type="button" class="primary full-button" id="stele-drift" ${r?.waiting ? 'disabled' : ''}>寄出漂流信</button>`;
+    if (r?.reply) save(true);
+  } else {
+    body += STELE_POSTS.map(([who, text]) =>
+      who ? `<p class="pact-line"><small>${esc(who)}</small> ${esc(text)}</p>` : `<p>${esc(text)}</p>`
+    ).join('');
+  }
+  body += '</div>';
+  modal('慈光港 · 留言碑', '居民的留言', body, [{ label: '離開', primary: true, action: closeModal }]);
+  const root = $('modal-body');
+  root.querySelectorAll('[data-tab]').forEach(b => (b.onclick = () => openStele(b.dataset.tab)));
+  root.querySelectorAll('[data-st]').forEach(b => (b.onclick = () => ((steleT = b.dataset.st), openStele(steleTab))));
+  root.querySelectorAll('[data-sw]').forEach(b => (b.onclick = () => ((steleW = b.dataset.sw), openStele(steleTab))));
+  root.querySelectorAll('[data-res]').forEach(
+    b =>
+      (b.onclick = () => {
+        const r = resonatePost(state, b.dataset.res);
+        toast(r.ok ? r.message : r.error, !r.ok);
+        if (r.ok && b.dataset.res.startsWith('o')) community.resonate(b.dataset.res).catch(() => {});
+        save(true);
+        openStele('posts');
+      })
+  );
+  const w = root.querySelector('#stele-write');
+  if (w)
+    w.onclick = () => {
+      const r = writePost(state, steleT, steleW);
+      toast(r.ok ? r.message : r.error, !r.ok);
+      if (r.ok) {
+        community.post(steleT, steleW, 'No.0412').catch(() => {});
+        save(true);
+        openStele('posts');
+      }
+    };
+  const d = root.querySelector('#stele-drift');
+  if (d)
+    d.onclick = () => {
+      const r = sendDrift(state, steleT, steleW);
+      toast(r.ok ? r.message : r.error, !r.ok);
+      if (r.ok) {
+        save(true);
+        openStele('drift');
+      }
+    };
+}
+// 0.48: being in the New World — the dome's tells, the shell's ripple, and other residents' glowing footprints
+let shellRippleAt = -1e9,
+  traceTimer = 30;
+function tickNewWorld(dt) {
+  for (const e of tickDome(state, dt)) {
+    discover('新生之界 · 破綻', e.text);
+    save(true);
+  }
+  const p = domeLocal(state.player.x, state.player.z);
+  // 0.50: the first steps out through the tear
+  const out = noteOutside(state);
+  if (out) {
+    discover('穹頂外', out);
+    save(true);
+  }
+  if (nearShell(p.x, p.z, 3.5, tornOpen(state)) && performance.now() - shellRippleAt > 1600) {
+    shellRippleAt = performance.now();
+    const a = Math.atan2(p.x, p.z);
+    world.domeRipple(Math.sin(a) * 289, Math.cos(a) * 289, world.baseY + 1.6);
+    audio.note(1320, 0.12);
+  }
+  // footprints show up now and then out in the country, a little ahead of you
+  const outside = Math.abs(p.x) > 50 || Math.abs(p.z) > 50;
+  if (outside && (traceTimer -= dt) <= 0) {
+    traceTimer = 45 + Math.random() * 40;
+    const h = state.player.heading + (Math.random() - 0.5) * 1.6,
+      d = 10 + Math.random() * 10,
+      x = p.x + Math.sin(h) * d,
+      z = p.z + Math.cos(h) * d;
+    if (countryWalkable(x, z, 1)) {
+      world.showTrace(x, z, Math.random() * Math.PI * 2);
+      const first = noteTrace(state);
+      if (first) setTimeout(() => discover('殘影', first), 2500);
+    }
+  }
+}
+// 0.49: the end of chapter two — forget tonight, or demand the truth
+function chapterTwoChoice() {
+  modal('管理區', '晴在等你的回答', '<p class="pact-line">「讓我幫你忘記今晚，好嗎？」</p>', [
+    { label: '讓我忘記', action: () => (closeModal(), chapterTwoEnd('forget')) },
+    { label: '我要知道真相', primary: true, action: () => (closeModal(), chapterTwoEnd('truth')) }
+  ]);
+}
+function chapterTwoEnd(choice) {
+  const r = chooseEnding(state, choice);
+  if (!r.ok) return toast(r.error, true);
+  save(true);
+  playLines(r.ending.scenes, r.ending.title, () =>
+    townFade(() => {
+      if (choice === 'forget') {
+        // you wake in your room the next morning
+        state.elapsed = nextMorning(state);
+        Object.assign(state.player, {
+          ...townWorld(TOWN_BUILDINGS.find(b => b.id === 'apartment').door),
+          mode: 'foot'
+        });
+      } else {
+        // at the gate, where 嘯岳 tore the shell open
+        Object.assign(state.player, { ...townWorld({ x: 3, z: 50 }), heading: 0, mode: 'foot' });
+        world.domeRipple(0, 289, 6);
+      }
+      destination = null;
+      world.sync(state);
+      save(true);
+      updateUI();
+      discover(r.ending.title, '第三章——敬請期待');
+    })
+  );
+}
+// 0.47: over the mountains on 嘯岳's back, down to 慈光港 — and back to the lake
+function townFade(then) {
+  const fade = $('focus-fade');
+  if (!fade) return then();
+  fade.hidden = false;
+  requestAnimationFrame(() => fade.classList.add('on'));
+  setTimeout(() => {
+    then();
+    fade.classList.remove('on');
+    setTimeout(() => (fade.hidden = true), 700);
+  }, 900);
+}
+function goToTown() {
+  townFade(() => {
+    const r = enterTown(state);
+    destination = null;
+    selectedTarget = null;
+    world.yaw = 0;
+    world.sync(state);
+    save(true);
+    updateUI();
+    if (r.first) {
+      discover('新生之界 · ' + TOWN_NAME, '街道乾淨，窗戶都亮著燈——可是一個人都沒有。');
+      setTimeout(() => playLines(GUIDE_SCRIPT.xiaoyue, '新生之界'), 1600);
+    } else toast(`回到了${TOWN_NAME}。`);
+  });
+}
+function backToLake() {
+  townFade(() => {
+    const r = leaveTown(state);
+    destination = null;
+    selectedTarget = null;
+    world.sync(state);
+    save(true);
+    updateUI();
+    toast(r.ok ? r.message : r.error, !r.ok);
+  });
+}
+function townAction(id) {
+  normalizeTown(state);
+  const done = r => {
+    if (r.message || r.error) toast(r.ok ? r.message : r.error, !r.ok);
+    if (r.ok) {
+      world.sync(state);
+      save(true);
+      updateUI();
+    }
+  };
+  if (id === 'guide') {
+    // 0.49: after you chose the truth she is gone; after you chose to forget she is as kind as ever
+    if (guideGone(state)) return toast('晴不在歡迎中心前。地上只留著她的太陽徽章。');
+    // 0.51: once you have found her card, she tells you herself (forget branch)
+    const confess = qingConfession(state);
+    if (confess) {
+      save(true);
+      updateUI();
+      return playLines(confess, '引路人 · No.0001');
+    }
+    if (state.chapter2?.choice === 'forget') return playLines(AFTER_FORGET, '引路人');
+    // 0.48: once a post of yours has been removed, she brings it up — gently
+    const warn = state.town?.met && guideWarning(state);
+    if (warn) {
+      save(true);
+      playLines(warn, '引路人');
+      return;
+    }
+    const r = meetGuide(state);
+    save(true);
+    updateUI();
+    if (r.script)
+      playLines(GUIDE_SCRIPT.first, '引路人', () =>
+        discover('居民證 No.0412', '新生者手冊 · 公寓 0412 號房 · 每日配給')
+      );
+    else playLines(r.lines, '引路人');
+    return;
+  }
+  if (id === 'room') {
+    const r = useRoom(state);
+    if (!r.ok) return done(r);
+    save(true);
+    updateUI();
+    const night = isNight(state);
+    modal(
+      '居民公寓',
+      '0412 號房',
+      `<p>${esc(r.message)}</p>${night ? '' : '<p class="dv-note">天黑以後，可以在這裡睡到天亮。</p>'}`,
+      [
+        ...(night ? [{ label: '睡到天亮', primary: true, action: () => (closeModal(), sleepInTown()) }] : []),
+        { label: '離開', primary: !night, action: closeModal }
+      ]
+    );
+    return;
+  }
+  if (id === 'ration') {
+    const r = takeRation(state);
+    if (r.ok) flyResources(r.rewards, state.player.x, 1, state.player.z);
+    return done(r);
+  }
+  if (id === 'stele') {
+    readStele(state);
+    save(true);
+    updateUI();
+    openStele('posts');
+    return;
+  }
+  if (id === 'board') {
+    // 0.49: the day after part one, a second notice: a resident has "graduated"
+    const r = readNotice(state);
+    if (r.first) (save(true), updateUI());
+    const [head, ...rest] = r.lines || BOARD_LINES;
+    const paper = `<div class="notice"><span class="notice-pin"></span><h3>${esc(head)}</h3>${rest.map(l => `<p>${esc(l)}</p>`).join('')}<span class="notice-seal" aria-hidden="true"></span></div>`;
+    modal('慈光港', '慈愛公告板', paper, [{ label: '離開', primary: true, action: closeModal }]);
+    return;
+  }
+  if (id === 'kiosk') {
+    const r = readLetter(state);
+    if (!r.ok) return done(r);
+    save(true);
+    updateUI();
+    modal(
+      `家書 · 第 ${r.n} 封`,
+      '寄件人：' + r.letter.from,
+      `<p class="pact-line">${esc(r.letter.text)}</p><p>${esc(r.letter.wake)}</p>`,
+      [{ label: '把信收好', primary: true, action: closeModal }]
+    );
+    return;
+  }
+  if (id === 'diner') {
+    const r = searchDiner(state);
+    if (r?.found) {
+      save(true);
+      updateUI();
+      return playLines(DINER_FIND, '空無一人的餐館', () => discover('管理區門禁卡', '夜裡，到管理區刷卡。'));
+    }
+    return done(r || lookDiner(state));
+  }
+  if (id === 'admin') {
+    // 0.49: with No.0156's key, at night, the door opens
+    const inside = enterAdmin(state);
+    if (inside?.scenes) {
+      save(true);
+      return playLines(inside.scenes, '管理區', chapterTwoChoice);
+    }
+    if (inside) return done(inside);
+    const r = lookAdmin(state);
+    done(r);
+    if (r.end) {
+      normalizeChapter2(state);
+      save(true);
+      setTimeout(() => discover('第二章（上）完 · 慈光', '整座城只有管理區裡，真的有人。'), 1400);
+    }
+    return;
+  }
+  if (id === 'xiaoyue') {
+    // 0.50: in the forget branch 嘯岳 remembers, and tears the shell when you ask
+    const canTear = chapterThreeStarted(state) && !tornOpen(state);
+    modal(
+      '新生之界',
+      '嘯岳',
+      `<p class="pact-line">${canTear ? '「……你忘了什麼，對吧？我記得。」' : '「要回去了嗎？」'}</p>`,
+      [
+        ...(canTear ? [{ label: '請嘯岳撕開穹頂', primary: true, action: () => (closeModal(), askTear()) }] : []),
+        { label: '騎嘯岳回到湖區', primary: !canTear, action: () => (closeModal(), backToLake()) },
+        { label: '再待一會兒', action: closeModal }
+      ]
+    );
+    return;
+  }
+  // 0.50: past the dome
+  if (id === 'tear') return toast('穹頂的裂口。邊緣還在發著紫光。往北走就回到穹頂裡。');
+  if (id === 'outpost') {
+    const r = readK(state);
+    save(true);
+    updateUI();
+    return playLines(r.lines, '研究員 K. 的前哨站', () => {
+      if (r.n === 3) discover('研究員 K. · 紀錄 3', '前哨站西邊：裂縫 · 第一層');
+    });
+  }
+  if (id === 'rift') {
+    const core = seeCore(state);
+    if (core?.script) {
+      save(true);
+      updateUI();
+      return playLines(core.script, '裂縫的核心', () => discover('第三章（上）完 · 橋', '第三章（下）——敬請期待'));
+    }
+    // 0.51: three shards make the bridge
+    if (bridgeReady(state)) {
+      const b = crossBridge(state);
+      save(true);
+      updateUI();
+      return playLines(b.script, '裂縫的核心 · 橋', () => discover('第三章 完 · 橋的兩端', '第四章——敬請期待'));
+    }
+    return openRift();
+  }
+}
+// 0.51: which layer of the rift to go down into
+function openRift() {
+  const c = state.chapter3 || {},
+    open = [1, 2, 3].filter(l => layerOpen(state, l));
+  if (open.length <= 1) return enterLayer(1);
+  modal('裂縫', '要往下走多深？', `<p>核心碎片 ${c.shards || 0} / 3</p>`, [
+    ...open.map(l => ({
+      label: `${LAYERS[l].name}${(c.cleared || []).includes(l) ? ' ✓' : ''}`,
+      primary: l === open[open.length - 1],
+      action: () => (closeModal(), enterLayer(l))
+    })),
+    { label: '離開', action: closeModal }
+  ]);
+}
+function enterLayer(layer) {
+  const r = startTrial(state, undefined, layer);
+  if (!r.ok) return toast(r.error, true);
+  trial = r.battle;
+  showTrial();
+}
+function askTear() {
+  const r = tearShell(state);
+  if (!r.ok) return toast(r.error, true);
+  save(true);
+  playLines(r.script, '嘯岳', () => {
+    world.domeRipple(0, 289, 6);
+    world.sync(state);
+    updateUI();
+    discover('穹頂的裂口', '城門南邊，穹頂的盡頭');
+  });
+}
+// 0.50: the rift trial — your beasts fight on their own; you choose the tactic each round
+let trial = null;
+const bar = (hp, max, cls = '') =>
+  `<span class="trial-bar ${cls}"><i style="width:${Math.max(0, Math.round((hp / max) * 100))}%"></i></span>`;
+function showTrial() {
+  const b = trial;
+  if (!b) return;
+  if (b.over) {
+    const r = finishTrial(state, b);
+    trial = null;
+    save(true);
+    updateUI();
+    world.sync(state);
+    const where = '裂縫 · ' + LAYERS[r.layer || 1].name;
+    if (!r.won) {
+      modal(where, '被裂縫吐了出來', '<p>御獸都受了傷，但都還活著。回去休息一下再來。</p>', [
+        { label: '離開', primary: true, action: closeModal }
+      ]);
+      return;
+    }
+    const loot = Object.entries(r.rewards || {})
+      .map(([k, v]) => `${ITEM_NAMES[k] || k} +${v}`)
+      .join(' · ');
+    const next = !r.first
+      ? ''
+      : r.layer === 1
+        ? '再靠近裂縫一次，觸碰它的核心。'
+        : r.layer === 3
+          ? '三塊碎片都到齊了。再靠近裂縫一次。'
+          : '';
+    const done = () =>
+      modal(
+        where,
+        r.first ? `核心碎片 ${state.chapter3.shards} / 3` : '又清了一次',
+        `<p>${loot}${r.ups.length ? ` · 升級：${esc(r.ups.join('、'))}` : ''}</p>${next ? `<p class="dv-note">${next}</p>` : ''}`,
+        [{ label: '離開', primary: true, action: closeModal }]
+      );
+    // the second layer holds 晴's card, the third what is left of K.
+    if (r.script) playLines(r.script, where, done);
+    else done();
+    return;
+  }
+  // optimisation round 2: each beast's portrait (its contract-card still), and what it just took or dealt
+  const fx = b.fx || {};
+  const pic = u => {
+    const p = state.tamed.find(t => t.id === u.id);
+    const src =
+      p && beastStage.thumb(`${p.id}:${p.kind || 'beast'}:${p.genome?.bs?.join(',') || ''}`, p.genome, 'beast');
+    return src ? `<img class="trial-pic" src="${src}" alt="">` : '';
+  };
+  const side = (list, foe) =>
+    list
+      .map(
+        (u, i) =>
+          `<div class="trial-unit${foe ? ' foe' : ''}${u.hp <= 0 ? ' down' : ''}${fx[(foe ? 'f' : 'm') + i] ? ' hit' : ''}">${foe ? '' : pic(u)}<div><b>${esc(u.name)}</b>${bar(u.hp, u.maxHp, foe ? 'foe' : '')}<small>${Math.max(0, Math.ceil(u.hp))} / ${u.maxHp}</small></div>${fx[(foe ? 'f' : 'm') + i] ? `<em class="trial-dmg">-${fx[(foe ? 'f' : 'm') + i]}</em>` : ''}</div>`
+      )
+      .join('');
+  const act = tactic => {
+    const before = [...b.members.map(m => m.hp), ...b.foes.map(f => f.hp)],
+      wave = b.wave;
+    trialRound(b, tactic);
+    // damage per unit this round (a new wave starts fresh)
+    b.fx = {};
+    let took = 0,
+      dealt = 0;
+    b.members.forEach((m, i) => {
+      const d = Math.round(before[i] - m.hp);
+      if (d > 0) ((b.fx['m' + i] = d), (took += d));
+    });
+    if (b.wave === wave)
+      b.foes.forEach((f, i) => {
+        const d = Math.round(before[b.members.length + i] - f.hp);
+        if (d > 0) ((b.fx['f' + i] = d), (dealt += d));
+      });
+    if (dealt) audio.note(tactic === 'seal' ? 980 : 720, tactic === 'seal' ? 0.35 : 0.12);
+    if (took) {
+      audio.note(170, 0.18);
+      haptic('hit');
+    }
+    if (b.over === 'won') audio.note(1180, 0.6);
+    showTrial();
+    if (took) $('modal-body').querySelector('.trial')?.classList.add('shake');
+  };
+  modal(
+    `裂縫 · ${LAYERS[b.layer || 1].name} · 第 ${b.wave + 1} / ${WAVE_COUNT} 波`,
+    '裂縫試煉',
+    `<div class="trial"><div class="trial-side">${side(b.members, false)}</div><div class="trial-vs">VS</div><div class="trial-side">${side(b.foes, true)}</div></div><p class="dv-note trial-log">${b.log.map(esc).join('<br>') || '御獸會自己戰鬥。每一回合，選一個戰術。'}</p>`,
+    [
+      { label: TACTICS.strike.name, primary: true, action: () => act('strike') },
+      { label: TACTICS.guard.name, action: () => act('guard') },
+      ...(canSeal(b) ? [{ label: TACTICS.seal.name + ' · 全體', action: () => act('seal') }] : []),
+      { label: '撤退', action: () => ((b.over = 'lost'), showTrial()) }
+    ]
   );
 }
 function storyEvents(dt) {
@@ -3511,9 +4169,11 @@ function updateBeastHUD() {
   }
   if (e.mounted) $('travel-mode').textContent = e.diving ? '御獸深潛 · 8m' : '御獸騎乘';
   else if (state.inCave) $('travel-mode').textContent = '異晶洞窟';
+  else if (state.inTown) $('travel-mode').textContent = '新生之界 · ' + TOWN_NAME;
   else if (state.player.level) $('travel-mode').textContent = '避難所二樓';
   const b = e.boss;
-  $('boss-bar').hidden = b.defeated || state.inCave || Math.hypot(b.x - state.player.x, b.z - state.player.z) > 35;
+  $('boss-bar').hidden =
+    b.defeated || state.inCave || state.inTown || Math.hypot(b.x - state.player.x, b.z - state.player.z) > 35;
   $('boss-bar').textContent = `深海守望者  ${Math.max(0, Math.ceil(b.hp))} / 480`;
   if ($('boss-bar').hidden) {
     // 0.22: the nearest hostile thing's strength while it is on you
@@ -4127,16 +4787,42 @@ function focusCard(b, item, near) {
     );
     act('製作物品 · 13 種配方', () => openPanel('craft'), { disabled: !near });
   } else if (item.key === 'laptop') {
+    const ec = normalizeEchoes(state);
     card.eyebrow = '破舊筆電';
-    card.title = '系統修復模式';
+    card.title = ec.repaired ? 'NWP-0412 · 終端' : '系統修復模式';
     if (near) {
       const r = readLaptop(state);
       if (r.ok && r.first) {
         log(state, '破舊筆電', '開機畫面停在修復模式。最後一筆同步，是我出車禍的那個早上。');
         save(true);
       }
-      card.extra = `<pre class="laptop-screen">${(r.lines || []).map(esc).join('\n')}</pre>`;
-      card.info = '（電源鍵按不太下去。也許哪天找到零件，可以把它修好。）';
+      card.extra = `<pre class="laptop-screen">${(ec.repaired ? RESTORED_LINES : r.lines || []).map(esc).join('\n')}</pre>`;
+      // 0.46: three parts bring it back to life — and what it recovers should not be there
+      const missing = missingParts(state);
+      if (ec.repaired) card.info = '（壞掉的電腦連星星都在亂講……應該吧。）';
+      else if (missing.length)
+        card.info = `（電源鍵按不太下去。還缺零件：${missing.map(k => `${LAPTOP_PARTS[k].name}——${LAPTOP_PARTS[k].where}`).join('；')}。）`;
+      else
+        act(
+          '裝上零件，修好筆電',
+          () => {
+            const res = repairLaptop(state);
+            if (!res.ok) return focusDone(res);
+            save(true);
+            focusDone({ ok: true, message: '筆電重新開機了。螢幕上跳出一行又一行還原的資料……' });
+            setTimeout(
+              () =>
+                modal(
+                  '破舊筆電 · 已修復',
+                  'NWP-0412 · 適應期監測',
+                  `<pre class="laptop-screen">${RESTORED_LINES.map(esc).join('\n')}</pre><p class="pact-line">（訊息……已讀？我明明沒有寄出去。是誰讀的？）</p>`,
+                  [{ label: '……一定是壞掉了', primary: true, action: closeModal }]
+                ),
+              900
+            );
+          },
+          { primary: true }
+        );
     }
   } else if (item.key === 'locker') {
     normalizeBag(state);
@@ -4414,6 +5100,14 @@ function startSleep() {
   const b = findFacility(state, focus.id);
   if (!b || !nearBuilding(b)) return toast('走到床邊才能睡覺。', true);
   if (!isNight(state)) return toast('天還亮著，睡不著。', true);
+  beginSleep();
+}
+function sleepInTown() {
+  if (sleeping) return;
+  if (!isNight(state)) return toast('天還亮著，睡不著。', true);
+  beginSleep();
+}
+function beginSleep() {
   sleeping = {
     start: performance.now(),
     from: state.elapsed,
@@ -4451,8 +5145,22 @@ function tickSleep() {
   world.sync(state);
   toast('一覺到天亮。體力全滿。');
   if (hatched.length) discover('新的生命誕生', `${hatched.map(p => p.name).join('、')} 在夜裡破殼而出。`);
+  // 0.46: sometimes a voice from somewhere else leaks into the dream — but never in 慈光港 (0.47)
+  const echo = state.inTown ? null : echoOnWake(state);
+  if (state.inTown) setTimeout(() => toast('這裡睡得很沉，一個夢都沒有。'), 1200);
   save(true);
   updateUI();
+  if (echo)
+    setTimeout(
+      () =>
+        modal(
+          `回聲 ${heardEchoes(state).length}/${ECHOES.length}`,
+          echo.voice,
+          `<p class="pact-line echo-line">${esc(echo.line)}</p><p>${esc(echo.wake)}</p>`,
+          [{ label: '只是夢而已', primary: true, action: closeModal }]
+        ),
+      1000
+    );
 }
 function openFacility(id) {
   activeFacility = id;
@@ -4749,7 +5457,9 @@ function renderPanel() {
                 ? genesHTML()
                 : journalTab === 'beasts'
                   ? beastsHTML()
-                  : achievementsHTML());
+                  : journalTab === 'echoes'
+                    ? echoesHTML()
+                    : achievementsHTML());
     body.querySelectorAll('[data-claim]').forEach(
       b =>
         (b.onclick = () => {
@@ -5331,7 +6041,7 @@ function planRoute() {
     draft = vesselDraft();
   routeAt = state.elapsed;
   routeIdx = 0;
-  if (!mk || draft === null || state.inCave) {
+  if (!mk || draft === null || state.inCave || state.inTown) {
     route = null;
     return;
   }
@@ -5570,6 +6280,12 @@ function drawBigMap() {
 }
 function returnHome() {
   if (!running || paused) return;
+  if (state.inTown) {
+    closePanel();
+    destination = townWorld({ x: 4, z: 52 });
+    toast('嘯岳在城門外等你。走到牠身邊，就能回到湖區。');
+    return;
+  }
   if (state.inCave) {
     destination = { x: 120, z: -106 };
     closePanel();
@@ -5652,7 +6368,16 @@ function updateUI() {
   $('coords').textContent =
     `${Math.abs(state.player.z).toFixed(1)} ${state.player.z < 0 ? 'N' : 'S'} / ${Math.abs(state.player.x).toFixed(1)} ${state.player.x < 0 ? 'W' : 'E'}`;
   const far = Math.hypot(state.player.x, state.player.z);
-  $('zone-text').textContent = far < 35 ? '初醒淺海' : far < 80 ? '漂流之境' : '異生深海';
+  const lp = domeLocal(state.player.x, state.player.z);
+  $('zone-text').textContent = state.inTown
+    ? Math.hypot(lp.x, lp.z) > 290
+      ? '穹頂外 · 裂縫荒原'
+      : TOWN_NAME
+    : far < 35
+      ? '初醒淺海'
+      : far < 80
+        ? '漂流之境'
+        : '異生深海';
   let quests, title, hint, chapter;
   const nf = count(state, 'floor'),
     np = count(state, 'pen');
@@ -5706,16 +6431,27 @@ function updateUI() {
     ];
     hint = '異晶藏在發光研究箱中。箱子會隨海流補充。';
   }
+  // optimisation round 2: in the New World the panel follows chapters two and three, with where to go next
+  let goalLine = '';
+  if (state.inTown) {
+    const sp = storyPanel(state);
+    chapter = sp.chapter;
+    title = sp.title;
+    quests = sp.quests;
+    goalLine = sp.goalText;
+  }
   $('quest-chapter').textContent = chapter;
   $('quest-title').textContent = title;
   {
     let open = 0;
-    $('quest-list').innerHTML = quests
-      .map(
-        ([name, done, n]) =>
-          `<div class="quest-item ${done ? 'done' : ''} ${done || open++ >= 2 ? 'minor' : ''}">${name}${n ? `<b>${n}</b>` : ''}</div>`
-      )
-      .join('');
+    $('quest-list').innerHTML =
+      (goalLine ? `<div class="quest-item goal">◆ ${esc(goalLine)}</div>` : '') +
+      quests
+        .map(
+          ([name, done, n]) =>
+            `<div class="quest-item ${done ? 'done' : ''} ${done || open++ >= 2 ? 'minor' : ''}">${name}${n ? `<b>${n}</b>` : ''}</div>`
+        )
+        .join('');
   }
   // the bottom bar follows where you are: on the raft, build and the device; at sea, the device and expeditions
   const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin';
@@ -5803,6 +6539,19 @@ let journalTab = 'log',
   progressTimer = 0,
   achievementQueue = [],
   achievementShowing = false;
+function echoesHTML() {
+  const heard = heardEchoes(state);
+  return (
+    '<p class="dv-note">睡著的時候聽見的聲音。不是這片湖上的聲音。</p>' +
+    heard
+      .map(
+        (x, i) =>
+          `<article class="journal-entry compact"><small>ECHO ${String(i + 1).padStart(2, '0')} · ${esc(x.voice)}</small><p class="echo-line">${esc(x.line)}</p><p>${esc(x.wake)}</p></article>`
+      )
+      .join('') +
+    (heard.length < ECHOES.length ? `<p class="dv-note">還有 ${ECHOES.length - heard.length} 段沒有聽見。</p>` : '')
+  );
+}
 function journalTabs() {
   const c = codexProgress(state);
   return `<div class="tabs journal-tabs">${[
@@ -5814,7 +6563,9 @@ function journalTabs() {
     ['base', `據點 ${ratingStars(state)}`],
     ['genes', `基因 ${Object.keys(state.codex?.genes || {}).length}/48`],
     ['beasts', `御獸 ${Object.keys(state.codex?.beasts || {}).length}/${BEAST_IDS.length}`],
-    ['rewards', '收集獎勵']
+    ['rewards', '收集獎勵'],
+    // 0.46: the voices heard in sleep, once there is one
+    ...(heardEchoes(state).length ? [['echoes', `回聲 ${heardEchoes(state).length}/${ECHOES.length}`]] : [])
   ]
     .map(
       ([k, l]) =>
@@ -6197,7 +6948,7 @@ function updateStorm(dt = 1 / 30) {
   document.body.classList.toggle('storm-alert-on', !!sc);
   // A storm counts as weathered at sea after 30 s spent off shore while it rages.
   if (sc?.phase === 'storm' && running && !paused) {
-    const atSea = !['foot', 'aboard', 'cabin'].includes(state.player.mode) && !state.inCave;
+    const atSea = !['foot', 'aboard', 'cabin'].includes(state.player.mode) && !state.inCave && !state.inTown;
     if (atSea) stormSeaTime += dt;
   } else if (stormSeaTime) {
     if (stormSeaTime >= 30 && state.stats) {
@@ -6217,6 +6968,7 @@ function updateStorm(dt = 1 / 30) {
     state.player.mode === 'aboard' ||
     state.player.mode === 'cabin' ||
     !!state.inCave ||
+    !!state.inTown ||
     !!state.expedition?.diving;
   stormShelter = safe ? null : nearestShelter();
   if (sc.phase === 'warn' && !stormWarned) {
@@ -6264,7 +7016,7 @@ function endTutorial(skipped) {
 }
 function updateTutorial(force = false) {
   const el = $('tutorial');
-  if (!running || !tutorialActive(state)) {
+  if (!running || !tutorialActive(state) || state.inTown || state.inCave) {
     document.body.classList.remove('tutorial-on');
     if (!el.hidden) {
       el.hidden = true;
@@ -6532,6 +7284,20 @@ function worldLabels() {
   } else if (state.player.mode === 'foot')
     labels.push({ x: state.boat.x, y: 2.7, z: state.boat.z, text: '⛵ 停泊的小艇', className: 'mint' });
   if (nearest) labels = labels.filter(l => !(nearest.type === 'buoy' && l.x === 17));
+  // 0.47: in town, the town's own signs instead of the lake's
+  if (state.inTown)
+    labels = TOWN_BUILDINGS.filter(b => b.name)
+      .map(b => ({
+        ...townWorld(b),
+        y: b.h + 2,
+        text: b.id === 'admin' ? '▣ 管理區 · 僅限職員' : '⌂ ' + b.name,
+        className: b.id === 'admin' ? '' : 'gold'
+      }))
+      .concat(outsidePoints(state).map(p => ({ ...townWorld(p), y: 6, text: '◈ ' + p.name, className: 'mint' })))
+      // the next place the story wants you at
+      .concat(
+        (g => (g ? [{ x: g.x, y: 9, z: g.z, text: '▼ ' + g.name, className: 'goal' }] : []))(storyPanel(state).goal)
+      );
   $('world-labels').innerHTML = labels
     .map(l => {
       const p = world.screenPoint(l.x, l.y, l.z);
@@ -6839,6 +7605,7 @@ function handleCollapse() {
   state.expedition.diving = false;
   state.expedition.activeId = null;
   state.inCave = false;
+  state.inTown = false;
   state.player.level = 0;
   state.vitals = { health: 65, food: 50, water: 55 };
   state.player.x = 7;
@@ -7584,6 +8351,11 @@ function musicMood() {
   if (state.inCave || (boss && !boss.defeated && Math.hypot(boss.x - state.player.x, boss.z - state.player.z) < 70))
     return 'boss';
   if (e?.diving) return 'deep';
+  // 0.54: outside the dome, under the real sky, the music turns as strange as the land
+  if (state.inTown && domeCracked(state)) {
+    const p = domeLocal(state.player.x, state.player.z);
+    if (Math.hypot(p.x, p.z) > DOME_R + 2) return 'deep';
+  }
   if (state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin') return 'island';
   const hours = hourOf(state);
   return stormAt(state) || hours < 5.6 || hours > 18.6 ? 'night' : 'day';
@@ -7618,6 +8390,20 @@ function updateSound(dt) {
     state.player.mode !== 'cabin' &&
     !state.inCave;
   audio.motion(vessel ? world.hullSpeed || 0 : 0);
+  // 0.54: no sea in the New World: its own ambience instead
+  const town = running && !!state.inTown && !film;
+  audio.gain.gain.setTargetAtTime(town ? 0.02 : 0.18, audio.ctx.currentTime, 0.8);
+  if (town) {
+    const p = domeLocal(state.player.x, state.player.z),
+      r = Math.hypot(p.x, p.z);
+    audio.newWorld?.set({
+      town,
+      night: isNight(state),
+      outside: domeCracked(state) && r > DOME_R + 2,
+      shell: Math.max(0, 1 - Math.abs(r - DOME_R) / 25),
+      rift: Math.max(0, 1 - Math.hypot(p.x - RIFT.x, p.z - RIFT.z) / 60)
+    });
+  } else audio.newWorld?.set({});
 }
 function frame(now, manual = false) {
   if (!manual) requestAnimationFrame(frame);
@@ -7803,9 +8589,15 @@ function frame(now, manual = false) {
       updateUI();
       updateNearest();
       checkSightings();
+      if (state.inTown) tickNewWorld(0.2);
+      // 0.48: posts with forbidden words disappear the next day
+      for (const p of tickComms(state)) {
+        discover('留言碑', `你刻的「${phrase(p.t, p.w)}」被移除了。`);
+        save(true);
+      }
       updateFishingHUD();
       // 0.36.5: a stone sleeper you have stood near is named in the codex
-      if (!state.inCave)
+      if (!state.inCave && !state.inTown)
         for (const t of STATUES)
           if (
             t.at &&
@@ -7863,7 +8655,15 @@ function frame(now, manual = false) {
     }
   }
   world.titleMode = !running;
-  world.update(dt, state, { title: !running, destination, salvaging });
+  world.update(dt, state, {
+    title: !running,
+    destination,
+    salvaging,
+    // a line of dialogue (not a panel like the stele or a trial)
+    talking: running && !!state.inTown && !$('modal-shade').hidden && !$('modal-body').querySelector('div, article')
+  });
+  // 0.54: while the camera holds a close-up, dialogue becomes a subtitle bar instead of a blurred-out screen
+  document.body.classList.toggle('talk-cam', !!world.talkActive);
   world.render();
   placeFocusSpots();
   if (panel === 'beasts') beastStage.update(dt);

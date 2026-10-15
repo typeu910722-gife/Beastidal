@@ -7,12 +7,14 @@ import * as T from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/addons/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from './vendor/addons/utils/SkeletonUtils.js';
 
-// Two looks, both office workers in shirt and suit (Microsoft Rocketbox, MIT). Their rigs were renamed to Mixamo bone
+// Two looks for you, both office workers in shirt and suit, and 晴's nurse's whites (Microsoft Rocketbox, MIT). Their rigs were renamed to Mixamo bone
 // names and given Idle / Walk / Run clips offline (retargeted from Mixamo motions), so the code below treats both
 // the same way.
 export const LOOKS = {
   male: { url: 'protagonist.glb', height: 1.78 },
-  female: { url: 'protagonist-female.glb', height: 1.68 }
+  female: { url: 'protagonist-female.glb', height: 1.68 },
+  // 0.59: 晴, the guide — Rocketbox Medical_Female_01, a nurse all in white (慈愛組織's colour, and its "care")
+  guide: { url: 'guide-qing.glb', height: 1.66 }
 };
 const loaded = {},
   pending = {},
@@ -127,6 +129,7 @@ function attach(h, look, { scene, clips, fit }) {
     t: 0,
     idle: { yaw: 0, pitch: 0, toYaw: 0, toPitch: 0, next: 2 }
   };
+  h.userData.onDressed?.(m); // 0.54: a figure may restyle its body (晴's white uniform)
 }
 
 const smooth = (a, b, x) => {

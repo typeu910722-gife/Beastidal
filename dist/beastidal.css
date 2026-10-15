@@ -2610,6 +2610,13 @@ body.focus-on .contract-btn {
   margin-right: 4px;
 }
 /* 0.16 嘯岳之契: dialogue cards and the story checklist */
+/* 0.46: voices from the hospital room, heard in sleep */
+.echo-line {
+  font-style: italic;
+  color: #c9d3dc;
+  border-left: 2px solid #6f8090;
+  padding-left: 10px;
+}
 .pact-line {
   font-size: 17px;
   line-height: 1.9;
@@ -3633,4 +3640,314 @@ body.landscape-play.beast-on .supply-row {
 }
 body:has(#discovery:not([hidden])) #toasts {
   top: 124px;
+}
+
+/* 0.48: the message stele — set phrases, posts, resonance */
+.stele .tabs {
+  margin-bottom: 10px;
+}
+.stele-post {
+  border-left: 2px solid #6f8090;
+  padding: 4px 10px;
+  margin: 8px 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 2px 10px;
+}
+.stele-post small {
+  grid-column: 1 / -1;
+  opacity: 0.7;
+}
+.stele-post p {
+  margin: 0;
+  font-size: 16px;
+}
+.stele-post.mine {
+  border-left-color: #e9c46a;
+}
+.stele-post.removed p {
+  font-style: italic;
+  opacity: 0.55;
+}
+.stele-post.reply {
+  display: block;
+  border-left-color: #9ff0ff;
+}
+.stele-post button,
+.stele-res {
+  font-size: 12px;
+  padding: 3px 9px;
+  opacity: 0.85;
+}
+.stele-pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+.stele-pick button {
+  padding: 5px 10px;
+  border-radius: 14px;
+  font-size: 13px;
+}
+.stele-pick button.active {
+  background: #e9c46a;
+  color: #1d1a12;
+}
+.stele-pick.words button {
+  font-size: 12px;
+}
+.stele-preview {
+  font-size: 18px;
+  text-align: center;
+  margin: 10px 0;
+  color: #f3ead4;
+}
+
+/* 0.54: the stele reads as carved stone, the board as a pinned paper notice */
+.stele {
+  background:
+    radial-gradient(120% 80% at 30% 0%, rgba(255, 255, 255, 0.07), transparent 60%),
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.018) 0 2px, transparent 2px 7px),
+    linear-gradient(180deg, #4b4f57, #3a3d44);
+  border: 1px solid #2a2c31;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.35),
+    0 6px 18px rgba(0, 0, 0, 0.3);
+  padding: 12px 14px;
+  max-height: min(58vh, 520px);
+  overflow-y: auto;
+}
+.stele-post {
+  border-left: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+  padding: 8px 4px;
+  margin: 0;
+}
+.stele-post p {
+  font-family: 'Noto Serif TC', 'Songti TC', serif;
+  color: #e7e3da;
+  letter-spacing: 0.04em;
+  text-shadow:
+    0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.stele-post small {
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  color: #b9c0c8;
+}
+.stele-post.mine p {
+  color: #f1d58a;
+}
+.stele-post.removed p {
+  color: #9aa0a6;
+  text-decoration: line-through rgba(154, 160, 166, 0.5);
+}
+.stele-post.reply {
+  border-bottom-color: rgba(159, 240, 255, 0.25);
+}
+.notice {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 30%), #f3ecda;
+  color: #3d3428;
+  padding: 22px 22px 18px;
+  margin: 6px auto 4px;
+  max-width: 440px;
+  transform: rotate(-0.8deg);
+  box-shadow:
+    0 1px 0 #d8ceb5,
+    0 10px 24px rgba(0, 0, 0, 0.35);
+  font-family: 'Noto Serif TC', 'Songti TC', serif;
+}
+.notice h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: 0.12em;
+  color: #8a5a20;
+  border-bottom: 1px double #c9a75e;
+  padding-bottom: 8px;
+}
+.notice p {
+  margin: 6px 0;
+  line-height: 1.7;
+}
+.notice-pin {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ff9d8a, #b23a2a 60%, #6d1f15);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+.notice-seal {
+  display: block;
+  width: 46px;
+  height: 46px;
+  margin: 10px 0 0 auto;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 142, 46, 0.75);
+  background: radial-gradient(circle, rgba(233, 196, 106, 0.85) 0 30%, transparent 32%);
+  box-shadow: inset 0 0 0 5px rgba(201, 142, 46, 0.18);
+  transform: rotate(-12deg);
+}
+
+/* 0.50: the rift trial */
+.trial {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: center;
+}
+.trial-vs {
+  font-weight: 700;
+  opacity: 0.6;
+}
+.trial-unit {
+  margin: 6px 0;
+  display: grid;
+  gap: 2px;
+}
+.trial-unit.down {
+  opacity: 0.4;
+}
+.trial-unit small {
+  opacity: 0.7;
+  font-size: 11px;
+}
+.trial-bar {
+  display: block;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.trial-bar i {
+  display: block;
+  height: 100%;
+  background: #8fe3b0;
+  transition: width 0.3s;
+}
+.trial-bar.foe i {
+  background: #c27bff;
+}
+.trial-log {
+  min-height: 4.5em;
+  font-size: 12px;
+}
+
+/* optimisation round 2: the next story goal, and feedback in the rift trial */
+.quest-item.goal {
+  color: #f3d58a;
+  font-weight: 600;
+}
+.world-tag.goal {
+  color: #1d1a12;
+  background: #f3d58a;
+  border-color: #f3d58a;
+  font-weight: 700;
+  animation: goal-bob 1.6s ease-in-out infinite;
+}
+@keyframes goal-bob {
+  50% {
+    transform: translate(-50%, calc(-100% - 6px));
+  }
+}
+.trial-unit {
+  position: relative;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 8px;
+}
+.trial-unit.foe {
+  grid-template-columns: 1fr;
+}
+.trial-pic {
+  width: 38px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.trial-unit.hit .trial-pic,
+.trial-unit.hit b {
+  animation: trial-flash 0.35s ease-out;
+}
+.trial-dmg {
+  position: absolute;
+  right: 0;
+  top: -4px;
+  font-style: normal;
+  font-weight: 800;
+  color: #ff8a7a;
+  text-shadow: 0 1px 2px #000;
+  animation: trial-float 0.9s ease-out forwards;
+}
+.trial-side:last-child .trial-dmg {
+  color: #f3d58a;
+}
+@keyframes trial-float {
+  from {
+    opacity: 1;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+@keyframes trial-flash {
+  0% {
+    filter: brightness(2.2);
+  }
+  100% {
+    filter: none;
+  }
+}
+.trial.shake {
+  animation: trial-shake 0.3s;
+}
+@keyframes trial-shake {
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+/* 0.54: dialogue in town during the camera's close-up: a subtitle bar over a clear view */
+body.talk-cam #modal-shade {
+  backdrop-filter: none;
+  background: linear-gradient(180deg, transparent 50%, rgba(2, 14, 20, 0.7));
+  align-items: flex-end;
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
+}
+body.talk-cam #modal {
+  width: min(720px, 100%);
+  padding: 18px 26px 16px;
+  background: rgba(8, 32, 40, 0.86);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+body.talk-cam #modal-title {
+  font-size: 20px;
+  margin: 2px 0 6px;
+}
+body.talk-cam #modal-eyebrow {
+  display: none;
+}
+body.talk-cam #modal-body {
+  font-size: 16px;
+  color: #e3eee9;
+}
+body.talk-cam #modal-actions {
+  margin-top: 10px;
 }

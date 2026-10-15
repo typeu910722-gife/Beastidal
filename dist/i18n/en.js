@@ -3223,5 +3223,642 @@ export default {
     '(That day I never made it to the office. Now I have a warship that carries my whole home.)',
   '（守望者沉下去了。這片海，從今天起會記住我的名字。）':
     '(The warden has sunk. From today this sea will remember my name.)',
-  點一下開始: 'Tap to start'
+  點一下開始: 'Tap to start',
+  // 0.46 適應期的裂痕: echoes, the laptop's parts, the end of chapter one
+  '嗶。嗶。嗶。——很規律的電子音，像是從很遠的地方傳來。':
+    'Beep. Beep. Beep. — a steady electronic tone, as if from very far away.',
+  '（又是那個聲音。這片湖上沒有任何會發出這種聲音的東西。）':
+    '(That sound again. Nothing on this lake makes a sound like that.)',
+  陌生的女聲: "A stranger's voice (a woman)",
+  '「血壓九十、六十，血氧九十四。……他今天眉頭皺了一下，你有看到嗎？」':
+    '"Blood pressure ninety over sixty, oxygen ninety-four. …He frowned a little today — did you see?"',
+  '（醒來的時候，額頭上好像還留著一隻手的溫度。）': '(When I wake, my forehead still seems warm from a hand.)',
+  媽媽: 'Mom',
+  '「醫生說再這樣下去，費用……慈愛那邊的人說，他們全部負擔。一毛都不用我們出。」':
+    '"The doctor says if this goes on, the bills… The people from Compassion say they\'ll cover all of it. We won\'t pay a cent."',
+  '（媽……？轉生之後，我已經很久沒有想起她的聲音了。）':
+    "(Mom…? Since I was reborn I haven't once remembered her voice.)",
+  溫和的男聲: 'A gentle voice (a man)',
+  '「這是家屬同意書，第三頁請簽在這裡。參與者編號 0412。請放心，NW 計畫只是讓他在電腦模擬的世界裡，過沒有痛苦的生活。」':
+    '"This is the family consent form — please sign here, on page three. Participant number 0412. Rest assured, the NW Project only lets him live a life without pain in a computer-simulated world."',
+  '（0412。筆電開機畫面的角落，好像也有這串數字。）':
+    "(0412. That number was in the corner of the laptop's boot screen too.)",
+  '「這是他本週的狀態報告。您看這張——他在湖邊笑得很開心。模擬世界裡，他交到朋友了。」':
+    '"Here is his status report for the week. Look at this one — he\'s laughing by the lake. He\'s made friends in the simulation."',
+  '（我在湖邊笑……有人在看著我嗎？還是只是夢？）':
+    '(Laughing by the lake… Is someone watching me? Or is it only a dream?)',
+  冰冷的聲音: 'A cold voice',
+  '「0412 號載體，適應率 71%，意識錨定穩定。原體維持基本生命徵象即可，不需要治療。家屬端報告照常生成。」':
+    '"Carrier 0412: adaptation 71%, consciousness anchor stable. Keep the original body on basic life signs only — no treatment needed. Family reports to be generated as usual."',
+  '（載體。原體。……這不是醫院的聲音。這個聲音，離我很近。）':
+    "(Carrier. Original body. …That isn't a hospital voice. That voice is close to me.)",
+  '「他們說你的手指今天動了一下。報告上寫著『神經反應改善』。媽媽每天都來，你一定要醒過來喔。」':
+    '"They say your finger moved today. The report says \'improved neural response\'. Mom comes every day — you have to wake up, okay?"',
+  '（我的手指……我低頭看自己的手。它一直都在動啊。）':
+    "(My finger… I look down at my hand. It's been moving all along.)",
+  '「0412 號適應期即將結束。準備開放新生之界接入。——別讓他知道山的另一邊是真的。」':
+    '"0412\'s adaptation period is nearly over. Prepare to open access to the New World. — Don\'t let him find out the far side of the mountains is real."',
+  '（山的另一邊。嘯岳說過，牠能越過群山。）': '(The far side of the mountains. Xiaoyue said it could cross them.)',
+  電源模組: 'Power module',
+  記憶晶片: 'Memory chip',
+  棕櫚環礁的漂流者寶箱: "The castaway's chest on Palm Atoll",
+  訊號天線: 'Signal antenna',
+  沉城遺島的御獸文明石碑: 'The beast-civilisation stele on the Sunken City isle',
+  '磁碟修復完成 · 可讀取 98%。': 'Disk repair complete · 98% readable.',
+  '系統標頭：NWP-0412 · 適應期監測 · 終端已連線。':
+    'System header: NWP-0412 · adaptation monitoring · terminal connected.',
+  '[已還原郵件] 寄件人：慈愛組織 · 家屬關懷專員': '[Recovered mail] From: Compassion · Family Care Officer',
+  '主旨：關於令郎參與 NW 計畫之說明': "Subject: About your son's participation in the NW Project",
+  '「……本計畫以電腦模擬環境，使病患在無痛狀態下延續生活。醫療費用由本會全額負擔，':
+    '"…This project uses a computer-simulated environment so that the patient may go on living free of pain. All medical costs are borne by our organisation,',
+  '並每週提供狀態報告予家屬……」（以下無法讀取）':
+    'and a status report is provided to the family each week…" (the rest is unreadable)',
+  '訊息狀態：已讀。': 'Message status: read.',
+  'GPS：衛星訊號 0。本地網路「NWP-LAKE」已連線。': 'GPS: 0 satellites. Local network "NWP-LAKE" connected.',
+  '星圖比對：觀測資料吻合，誤差 0.00%。非模擬資料。':
+    'Star chart check: observations match, error 0.00%. Not simulated data.',
+  '回聲 ·': 'Echo ·',
+  '零件湊齊了，回書桌修好它。': 'All the parts are here — go back to the desk and fix it.',
+  '找到筆電的{0}（{1}/3）。{2}': "Found the laptop's {0} ({1}/3). {2}",
+  筆電零件: 'Laptop part',
+  '筆電已經修好了。': 'The laptop is already fixed.',
+  '還缺：{0}。': 'Still missing: {0}.',
+  筆電修好了: 'The laptop works again',
+  '磁碟救回來了，但裡面的東西不對勁：一封寄給家屬的信、一則「已讀」的訊息、一張和這片天空完全吻合的星圖。壞掉的電腦連星星都在亂講——應該吧。':
+    'The disk is saved, but what\'s on it is wrong: a letter to a family, a message marked "read", a star chart that matches this sky exactly. A broken computer gets even the stars wrong — I suppose.',
+  '浮標裡的研究紀錄指出，異晶讓所有海洋生命共享同一套基因語言。先以誘餌建立信任，用外出籠帶回船上，讓兩個個體配對出比斯基因，最後以契約書契闊進化。紀錄末尾的署名：研究員 K.——NWP 前導觀……（以下毀損）':
+    "The buoy's research notes say that crystal gives all sea life one shared genetic language. Win trust with bait, bring them aboard in a carry cage, pair two to breed BS genes, and evolve them with a contract scroll. Signed at the end: Researcher K. — NWP advance obs… (the rest is damaged)",
+  '（箱底壓著一塊不屬於這裡的電源模組。）':
+    "(At the bottom of the chest lies a power module that doesn't belong here.)",
+  'NWP-0412 · 終端': 'NWP-0412 · terminal',
+  '（壞掉的電腦連星星都在亂講……應該吧。）': '(A broken computer gets even the stars wrong… I suppose.)',
+  '；': '; ',
+  '（電源鍵按不太下去。還缺零件：{0}。）': '(The power button barely presses. Parts still missing: {0}.)',
+  '裝上零件，修好筆電': 'Fit the parts and fix the laptop',
+  '筆電重新開機了。螢幕上跳出一行又一行還原的資料……':
+    'The laptop boots. Line after line of recovered data scrolls up the screen…',
+  '破舊筆電 · 已修復': 'Battered laptop · repaired',
+  'NWP-0412 · 適應期監測': 'NWP-0412 · adaptation monitoring',
+  '（訊息……已讀？我明明沒有寄出去。是誰讀的？）': '(The message… read? I never sent it. Who read it?)',
+  '……一定是壞掉了': '…It must be broken',
+  '回聲 {0}/{1}': 'Echoes {0}/{1}',
+  只是夢而已: 'Only a dream',
+  '睡著的時候聽見的聲音。不是這片湖上的聲音。': 'Voices heard in sleep. Not voices from this lake.',
+  '還有 {0} 段沒有聽見。': '{0} more not yet heard.',
+  '山的另一側沒有海。是一片望不見盡頭的大陸——平原、河流，地平線上有城市的燈火。':
+    'There is no sea on the other side. There is a continent without end — plains, rivers, and city lights on the horizon.',
+  '天上那道紫色的裂縫緩緩合上，像有人拉上了布幕。':
+    'The purple rift in the sky slowly closes, like someone drawing a curtain.',
+  廣播: 'Broadcast',
+  '「恭喜您完成適應期。歡迎來到——新生之界。」':
+    '"Congratulations on completing your adaptation period. Welcome to — the New World."',
+  '「這裡沒有病痛，沒有債務，沒有失去。您的家人一切安好。慈愛組織，與您同在。」':
+    '"Here there is no sickness, no debt, no loss. Your family is well. Compassion is with you."',
+  '……我的家人？': '…My family?',
+  '這個聲音。研究員那個會發光的盒子裡，也有一模一樣的聲音。':
+    "That voice. The researcher's glowing box had exactly the same voice in it.",
+  '築山的人想擋住的是裂縫。可是說話的這些人……他們把湖當成了籠子的門。':
+    'Those who built the mountains wanted to keep the rift out. But these voices… they use the lake as the door of a cage.',
+  '還不是時候。等你準備好了，我們再下去。': "Not yet. When you're ready, we'll go down.",
+  '第一章 完 · 適應期結束': 'End of Chapter One · The Adaptation Period Ends',
+  '山外不是海，是一片大陸。天上的聲音叫它「新生之界」，還說我的家人一切安好——它怎麼會知道我有家人？第二章 · 新生之界——敬請期待。':
+    'Beyond the mountains is not a sea but a continent. The voice in the sky called it "the New World", and said my family is well — how would it know I have a family? Chapter Two · The New World — coming soon.',
+  // 0.47 抵達新生之界: 慈光港
+  '第二章 · 新生之界': 'Chapter Two · The New World',
+  '越過群山，前往新生之界': 'Cross the mountains to the New World',
+  '這裡沒有水。要回湖區，到城門外找嘯岳。':
+    "There's no water here. To go back to the lake, find Xiaoyue outside the town gate.",
+  山下的城市: 'The city below',
+  '地平線上的燈火，是一座港城。嘯岳低頭看著你。':
+    'The lights on the horizon are a harbour town. Xiaoyue looks down at you.',
+  '下山，前往新生之界': 'Go down to the New World',
+  還不是時候: 'Not yet',
+  '新生之界 ·': 'The New World ·',
+  '街道乾淨，窗戶都亮著燈——可是一個人都沒有。': 'The streets are clean and every window is lit — but there is no one.',
+  新生之界: 'The New World',
+  '回到了{0}。': 'Back in {0}.',
+  引路人: 'The guide',
+  '居民證 No.0412': 'Resident card No.0412',
+  '新生者手冊 · 公寓 0412 號房 · 每日配給': "Newcomer's handbook · Apartment room 0412 · daily rations",
+  居民公寓: "Residents' apartments",
+  '0412 號房': 'Room 0412',
+  '天黑以後，可以在這裡睡到天亮。': 'After dark you can sleep here until morning.',
+  睡到天亮: 'Sleep until morning',
+  '慈光港 · 留言碑': 'Port Mercylight · message stele',
+  居民的留言: 'Messages from residents',
+  '（石碑上沒有可以刻字的地方……現在還沒有。）': "(There's no room left on the stele to carve anything… not yet.)",
+  慈光港: 'Port Mercylight',
+  慈愛公告板: 'Compassion notice board',
+  '家書 · 第 {0} 封': 'Letter from home · no. {0}',
+  '寄件人：': 'From: ',
+  把信收好: 'Keep the letter',
+  '第二章（上）完 · 慈光': 'End of Chapter Two, Part One · Mercylight',
+  '整座城只有管理區裡，真的有人。': 'In the whole town, only the admin block has anyone in it.',
+  '「要回去了嗎？」': '"Going back?"',
+  騎嘯岳回到湖區: 'Ride Xiaoyue back to the lake',
+  再待一會兒: 'Stay a little longer',
+  '這裡睡得很沉，一個夢都沒有。': 'I sleep deeply here. Not a single dream.',
+  '嘯岳在城門外等你。走到牠身邊，就能回到湖區。':
+    'Xiaoyue is waiting outside the town gate. Walk up to it to go back to the lake.',
+  '▣ 管理區 · 僅限職員': '▣ Admin block · staff only',
+  晴: 'Qing',
+  新生歡迎中心: 'New Life Welcome Centre',
+  配給站: 'Ration station',
+  家書亭: 'Letter kiosk',
+  管理區: 'Admin block',
+  空無一人的餐館: 'The empty diner',
+  '山下是一座港城。街道乾淨，窗戶都亮著燈，門口擺著鞋子——可是一個人都沒有。城門上刻著：「歡迎回家。」':
+    'Below the mountains lies a harbour town. Clean streets, every window lit, shoes set out at the doors — but no one at all. Carved over the gate: "Welcome home."',
+  '你不在新生之界。': "You're not in the New World.",
+  '嘯岳背著你越過山脊，回到了湖岸。': 'Xiaoyue carries you back over the ridge to the lake shore.',
+  '歡迎回家，0412 號。……啊，抱歉。我是說——歡迎來到新生之界。':
+    "Welcome home, number 0412. …Oh, I'm sorry. I mean — welcome to the New World.",
+  '我是引路人，晴。從今天起，你在這裡的生活，由我們來照顧。':
+    "I'm your guide, Qing. From today on, we'll take care of your life here.",
+  '你……知道我是誰？': 'You… know who I am?',
+  '當然。你吃了很多苦——從那天早上的雨開始。': "Of course. You've suffered so much — ever since the rain that morning.",
+  '（我從來沒有跟任何人說過那天在下雨。）': '(I never told anyone it was raining that day.)',
+  '這裡的每一位居民，都是被選中的人。這裡不會再有痛苦。':
+    'Every resident here was chosen. There will be no more pain here.',
+  '這是你的居民證，和新生者手冊。公寓 0412 號房已經為你準備好了；配給站每天都能免費領取口糧和水。':
+    "Here's your resident card and the newcomer's handbook. Room 0412 in the apartments is ready for you, and the ration station gives out food and water free every day.",
+  '還有——你的家人寫了信給你。到家書亭就能讀。':
+    'And — your family has written to you. You can read it at the letter kiosk.',
+  '家人？可是我已經……': "My family? But I'm already…",
+  '在新生之界，沒有什麼是真正失去的。': 'In the New World, nothing is ever truly lost.',
+  '住得還習慣嗎？有任何需要，都可以來找我。': 'Settling in all right? Come to me if you need anything at all.',
+  '別擔心其他居民。大家只是還不習慣見面而已。':
+    "Don't worry about the other residents. They just aren't used to meeting people yet.",
+  '你的家人很好。我們每週都會去看他們。': 'Your family is well. We visit them every week.',
+  '慈愛組織，與你同在。': 'Compassion is with you.',
+  '晚上請早點休息。管理區？那裡只是辦公室，沒什麼好看的。':
+    "Please get to bed early tonight. The admin block? It's only offices — nothing to see.",
+  '這裡的味道不對。像研究員的盒子，像沒有風的湖。我不進去——我在城外等你。':
+    "This place smells wrong. Like the researcher's box, like a lake with no wind. I won't go in — I'll wait for you outside the town.",
+  '引路人 ·': 'Guide ·',
+  '她叫我 0412——和夢裡那個聲音說的數字一樣。她還知道那天早上在下雨。我領到了居民證和新生者手冊。':
+    "She called me 0412 — the same number the voice in my dreams said. She knew it was raining that morning, too. I was given a resident card and a newcomer's handbook.",
+  '門上的名牌寫著「0412」。門鎖著——也許該先去歡迎中心。':
+    'The nameplate on the door says "0412". It\'s locked — maybe I should go to the welcome centre first.',
+  '公寓 0412 號房': 'Apartment room 0412',
+  '房間很乾淨，床鋪好了，衣櫃裡的衣服是我的尺寸。窗台上有一盆剛澆過水的花。':
+    'The room is spotless, the bed made, the clothes in the wardrobe my size. On the windowsill, a flower that has just been watered.',
+  '0412 號房是你的了。晚上可以在這裡睡到天亮。': 'Room 0412 is yours. At night you can sleep here until morning.',
+  '夜深了，可以睡了。': "It's late. Time to sleep.",
+  '房間和早上離開時一模一樣。花又被澆過了。':
+    'The room is exactly as I left it this morning. The flower has been watered again.',
+  '窗口後面沒有人。櫃台上寫著：「請先完成居民登記。」':
+    'There\'s no one behind the window. A sign on the counter: "Please complete resident registration first."',
+  '今天的配給已經領過了。明天再來。': "You've had today's ration. Come back tomorrow.",
+  '窗口後面沒有人，配給卻已經裝好袋了。口糧的味道很淡，淡得像……醫院的流質。':
+    'No one behind the window, yet the ration was already bagged. The food tastes faint — as faint as… hospital liquid food.',
+  '領到今天的配給：口糧 3、淡水 3。一毛錢都不用付。': "Today's ration: 3 food, 3 water. Not a cent to pay.",
+  '第 3 天。有人晚上也會聽到嗶嗶聲嗎？': 'Day 3. Does anyone else hear beeping at night?',
+  '配給站的口糧，味道跟醫院的流質一模一樣。': 'The ration food tastes exactly like hospital liquid food.',
+  '我在湖邊住了 40 天才翻過山。你們呢？': 'I lived by the lake 40 days before I crossed the mountains. You?',
+  '公寓很好。可是我從來沒在走廊遇過任何人。':
+    "The apartments are nice. But I've never once met anyone in the corridor.",
+  '晴小姐說我女兒過得很好。我好想她。': 'Miss Qing says my daughter is doing well. I miss her so much.',
+  '有沒有人知道，「山的另一邊」再過去是什麼？': 'Does anyone know what lies beyond "the other side of the mountains"?',
+  '別相信——': "Don't trust —",
+  '（No.0156 的留言後半段被磨掉了，刻痕很新。）':
+    "(The rest of No.0156's message has been ground away. The marks are fresh.)",
+  留言碑: 'Message stele',
+  '石碑上刻滿了其他居民的留言。他們都在這座城裡——可是我一個人也沒見過。有一則留言被磨掉了。':
+    "The stele is covered in other residents' messages. They're all in this town — yet I haven't seen a single one. One message has been ground away.",
+  '慈愛公告 · 第 1 號': 'Compassion notice · No. 1',
+  '新生之界歡迎每一位被選中的居民。': 'The New World welcomes every chosen resident.',
+  '配給、住所、醫療，全部免費。': 'Rations, housing, medical care — all free.',
+  '請不要擔心家人——我們每週都會探望他們。': "Please don't worry about your families — we visit them every week.",
+  '請居民不要進入管理區。': 'Residents are asked not to enter the admin block.',
+  '孩子，你在那邊好嗎？慈愛的晴小姐說你很快就能適應。家裡一切都好，你不用擔心。你出門前說到公司再打給我，媽一直在等那通電話。現在知道你過得好，就夠了。':
+    "My child, are you well over there? Miss Qing from Compassion says you'll settle in soon. Everything's fine at home, don't worry. Before you left you said you'd call me when you got to work — Mom has been waiting for that call. Knowing you're well now is enough.",
+  '（那則訊息……我根本沒有寄出去。媽怎麼會知道我要說什麼？）':
+    '(That message… I never sent it. How would Mom know what I was going to say?)',
+  '醫生說你的狀況越來越好，報告上說你在那邊交到朋友了，還有一張你在湖邊笑的照片。媽媽把它貼在冰箱上。慈愛的人每週都來，費用的事你不要放在心上。':
+    "The doctor says you're getting better and better. The report says you've made friends over there, and there's a photo of you laughing by the lake. Mom put it on the fridge. The Compassion people come every week — don't you worry about the bills.",
+  '（湖邊笑的照片。夢裡那個溫和的聲音，也說過一模一樣的話。）':
+    '(A photo of me laughing by the lake. The gentle voice in my dream said exactly the same.)',
+  '他們說，你在那邊不會再痛了。媽媽有時候會想，如果你醒過來，會不會反而比較痛？……對不起，媽媽不該這樣寫。你在那邊快樂就好。':
+    "They say you won't hurt any more over there. Sometimes Mom wonders — if you woke up, would it hurt more? …I'm sorry, Mom shouldn't write that. As long as you're happy there.",
+  '（「醒過來」。如果我已經死了，要從哪裡醒過來？）': '("Woke up." If I\'m dead, what would I wake up from?)',
+  '亭子裡的信箱都上了鎖。每一格都貼著一個編號。':
+    'The mailboxes in the kiosk are all locked. Each one has a number on it.',
+  '信箱是空的。': 'The mailbox is empty.',
+  '0412 號信箱是空的。下一封信大約在第 {0} 天送到。':
+    'Mailbox 0412 is empty. The next letter should arrive around day {0}.',
+  '家書 ·': 'Letter from home ·',
+  '桌上有一碗吃到一半的湯，還在冒煙。椅子是拉開的，好像有人剛剛站起來。':
+    'On the table, a half-eaten bowl of soup, still steaming. The chair is pushed back, as if someone has just stood up.',
+  '「管理區 · 僅限職員」。門是鎖著的，窗戶貼著霧面紙。':
+    '"Admin block · staff only". The door is locked and the windows are frosted over.',
+  '深夜，管理區的門縫裡透出白光。裡面有人在說話，一個聲音很冷，我好像在哪裡聽過。整座城只有這裡，真的有人。':
+    "Late at night, white light shows under the admin block's door. Someone is talking inside — one voice is cold, and I think I've heard it before. In the whole town, only here is there really anyone.",
+  '門縫裡透出白光，裡面有人在說話。……那個冰冷的聲音，我在夢裡聽過。':
+    "White light under the door, and voices inside. …That cold voice — I've heard it in my dreams.",
+  '門縫裡透出白光。裡面有人在說話，聽不清楚。':
+    "White light under the door. Someone is talking inside; you can't make it out.",
+  '管理區 · 僅限職員': 'Admin block · staff only',
+  '嘯岳 · 回到湖區': 'Xiaoyue · back to the lake',
+  '抵達新生之界 · {0}': 'Reach the New World · {0}',
+  '和引路人{0}交談（新生歡迎中心前）': 'Talk to the guide, {0} (in front of the welcome centre)',
+  '入住居民公寓 0412 號房': 'Move into room 0412 in the apartments',
+  到配給站領取配給: 'Collect a ration at the ration station',
+  讀廣場上的留言碑: 'Read the message stele in the plaza',
+  到家書亭讀家人的信: "Read your family's letter at the letter kiosk",
+  '夜裡，管理區還亮著燈……': "At night, the admin block's light is still on…",
+  '慈愛組織的引路人 · 按 E 交談': "Compassion's guide · press E to talk",
+  '你的房間 · 按 E 進門': 'Your room · press E to go in',
+  進門: 'Go in',
+  '每日免費配給 · 按 E 領取': 'Free daily ration · press E to collect',
+  '0412 號信箱 · 按 E 查看': 'Mailbox 0412 · press E to check',
+  '居民的留言 · 按 E 閱讀': "Residents' messages · press E to read",
+  閱讀: 'Read',
+  '慈愛組織的公告 · 按 E 閱讀': 'Notices from Compassion · press E to read',
+  '門開著，燈也亮著 · 按 E 看看': 'Door open, lights on · press E to look',
+  看看: 'Look',
+  '門是鎖著的 · 按 E 靠近': 'The door is locked · press E to go closer',
+  靠近: 'Go closer',
+  '牠在城門外等你 · 按 E 回到湖區': 'Waiting outside the gate · press E to go back to the lake',
+  回去: 'Go back',
+  // 0.48 穹頂與留言
+  '小心{0}': 'Beware of {0}',
+  '{0}就在這附近': '{0} is near here',
+  '有人聽到{0}嗎？': 'Does anyone else hear {0}?',
+  '我想念{0}': 'I miss {0}',
+  '別相信{0}': "Don't trust {0}",
+  '我在找{0}': "I'm looking for {0}",
+  '{0}很好': '{0} is good',
+  '為什麼會有{0}？': 'Why is there {0}?',
+  '{0}……我也是。': '{0}… me too.',
+  家人: 'family',
+  配給: 'the rations',
+  夢: 'dreams',
+  湖: 'the lake',
+  雨: 'the rain',
+  家: 'home',
+  天空: 'the sky',
+  鳥群: 'the flock of birds',
+  家書: 'letters from home',
+  嗶嗶聲: 'the beeping',
+  醫院: 'the hospital',
+  山的另一邊: 'the other side of the mountains',
+  穹頂: 'the dome',
+  '本則留言因違反居民守則，已由慈愛組織移除。':
+    "This message broke the residents' code and has been removed by Compassion.",
+  '我也一直在想我的家人。晴小姐說他們很好，可是我好想親眼看看。':
+    "I keep thinking about my family too. Miss Qing says they're well, but I so want to see for myself.",
+  '我媽媽每週都寫信給我。可是她的字，好像比以前工整了。':
+    'My mom writes to me every week. But her handwriting seems neater than it used to be.',
+  '晴小姐人很好。……她是我在這裡唯一見過的人。你也是嗎？':
+    "Miss Qing is very kind. …She's the only person I've seen here. You too?",
+  '配給的味道你也覺得怪嗎？我以為只有我這樣。': 'You think the rations taste strange too? I thought it was just me.',
+  '我也做夢。夢裡有人一直叫我的編號。': 'I dream too. In my dreams someone keeps calling my number.',
+  '我想念湖。在那裡，至少我知道自己在哪裡。': 'I miss the lake. There, at least, I knew where I was.',
+  '我的御獸也不肯進城。牠們是不是知道什麼？': "My beasts won't come into town either. Do they know something?",
+  '這裡的雨，好像只下在城裡。': 'The rain here seems to fall only on the town.',
+  '家……我已經想不太起來家長什麼樣子了。': 'Home… I can hardly remember what home looked like.',
+  '你有沒有在黃昏的時候，仔細看過天空？': 'Have you ever looked closely at the sky at sunset?',
+  '那群鳥！我數過，每次都是九隻。': "Those birds! I counted. It's always nine.",
+  '再讀一次你的家書。仔細讀。': 'Read your letters from home again. Carefully.',
+  '（漂流信被退回了。信封上蓋著慈愛組織的印章：「內容不符居民守則」。）':
+    '(The drifting letter came back. Its envelope bears Compassion\'s stamp: "Content does not comply with the residents\' code.")',
+  '選一個句型和一個詞。': 'Choose a phrase and a word.',
+  '今天已經刻了 {0} 則留言。明天再來。': "You've carved {0} messages today. Come back tomorrow.",
+  '我在石碑上刻下第一則留言：「{0}」。會有人看到嗎？':
+    'I carved my first message on the stele: "{0}". Will anyone see it?',
+  '刻下了：「{0}」': 'Carved: "{0}"',
+  '已經共鳴過了。': "You've already resonated with this.",
+  '你按下了共鳴。石碑上的字微微亮了一下。': 'You resonate. The words on the stele glow faintly.',
+  '上一封漂流信還沒有回音。': "Your last drifting letter hasn't been answered yet.",
+  '漂流信寄出去了：「{0}」。不知道會漂到誰手上。':
+    'The drifting letter is on its way: "{0}". Who knows whose hands it will reach.',
+  慈愛組織: 'Compassion',
+  '……我也是。': '…Me too.',
+  '漂流信 ·': 'Drifting letter ·',
+  '我刻的「{0}」不見了。原來的位置只剩一行字：「{1}」':
+    'The "{0}" I carved is gone. In its place, a single line: "{1}"',
+  '對了，0412。留言碑上的事，我聽說了。': 'Oh, and 0412 — I heard about the stele.',
+  '有些話，說出來只會讓大家不安喔。這裡的每個人，都是好不容易才不痛了。':
+    "Some things only upset everyone when they're said. Everyone here has only just stopped hurting.",
+  '你是個溫柔的人，對吧？': "You're a kind person, aren't you?",
+  殘影: 'Afterimage',
+  '草地上有一串發著淡光的腳印，走近就散了。剛才，有人站在這裡。':
+    'A trail of faintly glowing footprints in the grass — they scatter as you come near. Someone stood here a moment ago.',
+  '天上的紫色裂縫……不見了。在湖上，它一直都在那裡。':
+    'The purple rift in the sky… is gone. Over the lake it was always there.',
+  遠山: 'Far hills',
+  '那排山……我走了這麼久，它們一點也沒有變近。': "Those hills… I've walked so far, and they haven't come any closer.",
+  看不見的牆: 'The invisible wall',
+  '前面明明還有路……可是我走不過去。空氣裡閃過一圈六角形的光。':
+    "There's ground ahead, plain as day… but I can't walk on. A ring of hexagonal light flickers in the air.",
+  '那群鳥又飛過去了。同一個方向，同一個高度……跟剛才一模一樣。':
+    'The flock flies over again. Same direction, same height… exactly like before.',
+  夕陽: 'Sunset',
+  '夕陽下，天空好像有一格一格的線。眨一下眼，又不見了。':
+    "In the sunset the sky seems to have lines, a grid of cells. I blink, and it's gone.",
+  鹿: 'Deer',
+  '那頭鹿又從同一棵樹旁邊走過去了。牠每天走的，都是同一條路嗎？':
+    'That deer walks past the same tree again. Does it walk the very same path every day?',
+  '＿': '___',
+  '「{0}」': '"{0}"',
+  留言: 'Messages',
+  刻字: 'Carve',
+  漂流信: 'Drifting letters',
+  舊刻痕: 'Old carvings',
+  '· 你': '· you',
+  '· 居民': '· resident',
+  '共鳴 {0}': 'Resonate {0}',
+  '石碑上還沒有留言。': 'No messages on the stele yet.',
+  '（線上：其他居民的留言會出現在這裡。）': "(Online: other residents' messages appear here.)",
+  '刻下留言 · 今天還能刻 {0} 則': 'Carve a message · {0} left today',
+  '回信 · {0}': 'Reply · {0}',
+  '你寄出的：「{0}」': 'You sent: "{0}"',
+  '上一封漂流信還在漂。回音大約在第 {0} 天到。':
+    'Your last letter is still drifting. An answer should come around day {0}.',
+  '把一句話放進瓶子，漂給隨便一位居民。': 'Put a phrase in a bottle and let it drift to any resident.',
+  寄出漂流信: 'Send a drifting letter',
+  '新生之界 · 破綻': 'The New World · a crack',
+  '你刻的「{0}」被移除了。': 'The "{0}" you carved has been removed.',
+  // 0.49 第二章（下）
+  '（這位居民已「畢業」，前往更好的地方。）': '(This resident has "graduated" and gone on to a better place.)',
+  '慈愛公告 · 第 2 號': 'Compassion notice · No. 2',
+  '恭喜居民 {0} 完成新生，順利「畢業」，前往更好的地方。':
+    'Congratulations to resident {0}, who has completed their new life and "graduated" to a better place.',
+  '請大家為他獻上祝福。': 'Please send them your blessings.',
+  '畢業是每一位居民的目標。': "Graduation is every resident's goal.",
+  '{0} 「畢業」了。就是在留言碑上寫「別相信——」的那個人。留言碑上他的字，一夜之間全被磨平了。':
+    '{0} has "graduated" — the one who wrote "Don\'t trust —" on the stele. Overnight, every word they carved there was ground smooth.',
+  '湯已經涼了。桌子底下好像卡著什麼……太亮了，看不清楚。晚上再來。':
+    'The soup has gone cold. Something seems wedged under the table… too bright to make out. Come back at night.',
+  '{0} 的居民證': "{0}'s resident card",
+  '桌子底下卡著一張居民證：{0}。背面用膠帶黏著一張白色的卡片，印著太陽徽章——管理區的門禁卡。卡片邊緣刻了一行小字：「去看槽。」':
+    'A resident card was wedged under the table: {0}. Taped to its back, a white card with the sun emblem — a key to the admin block. Scratched along its edge: "Go see the tanks."',
+  '桌子底下卡著一張居民證。照片上的人很瘦，對著鏡頭笑。':
+    'A resident card is wedged under the table. The person in the photo is thin, smiling at the camera.',
+  '{0}。就是留言碑上寫「別相信——」的那個人。': '{0}. The one who wrote "Don\'t trust —" on the stele.',
+  '背面用膠帶黏著一張白色的卡片，印著太陽徽章——管理區的門禁卡。':
+    'Taped to the back is a white card with the sun emblem — a key to the admin block.',
+  '卡片邊緣刻了一行很小的字：「去看槽。」': 'Scratched along its edge, very small: "Go see the tanks."',
+  '門禁卡一刷，門無聲地滑開。裡面很冷，像醫院。':
+    "One swipe of the card and the door slides open without a sound. Inside it's cold, like a hospital.",
+  '牆上一整排螢幕，每一格都是一個房間——公寓的房間。0388 號房的床上躺著一個人，一動也不動。不是在睡覺。':
+    'A whole wall of screens, each one a room — the apartment rooms. In room 0388 someone lies on the bed, perfectly still. Not asleep.',
+  終端機: 'Terminal',
+  'NWP 適應監測 · 載體 0412 · 適應率 88%。家屬端週報：自動生成中。附件：〈湖邊微笑_week3.png〉——來源：載體視覺紀錄＋表情合成。':
+    'NWP adaptation monitoring · carrier 0412 · adaptation 88%. Weekly family report: generating automatically. Attachment: <smiling_by_the_lake_week3.png> — source: carrier visual record + expression synthesis.',
+  '湖邊笑的照片。媽媽貼在冰箱上的那一張。是他們做出來的。':
+    'The photo of me laughing by the lake. The one Mom put on the fridge. They made it.',
+  '畢業名單 · {0}：適應失敗。狀態：回收。意識資料封存，載體送回培育槽。家屬端：「已安詳離世」通知已寄出。':
+    'Graduation list · {0}: adaptation failed. Status: recycled. Consciousness data archived, carrier returned to the growth tanks. Family: "passed away peacefully" notice sent.',
+  '走廊盡頭是一排玻璃槽。淡綠色的液體裡，漂著一具一具的身體。':
+    'At the end of the corridor, a row of glass tanks. In the pale green liquid float bodies, one after another.',
+  'B-12 號槽的標籤寫著：「0412 · 備用載體 · 第 2 號」。槽裡那張臉……是我的臉。':
+    'The label on tank B-12 reads: "0412 · spare carrier · no. 2". The face in the tank… is my face.',
+  '伴生體計畫：以契約連結異晶突變生物與載體，可穩定意識錨定。契約書規格：前導觀測員 K.。':
+    'Companion project: binding crystal-mutated creatures to carriers by contract stabilises the consciousness anchor. Contract scroll specification: advance observer K.',
+  '我跟御獸的契約……也是他們的實驗？': 'My contracts with my beasts… are those their experiment too?',
+  '我不是轉生的。這個身體，是他們做的。': "I wasn't reborn. They made this body.",
+  '……0412。這麼晚了，你不該在這裡。': "…0412. It's late. You shouldn't be here.",
+  '你看到的那些，都是真的。可是你在這裡，不會痛。外面的你，每一天都在痛。':
+    "Everything you saw is real. But here, you don't hurt. Out there, you hurt every single day.",
+  '你媽媽每週都去看你。她握著你的手——那隻手，已經不會動了。':
+    'Your mother visits you every week. She holds your hand — a hand that can no longer move.',
+  '我可以幫你忘記今晚。明天早上醒來，你還是那個在湖邊笑的人。':
+    "I can help you forget tonight. Tomorrow morning you'll wake up still the person laughing by the lake.",
+  '門禁卡已經刷不開了。門上的太陽徽章，暗了。':
+    'The key card no longer works. The sun emblem on the door has gone dark.',
+  '白天門口有人進出的腳步聲。晚上再來。': 'By day there are footsteps going in and out. Come back at night.',
+  '第二章 完 · 遺忘': 'End of Chapter Two · Forgetting',
+  '……晚安，0412。': '…Good night, 0412.',
+  '醒來的時候，我躺在 0412 號房。窗台上的花又被澆過了。':
+    "When I wake, I'm lying in room 0412. The flower on the windowsill has been watered again.",
+  '日誌裡有幾頁是空白的。最後一頁，是我自己的字：「別相信晴。去城門外找嘯岳。」':
+    'A few pages of my journal are blank. On the last page, in my own handwriting: "Don\'t trust Qing. Find Xiaoyue outside the gate."',
+  '你身上有那個盒子的味道。……你忘了什麼，對吧？': "You smell of that box. …You've forgotten something, haven't you?",
+  '沒關係。我記得。': "It's all right. I remember.",
+  '我醒在 0412 號房，日誌少了幾頁。最後一頁是我自己的字：「別相信晴。去城門外找嘯岳。」嘯岳說，牠記得。第三章——敬請期待。':
+    'I woke in room 0412 with pages missing from my journal. The last page is in my own hand: "Don\'t trust Qing. Find Xiaoyue outside the gate." Xiaoyue says it remembers. Chapter Three — coming soon.',
+  '第二章 完 · 穹頂之外': 'End of Chapter Two · Beyond the Dome',
+  '我要知道真相。': 'I want to know the truth.',
+  '「0412 號越權存取。啟動記憶調整程序。」': '"Unauthorised access by 0412. Starting memory adjustment."',
+  '……快走。去城門。別回頭。': "…Go. To the gate. Don't look back.",
+  '整座城的燈同時熄了。我一路跑到城門，嘯岳已經站了起來。':
+    'Every light in town goes out at once. I run all the way to the gate; Xiaoyue is already on its feet.',
+  '我說過，這裡的味道不對。抓緊。': 'I told you this place smelled wrong. Hold on.',
+  '嘯岳撲向城門外的空氣——爪子底下，傳來玻璃碎裂的聲音。':
+    'Xiaoyue leaps at the empty air outside the gate — and under its claws comes the sound of breaking glass.',
+  '天空裂開一道縫。縫的另一邊，是那道紫色的裂縫，和真正的、比斯泰德的天空。':
+    'The sky splits open. On the other side is the purple rift, and the real sky of Beastidal.',
+  '晴放走了我。嘯岳撕開了穹頂，縫的另一邊是紫色的裂縫和真正的天空。我不是轉生的——我是 0412 號載體。第三章——敬請期待。':
+    "Qing let me go. Xiaoyue tore the dome open; beyond the tear are the purple rift and the real sky. I wasn't reborn — I am carrier 0412. Chapter Three — coming soon.",
+  '現在沒有要選擇的事。': "There's nothing to choose right now.",
+  '你今天氣色很好，0412。昨晚睡得好嗎？': 'You look well today, 0412. Did you sleep well last night?',
+  '{0} 不見了……公告板上有新的公告': "{0} is gone… there's a new notice on the board",
+  '（隔天，城裡好像少了一個人）': '(The next day, the town seems to be one person short)',
+  '夜裡，到空無一人的餐館找找看': 'At night, search the empty diner',
+  '夜裡，用門禁卡進入管理區': 'At night, use the key card to enter the admin block',
+  做出選擇: 'Make your choice',
+  晴在等你的回答: 'Qing is waiting for your answer',
+  '「讓我幫你忘記今晚，好嗎？」': '"Let me help you forget tonight, all right?"',
+  讓我忘記: 'Let me forget',
+  我要知道真相: 'I want the truth',
+  '第三章——敬請期待': 'Chapter Three — coming soon',
+  '晴不在歡迎中心前。地上只留著她的太陽徽章。':
+    "Qing isn't in front of the welcome centre. Only her sun badge lies on the ground.",
+  管理區門禁卡: 'Admin block key card',
+  '夜裡，到管理區刷卡。': 'At night, swipe it at the admin block.',
+  // 0.50 第三章（上）
+  '你不記得昨晚。可是我記得：你在發抖，那個女人放你走，城裡的燈全熄了。':
+    "You don't remember last night. But I do: you were shaking, that woman let you go, and every light in town went out.",
+  '你說過你想知道真相。……再說一次。': 'You said you wanted the truth. …Say it again.',
+  '我想知道真相。': 'I want to know the truth.',
+  '那就抓緊。': 'Then hold on.',
+  '嘯岳撲向城門外的空氣。爪子底下，傳來玻璃碎裂的聲音——天空裂開一道縫，縫後是紫色的裂縫。':
+    'Xiaoyue leaps at the empty air outside the gate. Under its claws comes the sound of breaking glass — the sky splits open, and behind it is the purple rift.',
+  '穹頂已經撕開了。裂口在城門南邊，穹頂的盡頭。':
+    'The dome is already torn. The tear is south of the gate, where the dome ends.',
+  裂口: 'The tear',
+  '嘯岳又撕開了穹頂。我忘了昨晚，可是牠記得。裂口在城門南邊，穹頂的盡頭。':
+    'Xiaoyue tore the dome open again. I forgot last night, but it remembered. The tear is south of the gate, where the dome ends.',
+  '走出裂口，腳下是乾裂的灰土。回頭看，穹頂是一座看不到頂的六角形外殼，裡面的草原、森林、天空，全是投影。這邊的天空，有那道紫色的裂縫。':
+    'Through the tear the ground is cracked grey dust. Looking back, the dome is a hexagonal shell too tall to see the top of; the meadows, woods and sky inside are all projections. On this side, the sky has the purple rift.',
+  穹頂外: 'Outside the dome',
+  '錄音 · 研究員 K.': 'Recording · Researcher K.',
+  '「紀錄一。我是研究員 K.，慈愛組織前導觀測員。我的工作，是確認載體能不能在這片大陸上活下去。」':
+    '"Log one. I am Researcher K., advance observer for Compassion. My job is to confirm whether carriers can survive on this continent."',
+  '「湖區的適應期很順利。御獸會主動靠近載體——牠們聽得懂我們。這不在計畫裡。」':
+    '"Adaptation at the lake goes smoothly. The beasts approach the carriers of their own accord — they understand us. That was not in the plan."',
+  '「紀錄二。裂縫不是自然的傷口。它是一座橋——一端是比斯泰德，一端是我們的世界。」':
+    '"Log two. The rift is not a natural wound. It is a bridge — one end in Beastidal, the other in our world."',
+  '「組織把人的意識，從那座橋送過來，裝進這邊培育的身體。家屬以為那是電腦模擬。董事會說，這是慈悲。」':
+    '"The organisation sends people\'s minds across that bridge and puts them into bodies grown on this side. The families believe it is a computer simulation. The board calls it mercy."',
+  '「紀錄三。我想要的『路』，是回去的路。意識能過來，就能回去。」':
+    '"Log three. The \'road\' I want is the road back. If a mind can come across, it can go back."',
+  '「原體還活著的人——還來得及。我要進裂縫，找到核心。如果你聽到這段……別讓他們『畢業』你。」':
+    "\"For those whose original bodies are still alive — there is still time. I am going into the rift to find its core. If you hear this… don't let them 'graduate' you.\"",
+  '錄音到這裡就斷了。桌上留著一張手繪的地圖：前哨站西邊的地面上，畫著一道裂縫，旁邊寫著「第一層」。':
+    'The recording cuts off here. A hand-drawn map is left on the desk: a rift in the ground west of the outpost, labelled "First layer".',
+  'K. 是慈愛組織的前導觀測員。他發現御獸聽得懂載體。':
+    'K. was an advance observer for Compassion. He found that the beasts understand the carriers.',
+  '裂縫是一座橋，一端是比斯泰德，一端是我們的世界。組織把意識從橋上送過來，家屬以為那是模擬。':
+    "The rift is a bridge, one end in Beastidal, the other in our world. The organisation sends minds across it; the families think it's a simulation.",
+  'K. 想找的是回去的路：意識能過來，就能回去。原體還活著的人，還來得及。他進了裂縫。':
+    'What K. was looking for was the way back: if a mind can come across, it can go back. For those whose original bodies are alive, there is still time. He went into the rift.',
+  '研究員 K. · 紀錄 {0}': 'Researcher K. · log {0}',
+  猛攻: 'Strike',
+  守勢: 'Brace',
+  契印技: 'Seal art',
+  裂縫晶骸: 'Rift crystal husk',
+  空殼載體: 'Empty carrier',
+  裂縫守門者: 'Rift warden',
+  '裂縫的光太刺眼，看不清裡面。先去附近的前哨站看看，也許有人留下了什麼。':
+    "The rift's light is too bright to see into. Check the outpost nearby first — maybe someone left something.",
+  '一個人進不去。帶上至少一隻締結契約、還有體力的御獸。':
+    "You can't go in alone. Bring at least one contracted beast with strength left.",
+  '第 {0} 波': 'Wave {0}',
+  '裂縫 · 第一層': 'The rift · first layer',
+  '裂縫把我們吐了出來。御獸都受了傷，但都還活著。休息一下再來。':
+    'The rift spat us out. The beasts are hurt, but all alive. Rest and try again.',
+  '守門者碎成一地晶塵。裂縫深處有一塊發光的碎片——核心的一角。':
+    'The warden shatters into crystal dust. Deep in the rift lies a glowing shard — a piece of the core.',
+  '又清了一次第一層。裂縫裡的晶骸好像永遠殺不完。': "The first layer cleared again. The rift's husks seem endless.",
+  '碎片在手心發燙。裂縫的光一下子變得很安靜。': "The shard burns in my palm. The rift's light goes suddenly still.",
+  '我看見一個房間。白色的天花板，點滴，心電監測器——嗶。嗶。嗶。':
+    'I see a room. A white ceiling, a drip, a heart monitor — beep. Beep. Beep.',
+  '床上躺著一個人。那是我。更瘦，更蒼白，可是那是我。': "Someone is lying in the bed. It's me. Thinner, paler, but me.",
+  '床邊的椅子上，媽媽睡著了，手還握著床上那隻手。':
+    'In the chair by the bed, Mom has fallen asleep, still holding the hand on the bed.',
+  '「……你今天，好像又動了一下。」': '"…You moved a little again today, I think."',
+  '那就是橋的另一頭。': 'That is the other end of the bridge.',
+  '碎片只有一塊。要走過去，還不夠。裂縫還有更深的地方。': 'One shard is not enough to cross. The rift goes deeper.',
+  '我握緊碎片。還來得及。': 'I grip the shard. There is still time.',
+  '第三章（上）完 · 橋': 'End of Chapter Three, Part One · The Bridge',
+  '裂縫的核心讓我看見了病房：瘦下去的我，握著我的手睡著的媽媽。原體還活著。碎片只有一塊，裂縫還有更深的層。第三章（下）——敬請期待。':
+    "The rift's core showed me the hospital room: my wasted body, and Mom asleep holding my hand. My original body is alive. One shard isn't enough; the rift has deeper layers. Chapter Three, Part Two — coming soon.",
+  '研究員 K. 的前哨站': "Researcher K.'s outpost",
+  '裂縫 · 第一層（核心）': 'The rift · first layer (core)',
+  穹頂的裂口: 'The tear in the dome',
+  '回到城門外，找嘯岳': 'Go back outside the gate and find Xiaoyue',
+  '走出穹頂的裂口（城門南邊，穹頂的盡頭）': 'Walk out through the tear (south of the gate, where the dome ends)',
+  '聽完研究員 K. 的錄音（{0}/{1}）': "Hear Researcher K.'s recordings ({0}/{1})",
+  '帶御獸通過裂縫 · 第一層': "Take your beasts through the rift's first layer",
+  觸碰裂縫的核心: "Touch the rift's core",
+  '第三章 · 裂縫之外': 'Chapter Three · Beyond the Rift',
+  '「……你忘了什麼，對吧？我記得。」': '"…You\'ve forgotten something, haven\'t you? I remember."',
+  請嘯岳撕開穹頂: 'Ask Xiaoyue to tear the dome open',
+  '穹頂的裂口。邊緣還在發著紫光。往北走就回到穹頂裡。':
+    'The tear in the dome. Its edges still glow violet. Walk north to go back inside.',
+  '研究員 K. · 紀錄 3': 'Researcher K. · log 3',
+  '前哨站西邊：裂縫 · 第一層': "West of the outpost: the rift's first layer",
+  裂縫的核心: "The rift's core",
+  '第三章（下）——敬請期待': 'Chapter Three, Part Two — coming soon',
+  '城門南邊，穹頂的盡頭': 'South of the gate, where the dome ends',
+  被裂縫吐了出來: 'Spat out by the rift',
+  '御獸都受了傷，但都還活著。回去休息一下再來。': 'The beasts are hurt, but all alive. Rest and come back.',
+  守門者倒下了: 'The warden has fallen',
+  又清了一次: 'Cleared again',
+  '裂縫深處有一塊發光的碎片——核心的一角。': 'Deep in the rift lies a glowing shard — a piece of the core.',
+  '裂縫裡的晶骸好像永遠殺不完。': "The rift's husks seem endless.",
+  '· 升級：{0}': '· level up: {0}',
+  '再靠近裂縫一次，觸碰它的核心。': 'Go up to the rift once more and touch its core.',
+  '異晶 +8 · 金屬 +4{0}': 'Crystal +8 · metal +4{0}',
+  '裂縫 · 第一層 · 第 {0} / {1} 波': 'The rift · first layer · wave {0} / {1}',
+  裂縫試煉: 'Rift trial',
+  '御獸會自己戰鬥。每一回合，選一個戰術。': 'Your beasts fight on their own. Each round, choose a tactic.',
+  '· 全體': '· all',
+  撤退: 'Retreat',
+  '穹頂外 · 裂縫荒原': 'Outside the dome · rift wastes',
+  '廢棄的前哨站 · 按 E 聽錄音': 'An abandoned outpost · press E to hear the recordings',
+  聽: 'Listen',
+  '發光的裂縫 · 按 E 進入': 'A glowing rift · press E to enter',
+  嘯岳撕開的裂口: 'The tear Xiaoyue made',
+  // 0.51 第三章（下）
+  鏡像載體: 'Mirror carrier',
+  '空殼 · 研究員 K.': 'Husk · Researcher K.',
+  第一層: 'First layer',
+  第二層: 'Second layer',
+  第三層: 'Third layer',
+  '更深的地方還過不去。': "You can't get any deeper yet.",
+  '裂縫 ·': 'The rift ·',
+  '又清了一次。裂縫裡的東西好像永遠殺不完。': 'Cleared again. The things in the rift seem endless.',
+  '鏡像載體倒下的地方，有一張居民證：No.0001 · 晴。還有第二塊碎片。':
+    'Where the mirror carrier fell lies a resident card: No.0001 · Qing. And the second shard.',
+  '空殼裡的 K. 終於停了下來。第三塊碎片落在他手邊——三塊都到齊了。':
+    'K., inside the husk, finally stops. The third shard lies by his hand — all three are here.',
+  '鏡像載體的殘骸旁邊，掉著一張居民證。照片上的人在笑——是晴。':
+    "Beside the mirror carrier's remains lies a resident card. The person in the photo is smiling — it's Qing.",
+  '編號：No.0001。發證日期，是十一年前。': 'Number: No.0001. Issued eleven years ago.',
+  '背面黏著一張小小的錄音晶片。': 'A tiny recording chip is stuck to the back.',
+  '錄音 · 晴': 'Recording · Qing',
+  '「我是 No.0001。第一個成功的載體。」': '"I am No.0001. The first carrier that worked."',
+  '「原體在一間療養院裡，十一年了。只要我替組織工作，費用就不會停。」':
+    '"My original body has been in a care home for eleven years. As long as I work for the organisation, the payments won\'t stop."',
+  '「所以我笑，我發居民證，我把一個一個的人送去『畢業』。……對不起。」':
+    "\"So I smile, I hand out resident cards, I send people off to 'graduate', one after another. …I'm sorry.\"",
+  '晴也是載體。她也有一個躺在某張病床上、等著別人付錢的身體。':
+    'Qing is a carrier too. She too has a body lying in some bed, waiting for someone to pay.',
+  '……你找到我的居民證了，對吧。': "…You found my resident card, didn't you.",
+  '我是 No.0001。第一個。我的原體在療養院躺了十一年。':
+    "I'm No.0001. The first. My original body has lain in a care home for eleven years.",
+  '我幫你忘記那一晚，不是為了組織。是因為我知道記得有多痛。':
+    'I helped you forget that night not for the organisation. Because I know how much remembering hurts.',
+  '裂縫最深的地方，K. 還在。他沒有回去成。……你要小心。':
+    'K. is still at the deepest part of the rift. He never made it back. …Be careful.',
+  '晴 · No.0001': 'Qing · No.0001',
+  '晴親口告訴我：她是第一個載體，原體在療養院躺了十一年。她替組織工作，是為了讓費用不要停。':
+    "Qing told me herself: she was the first carrier, and her original body has lain in a care home for eleven years. She works for the organisation so the payments won't stop.",
+  '「……載體……0412……你帶著……碎片……」': '"…Carrier… 0412… you carry… the shards…"',
+  '「我走到了核心。可是我的原體……在我進來的那一週……就被『維持結束』了。」':
+    '"I reached the core. But my original body… the week I came in… they \'ended maintenance\'."',
+  '「橋還在。走過去的人……會失去這一邊的身體。御獸……留在這邊。」':
+    '"The bridge is still there. Whoever crosses… loses the body on this side. The beasts… stay here."',
+  '「……快一點。他們……會停止付錢。」': '"…Hurry. They… will stop paying."',
+  '空殼的眼睛暗了下去。三塊碎片在背包裡一起發燙。':
+    "The husk's eyes go dark. The three shards burn together in my bag.",
+  '三塊碎片在裂縫的核心拼成一塊。光從裂縫裡升起來，在空中搭成一座細細的橋。':
+    "At the rift's core the three shards fit into one. Light rises from the rift and lays a narrow bridge across the air.",
+  '橋的另一頭，是那間病房。監測器的聲音，第一次這麼清楚。':
+    "At the bridge's far end is the hospital room. For the first time the monitor's sound is this clear.",
+  '「……0412 號。你走得比任何人都遠。」': '"…Number 0412. You have come further than anyone."',
+  管理者: 'The Administrator',
+  '「我是這裡的管理者。新生之界，是我建的。」': '"I am the administrator here. I built the New World."',
+  '「你要回去，我不攔你。可是你要知道：回去的是意識。這具身體、你的御獸、嘯岳——都留在這一邊。」':
+    '"If you want to go back, I won\'t stop you. But know this: what goes back is the mind. This body, your beasts, Xiaoyue — all stay on this side."',
+  '「你的原體撐不了太久了。你媽媽前天簽了第二份文件。」':
+    '"Your original body won\'t hold out much longer. Your mother signed a second document the day before yesterday."',
+  '……你要走，我送你到橋頭。': "…If you go, I'll walk you to the bridge.",
+  '我站在橋前面。一邊是病床上的我，一邊是嘯岳。':
+    'I stand before the bridge. On one side, me in a hospital bed. On the other, Xiaoyue.',
+  '碎片還不夠。': 'Not enough shards yet.',
+  '第三章 完 · 橋的兩端': 'End of Chapter Three · Both Ends of the Bridge',
+  '三塊碎片在核心拼成了一座橋，另一頭是病房。管理者第一次開口：回去的是意識，這具身體、御獸和嘯岳都會留下。媽媽前天簽了第二份文件。第四章——敬請期待。':
+    'The three shards made a bridge at the core; at its far end is the hospital room. The Administrator spoke for the first time: what goes back is the mind, and this body, the beasts and Xiaoyue all stay. Mom signed a second document the day before yesterday. Chapter Four — coming soon.',
+  '裂縫的核心 · 橋': "The rift's core · the bridge",
+  裂縫: 'The rift',
+  '帶御獸通過裂縫 · 第二層': "Take your beasts through the rift's second layer",
+  '回慈光港，問晴': 'Go back to Port Mercylight and ask Qing',
+  '帶御獸通過裂縫 · 第三層': "Take your beasts through the rift's third layer",
+  '用三塊碎片搭起橋（{0}/3）': 'Make the bridge with three shards ({0}/3)',
+  '引路人 · No.0001': 'The guide · No.0001',
+  '第四章——敬請期待': 'Chapter Four — coming soon',
+  '要往下走多深？': 'How deep will you go?',
+  '核心碎片 {0} / 3': 'Core shards {0} / 3',
+  '三塊碎片都到齊了。再靠近裂縫一次。': 'All three shards are here. Go up to the rift once more.',
+  '裂縫 · {0} · 第 {1} / {2} 波': 'The rift · {0} · wave {1} / {2}',
+  // optimisation round 2
+  '引路人 · 晴': 'The guide · Qing',
+  北: 'N',
+  東北: 'NE',
+  東: 'E',
+  東南: 'SE',
+  南: 'S',
+  西南: 'SW',
+  西: 'W',
+  西北: 'NW',
+  'CHAPTER 03 · 裂縫之外': 'CHAPTER 03 · Beyond the Rift',
+  'CHAPTER 02 · 新生之界': 'CHAPTER 02 · The New World',
+  '（夜裡）': ' (at night)',
+  '下一步：{0} · {1} {2} m{3}': 'Next: {0} · {1} {2} m{3}',
+  '管理區 · 非請勿入': 'Administration · Staff Only'
 };

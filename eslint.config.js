@@ -18,6 +18,11 @@ export default [
     languageOptions: { globals: { ...globals.serviceworker } }
   },
   {
+    // the optional Cloudflare Worker for the online message stele
+    files: ['worker/**/*.js'],
+    languageOptions: { ecmaVersion: 2023, sourceType: 'module', globals: { ...globals.serviceworker } }
+  },
+  {
     files: ['tests/**/*.mjs', 'server.mjs', 'eslint.config.js', 'scripts/**/*.mjs'],
     languageOptions: { ecmaVersion: 2023, sourceType: 'module', globals: { ...globals.node, ...globals.browser } },
     rules: { 'no-unused-vars': ['warn', { args: 'none' }] }

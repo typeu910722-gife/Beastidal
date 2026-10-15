@@ -2,15 +2,15 @@
 // few rare ones found nowhere else. Creatures spawn where the player is heading, keep a modest density, and
 // drift away again when left far behind. Sea and deep species roam the water; land species and plant mutants
 // live on the islands and along the foot of the mountains.
-import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded, familyOf } from './genetics.js?v=0.45.0';
-import { ISLANDS, onIsland, islandAt } from './islands.js?v=0.45.0';
-import { walkable, landNear, waterNear, groundAt } from './lake.js?v=0.45.0';
-import { stepFlee, turnToward } from './physics.js?v=0.45.0';
-import { ZONES, pickSpecies } from './species.js?v=0.45.0';
-import { rollTame } from './taming.js?v=0.45.0';
-import { makeWildBeast, beastsFor, BEAST_SPAWN_P } from './beasts.js?v=0.45.0';
-import { addRandomGene } from './bsgenes.js?v=0.45.0';
-import { spawnMods } from './weather.js?v=0.45.0';
+import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded, familyOf } from './genetics.js?v=0.60.0';
+import { ISLANDS, onIsland, islandAt } from './islands.js?v=0.60.0';
+import { walkable, landNear, waterNear, groundAt } from './lake.js?v=0.60.0';
+import { stepFlee, turnToward } from './physics.js?v=0.60.0';
+import { ZONES, pickSpecies } from './species.js?v=0.60.0';
+import { rollTame } from './taming.js?v=0.60.0';
+import { makeWildBeast, beastsFor, BEAST_SPAWN_P } from './beasts.js?v=0.60.0';
+import { addRandomGene } from './bsgenes.js?v=0.60.0';
+import { spawnMods } from './weather.js?v=0.60.0';
 
 export const WILD_CAP = 40;
 export const DESPAWN_RANGE = 260;
@@ -87,7 +87,7 @@ export function zonesNear(s) {
 // Called every few seconds: thins the far-off, fills the nearby zones one creature at a time. Returns the newcomer.
 export function spawnWild(s, r = Math.random) {
   s.wild ??= [];
-  if (s.inCave || s.player.mode === 'cabin') return null;
+  if (s.inCave || s.inTown || s.player.mode === 'cabin') return null;
   s.wild = s.wild.filter(
     w => w.follow || w.event || w.rescue || w.trust > 0 || dist(w, s.player) < DESPAWN_RANGE || !w.zone
   );

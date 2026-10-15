@@ -8,7 +8,7 @@
 //    ground near the player, swaying in the wind, parting where you walk and thinning out into the distance. It
 //    is built in 16 m tiles placed on a world-fixed grid (so it never shifts under you), a couple of tiles a frame.
 import * as T from './vendor/three.module.min.js';
-import { groundAt, slopeAt } from './lake.js?v=0.45.0';
+import { groundAt, slopeAt } from './lake.js?v=0.60.0';
 
 const NOISE = `
 float tl_h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
@@ -209,7 +209,17 @@ function swayMaterial(base, flower) {
   transformed+=inverse(r)*vec3(sway.x,0.,sway.y)*keep;
  }`
       );
+    // 0.57: light the blades like the ground they grow from — normals tilted up, and the same on both faces —
+    // so a meadow at noon is green, not a field of black spikes wherever a blade turns its back to the sun
+    sh.vertexShader = sh.vertexShader.replace(
+      '#include <beginnormal_vertex>',
+      '#include <beginnormal_vertex>\nobjectNormal=normalize(mix(objectNormal,inverse(mat3(instanceMatrix))*vec3(0.,1.,0.),.8));'
+    );
     sh.fragmentShader = sh.fragmentShader
+      .replace(
+        '#include <normal_fragment_begin>',
+        T.ShaderChunk.normal_fragment_begin.replace('gl_FrontFacing ? 1.0 : - 1.0', '1.0')
+      )
       .replace('#include <common>', '#include <common>\nvarying float gTip;')
       .replace(
         '#include <color_fragment>',
@@ -218,7 +228,7 @@ function swayMaterial(base, flower) {
           : '#include <color_fragment>\ndiffuseColor.rgb*=mix(.45,1.25,gTip*gTip);'
       );
   };
-  base.customProgramCacheKey = () => (flower ? 'meadow-flower' : 'meadow-blade');
+  base.customProgramCacheKey = () => (flower ? 'meadow-flower-2' : 'meadow-blade-2');
   base.userData.sway = u;
   return base;
 }

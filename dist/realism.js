@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { groundTexture } from './lake-models.js?v=0.45.0';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.45.0';
+import { groundTexture } from './lake-models.js?v=0.60.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.60.0';
 export const TRAIL = 40,
   SPLASHES = 4;
 
@@ -119,7 +119,7 @@ export function horizonColor(sun, storm, out = new T.Color()) {
 // An overcast, slightly sickly sky with the alien rift: a jagged tear of violet light low in the north-east.
 // The rift lives in skyRadiance so the sea reflects it and image-based lighting picks up its glow.
 const SKY_GLSL = `
-uniform vec3 uSunDir;uniform float uStorm;
+uniform vec3 uSunDir;uniform float uStorm;uniform float uRift;
 #ifndef RIFT_GAIN
 #define RIFT_GAIN 1.
 #endif
@@ -145,7 +145,7 @@ vec3 skyRadiance(vec3 dir){
  hor=mix(hor,vec3(.85,.38,.22)*max(day,.25),golden*toward*.8);zen=mix(zen,zen*vec3(1.,.72,.8),golden*.4);
  vec3 col=mix(hor,zen,pow(y,.55));float mu=max(dot(dir,s),0.);
  col+=vec3(1.,.8,.56)*(pow(mu,6.)*.22+pow(mu,64.)*1.1)*day*(1.-uStorm*.85);
- vec4 rift=riftLight(dir)*RIFT_GAIN*(1.-uStorm*.6);col=col*(1.-rift.a)+rift.rgb*(.6+.4*(1.-day));
+ vec4 rift=riftLight(dir)*RIFT_GAIN*uRift*(1.-uStorm*.6);col=col*(1.-rift.a)+rift.rgb*(.6+.4*(1.-day));
  return mix(col,vec3(.2,.23,.25)*(.15+.85*day),uStorm*.8);
 }`;
 const NOISE_GLSL = `
@@ -169,6 +169,8 @@ export function makeSky(quality = QUALITY.high) {
         uStorm: { value: 0 },
         uTime: { value: 0 },
         uNight: { value: 0 },
+        // 0.48: 1 everywhere but under the New World's dome, whose projected sky has no rift
+        uRift: { value: 1 },
         uFog: { value: new T.Color() }
       },
       vertexShader:
@@ -207,7 +209,7 @@ export function makeSky(quality = QUALITY.high) {
   vec3 cloud=mix(vec3(.015,.02,.03),mix(top,base,under*.8)*lit,day);
   cloud+=vec3(1.,.9,.75)*rim*1.6*day*(1.-uStorm);
   cloud=mix(cloud,vec3(.13,.15,.17)*(.2+.8*day),uStorm);
-  cloud+=riftLight(normalize(dir+vec3(0.,-.05,0.))).rgb*.18;
+  cloud+=riftLight(normalize(dir+vec3(0.,-.05,0.))).rgb*.18*uRift;
   cloud=mix(cloud,cloud*vec3(1.3,.75,.5),golden*.6);col=mix(col,cloud,c*.85);
   float stars=step(.9975,hash(floor(dir.xz/(h+.3)*420.)))*smoothstep(.05,.3,h)*(1.-day)*(1.-c)*(1.-uStorm);col+=stars*.8;
   col=mix(uFog,col,smoothstep(-.02,.16,h));
@@ -289,18 +291,18 @@ void main(){
  float detail=1.-smoothstep(25.,180.,dist);vec2 rp=ripple(p,uTime)*detail*mix(.22,.4,uStorm);
  vec2 wn=vec2(0.);float wake=dist<160.?wakeField(p,wn):0.;
  vec3 n=normalize(vNormalW+vec3(-rp.x-wn.x,0.,-rp.y-wn.y));
- float NdV=max(dot(n,V),0.);float F=.02+.98*pow(1.-NdV,5.);
+ float lowSun=1.-smoothstep(.04,.32,uSunDir.y);float NdV=max(dot(n,V),0.);float F=.02+.98*pow(1.-NdV,5.);
  vec3 R=reflect(-V,n);R.y=max(R.y,.015);vec3 refl=skyRadiance(normalize(R));
- float day=smoothstep(-.18,.12,uSunDir.y);vec3 deep=vec3(.001,.009,.014),shallow=vec3(.012,.10,.092);
+ float day=smoothstep(-.18,.12,uSunDir.y);vec3 deep=vec3(.007,.038,.052),shallow=vec3(.03,.16,.14);
  float gh=texture2D(uGround,(p-uGroundBox.xy)*uGroundBox.zw).r;float sh=1.-smoothstep(.3,16.,-gh);
  vec2 hd=abs(p-uHome.xy)-uHome.zw;float homeD=length(max(hd,0.));sh=max(sh,(1.-smoothstep(0.,6.,homeD))*.35);
  vec3 L=normalize(uSunDir.y>-.05?uSunDir:-uSunDir);float sunlit=max(L.y,0.)*mix(.08,1.,day);
- vec3 body=mix(deep,shallow,sh)*(.25+.75*sunlit)+vec3(.004,.014,.022)*(1.-day);
+ vec3 body=mix(deep,shallow,sh)*(.25+.75*sunlit)+vec3(.008,.024,.036)*(1.-day);body+=skyRadiance(vec3(0.,1.,0.))*.045*(1.-F);
  float cr=max(vCrest,0.)*.15;float sss=pow(max(dot(V,-L),0.),4.)*cr*1.6+cr*.35;body+=vec3(.02,.12,.085)*sss*sunlit;
- vec3 col=mix(body,refl,F);
+ vec3 col=mix(body,refl*mix(1.,.8,lowSun*day),min(F,mix(.92,.72,lowSun*day)));
  vec3 H=normalize(L+V);float NdH=max(dot(n,H),0.);float rough=mix(.05,.12,uStorm);float a2=rough*rough;float dd=NdH*NdH*(a2-1.)+1.;float ggx=a2/(3.14159*dd*dd);
  vec3 sunCol=mix(vec3(.25,.32,.5)*.12,mix(vec3(1.,.55,.3),vec3(1.,.93,.82),smoothstep(.0,.35,uSunDir.y)),day);
- col+=sunCol*min(ggx,400.)*F*uSunPower*max(dot(n,L),0.)*.35*(1.-uStorm*.8);
+ col+=sunCol*min(ggx,mix(400.,90.,lowSun))*F*uSunPower*max(dot(n,L),0.)*mix(.35,.16,lowSun)*(1.-uStorm*.8);
  float foam=smoothstep(.6,.9,vCrest)*smoothstep(.5,.8,noise(p*2.3+uTime*.5))*(.25+uStorm);
  float surf=-gh-.25-.35*sin(uTime*1.3+p.x*.4+p.y*.3);foam+=(1.-smoothstep(0.,1.2,abs(surf)))*step(gh,.6)*(.45+.55*noise(p*3.+uTime));
  foam+=(1.-smoothstep(.08,.7,homeD))*step(0.,max(hd.x,hd.y))*(.35+.4*noise(p*4.+uTime*.8));
@@ -331,6 +333,7 @@ export function makeWater(quality) {
         uTime: { value: 0 },
         uNight: { value: 0 },
         uStorm: { value: 0 },
+        uRift: { value: 1 },
         uCamera: { value: new T.Vector3() },
         uBoat: { value: new T.Vector3() },
         uHeading: { value: 0 },

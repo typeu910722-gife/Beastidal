@@ -1,18 +1,19 @@
 {
   "name": "beastidal",
-  "version": "0.45.0",
+  "version": "0.60.0",
   "private": true,
   "type": "module",
   "scripts": {
     "check": "node tests/syntax.mjs",
-    "test": "node tests/rules.test.mjs && node tests/expansion.test.mjs && node tests/ship.test.mjs && node tests/cloud.test.mjs && node tests/physics.test.mjs && node tests/ux.test.mjs && node tests/progress.test.mjs && node tests/i18n.test.mjs && node tests/story.test.mjs && node tests/content.test.mjs && node tests/nav.test.mjs && node tests/cabin.test.mjs && node tests/species.test.mjs && node tests/beasts.test.mjs && node tests/craft.test.mjs && node tests/weather.test.mjs && node tests/combat.test.mjs && node tests/look.test.mjs && node tests/tree.test.mjs && node tests/bodies.test.mjs && node tests/pacing.test.mjs && node scripts/preload.mjs --check",
+    "test": "node tests/rules.test.mjs && node tests/expansion.test.mjs && node tests/ship.test.mjs && node tests/cloud.test.mjs && node tests/physics.test.mjs && node tests/ux.test.mjs && node tests/progress.test.mjs && node tests/i18n.test.mjs && node tests/story.test.mjs && node tests/echoes.test.mjs && node tests/town.test.mjs && node tests/dome.test.mjs && node tests/chapter2.test.mjs && node tests/chapter3.test.mjs && node tests/bake.test.mjs && node tests/storynav.test.mjs && node tests/content.test.mjs && node tests/nav.test.mjs && node tests/cabin.test.mjs && node tests/species.test.mjs && node tests/beasts.test.mjs && node tests/craft.test.mjs && node tests/weather.test.mjs && node tests/combat.test.mjs && node tests/look.test.mjs && node tests/tree.test.mjs && node tests/bodies.test.mjs && node tests/pacing.test.mjs && node scripts/preload.mjs --check",
     "start": "node server.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "smoke": "node tests/smoke.mjs",
     "verify": "npm run format:check && npm run lint && npm run check && npm test && npm run i18n:check && npm run smoke",
-    "i18n:check": "node scripts/i18n-check.mjs"
+    "i18n:check": "node scripts/i18n-check.mjs",
+    "deploy:community": "node scripts/deploy-community.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

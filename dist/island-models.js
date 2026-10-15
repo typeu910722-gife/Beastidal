@@ -1,7 +1,8 @@
-import { surface } from './surfaces.js?v=0.45.0';
+import { surface } from './surfaces.js?v=0.60.0';
 import * as T from './vendor/three.module.min.js';
-import { ISLANDS, NODES } from './islands.js?v=0.45.0';
-import { groundAt, slopeAt } from './lake.js?v=0.45.0';
+import { bakeStatic } from './bake.js?v=0.60.0';
+import { ISLANDS, NODES } from './islands.js?v=0.60.0';
+import { groundAt, slopeAt } from './lake.js?v=0.60.0';
 const material = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.85, ...extra });
 const trunk = surface(material(0x8e7952), 'wood'),
   leaf = material(0x4c8263, { side: T.DoubleSide }),
@@ -104,7 +105,8 @@ export function makeIslands() {
   }
   // a stand of coconut palms along the boathouse island's sandy rim
   const boathouse = ISLANDS.find(i => i.id === 'palm'),
-    r = rnd(4127);
+    r = rnd(4127),
+    palms = new T.Group();
   for (let k = 0, placed = 0; k < 400 && placed < 14; k++) {
     const a = r() * Math.PI * 2,
       d = 0.25 + r() * 0.7,
@@ -116,9 +118,12 @@ export function makeIslands() {
     g.position.set(x, h - 0.35, z);
     g.rotation.y = r() * 6.28;
     palm(g, 0, 0, 4 + r() * 2.5);
-    group.add(g);
+    palms.add(g);
     placed++;
   }
+  // the palms never move: drawn as a few merged meshes
+  group.add(palms);
+  bakeStatic(palms);
   for (const n of NODES) {
     const g = new T.Group();
     g.position.set(n.x, groundAt(n.x, n.z), n.z);
