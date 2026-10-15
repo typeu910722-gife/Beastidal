@@ -1,9 +1,9 @@
 // 0.47 抵達新生之界: 慈光港, the first town past the mountains. Chapter two, part one.
 // Everything here is free and gentle, and the town is full of signs of life — but the only person you ever see is
 // the guide. The rules of the town live here; town-models.js draws it, game.js wires it up. See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.49.0';
-import { give } from './bag.js?v=0.49.0';
-import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.49.0';
+import { dayOf, isNight } from './clock.js?v=0.50.0';
+import { give } from './bag.js?v=0.50.0';
+import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.50.0';
 export { TOWN, toWorld };
 
 // The town sits in its own corner of the world, like the garden maze and the cabin, in the open country under the
@@ -38,9 +38,9 @@ export const ARRIVE_AT = { x: 0, z: 52 };
 
 // Where you can walk, in world coordinates: the streets inside the wall, out through the gate, and the open country
 // under the dome (0.48).
-export function townWalkable(x, z, pad = 0.35) {
+export function townWalkable(x, z, pad = 0.35, open = false) {
   const p = toLocal(x, z);
-  if (!countryWalkable(p.x, p.z, pad)) return false;
+  if (!countryWalkable(p.x, p.z, pad, open)) return false;
   // the wall: a band round the town, open only at the gate
   const W = WALL,
     t = 0.5 + pad,
@@ -293,7 +293,11 @@ export const TOWN_HINTS = {
   board: ['慈愛組織的公告 · 按 E 閱讀', '閱讀'],
   diner: ['門開著，燈也亮著 · 按 E 看看', '看看'],
   admin: ['門是鎖著的 · 按 E 靠近', '靠近'],
-  xiaoyue: ['牠在城門外等你 · 按 E 回到湖區', '回去']
+  xiaoyue: ['牠在城門外等你 · 按 E 回到湖區', '回去'],
+  // 0.50: past the dome
+  outpost: ['廢棄的前哨站 · 按 E 聽錄音', '聽'],
+  rift: ['發光的裂縫 · 按 E 進入', '進入'],
+  tear: ['嘯岳撕開的裂口', '查看']
 };
 // Chapter two, part one, for the story tab.
 export function townObjectives(s) {

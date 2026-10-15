@@ -6,10 +6,11 @@ import {
   upgradeBoat,
   boatUpgradeCost,
   awaken
-} from './expansion.js?v=0.49.0';
-import { objectives, normalizeStory } from './story.js?v=0.49.0';
-import { townObjectives } from './town.js?v=0.49.0';
-import { chapter2Objectives } from './chapter2.js?v=0.49.0';
+} from './expansion.js?v=0.50.0';
+import { objectives, normalizeStory } from './story.js?v=0.50.0';
+import { townObjectives } from './town.js?v=0.50.0';
+import { chapter2Objectives } from './chapter2.js?v=0.50.0';
+import { chapter3Objectives } from './chapter3.js?v=0.50.0';
 let tab = 'beasts',
   page = 0,
   pick = null,
@@ -56,8 +57,11 @@ export function renderAdventure(body, s, ctx) {
     body.innerHTML += `<ul class="pact-list">${story.map(([text, done]) => `<li class="${done ? 'done' : ''}">${done ? '✓' : '○'} ${esc(text)}</li>`).join('')}</ul>`;
     // 0.47: chapter two, part one — 慈光港
     const town = [...townObjectives(s), ...chapter2Objectives(s)];
+    const three = chapter3Objectives(s);
     if (town.length)
       body.innerHTML += `<p class="dv-note">第二章 · 新生之界</p><ul class="pact-list">${town.map(([text, done]) => `<li class="${done ? 'done' : ''}">${done ? '✓' : '○'} ${esc(text)}</li>`).join('')}</ul>`;
+    if (three.length)
+      body.innerHTML += `<p class="dv-note">第三章 · 裂縫之外</p><ul class="pact-list">${three.map(([text, done]) => `<li class="${done ? 'done' : ''}">${done ? '✓' : '○'} ${esc(text)}</li>`).join('')}</ul>`;
     if (s.story.stage >= 5)
       body.innerHTML += `<button type="button" id="pact-cross" class="primary full-button">${s.story.stage >= 6 ? '越過群山，前往新生之界' : '請嘯岳帶你越過群山'}</button>`;
   } else {

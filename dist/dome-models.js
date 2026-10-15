@@ -2,8 +2,9 @@
 // deer on their circles, the flock on its figure of eight, far hills that never come nearer, and the shell itself:
 // invisible, except for a ripple of hexagons where you touch it and its seams at sunset. Rules: dome.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, DOME_R, domeHeight, riverX, RIVER_HALF, BRIDGE, TREES, DEER, birdAt, deerAt } from './dome.js?v=0.49.0';
-import { grainTexture } from './realism.js?v=0.49.0';
+import { TOWN, DOME_R, domeHeight, riverX, RIVER_HALF, BRIDGE, TREES, DEER, birdAt, deerAt } from './dome.js?v=0.50.0';
+import { grainTexture } from './realism.js?v=0.50.0';
+import { OUTPOST, RIFT } from './chapter3.js?v=0.50.0';
 
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.9, ...extra });
 const SIZE = 640,
@@ -42,7 +43,7 @@ function terrain() {
 }
 function river() {
   const pts = [];
-  for (let z = -DOME_R; z <= DOME_R; z += 6) pts.push(z);
+  for (let z = -DOME_R; z <= DOME_R; z += 6) if (Math.hypot(riverX(z), z) < DOME_R - 2) pts.push(z);
   const geo = new T.BufferGeometry(),
     v = [],
     idx = [];
@@ -185,19 +186,27 @@ function shell() {
       uSeams: { value: 0 },
       uTime: { value: 0 },
       uRipple: { value: new T.Vector3(0, -999, 0) },
-      uRippleT: { value: -99 }
+      uRippleT: { value: -99 },
+      uOutside: { value: 0 }, // 0.50: seen from outside, the shell shows its panels
+      uTear: { value: 0 } // 0.50: where 嘯岳 tore it, due south at the foot
     },
     vertexShader: `varying vec3 vP;varying vec3 vL;
 void main(){vL=position;vec4 w=modelMatrix*vec4(position,1.);vP=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}`,
-    fragmentShader: `uniform float uSeams;uniform float uTime;uniform vec3 uRipple;uniform float uRippleT;
+    fragmentShader: `uniform float uSeams;uniform float uTime;uniform vec3 uRipple;uniform float uRippleT;uniform float uOutside;uniform float uTear;
 varying vec3 vP;varying vec3 vL;
 float hexEdge(vec2 p){vec2 r=vec2(1.,1.732),h=r*.5;vec2 a=mod(p,r)-h,b=mod(p-h,r)-h;vec2 g=dot(a,a)<dot(b,b)?a:b;
  g=abs(g);return .5-max(dot(g,normalize(r)),g.x);}
-void main(){vec3 d=normalize(vL);vec2 uv=vec2(atan(d.x,d.z)*24.,asin(clamp(d.y,0.,1.))*24.);
+void main(){vec3 d=normalize(vL);float az=atan(d.x,d.z),el=asin(clamp(d.y,0.,1.));vec2 uv=vec2(az*24.,el*24.);
  float line=1.-smoothstep(.0,.035,hexEdge(uv));
  float age=uTime-uRippleT;float rip=exp(-length(vP-uRipple)/9.)*clamp(1.-age/1.8,0.,1.)*(.6+.4*sin(age*14.));
- float a=line*(uSeams*.4*smoothstep(0.,.12,d.y)+rip*.95);
- if(a<.003)discard;gl_FragColor=vec4(mix(vec3(1.,.86,.6),vec3(.75,.95,1.),rip),a);}`
+ // the tear: a jagged gap at the foot of the shell, its lips burning violet
+ float w=(.024+.006*sin(el*90.+3.))*(1.-el/.11),gap=abs(az)-w;
+ if(uTear>.5&&el<.11&&gap<0.)discard;
+ float lip=uTear*exp(-max(gap,0.)*260.)*step(el,.13);
+ float a=line*(uSeams*.4*smoothstep(0.,.12,d.y)+rip*.95+uOutside*.45)+uOutside*.06+lip*.9;
+ if(a<.003)discard;
+ vec3 c=mix(vec3(1.,.86,.6),vec3(.75,.95,1.),rip);c=mix(c,vec3(.62,.66,.72),uOutside*(1.-line));c=mix(c,vec3(.8,.4,1.),lip);
+ gl_FragColor=vec4(c,min(a,1.));}`
   });
   const m = new T.Mesh(new T.SphereGeometry(DOME_R, 96, 32, 0, Math.PI * 2, 0, Math.PI / 2), material);
   m.renderOrder = 4;
@@ -246,6 +255,82 @@ function traces() {
   return { group: g, trails };
 }
 
+// 0.50: outside the shell — researcher K.'s abandoned outpost and the first layer of the rift
+function outsideProps() {
+  const g = new T.Group(),
+    rust = mat(0x6b5446, { roughness: 0.8, metalness: 0.4 }),
+    dark = mat(0x2c2a2e, { roughness: 0.7, metalness: 0.5 });
+  const O = OUTPOST;
+  const shack = new T.Group();
+  shack.position.set(O.x, 0, O.z);
+  shack.rotation.y = -0.4;
+  const walls = new T.Mesh(new T.BoxGeometry(6, 3, 4.5), rust);
+  walls.position.y = 1.5;
+  shack.add(walls);
+  const roof = new T.Mesh(new T.BoxGeometry(6.8, 0.25, 5.3), dark);
+  roof.position.y = 3.15;
+  roof.rotation.z = 0.08;
+  shack.add(roof);
+  const mast = new T.Mesh(new T.CylinderGeometry(0.06, 0.08, 7, 6), dark);
+  mast.position.set(2.4, 3.5, -1.6);
+  shack.add(mast);
+  const dish = new T.Mesh(new T.SphereGeometry(0.9, 16, 8, 0, Math.PI * 2, 0, Math.PI / 3), dark);
+  dish.position.set(2.4, 6.6, -1.6);
+  dish.rotation.x = 1.1;
+  shack.add(dish);
+  const desk = new T.Mesh(new T.BoxGeometry(1.6, 0.9, 0.8), dark);
+  desk.position.set(-0.6, 0.45, 2.7);
+  shack.add(desk);
+  const screen = new T.Mesh(
+    new T.PlaneGeometry(0.7, 0.45),
+    new T.MeshStandardMaterial({ color: 0x0b1a1c, emissive: 0x6fe3d6, emissiveIntensity: 1.2 })
+  );
+  screen.position.set(-0.6, 1.25, 2.72);
+  shack.add(screen);
+  for (const [x, z] of [
+    [-3.6, 1],
+    [-3.9, -0.6],
+    [3.4, 2.4]
+  ]) {
+    const crate = new T.Mesh(new T.BoxGeometry(0.9, 0.8, 0.9), rust);
+    crate.position.set(x, 0.4, z);
+    crate.rotation.y = x;
+    shack.add(crate);
+  }
+  shack.traverse(o => o.isMesh && (o.castShadow = o.receiveShadow = true));
+  g.add(shack);
+  // the rift: a jagged seam of violet light in the ground, crystal splinters hanging over it
+  const R = RIFT,
+    glow = new T.MeshStandardMaterial({ color: 0x1a0624, emissive: 0xb35cff, emissiveIntensity: 2.2 });
+  const shards = [];
+  for (let i = -6; i <= 6; i++) {
+    const seg = new T.Mesh(
+      new T.BoxGeometry(2.6 + Math.abs(Math.sin(i * 1.7)) * 1.4, 0.06, 0.25 + Math.cos(i) * 0.15),
+      glow
+    );
+    seg.position.set(R.x + i * 2.3, 0.04, R.z + Math.sin(i * 0.9) * 1.8);
+    seg.rotation.y = 0.35 + Math.sin(i * 2.1) * 0.35;
+    g.add(seg);
+  }
+  const crystal = new T.MeshStandardMaterial({
+    color: 0x9b6bd6,
+    emissive: 0x7b3fd0,
+    emissiveIntensity: 1,
+    roughness: 0.2
+  });
+  for (let i = 0; i < 9; i++) {
+    const c = new T.Mesh(new T.OctahedronGeometry(0.35 + (i % 3) * 0.2), crystal);
+    c.position.set(R.x + (i - 4) * 3, 2 + (i % 4), R.z + Math.cos(i * 1.3) * 2);
+    c.userData.phase = i;
+    g.add(c);
+    shards.push(c);
+  }
+  const light = new T.PointLight(0xb35cff, 600, 40, 1.6);
+  light.position.set(R.x, 3, R.z);
+  g.add(light);
+  g.userData.shards = shards;
+  return g;
+}
 export function makeDome() {
   const group = new T.Group();
   group.position.set(TOWN.x, 0, TOWN.z);
@@ -270,7 +355,10 @@ export function makeDome() {
   const tr = traces();
   group.add(tr.group);
   const hills = farHills();
-  return { group, hills, deer, birds, dome, traces: tr.trails };
+  const props = outsideProps();
+  props.visible = false;
+  group.add(props);
+  return { group, hills, deer, birds, dome, traces: tr.trails, props, ground: outside };
 }
 // A trail of footprints, local coordinates, walking along `heading`.
 export function showTrace(d, x, z, heading) {
@@ -289,10 +377,20 @@ export function domeRipple(d, lx, lz, y, t) {
   d.dome.material.uniforms.uRipple.value.set(TOWN.x + lx, y, TOWN.z + lz);
   d.dome.material.uniforms.uRippleT.value = t;
 }
-export function animateDome(d, t, dt, { player, seams }) {
+export function animateDome(d, t, dt, { player, seams, cracked = false, outside = false }) {
   const u = d.dome.material.uniforms;
   u.uTime.value = t;
   u.uSeams.value = seams;
+  u.uTear.value = cracked ? 1 : 0;
+  u.uOutside.value += ((outside ? 1 : 0) - u.uOutside.value) * Math.min(1, dt * 2);
+  // once the shell is torn, what lies beyond it is the real wasteland, not more meadow
+  d.props.visible = cracked;
+  d.ground.material.color.setHex(cracked ? 0x4a4550 : 0x5a7044);
+  d.ground.position.y = cracked ? -0.05 : -0.4;
+  for (const c of d.props.userData.shards) {
+    c.position.y = 2 + (c.userData.phase % 4) + Math.sin(t + c.userData.phase) * 0.3;
+    c.rotation.y = t * 0.6 + c.userData.phase;
+  }
   d.hills.position.set(player.x, 0, player.z);
   d.deer.forEach((m, i) => {
     const p = deerAt(t, i);

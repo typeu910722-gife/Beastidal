@@ -3704,3 +3704,47 @@ body:has(#discovery:not([hidden])) #toasts {
   margin: 10px 0;
   color: #f3ead4;
 }
+
+/* 0.50: the rift trial */
+.trial {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: center;
+}
+.trial-vs {
+  font-weight: 700;
+  opacity: 0.6;
+}
+.trial-unit {
+  margin: 6px 0;
+  display: grid;
+  gap: 2px;
+}
+.trial-unit.down {
+  opacity: 0.4;
+}
+.trial-unit small {
+  opacity: 0.7;
+  font-size: 11px;
+}
+.trial-bar {
+  display: block;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.trial-bar i {
+  display: block;
+  height: 100%;
+  background: #8fe3b0;
+  transition: width 0.3s;
+}
+.trial-bar.foe i {
+  background: #c27bff;
+}
+.trial-log {
+  min-height: 4.5em;
+  font-size: 12px;
+}

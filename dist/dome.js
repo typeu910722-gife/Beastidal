@@ -2,10 +2,17 @@
 // It is a dome: 慈愛組織's laboratory on the continent of 比斯泰德, its sky projected on the inside of the shell.
 // This module is the land under it (in metres, local to the town's plaza; +z is south) and the cracks in the
 // illusion. town.js puts the town in it; town-models.js draws it. See docs/STORY.md.
-import { dayOf, hourOf } from './clock.js?v=0.49.0';
+import { dayOf, hourOf } from './clock.js?v=0.50.0';
+import { domeCracked } from './chapter2.js?v=0.50.0';
 
 export const TOWN = { x: 3000, z: 3000 }; // the plaza's centre, in world coordinates
 export const DOME_R = 290; // the shell's radius: an invisible wall where the land seems to go on
+// 0.50: outside the shell, once it is torn: the wasteland under the real sky, out to here
+export const OUTER_R = 470;
+// where 嘯岳 tore the shell, south of the gate
+export const TEAR = { half: 6 };
+export const inTear = (lx, lz) => lz > 0 && Math.abs(lx) < TEAR.half && Math.abs(Math.hypot(lx, lz) - DOME_R) < 4;
+export const outsideDome = (lx, lz) => Math.hypot(lx, lz) > DOME_R;
 export const toWorld = p => ({ x: TOWN.x + p.x, z: TOWN.z + p.z });
 export const toLocal = (x, z) => ({ x: x - TOWN.x, z: z - TOWN.z });
 
@@ -14,7 +21,8 @@ export const riverX = lz => 122 + 34 * Math.sin(lz * 0.012 + 0.6);
 export const RIVER_HALF = 5;
 export const BRIDGE = { z: 118, half: 2.2 };
 export const onBridge = (lx, lz) => Math.abs(lz - BRIDGE.z) < BRIDGE.half && Math.abs(lx - riverX(lz)) < RIVER_HALF + 3;
-export const inRiver = (lx, lz) => Math.abs(lx - riverX(lz)) < RIVER_HALF && !onBridge(lx, lz);
+export const inRiver = (lx, lz) =>
+  Math.abs(lx - riverX(lz)) < RIVER_HALF && !onBridge(lx, lz) && Math.hypot(lx, lz) < DOME_R;
 
 // The town and the road out of its gate lie flat; the country rolls around them and rises towards the shell.
 const flatness = (lx, lz) => {
@@ -29,8 +37,11 @@ export function domeHeight(lx, lz) {
     1.9 * Math.sin(lx * 0.047 + lz * 0.031) +
     1.1 * Math.sin(lz * 0.081 - lx * 0.023 + 2.1) +
     2.2;
-  const rim = Math.max(0, Math.hypot(lx, lz) - 190) * 0.06;
-  let h = (Math.max(0, hills) + rim) * flatness(lx, lz);
+  const d = Math.hypot(lx, lz),
+    rim = Math.max(0, Math.min(d, DOME_R) - 190) * 0.06,
+    // past the shell the land flattens into the wasteland (0.50)
+    edge = 1 - Math.min(1, Math.max(0, (d - DOME_R - 4) / 22));
+  let h = (Math.max(0, hills) + rim) * flatness(lx, lz) * edge;
   // the river cuts a channel; the bridge's ends stay level with the banks
   const r = Math.abs(lx - riverX(lz));
   if (r < RIVER_HALF + 6)
@@ -75,12 +86,16 @@ export function treeAt(lx, lz, pad = 0) {
 }
 
 // Out in the open country, under the shell (the walls and buildings are town.js's).
-export function countryWalkable(lx, lz, pad = 0.35) {
-  if (Math.hypot(lx, lz) > DOME_R - pad) return false;
+// `open`: the shell has been torn, and its tear lets you out into the wasteland (0.50)
+export function countryWalkable(lx, lz, pad = 0.35, open = false) {
+  const d = Math.hypot(lx, lz);
+  if (d > (open ? OUTER_R : DOME_R) - pad) return false;
+  if (open && Math.abs(d - DOME_R) < 0.6 + pad && !inTear(lx, lz)) return false;
   if (inRiver(lx, lz)) return false;
-  return !treeAt(lx, lz, pad);
+  return d > DOME_R || !treeAt(lx, lz, pad);
 }
-export const nearShell = (lx, lz, by = 3.5) => Math.hypot(lx, lz) > DOME_R - by;
+export const nearShell = (lx, lz, by = 3.5, open = false) =>
+  Math.abs(Math.hypot(lx, lz) - DOME_R) < by && !(open && inTear(lx, lz));
 
 // The flock: nine birds that fly the very same figure of eight every forty seconds.
 export const BIRD_PERIOD = 40;
@@ -159,6 +174,6 @@ export function tickDome(s, dt) {
   if (d.out > 150 && hourOf(s) > 7 && hourOf(s) < 17.5) add('birds');
   if (d.out > 300) add('deer');
   if (duskSeams(s) > 0.6) add('seams');
-  if (nearShell(p.x, p.z)) add('wall');
+  if (nearShell(p.x, p.z, 3.5, domeCracked(s))) add('wall');
   return out;
 }

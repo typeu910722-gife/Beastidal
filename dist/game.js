@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.49.0';
-import { renderAdventure } from './expansion-ui.js?v=0.49.0';
+} from './expansion.js?v=0.50.0';
+import { renderAdventure } from './expansion-ui.js?v=0.50.0';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.49.0';
-import { monologue, markGuide, pride, markPride } from './guide.js?v=0.49.0';
-import { climb, demolish, relocate } from './construction.js?v=0.49.0';
+} from './ship.js?v=0.50.0';
+import { monologue, markGuide, pride, markPride } from './guide.js?v=0.50.0';
+import { climb, demolish, relocate } from './construction.js?v=0.50.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.49.0';
+} from './housing.js?v=0.50.0';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.49.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.49.0';
-import { lakeMinimap } from './lake-map.js?v=0.49.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.49.0';
+} from './islands.js?v=0.50.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.50.0';
+import { lakeMinimap } from './lake-map.js?v=0.50.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.50.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.49.0';
+} from './cabin.js?v=0.50.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.49.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.49.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.49.0';
-import { QUALITY } from './realism.js?v=0.49.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.49.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.49.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.49.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.49.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.49.0';
-import { CONFIG } from './config.js?v=0.49.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.49.0';
+} from './story.js?v=0.50.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.50.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.50.0';
+import { QUALITY } from './realism.js?v=0.50.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.50.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.50.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.50.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.50.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.50.0';
+import { CONFIG } from './config.js?v=0.50.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.50.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,7 +122,7 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.49.0';
+} from './codex.js?v=0.50.0';
 import {
   ensureLandBeasts,
   normalizeWildlife,
@@ -130,12 +130,12 @@ import {
   spawnWild,
   spawnUnder,
   ashore
-} from './wildlife.js?v=0.49.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.49.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.49.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.49.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.49.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.49.0';
+} from './wildlife.js?v=0.50.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.50.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.50.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.50.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.50.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.50.0';
 import {
   startFishing,
   tickFishing,
@@ -144,7 +144,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.49.0';
+} from './fishing.js?v=0.50.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -154,10 +154,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.49.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.49.0';
-import { setClimbing } from './lake.js?v=0.49.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.49.0';
+} from './reclaim.js?v=0.50.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.50.0';
+import { setClimbing } from './lake.js?v=0.50.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.50.0';
 import {
   RARITY,
   FRENZY,
@@ -184,7 +184,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.49.0';
+} from './taming.js?v=0.50.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -203,8 +203,8 @@ import {
   AI_RANGE,
   onLayer,
   callAssist
-} from './combat.js?v=0.49.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.49.0';
+} from './combat.js?v=0.50.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.50.0';
 import {
   ECHOES,
   LAPTOP_PARTS,
@@ -214,7 +214,7 @@ import {
   missingParts,
   normalizeEchoes,
   repairLaptop
-} from './echoes.js?v=0.49.0';
+} from './echoes.js?v=0.50.0';
 import {
   TOWN_NAME,
   BUILDINGS as TOWN_BUILDINGS,
@@ -234,7 +234,7 @@ import {
   TOWN_HINTS,
   toWorld as townWorld,
   normalizeTown
-} from './town.js?v=0.49.0';
+} from './town.js?v=0.50.0';
 import {
   TEMPLATES,
   WORDS,
@@ -252,8 +252,23 @@ import {
   guideWarning,
   noteTrace,
   normalizeComms
-} from './comms.js?v=0.49.0';
-import { Community } from './community.js?v=0.49.0';
+} from './comms.js?v=0.50.0';
+import { Community } from './community.js?v=0.50.0';
+import {
+  outsidePoints,
+  tearShell,
+  noteOutside,
+  readK,
+  startTrial,
+  trialRound,
+  finishTrial,
+  canSeal,
+  seeCore,
+  tornOpen,
+  started as chapterThreeStarted,
+  TACTICS,
+  WAVE_COUNT
+} from './chapter3.js?v=0.50.0';
 import {
   readNotice,
   searchDiner,
@@ -264,15 +279,15 @@ import {
   DINER_FIND,
   AFTER_FORGET,
   GRADUATED_TEXT
-} from './chapter2.js?v=0.49.0';
-import { tickDome, nearShell, toLocal as domeLocal, countryWalkable } from './dome.js?v=0.49.0';
-import { BeastStage } from './beast-stage.js?v=0.49.0';
-import { loadArt, art, artImg } from './art.js?v=0.49.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.49.0';
-import { separateBodies } from './bodies.js?v=0.49.0';
-import { STATUES } from './statues.js?v=0.49.0';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.49.0';
-import { lookOf } from './beast-look.js?v=0.49.0';
+} from './chapter2.js?v=0.50.0';
+import { tickDome, nearShell, toLocal as domeLocal, countryWalkable } from './dome.js?v=0.50.0';
+import { BeastStage } from './beast-stage.js?v=0.50.0';
+import { loadArt, art, artImg } from './art.js?v=0.50.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.50.0';
+import { separateBodies } from './bodies.js?v=0.50.0';
+import { STATUES } from './statues.js?v=0.50.0';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.50.0';
+import { lookOf } from './beast-look.js?v=0.50.0';
 import {
   TREE,
   BRANCHES,
@@ -284,8 +299,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.49.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.49.0';
+} from './beast-tree.js?v=0.50.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.50.0';
 import {
   funds,
   normalizeBag,
@@ -306,12 +321,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.49.0';
-import { iconFor } from './icons.js?v=0.49.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.49.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.49.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.49.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.49.0';
+} from './bag.js?v=0.50.0';
+import { iconFor } from './icons.js?v=0.50.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.50.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.50.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.50.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.50.0';
 import {
   homePos,
   facilityPos,
@@ -323,10 +338,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.49.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.49.0';
-export const GAME_VERSION = '0.49.0';
-import { CloudSave } from './cloud-save.js?v=0.49.0';
+} from './fortress.js?v=0.50.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.50.0';
+export const GAME_VERSION = '0.50.0';
+import { CloudSave } from './cloud-save.js?v=0.50.0';
 import {
   readLocal,
   writeLocal,
@@ -343,9 +358,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.49.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.49.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.49.0';
+} from './save-store.js?v=0.50.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.50.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.50.0';
 import {
   RESOURCE_NAMES,
   RECIPES,
@@ -366,8 +381,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.49.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.49.0';
+} from './rules.js?v=0.50.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.50.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -2044,7 +2059,7 @@ const nearWild = () => (state.wild || []).filter(w => onLayer(state, w));
 function getAllTargets() {
   // 0.47: in 慈光港 only the town's own places
   if (state.inTown)
-    return townPoints(state)
+    return [...townPoints(state), ...outsidePoints(state).map(p => ({ ...p, ...townWorld(p) }))]
       .filter(p => !(p.id === 'guide' && guideGone(state)))
       .map(p => ({ ...p, type: 'town' }));
   if (state.player.mode === 'cabin') return [...cabinPointsWorld(state), ...loungeTargets()];
@@ -3539,7 +3554,13 @@ function tickNewWorld(dt) {
     save(true);
   }
   const p = domeLocal(state.player.x, state.player.z);
-  if (nearShell(p.x, p.z) && performance.now() - shellRippleAt > 1600) {
+  // 0.50: the first steps out through the tear
+  const out = noteOutside(state);
+  if (out) {
+    discover('穹頂外', out);
+    save(true);
+  }
+  if (nearShell(p.x, p.z, 3.5, tornOpen(state)) && performance.now() - shellRippleAt > 1600) {
     shellRippleAt = performance.now();
     const a = Math.atan2(p.x, p.z);
     world.domeRipple(Math.sin(a) * 289, Math.cos(a) * 289, world.baseY + 1.6);
@@ -3740,11 +3761,101 @@ function townAction(id) {
     return;
   }
   if (id === 'xiaoyue') {
-    modal('新生之界', '嘯岳', '<p class="pact-line">「要回去了嗎？」</p>', [
-      { label: '騎嘯岳回到湖區', primary: true, action: () => (closeModal(), backToLake()) },
-      { label: '再待一會兒', action: closeModal }
-    ]);
+    // 0.50: in the forget branch 嘯岳 remembers, and tears the shell when you ask
+    const canTear = chapterThreeStarted(state) && !tornOpen(state);
+    modal(
+      '新生之界',
+      '嘯岳',
+      `<p class="pact-line">${canTear ? '「……你忘了什麼，對吧？我記得。」' : '「要回去了嗎？」'}</p>`,
+      [
+        ...(canTear ? [{ label: '請嘯岳撕開穹頂', primary: true, action: () => (closeModal(), askTear()) }] : []),
+        { label: '騎嘯岳回到湖區', primary: !canTear, action: () => (closeModal(), backToLake()) },
+        { label: '再待一會兒', action: closeModal }
+      ]
+    );
+    return;
   }
+  // 0.50: past the dome
+  if (id === 'tear') return toast('穹頂的裂口。邊緣還在發著紫光。往北走就回到穹頂裡。');
+  if (id === 'outpost') {
+    const r = readK(state);
+    save(true);
+    updateUI();
+    return playLines(r.lines, '研究員 K. 的前哨站', () => {
+      if (r.n === 3) discover('研究員 K. · 紀錄 3', '前哨站西邊：裂縫 · 第一層');
+    });
+  }
+  if (id === 'rift') {
+    const core = seeCore(state);
+    if (core?.script) {
+      save(true);
+      updateUI();
+      return playLines(core.script, '裂縫的核心', () => discover('第三章（上）完 · 橋', '第三章（下）——敬請期待'));
+    }
+    const r = startTrial(state);
+    if (!r.ok) return toast(r.error, true);
+    trial = r.battle;
+    return showTrial();
+  }
+}
+function askTear() {
+  const r = tearShell(state);
+  if (!r.ok) return toast(r.error, true);
+  save(true);
+  playLines(r.script, '嘯岳', () => {
+    world.domeRipple(0, 289, 6);
+    world.sync(state);
+    updateUI();
+    discover('穹頂的裂口', '城門南邊，穹頂的盡頭');
+  });
+}
+// 0.50: the rift trial — your beasts fight on their own; you choose the tactic each round
+let trial = null;
+const bar = (hp, max, cls = '') =>
+  `<span class="trial-bar ${cls}"><i style="width:${Math.max(0, Math.round((hp / max) * 100))}%"></i></span>`;
+function showTrial() {
+  const b = trial;
+  if (!b) return;
+  if (b.over) {
+    const r = finishTrial(state, b);
+    trial = null;
+    save(true);
+    updateUI();
+    world.sync(state);
+    if (!r.won) {
+      modal('裂縫 · 第一層', '被裂縫吐了出來', '<p>御獸都受了傷，但都還活著。回去休息一下再來。</p>', [
+        { label: '離開', primary: true, action: closeModal }
+      ]);
+      return;
+    }
+    modal(
+      '裂縫 · 第一層',
+      r.first ? '守門者倒下了' : '又清了一次',
+      `<p>${r.first ? '裂縫深處有一塊發光的碎片——核心的一角。' : '裂縫裡的晶骸好像永遠殺不完。'}</p><p>異晶 +8 · 金屬 +4${r.ups.length ? ` · 升級：${esc(r.ups.join('、'))}` : ''}</p>${r.first ? '<p class="dv-note">再靠近裂縫一次，觸碰它的核心。</p>' : ''}`,
+      [{ label: '離開', primary: true, action: closeModal }]
+    );
+    return;
+  }
+  const side = list =>
+    list
+      .map(
+        u =>
+          `<div class="trial-unit${u.hp <= 0 ? ' down' : ''}"><b>${esc(u.name)}</b>${bar(u.hp, u.maxHp, u.atk !== undefined && u.def === undefined ? 'foe' : '')}<small>${Math.max(0, Math.ceil(u.hp))} / ${u.maxHp}</small></div>`
+      )
+      .join('');
+  modal(
+    `裂縫 · 第一層 · 第 ${b.wave + 1} / ${WAVE_COUNT} 波`,
+    '裂縫試煉',
+    `<div class="trial"><div class="trial-side">${side(b.members)}</div><div class="trial-vs">VS</div><div class="trial-side">${side(b.foes)}</div></div><p class="dv-note trial-log">${b.log.map(esc).join('<br>') || '御獸會自己戰鬥。每一回合，選一個戰術。'}</p>`,
+    [
+      { label: TACTICS.strike.name, primary: true, action: () => (trialRound(b, 'strike'), showTrial()) },
+      { label: TACTICS.guard.name, action: () => (trialRound(b, 'guard'), showTrial()) },
+      ...(canSeal(b)
+        ? [{ label: TACTICS.seal.name + ' · 全體', action: () => (trialRound(b, 'seal'), showTrial()) }]
+        : []),
+      { label: '撤退', action: () => ((b.over = 'lost'), showTrial()) }
+    ]
+  );
 }
 function storyEvents(dt) {
   for (const ev of tickStory(state, dt, {
@@ -6158,7 +6269,16 @@ function updateUI() {
   $('coords').textContent =
     `${Math.abs(state.player.z).toFixed(1)} ${state.player.z < 0 ? 'N' : 'S'} / ${Math.abs(state.player.x).toFixed(1)} ${state.player.x < 0 ? 'W' : 'E'}`;
   const far = Math.hypot(state.player.x, state.player.z);
-  $('zone-text').textContent = state.inTown ? TOWN_NAME : far < 35 ? '初醒淺海' : far < 80 ? '漂流之境' : '異生深海';
+  const lp = domeLocal(state.player.x, state.player.z);
+  $('zone-text').textContent = state.inTown
+    ? Math.hypot(lp.x, lp.z) > 290
+      ? '穹頂外 · 裂縫荒原'
+      : TOWN_NAME
+    : far < 35
+      ? '初醒淺海'
+      : far < 80
+        ? '漂流之境'
+        : '異生深海';
   let quests, title, hint, chapter;
   const nf = count(state, 'floor'),
     np = count(state, 'pen');
@@ -7056,12 +7176,14 @@ function worldLabels() {
   if (nearest) labels = labels.filter(l => !(nearest.type === 'buoy' && l.x === 17));
   // 0.47: in town, the town's own signs instead of the lake's
   if (state.inTown)
-    labels = TOWN_BUILDINGS.filter(b => b.name).map(b => ({
-      ...townWorld(b),
-      y: b.h + 2,
-      text: b.id === 'admin' ? '▣ 管理區 · 僅限職員' : '⌂ ' + b.name,
-      className: b.id === 'admin' ? '' : 'gold'
-    }));
+    labels = TOWN_BUILDINGS.filter(b => b.name)
+      .map(b => ({
+        ...townWorld(b),
+        y: b.h + 2,
+        text: b.id === 'admin' ? '▣ 管理區 · 僅限職員' : '⌂ ' + b.name,
+        className: b.id === 'admin' ? '' : 'gold'
+      }))
+      .concat(outsidePoints(state).map(p => ({ ...townWorld(p), y: 6, text: '◈ ' + p.name, className: 'mint' })));
   $('world-labels').innerHTML = labels
     .map(l => {
       const p = world.screenPoint(l.x, l.y, l.z);

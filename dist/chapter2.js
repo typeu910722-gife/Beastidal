@@ -4,7 +4,7 @@
 // family reports, the graduation list ("recycled"), a tank holding a body with your face, the truth about contracts
 // → 晴 finds you and offers to help you forget. Forget, or demand the truth: either way chapter two ends.
 // See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.49.0';
+import { dayOf, isNight } from './clock.js?v=0.50.0';
 
 export function normalizeChapter2(s) {
   s.chapter2 ??= {};
@@ -139,7 +139,8 @@ export function choose(s, choice) {
 }
 // After the truth, 晴 is gone and the shell over the gate stays cracked.
 export const guideGone = s => s.chapter2?.choice === 'truth';
-export const domeCracked = s => s.chapter2?.choice === 'truth';
+// 0.50: in the forget branch 嘯岳 tears it later (chapter3.js sets chapter3.torn)
+export const domeCracked = s => s.chapter2?.choice === 'truth' || !!s.chapter3?.torn;
 export const AFTER_FORGET = [['晴', '你今天氣色很好，0412。昨晚睡得好嗎？']];
 
 export function chapter2Objectives(s) {

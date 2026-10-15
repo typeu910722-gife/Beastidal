@@ -3667,5 +3667,110 @@ export default {
   '晴不在歡迎中心前。地上只留著她的太陽徽章。':
     "Qing isn't in front of the welcome centre. Only her sun badge lies on the ground.",
   管理區門禁卡: 'Admin block key card',
-  '夜裡，到管理區刷卡。': 'At night, swipe it at the admin block.'
+  '夜裡，到管理區刷卡。': 'At night, swipe it at the admin block.',
+  // 0.50 第三章（上）
+  '你不記得昨晚。可是我記得：你在發抖，那個女人放你走，城裡的燈全熄了。':
+    "You don't remember last night. But I do: you were shaking, that woman let you go, and every light in town went out.",
+  '你說過你想知道真相。……再說一次。': 'You said you wanted the truth. …Say it again.',
+  '我想知道真相。': 'I want to know the truth.',
+  '那就抓緊。': 'Then hold on.',
+  '嘯岳撲向城門外的空氣。爪子底下，傳來玻璃碎裂的聲音——天空裂開一道縫，縫後是紫色的裂縫。':
+    'Xiaoyue leaps at the empty air outside the gate. Under its claws comes the sound of breaking glass — the sky splits open, and behind it is the purple rift.',
+  '穹頂已經撕開了。裂口在城門南邊，穹頂的盡頭。':
+    'The dome is already torn. The tear is south of the gate, where the dome ends.',
+  裂口: 'The tear',
+  '嘯岳又撕開了穹頂。我忘了昨晚，可是牠記得。裂口在城門南邊，穹頂的盡頭。':
+    'Xiaoyue tore the dome open again. I forgot last night, but it remembered. The tear is south of the gate, where the dome ends.',
+  '走出裂口，腳下是乾裂的灰土。回頭看，穹頂是一座看不到頂的六角形外殼，裡面的草原、森林、天空，全是投影。這邊的天空，有那道紫色的裂縫。':
+    'Through the tear the ground is cracked grey dust. Looking back, the dome is a hexagonal shell too tall to see the top of; the meadows, woods and sky inside are all projections. On this side, the sky has the purple rift.',
+  穹頂外: 'Outside the dome',
+  '錄音 · 研究員 K.': 'Recording · Researcher K.',
+  '「紀錄一。我是研究員 K.，慈愛組織前導觀測員。我的工作，是確認載體能不能在這片大陸上活下去。」':
+    '"Log one. I am Researcher K., advance observer for Compassion. My job is to confirm whether carriers can survive on this continent."',
+  '「湖區的適應期很順利。御獸會主動靠近載體——牠們聽得懂我們。這不在計畫裡。」':
+    '"Adaptation at the lake goes smoothly. The beasts approach the carriers of their own accord — they understand us. That was not in the plan."',
+  '「紀錄二。裂縫不是自然的傷口。它是一座橋——一端是比斯泰德，一端是我們的世界。」':
+    '"Log two. The rift is not a natural wound. It is a bridge — one end in Beastidal, the other in our world."',
+  '「組織把人的意識，從那座橋送過來，裝進這邊培育的身體。家屬以為那是電腦模擬。董事會說，這是慈悲。」':
+    '"The organisation sends people\'s minds across that bridge and puts them into bodies grown on this side. The families believe it is a computer simulation. The board calls it mercy."',
+  '「紀錄三。我想要的『路』，是回去的路。意識能過來，就能回去。」':
+    '"Log three. The \'road\' I want is the road back. If a mind can come across, it can go back."',
+  '「原體還活著的人——還來得及。我要進裂縫，找到核心。如果你聽到這段……別讓他們『畢業』你。」':
+    "\"For those whose original bodies are still alive — there is still time. I am going into the rift to find its core. If you hear this… don't let them 'graduate' you.\"",
+  '錄音到這裡就斷了。桌上留著一張手繪的地圖：前哨站西邊的地面上，畫著一道裂縫，旁邊寫著「第一層」。':
+    'The recording cuts off here. A hand-drawn map is left on the desk: a rift in the ground west of the outpost, labelled "First layer".',
+  'K. 是慈愛組織的前導觀測員。他發現御獸聽得懂載體。':
+    'K. was an advance observer for Compassion. He found that the beasts understand the carriers.',
+  '裂縫是一座橋，一端是比斯泰德，一端是我們的世界。組織把意識從橋上送過來，家屬以為那是模擬。':
+    "The rift is a bridge, one end in Beastidal, the other in our world. The organisation sends minds across it; the families think it's a simulation.",
+  'K. 想找的是回去的路：意識能過來，就能回去。原體還活著的人，還來得及。他進了裂縫。':
+    'What K. was looking for was the way back: if a mind can come across, it can go back. For those whose original bodies are alive, there is still time. He went into the rift.',
+  '研究員 K. · 紀錄 {0}': 'Researcher K. · log {0}',
+  猛攻: 'Strike',
+  守勢: 'Brace',
+  契印技: 'Seal art',
+  裂縫晶骸: 'Rift crystal husk',
+  空殼載體: 'Empty carrier',
+  裂縫守門者: 'Rift warden',
+  '裂縫的光太刺眼，看不清裡面。先去附近的前哨站看看，也許有人留下了什麼。':
+    "The rift's light is too bright to see into. Check the outpost nearby first — maybe someone left something.",
+  '一個人進不去。帶上至少一隻締結契約、還有體力的御獸。':
+    "You can't go in alone. Bring at least one contracted beast with strength left.",
+  '第 {0} 波': 'Wave {0}',
+  '裂縫 · 第一層': 'The rift · first layer',
+  '裂縫把我們吐了出來。御獸都受了傷，但都還活著。休息一下再來。':
+    'The rift spat us out. The beasts are hurt, but all alive. Rest and try again.',
+  '守門者碎成一地晶塵。裂縫深處有一塊發光的碎片——核心的一角。':
+    'The warden shatters into crystal dust. Deep in the rift lies a glowing shard — a piece of the core.',
+  '又清了一次第一層。裂縫裡的晶骸好像永遠殺不完。': "The first layer cleared again. The rift's husks seem endless.",
+  '碎片在手心發燙。裂縫的光一下子變得很安靜。': "The shard burns in my palm. The rift's light goes suddenly still.",
+  '我看見一個房間。白色的天花板，點滴，心電監測器——嗶。嗶。嗶。':
+    'I see a room. A white ceiling, a drip, a heart monitor — beep. Beep. Beep.',
+  '床上躺著一個人。那是我。更瘦，更蒼白，可是那是我。': "Someone is lying in the bed. It's me. Thinner, paler, but me.",
+  '床邊的椅子上，媽媽睡著了，手還握著床上那隻手。':
+    'In the chair by the bed, Mom has fallen asleep, still holding the hand on the bed.',
+  '「……你今天，好像又動了一下。」': '"…You moved a little again today, I think."',
+  '那就是橋的另一頭。': 'That is the other end of the bridge.',
+  '碎片只有一塊。要走過去，還不夠。裂縫還有更深的地方。': 'One shard is not enough to cross. The rift goes deeper.',
+  '我握緊碎片。還來得及。': 'I grip the shard. There is still time.',
+  '第三章（上）完 · 橋': 'End of Chapter Three, Part One · The Bridge',
+  '裂縫的核心讓我看見了病房：瘦下去的我，握著我的手睡著的媽媽。原體還活著。碎片只有一塊，裂縫還有更深的層。第三章（下）——敬請期待。':
+    "The rift's core showed me the hospital room: my wasted body, and Mom asleep holding my hand. My original body is alive. One shard isn't enough; the rift has deeper layers. Chapter Three, Part Two — coming soon.",
+  '研究員 K. 的前哨站': "Researcher K.'s outpost",
+  '裂縫 · 第一層（核心）': 'The rift · first layer (core)',
+  穹頂的裂口: 'The tear in the dome',
+  '回到城門外，找嘯岳': 'Go back outside the gate and find Xiaoyue',
+  '走出穹頂的裂口（城門南邊，穹頂的盡頭）': 'Walk out through the tear (south of the gate, where the dome ends)',
+  '聽完研究員 K. 的錄音（{0}/{1}）': "Hear Researcher K.'s recordings ({0}/{1})",
+  '帶御獸通過裂縫 · 第一層': "Take your beasts through the rift's first layer",
+  觸碰裂縫的核心: "Touch the rift's core",
+  '第三章 · 裂縫之外': 'Chapter Three · Beyond the Rift',
+  '「……你忘了什麼，對吧？我記得。」': '"…You\'ve forgotten something, haven\'t you? I remember."',
+  請嘯岳撕開穹頂: 'Ask Xiaoyue to tear the dome open',
+  '穹頂的裂口。邊緣還在發著紫光。往北走就回到穹頂裡。':
+    'The tear in the dome. Its edges still glow violet. Walk north to go back inside.',
+  '研究員 K. · 紀錄 3': 'Researcher K. · log 3',
+  '前哨站西邊：裂縫 · 第一層': "West of the outpost: the rift's first layer",
+  裂縫的核心: "The rift's core",
+  '第三章（下）——敬請期待': 'Chapter Three, Part Two — coming soon',
+  '城門南邊，穹頂的盡頭': 'South of the gate, where the dome ends',
+  被裂縫吐了出來: 'Spat out by the rift',
+  '御獸都受了傷，但都還活著。回去休息一下再來。': 'The beasts are hurt, but all alive. Rest and come back.',
+  守門者倒下了: 'The warden has fallen',
+  又清了一次: 'Cleared again',
+  '裂縫深處有一塊發光的碎片——核心的一角。': 'Deep in the rift lies a glowing shard — a piece of the core.',
+  '裂縫裡的晶骸好像永遠殺不完。': "The rift's husks seem endless.",
+  '· 升級：{0}': '· level up: {0}',
+  '再靠近裂縫一次，觸碰它的核心。': 'Go up to the rift once more and touch its core.',
+  '異晶 +8 · 金屬 +4{0}': 'Crystal +8 · metal +4{0}',
+  '裂縫 · 第一層 · 第 {0} / {1} 波': 'The rift · first layer · wave {0} / {1}',
+  裂縫試煉: 'Rift trial',
+  '御獸會自己戰鬥。每一回合，選一個戰術。': 'Your beasts fight on their own. Each round, choose a tactic.',
+  '· 全體': '· all',
+  撤退: 'Retreat',
+  '穹頂外 · 裂縫荒原': 'Outside the dome · rift wastes',
+  '廢棄的前哨站 · 按 E 聽錄音': 'An abandoned outpost · press E to hear the recordings',
+  聽: 'Listen',
+  '發光的裂縫 · 按 E 進入': 'A glowing rift · press E to enter',
+  嘯岳撕開的裂口: 'The tear Xiaoyue made'
 };
