@@ -3772,5 +3772,78 @@ export default {
   '廢棄的前哨站 · 按 E 聽錄音': 'An abandoned outpost · press E to hear the recordings',
   聽: 'Listen',
   '發光的裂縫 · 按 E 進入': 'A glowing rift · press E to enter',
-  嘯岳撕開的裂口: 'The tear Xiaoyue made'
+  嘯岳撕開的裂口: 'The tear Xiaoyue made',
+  // 0.51 第三章（下）
+  鏡像載體: 'Mirror carrier',
+  '空殼 · 研究員 K.': 'Husk · Researcher K.',
+  第一層: 'First layer',
+  第二層: 'Second layer',
+  第三層: 'Third layer',
+  '更深的地方還過不去。': "You can't get any deeper yet.",
+  '裂縫 ·': 'The rift ·',
+  '又清了一次。裂縫裡的東西好像永遠殺不完。': 'Cleared again. The things in the rift seem endless.',
+  '鏡像載體倒下的地方，有一張居民證：No.0001 · 晴。還有第二塊碎片。':
+    'Where the mirror carrier fell lies a resident card: No.0001 · Qing. And the second shard.',
+  '空殼裡的 K. 終於停了下來。第三塊碎片落在他手邊——三塊都到齊了。':
+    'K., inside the husk, finally stops. The third shard lies by his hand — all three are here.',
+  '鏡像載體的殘骸旁邊，掉著一張居民證。照片上的人在笑——是晴。':
+    "Beside the mirror carrier's remains lies a resident card. The person in the photo is smiling — it's Qing.",
+  '編號：No.0001。發證日期，是十一年前。': 'Number: No.0001. Issued eleven years ago.',
+  '背面黏著一張小小的錄音晶片。': 'A tiny recording chip is stuck to the back.',
+  '錄音 · 晴': 'Recording · Qing',
+  '「我是 No.0001。第一個成功的載體。」': '"I am No.0001. The first carrier that worked."',
+  '「原體在一間療養院裡，十一年了。只要我替組織工作，費用就不會停。」':
+    '"My original body has been in a care home for eleven years. As long as I work for the organisation, the payments won\'t stop."',
+  '「所以我笑，我發居民證，我把一個一個的人送去『畢業』。……對不起。」':
+    "\"So I smile, I hand out resident cards, I send people off to 'graduate', one after another. …I'm sorry.\"",
+  '晴也是載體。她也有一個躺在某張病床上、等著別人付錢的身體。':
+    'Qing is a carrier too. She too has a body lying in some bed, waiting for someone to pay.',
+  '……你找到我的居民證了，對吧。': "…You found my resident card, didn't you.",
+  '我是 No.0001。第一個。我的原體在療養院躺了十一年。':
+    "I'm No.0001. The first. My original body has lain in a care home for eleven years.",
+  '我幫你忘記那一晚，不是為了組織。是因為我知道記得有多痛。':
+    'I helped you forget that night not for the organisation. Because I know how much remembering hurts.',
+  '裂縫最深的地方，K. 還在。他沒有回去成。……你要小心。':
+    'K. is still at the deepest part of the rift. He never made it back. …Be careful.',
+  '晴 · No.0001': 'Qing · No.0001',
+  '晴親口告訴我：她是第一個載體，原體在療養院躺了十一年。她替組織工作，是為了讓費用不要停。':
+    "Qing told me herself: she was the first carrier, and her original body has lain in a care home for eleven years. She works for the organisation so the payments won't stop.",
+  '「……載體……0412……你帶著……碎片……」': '"…Carrier… 0412… you carry… the shards…"',
+  '「我走到了核心。可是我的原體……在我進來的那一週……就被『維持結束』了。」':
+    '"I reached the core. But my original body… the week I came in… they \'ended maintenance\'."',
+  '「橋還在。走過去的人……會失去這一邊的身體。御獸……留在這邊。」':
+    '"The bridge is still there. Whoever crosses… loses the body on this side. The beasts… stay here."',
+  '「……快一點。他們……會停止付錢。」': '"…Hurry. They… will stop paying."',
+  '空殼的眼睛暗了下去。三塊碎片在背包裡一起發燙。':
+    "The husk's eyes go dark. The three shards burn together in my bag.",
+  '三塊碎片在裂縫的核心拼成一塊。光從裂縫裡升起來，在空中搭成一座細細的橋。':
+    "At the rift's core the three shards fit into one. Light rises from the rift and lays a narrow bridge across the air.",
+  '橋的另一頭，是那間病房。監測器的聲音，第一次這麼清楚。':
+    "At the bridge's far end is the hospital room. For the first time the monitor's sound is this clear.",
+  '「……0412 號。你走得比任何人都遠。」': '"…Number 0412. You have come further than anyone."',
+  管理者: 'The Administrator',
+  '「我是這裡的管理者。新生之界，是我建的。」': '"I am the administrator here. I built the New World."',
+  '「你要回去，我不攔你。可是你要知道：回去的是意識。這具身體、你的御獸、嘯岳——都留在這一邊。」':
+    '"If you want to go back, I won\'t stop you. But know this: what goes back is the mind. This body, your beasts, Xiaoyue — all stay on this side."',
+  '「你的原體撐不了太久了。你媽媽前天簽了第二份文件。」':
+    '"Your original body won\'t hold out much longer. Your mother signed a second document the day before yesterday."',
+  '……你要走，我送你到橋頭。': "…If you go, I'll walk you to the bridge.",
+  '我站在橋前面。一邊是病床上的我，一邊是嘯岳。':
+    'I stand before the bridge. On one side, me in a hospital bed. On the other, Xiaoyue.',
+  '碎片還不夠。': 'Not enough shards yet.',
+  '第三章 完 · 橋的兩端': 'End of Chapter Three · Both Ends of the Bridge',
+  '三塊碎片在核心拼成了一座橋，另一頭是病房。管理者第一次開口：回去的是意識，這具身體、御獸和嘯岳都會留下。媽媽前天簽了第二份文件。第四章——敬請期待。':
+    'The three shards made a bridge at the core; at its far end is the hospital room. The Administrator spoke for the first time: what goes back is the mind, and this body, the beasts and Xiaoyue all stay. Mom signed a second document the day before yesterday. Chapter Four — coming soon.',
+  '裂縫的核心 · 橋': "The rift's core · the bridge",
+  裂縫: 'The rift',
+  '帶御獸通過裂縫 · 第二層': "Take your beasts through the rift's second layer",
+  '回慈光港，問晴': 'Go back to Port Mercylight and ask Qing',
+  '帶御獸通過裂縫 · 第三層': "Take your beasts through the rift's third layer",
+  '用三塊碎片搭起橋（{0}/3）': 'Make the bridge with three shards ({0}/3)',
+  '引路人 · No.0001': 'The guide · No.0001',
+  '第四章——敬請期待': 'Chapter Four — coming soon',
+  '要往下走多深？': 'How deep will you go?',
+  '核心碎片 {0} / 3': 'Core shards {0} / 3',
+  '三塊碎片都到齊了。再靠近裂縫一次。': 'All three shards are here. Go up to the rift once more.',
+  '裂縫 · {0} · 第 {1} / {2} 波': 'The rift · {0} · wave {1} / {2}'
 };

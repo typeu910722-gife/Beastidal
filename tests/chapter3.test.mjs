@@ -22,7 +22,14 @@ import {
   seeCore,
   outsidePoints,
   chapter3Objectives,
-  TEAM_MAX
+  TEAM_MAX,
+  layerOpen,
+  qingConfession,
+  bridgeReady,
+  crossBridge,
+  QING_CARD,
+  K_END,
+  BRIDGE_SCENE
 } from '../dist/chapter3.js';
 
 let n = 0;
@@ -144,7 +151,58 @@ test('Winning gives a shard, xp and loot once; losing only tires the beasts; the
   assert.ok(seeCore(s).script.length);
   assert.ok(seeCore(s).again);
   assert.equal(s.log[0].title.startsWith('第三章（上）完'), true);
-  assert.ok(chapter3Objectives(s).every(([, done]) => done));
+  const partOne = chapter3Objectives(s);
+  assert.ok(partOne.slice(0, partOne.findIndex(([text]) => text.startsWith('第三章（上）')) + 1).every(([, d]) => d));
+});
+
+test("Part two: the second layer after the vision, 晴's card, the third layer, K., the bridge", () => {
+  const s = after('forget');
+  tearShell(s);
+  Object.assign(s.player, toWorld({ x: 0, z: DOME_R + 10 }));
+  noteOutside(s);
+  const c = normalizeChapter3(s);
+  c.logs = K_LOGS.length;
+  assert.ok(layerOpen(s, 1) && !layerOpen(s, 2) && !layerOpen(s, 3));
+  assert.equal(startTrial(s, 1, 2).ok, false);
+  // like a player: try again (rested) until the layer falls
+  const win = layer => {
+    for (let seed = 1; seed < 30; seed++) {
+      for (const p of s.tamed) p.health = 100;
+      const b = startTrial(s, seed * 31 + layer, layer).battle;
+      while (!b.over) trialRound(b, smart(b));
+      const r = finishTrial(s, b);
+      if (r.won) return r;
+    }
+    assert.fail('layer ' + layer + ' never fell');
+  };
+  win(1);
+  seeCore(s);
+  assert.ok(layerOpen(s, 2) && !layerOpen(s, 3));
+  const r2 = win(2);
+  assert.ok(r2.first && r2.script === QING_CARD && c.qing);
+  assert.ok(layerOpen(s, 3));
+  // in the forget branch 晴 tells you herself, once
+  assert.ok(qingConfession(s));
+  assert.equal(qingConfession(s), null);
+  assert.ok(!bridgeReady(s));
+  const r3 = win(3);
+  assert.equal(r3.script, K_END);
+  assert.equal(c.shards, 3);
+  assert.ok(bridgeReady(s));
+  assert.ok(crossBridge(s).script === BRIDGE_SCENE);
+  assert.ok(crossBridge(s).again);
+  assert.equal(s.log[0].title, '第三章 完 · 橋的兩端');
+  assert.ok(chapter3Objectives(s).every(([, d]) => d));
+  // a second clear of a layer gives loot but no new shard
+  assert.equal(win(1).first, false);
+  assert.equal(c.shards, 3);
+});
+
+test('Saves from 0.50 that had won the first layer keep it', () => {
+  const s = after('truth');
+  s.chapter3 = { torn: false, outside: true, logs: 3, trials: 2, vision: true, shards: 1 };
+  assert.deepEqual(normalizeChapter3(s).cleared, [1]);
+  assert.ok(layerOpen(s, 2));
 });
 
 console.log(`\n${n} chapter three tests passed.`);
