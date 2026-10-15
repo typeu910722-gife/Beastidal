@@ -4517,3 +4517,70 @@ body.syncing #travel-status {
   border-bottom-color: rgba(233, 251, 255, 0.7);
   filter: none;
 }
+
+/* 0.61.2: on a touch screen, inside your beast: a big strike under the right thumb, a dodge beside it */
+#sync-attack,
+#sync-dodge {
+  border-radius: 50%;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  font-weight: 700;
+  color: #fff;
+}
+#sync-attack {
+  width: 86px;
+  height: 86px;
+  min-height: 86px;
+  font-size: 17px;
+  background: radial-gradient(circle at 40% 35%, #ff9a6a, #c8452a 70%);
+  border: 2px solid #ffd2b8;
+  box-shadow: 0 0 22px rgba(255, 110, 60, 0.55);
+}
+#sync-dodge {
+  width: 64px;
+  height: 64px;
+  min-height: 64px;
+  font-size: 14px;
+  background: radial-gradient(circle at 40% 35%, #8fe6ff, #2a86a8 70%);
+  border: 2px solid #d4f6ff;
+  box-shadow: 0 0 16px rgba(80, 200, 255, 0.5);
+  align-self: flex-start;
+}
+#sync-attack.pressed {
+  box-shadow: 0 0 34px rgba(255, 150, 80, 0.9);
+}
+.landscape-play #sync-attack {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+}
+.landscape-play #sync-dodge {
+  position: absolute;
+  right: 100px;
+  bottom: 18px;
+}
+.landscape-play.lefty #sync-attack {
+  right: auto;
+  left: 4px;
+}
+.landscape-play.lefty #sync-dodge {
+  right: auto;
+  left: 100px;
+}
+/* the riding and diving buttons and the small strike button step back while the big ones are out */
+body.syncing.touch-device #sprint-btn,
+body.syncing.touch-device #repel-btn,
+body.syncing.touch-device #ride-btn,
+body.syncing.touch-device #dive-btn,
+body.syncing.touch-device #beast-attack,
+body.syncing.touch-device #dodge-btn {
+  display: none;
+}
+.landscape-play #sync-hud {
+  width: 200px;
+  bottom: 86px;
+}
+.landscape-play #sync-hud .sync-name {
+  font-size: 12px;
+}
