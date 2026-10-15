@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.46.0';
-import { renderAdventure } from './expansion-ui.js?v=0.46.0';
+} from './expansion.js?v=0.47.0';
+import { renderAdventure } from './expansion-ui.js?v=0.47.0';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.46.0';
-import { monologue, markGuide, pride, markPride } from './guide.js?v=0.46.0';
-import { climb, demolish, relocate } from './construction.js?v=0.46.0';
+} from './ship.js?v=0.47.0';
+import { monologue, markGuide, pride, markPride } from './guide.js?v=0.47.0';
+import { climb, demolish, relocate } from './construction.js?v=0.47.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.46.0';
+} from './housing.js?v=0.47.0';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.46.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.46.0';
-import { lakeMinimap } from './lake-map.js?v=0.46.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.46.0';
+} from './islands.js?v=0.47.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.47.0';
+import { lakeMinimap } from './lake-map.js?v=0.47.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.47.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.46.0';
+} from './cabin.js?v=0.47.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.46.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.46.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.46.0';
-import { QUALITY } from './realism.js?v=0.46.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.46.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.46.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.46.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.46.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.46.0';
-import { CONFIG } from './config.js?v=0.46.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.46.0';
+} from './story.js?v=0.47.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.47.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.47.0';
+import { QUALITY } from './realism.js?v=0.47.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.47.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.47.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.47.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.47.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.47.0';
+import { CONFIG } from './config.js?v=0.47.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.47.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,7 +122,7 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.46.0';
+} from './codex.js?v=0.47.0';
 import {
   ensureLandBeasts,
   normalizeWildlife,
@@ -130,12 +130,12 @@ import {
   spawnWild,
   spawnUnder,
   ashore
-} from './wildlife.js?v=0.46.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.46.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.46.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.46.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.46.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.46.0';
+} from './wildlife.js?v=0.47.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.47.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.47.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.47.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.47.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.47.0';
 import {
   startFishing,
   tickFishing,
@@ -144,7 +144,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.46.0';
+} from './fishing.js?v=0.47.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -154,10 +154,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.46.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.46.0';
-import { setClimbing } from './lake.js?v=0.46.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.46.0';
+} from './reclaim.js?v=0.47.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.47.0';
+import { setClimbing } from './lake.js?v=0.47.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.47.0';
 import {
   RARITY,
   FRENZY,
@@ -184,7 +184,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.46.0';
+} from './taming.js?v=0.47.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -203,8 +203,8 @@ import {
   AI_RANGE,
   onLayer,
   callAssist
-} from './combat.js?v=0.46.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.46.0';
+} from './combat.js?v=0.47.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.47.0';
 import {
   ECHOES,
   LAPTOP_PARTS,
@@ -214,14 +214,33 @@ import {
   missingParts,
   normalizeEchoes,
   repairLaptop
-} from './echoes.js?v=0.46.0';
-import { BeastStage } from './beast-stage.js?v=0.46.0';
-import { loadArt, art, artImg } from './art.js?v=0.46.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.46.0';
-import { separateBodies } from './bodies.js?v=0.46.0';
-import { STATUES } from './statues.js?v=0.46.0';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.46.0';
-import { lookOf } from './beast-look.js?v=0.46.0';
+} from './echoes.js?v=0.47.0';
+import {
+  TOWN_NAME,
+  BUILDINGS as TOWN_BUILDINGS,
+  GUIDE_SCRIPT,
+  BOARD_LINES,
+  enterTown,
+  leaveTown,
+  meetGuide,
+  useRoom,
+  takeRation,
+  readStele,
+  readLetter,
+  lookDiner,
+  lookAdmin,
+  townPoints,
+  TOWN_HINTS,
+  toWorld as townWorld,
+  normalizeTown
+} from './town.js?v=0.47.0';
+import { BeastStage } from './beast-stage.js?v=0.47.0';
+import { loadArt, art, artImg } from './art.js?v=0.47.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.47.0';
+import { separateBodies } from './bodies.js?v=0.47.0';
+import { STATUES } from './statues.js?v=0.47.0';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.47.0';
+import { lookOf } from './beast-look.js?v=0.47.0';
 import {
   TREE,
   BRANCHES,
@@ -233,8 +252,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.46.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.46.0';
+} from './beast-tree.js?v=0.47.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.47.0';
 import {
   funds,
   normalizeBag,
@@ -255,12 +274,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.46.0';
-import { iconFor } from './icons.js?v=0.46.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.46.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.46.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.46.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.46.0';
+} from './bag.js?v=0.47.0';
+import { iconFor } from './icons.js?v=0.47.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.47.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.47.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.47.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.47.0';
 import {
   homePos,
   facilityPos,
@@ -272,10 +291,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.46.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.46.0';
-export const GAME_VERSION = '0.46.0';
-import { CloudSave } from './cloud-save.js?v=0.46.0';
+} from './fortress.js?v=0.47.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.47.0';
+export const GAME_VERSION = '0.47.0';
+import { CloudSave } from './cloud-save.js?v=0.47.0';
 import {
   readLocal,
   writeLocal,
@@ -292,9 +311,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.46.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.46.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.46.0';
+} from './save-store.js?v=0.47.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.47.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.47.0';
 import {
   RESOURCE_NAMES,
   RECIPES,
@@ -315,8 +334,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.46.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.46.0';
+} from './rules.js?v=0.47.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.47.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -716,7 +735,8 @@ function updateDock() {
   }
   const spot = dockOption(state),
     foot = state.player.mode === 'foot';
-  $('dock-btn').hidden = !running || paused || !!panel || !!buildType || !!salvaging || (!foot && !spot?.near);
+  $('dock-btn').hidden =
+    !running || paused || !!panel || !!buildType || !!salvaging || !!state.inTown || (!foot && !spot?.near);
   $('dock-label').textContent = foot
     ? spot?.near
       ? '登艇出海'
@@ -734,6 +754,10 @@ function updateDock() {
   $('joystick').setAttribute('aria-label', foot ? '拖曳移動角色' : '拖曳駕艇');
 }
 function dock() {
+  if (state.inTown) {
+    toast('這裡沒有水。要回湖區，到城門外找嘯岳。');
+    return;
+  }
   if (state.inCave) {
     toast('請先離開洞窟。');
     return;
@@ -1543,6 +1567,7 @@ function unstuck() {
   e.diving = false;
   e.depth = 0;
   state.inCave = false;
+  state.inTown = false;
   if (state.ship && !state.skiff) {
     Object.assign(state.player, { mode: 'ship', x: state.ship.x, z: state.ship.z, heading: state.ship.heading });
     world.yaw = state.ship.heading + Math.PI;
@@ -1957,7 +1982,9 @@ function initialize() {
       repel,
       openSettings,
       openPanel,
-      closePanel
+      closePanel,
+      goToTown,
+      townAction
     };
   $('load-screen').hidden = true;
   $('title-screen').hidden = false;
@@ -1983,6 +2010,8 @@ const loungeTargets = () =>
 // 0.40: the creatures on your layer of the sea — diving, only what swims down there; above, only the surface ones
 const nearWild = () => (state.wild || []).filter(w => onLayer(state, w));
 function getAllTargets() {
+  // 0.47: in 慈光港 only the town's own places
+  if (state.inTown) return townPoints(state).map(p => ({ ...p, type: 'town' }));
   if (state.player.mode === 'cabin') return [...cabinPointsWorld(state), ...loungeTargets()];
   if (state.player.mode === 'aboard') return shipPointsWorld(state);
   const arr = state.loot.map(l => ({ ...l, type: 'loot', name: lootNames[l.kind] }));
@@ -2083,88 +2112,93 @@ function updateNearest() {
   if (inRange) {
     $('context-title').textContent = selected.name;
     $('context-subtitle').textContent = P(
-      selected.type === 'shippoint'
-        ? (state.player.mode === 'cabin' ? FLOORS[state.player.floor | 0] : DECKS[state.player.deck] || DECKS[3]).name +
+      selected.type === 'town'
+        ? TOWN_HINTS[selected.id][0]
+        : selected.type === 'shippoint'
+          ? (state.player.mode === 'cabin' ? FLOORS[state.player.floor | 0] : DECKS[state.player.deck] || DECKS[3])
+              .name +
             ' · 按 E ' +
             selected.verb
-        : selected.type === 'plot'
-          ? plotText(selected)
-          : selected.type === 'claim'
-            ? (state.occupied || []).includes(selected.claimId)
-              ? '你的領地 · 御獸在此休息'
-              : '派出羈絆 30 的夥伴 · 按 E 插旗占領'
-            : selected.type === 'event'
-              ? state.lakeEvent?.kind === 'merchant'
-                ? '湖上事件 · 開船靠近按 E 交易'
-                : '湖上事件 · 潛到光柱下按 E 打開'
-              : selected.type === 'pact'
-                ? duelActive(state)
-                  ? '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開'
-                  : '遠古御獸 · 按 E 交談'
-                : selected.type === 'site'
-                  ? '探索點 · 靠近按 E 調查'
-                  : selected.type === 'facility'
-                    ? '點擊建築或按 E 開啟設施'
-                    : selected.type === 'node'
-                      ? (state.harvested?.[selected.id] || 0) > state.elapsed
-                        ? '資源恢復中 · 兩分鐘再生'
-                        : '登島後走近 4 公尺內採集'
-                      : selected.type === 'loot'
-                        ? `${Math.round(d(selected))}m · 可打撈物資`
-                        : selected.type === 'buoy'
-                          ? '訊號微弱 · 有人留下了紀錄'
-                          : selected.rescue === 'tangled'
-                            ? '被漂流漁網纏住了 · 按 E 解開'
-                            : selected.rescue === 'freed'
-                              ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
-                              : selected.rescue === 'friend' && !state.secret
-                                ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
-                                : state.secret
-                                  ? frenzied(selected, state.elapsed)
-                                    ? '狂暴中！驅離不了，按 F 讓夥伴攻擊'
-                                    : selected.beast
-                                      ? beastText(selected)
-                                      : selected.follow
-                                        ? '信任 100% · 跟著你 · 拿出外出籠按 X 帶牠回船上'
-                                        : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
-                                  : '未知生命 · 調查浮標，或按空白鍵驅離'
+          : selected.type === 'plot'
+            ? plotText(selected)
+            : selected.type === 'claim'
+              ? (state.occupied || []).includes(selected.claimId)
+                ? '你的領地 · 御獸在此休息'
+                : '派出羈絆 30 的夥伴 · 按 E 插旗占領'
+              : selected.type === 'event'
+                ? state.lakeEvent?.kind === 'merchant'
+                  ? '湖上事件 · 開船靠近按 E 交易'
+                  : '湖上事件 · 潛到光柱下按 E 打開'
+                : selected.type === 'pact'
+                  ? duelActive(state)
+                    ? '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開'
+                    : '遠古御獸 · 按 E 交談'
+                  : selected.type === 'site'
+                    ? '探索點 · 靠近按 E 調查'
+                    : selected.type === 'facility'
+                      ? '點擊建築或按 E 開啟設施'
+                      : selected.type === 'node'
+                        ? (state.harvested?.[selected.id] || 0) > state.elapsed
+                          ? '資源恢復中 · 兩分鐘再生'
+                          : '登島後走近 4 公尺內採集'
+                        : selected.type === 'loot'
+                          ? `${Math.round(d(selected))}m · 可打撈物資`
+                          : selected.type === 'buoy'
+                            ? '訊號微弱 · 有人留下了紀錄'
+                            : selected.rescue === 'tangled'
+                              ? '被漂流漁網纏住了 · 按 E 解開'
+                              : selected.rescue === 'freed'
+                                ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
+                                : selected.rescue === 'friend' && !state.secret
+                                  ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
+                                  : state.secret
+                                    ? frenzied(selected, state.elapsed)
+                                      ? '狂暴中！驅離不了，按 F 讓夥伴攻擊'
+                                      : selected.beast
+                                        ? beastText(selected)
+                                        : selected.follow
+                                          ? '信任 100% · 跟著你 · 拿出外出籠按 X 帶牠回船上'
+                                          : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
+                                    : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
     $('context-verb').textContent =
-      selected.type === 'shippoint'
-        ? selected.verb
-        : selected.type === 'plot'
-          ? selected.state === 'wild'
-            ? '開墾'
-            : selected.state === 'cleared'
-              ? '建造'
-              : '查看'
-          : selected.type === 'claim'
-            ? (state.occupied || []).includes(selected.claimId)
-              ? '查看'
-              : '占領'
-            : selected.type === 'event'
-              ? state.lakeEvent?.kind === 'merchant'
-                ? '交易'
-                : '打開'
-              : selected.type === 'pact'
-                ? '交談'
-                : selected.type === 'site'
-                  ? '調查'
-                  : selected.type === 'facility'
-                    ? '操作'
-                    : selected.type === 'node'
-                      ? '採集'
-                      : selected.type === 'loot'
-                        ? '打撈'
-                        : selected.type === 'buoy'
-                          ? '調查'
-                          : selected.rescue === 'tangled'
-                            ? '解開'
-                            : selected.rescue === 'freed'
-                              ? '餵食'
-                              : state.secret
-                                ? '投餌'
-                                : '觀察';
+      selected.type === 'town'
+        ? TOWN_HINTS[selected.id][1]
+        : selected.type === 'shippoint'
+          ? selected.verb
+          : selected.type === 'plot'
+            ? selected.state === 'wild'
+              ? '開墾'
+              : selected.state === 'cleared'
+                ? '建造'
+                : '查看'
+            : selected.type === 'claim'
+              ? (state.occupied || []).includes(selected.claimId)
+                ? '查看'
+                : '占領'
+              : selected.type === 'event'
+                ? state.lakeEvent?.kind === 'merchant'
+                  ? '交易'
+                  : '打開'
+                : selected.type === 'pact'
+                  ? '交談'
+                  : selected.type === 'site'
+                    ? '調查'
+                    : selected.type === 'facility'
+                      ? '操作'
+                      : selected.type === 'node'
+                        ? '採集'
+                        : selected.type === 'loot'
+                          ? '打撈'
+                          : selected.type === 'buoy'
+                            ? '調查'
+                            : selected.rescue === 'tangled'
+                              ? '解開'
+                              : selected.rescue === 'freed'
+                                ? '餵食'
+                                : state.secret
+                                  ? '投餌'
+                                  : '觀察';
   }
   $('target-card').hidden = !selected || inRange || !!panel || !!buildType;
   if (selected && !inRange && !panel) {
@@ -2230,6 +2264,10 @@ function interact() {
   }
   if (t.type === 'node') {
     gather(t.id);
+    return;
+  }
+  if (t.type === 'town') {
+    townAction(t.id);
     return;
   }
   if (t.type === 'loot') {
@@ -3157,6 +3195,21 @@ function beastAction(action, heavy = false) {
   }
 }
 // ---------- 嘯岳之契: dialogue cards, trials, pact and the crossing ----------
+function playLines(lines, title, then) {
+  let i = 0;
+  const next = () => {
+    if (i >= lines.length) {
+      closeModal();
+      then?.();
+      return;
+    }
+    const [who, line] = lines[i++];
+    modal(title, who || '……', `<p class="pact-line">${esc(line)}</p>`, [
+      { label: i < lines.length ? '繼續' : '……', primary: true, action: next }
+    ]);
+  };
+  next();
+}
 function playScript(name, then) {
   const lines = SCRIPT[name] || [];
   let i = 0;
@@ -3298,6 +3351,11 @@ function crossMountains() {
     return;
   }
   closePanel();
+  // 0.47: once chapter one is over, the crossing goes straight down to 慈光港
+  if ((state.story?.stage || 0) >= 6) {
+    goToTown();
+    return;
+  }
   world.startCinematic(state);
   setTimeout(
     () =>
@@ -3306,10 +3364,153 @@ function crossMountains() {
         world.cinematic = null;
         save(true);
         updateUI();
-        discover('第一章 完 · 沉湖之誓', '第二章 · 裂縫之外——敬請期待');
+        discover('第一章 完 · 適應期結束', '第二章 · 新生之界');
+        setTimeout(
+          () =>
+            modal(
+              '第二章 · 新生之界',
+              '山下的城市',
+              '<p class="pact-line">地平線上的燈火，是一座港城。嘯岳低頭看著你。</p>',
+              [
+                { label: '下山，前往新生之界', primary: true, action: () => (closeModal(), goToTown()) },
+                { label: '還不是時候', action: closeModal }
+              ]
+            ),
+          4200
+        );
       }),
     2600
   );
+}
+// 0.47: over the mountains on 嘯岳's back, down to 慈光港 — and back to the lake
+function townFade(then) {
+  const fade = $('focus-fade');
+  if (!fade) return then();
+  fade.hidden = false;
+  requestAnimationFrame(() => fade.classList.add('on'));
+  setTimeout(() => {
+    then();
+    fade.classList.remove('on');
+    setTimeout(() => (fade.hidden = true), 700);
+  }, 900);
+}
+function goToTown() {
+  townFade(() => {
+    const r = enterTown(state);
+    destination = null;
+    selectedTarget = null;
+    world.yaw = 0;
+    world.sync(state);
+    save(true);
+    updateUI();
+    if (r.first) {
+      discover('新生之界 · ' + TOWN_NAME, '街道乾淨，窗戶都亮著燈——可是一個人都沒有。');
+      setTimeout(() => playLines(GUIDE_SCRIPT.xiaoyue, '新生之界'), 1600);
+    } else toast(`回到了${TOWN_NAME}。`);
+  });
+}
+function backToLake() {
+  townFade(() => {
+    const r = leaveTown(state);
+    destination = null;
+    selectedTarget = null;
+    world.sync(state);
+    save(true);
+    updateUI();
+    toast(r.ok ? r.message : r.error, !r.ok);
+  });
+}
+function townAction(id) {
+  normalizeTown(state);
+  const done = r => {
+    if (r.message || r.error) toast(r.ok ? r.message : r.error, !r.ok);
+    if (r.ok) {
+      world.sync(state);
+      save(true);
+      updateUI();
+    }
+  };
+  if (id === 'guide') {
+    const r = meetGuide(state);
+    save(true);
+    updateUI();
+    if (r.script)
+      playLines(GUIDE_SCRIPT.first, '引路人', () =>
+        discover('居民證 No.0412', '新生者手冊 · 公寓 0412 號房 · 每日配給')
+      );
+    else playLines(r.lines, '引路人');
+    return;
+  }
+  if (id === 'room') {
+    const r = useRoom(state);
+    if (!r.ok) return done(r);
+    save(true);
+    updateUI();
+    const night = isNight(state);
+    modal(
+      '居民公寓',
+      '0412 號房',
+      `<p>${esc(r.message)}</p>${night ? '' : '<p class="dv-note">天黑以後，可以在這裡睡到天亮。</p>'}`,
+      [
+        ...(night ? [{ label: '睡到天亮', primary: true, action: () => (closeModal(), sleepInTown()) }] : []),
+        { label: '離開', primary: !night, action: closeModal }
+      ]
+    );
+    return;
+  }
+  if (id === 'ration') {
+    const r = takeRation(state);
+    if (r.ok) flyResources(r.rewards, state.player.x, 1, state.player.z);
+    return done(r);
+  }
+  if (id === 'stele') {
+    const r = readStele(state);
+    save(true);
+    updateUI();
+    modal(
+      '慈光港 · 留言碑',
+      '居民的留言',
+      r.posts
+        .map(([who, text]) =>
+          who ? `<p class="pact-line"><small>${esc(who)}</small> ${esc(text)}</p>` : `<p>${esc(text)}</p>`
+        )
+        .join('') + '<p class="dv-note">（石碑上沒有可以刻字的地方……現在還沒有。）</p>',
+      [{ label: '離開', primary: true, action: closeModal }]
+    );
+    return;
+  }
+  if (id === 'board') {
+    modal('慈光港', '慈愛公告板', BOARD_LINES.map(l => `<p>${esc(l)}</p>`).join(''), [
+      { label: '離開', primary: true, action: closeModal }
+    ]);
+    return;
+  }
+  if (id === 'kiosk') {
+    const r = readLetter(state);
+    if (!r.ok) return done(r);
+    save(true);
+    updateUI();
+    modal(
+      `家書 · 第 ${r.n} 封`,
+      '寄件人：' + r.letter.from,
+      `<p class="pact-line">${esc(r.letter.text)}</p><p>${esc(r.letter.wake)}</p>`,
+      [{ label: '把信收好', primary: true, action: closeModal }]
+    );
+    return;
+  }
+  if (id === 'diner') return done(lookDiner(state));
+  if (id === 'admin') {
+    const r = lookAdmin(state);
+    done(r);
+    if (r.end) setTimeout(() => discover('第二章（上）完 · 慈光', '整座城只有管理區裡，真的有人。'), 1400);
+    return;
+  }
+  if (id === 'xiaoyue') {
+    modal('新生之界', '嘯岳', '<p class="pact-line">「要回去了嗎？」</p>', [
+      { label: '騎嘯岳回到湖區', primary: true, action: () => (closeModal(), backToLake()) },
+      { label: '再待一會兒', action: closeModal }
+    ]);
+  }
 }
 function storyEvents(dt) {
   for (const ev of tickStory(state, dt, {
@@ -3524,9 +3725,11 @@ function updateBeastHUD() {
   }
   if (e.mounted) $('travel-mode').textContent = e.diving ? '御獸深潛 · 8m' : '御獸騎乘';
   else if (state.inCave) $('travel-mode').textContent = '異晶洞窟';
+  else if (state.inTown) $('travel-mode').textContent = '新生之界 · ' + TOWN_NAME;
   else if (state.player.level) $('travel-mode').textContent = '避難所二樓';
   const b = e.boss;
-  $('boss-bar').hidden = b.defeated || state.inCave || Math.hypot(b.x - state.player.x, b.z - state.player.z) > 35;
+  $('boss-bar').hidden =
+    b.defeated || state.inCave || state.inTown || Math.hypot(b.x - state.player.x, b.z - state.player.z) > 35;
   $('boss-bar').textContent = `深海守望者  ${Math.max(0, Math.ceil(b.hp))} / 480`;
   if ($('boss-bar').hidden) {
     // 0.22: the nearest hostile thing's strength while it is on you
@@ -4453,6 +4656,14 @@ function startSleep() {
   const b = findFacility(state, focus.id);
   if (!b || !nearBuilding(b)) return toast('走到床邊才能睡覺。', true);
   if (!isNight(state)) return toast('天還亮著，睡不著。', true);
+  beginSleep();
+}
+function sleepInTown() {
+  if (sleeping) return;
+  if (!isNight(state)) return toast('天還亮著，睡不著。', true);
+  beginSleep();
+}
+function beginSleep() {
   sleeping = {
     start: performance.now(),
     from: state.elapsed,
@@ -4490,8 +4701,9 @@ function tickSleep() {
   world.sync(state);
   toast('一覺到天亮。體力全滿。');
   if (hatched.length) discover('新的生命誕生', `${hatched.map(p => p.name).join('、')} 在夜裡破殼而出。`);
-  // 0.46: sometimes a voice from somewhere else leaks into the dream
-  const echo = echoOnWake(state);
+  // 0.46: sometimes a voice from somewhere else leaks into the dream — but never in 慈光港 (0.47)
+  const echo = state.inTown ? null : echoOnWake(state);
+  if (state.inTown) setTimeout(() => toast('這裡睡得很沉，一個夢都沒有。'), 1200);
   save(true);
   updateUI();
   if (echo)
@@ -5385,7 +5597,7 @@ function planRoute() {
     draft = vesselDraft();
   routeAt = state.elapsed;
   routeIdx = 0;
-  if (!mk || draft === null || state.inCave) {
+  if (!mk || draft === null || state.inCave || state.inTown) {
     route = null;
     return;
   }
@@ -5624,6 +5836,12 @@ function drawBigMap() {
 }
 function returnHome() {
   if (!running || paused) return;
+  if (state.inTown) {
+    closePanel();
+    destination = townWorld({ x: 4, z: 52 });
+    toast('嘯岳在城門外等你。走到牠身邊，就能回到湖區。');
+    return;
+  }
   if (state.inCave) {
     destination = { x: 120, z: -106 };
     closePanel();
@@ -5706,7 +5924,7 @@ function updateUI() {
   $('coords').textContent =
     `${Math.abs(state.player.z).toFixed(1)} ${state.player.z < 0 ? 'N' : 'S'} / ${Math.abs(state.player.x).toFixed(1)} ${state.player.x < 0 ? 'W' : 'E'}`;
   const far = Math.hypot(state.player.x, state.player.z);
-  $('zone-text').textContent = far < 35 ? '初醒淺海' : far < 80 ? '漂流之境' : '異生深海';
+  $('zone-text').textContent = state.inTown ? TOWN_NAME : far < 35 ? '初醒淺海' : far < 80 ? '漂流之境' : '異生深海';
   let quests, title, hint, chapter;
   const nf = count(state, 'floor'),
     np = count(state, 'pen');
@@ -6266,7 +6484,7 @@ function updateStorm(dt = 1 / 30) {
   document.body.classList.toggle('storm-alert-on', !!sc);
   // A storm counts as weathered at sea after 30 s spent off shore while it rages.
   if (sc?.phase === 'storm' && running && !paused) {
-    const atSea = !['foot', 'aboard', 'cabin'].includes(state.player.mode) && !state.inCave;
+    const atSea = !['foot', 'aboard', 'cabin'].includes(state.player.mode) && !state.inCave && !state.inTown;
     if (atSea) stormSeaTime += dt;
   } else if (stormSeaTime) {
     if (stormSeaTime >= 30 && state.stats) {
@@ -6286,6 +6504,7 @@ function updateStorm(dt = 1 / 30) {
     state.player.mode === 'aboard' ||
     state.player.mode === 'cabin' ||
     !!state.inCave ||
+    !!state.inTown ||
     !!state.expedition?.diving;
   stormShelter = safe ? null : nearestShelter();
   if (sc.phase === 'warn' && !stormWarned) {
@@ -6601,6 +6820,14 @@ function worldLabels() {
   } else if (state.player.mode === 'foot')
     labels.push({ x: state.boat.x, y: 2.7, z: state.boat.z, text: '⛵ 停泊的小艇', className: 'mint' });
   if (nearest) labels = labels.filter(l => !(nearest.type === 'buoy' && l.x === 17));
+  // 0.47: in town, the town's own signs instead of the lake's
+  if (state.inTown)
+    labels = TOWN_BUILDINGS.filter(b => b.name).map(b => ({
+      ...townWorld(b),
+      y: b.h + 2,
+      text: b.id === 'admin' ? '▣ 管理區 · 僅限職員' : '⌂ ' + b.name,
+      className: b.id === 'admin' ? '' : 'gold'
+    }));
   $('world-labels').innerHTML = labels
     .map(l => {
       const p = world.screenPoint(l.x, l.y, l.z);
@@ -6908,6 +7135,7 @@ function handleCollapse() {
   state.expedition.diving = false;
   state.expedition.activeId = null;
   state.inCave = false;
+  state.inTown = false;
   state.player.level = 0;
   state.vitals = { health: 65, food: 50, water: 55 };
   state.player.x = 7;
@@ -7874,7 +8102,7 @@ function frame(now, manual = false) {
       checkSightings();
       updateFishingHUD();
       // 0.36.5: a stone sleeper you have stood near is named in the codex
-      if (!state.inCave)
+      if (!state.inCave && !state.inTown)
         for (const t of STATUES)
           if (
             t.at &&

@@ -3322,5 +3322,163 @@ export default {
   '還不是時候。等你準備好了，我們再下去。': "Not yet. When you're ready, we'll go down.",
   '第一章 完 · 適應期結束': 'End of Chapter One · The Adaptation Period Ends',
   '山外不是海，是一片大陸。天上的聲音叫它「新生之界」，還說我的家人一切安好——它怎麼會知道我有家人？第二章 · 新生之界——敬請期待。':
-    'Beyond the mountains is not a sea but a continent. The voice in the sky called it "the New World", and said my family is well — how would it know I have a family? Chapter Two · The New World — coming soon.'
+    'Beyond the mountains is not a sea but a continent. The voice in the sky called it "the New World", and said my family is well — how would it know I have a family? Chapter Two · The New World — coming soon.',
+  // 0.47 抵達新生之界: 慈光港
+  '第二章 · 新生之界': 'Chapter Two · The New World',
+  '越過群山，前往新生之界': 'Cross the mountains to the New World',
+  '這裡沒有水。要回湖區，到城門外找嘯岳。':
+    "There's no water here. To go back to the lake, find Xiaoyue outside the town gate.",
+  山下的城市: 'The city below',
+  '地平線上的燈火，是一座港城。嘯岳低頭看著你。':
+    'The lights on the horizon are a harbour town. Xiaoyue looks down at you.',
+  '下山，前往新生之界': 'Go down to the New World',
+  還不是時候: 'Not yet',
+  '新生之界 ·': 'The New World ·',
+  '街道乾淨，窗戶都亮著燈——可是一個人都沒有。': 'The streets are clean and every window is lit — but there is no one.',
+  新生之界: 'The New World',
+  '回到了{0}。': 'Back in {0}.',
+  引路人: 'The guide',
+  '居民證 No.0412': 'Resident card No.0412',
+  '新生者手冊 · 公寓 0412 號房 · 每日配給': "Newcomer's handbook · Apartment room 0412 · daily rations",
+  居民公寓: "Residents' apartments",
+  '0412 號房': 'Room 0412',
+  '天黑以後，可以在這裡睡到天亮。': 'After dark you can sleep here until morning.',
+  睡到天亮: 'Sleep until morning',
+  '慈光港 · 留言碑': 'Port Mercylight · message stele',
+  居民的留言: 'Messages from residents',
+  '（石碑上沒有可以刻字的地方……現在還沒有。）': "(There's no room left on the stele to carve anything… not yet.)",
+  慈光港: 'Port Mercylight',
+  慈愛公告板: 'Compassion notice board',
+  '家書 · 第 {0} 封': 'Letter from home · no. {0}',
+  '寄件人：': 'From: ',
+  把信收好: 'Keep the letter',
+  '第二章（上）完 · 慈光': 'End of Chapter Two, Part One · Mercylight',
+  '整座城只有管理區裡，真的有人。': 'In the whole town, only the admin block has anyone in it.',
+  '「要回去了嗎？」': '"Going back?"',
+  騎嘯岳回到湖區: 'Ride Xiaoyue back to the lake',
+  再待一會兒: 'Stay a little longer',
+  '這裡睡得很沉，一個夢都沒有。': 'I sleep deeply here. Not a single dream.',
+  '嘯岳在城門外等你。走到牠身邊，就能回到湖區。':
+    'Xiaoyue is waiting outside the town gate. Walk up to it to go back to the lake.',
+  '▣ 管理區 · 僅限職員': '▣ Admin block · staff only',
+  晴: 'Qing',
+  新生歡迎中心: 'New Life Welcome Centre',
+  配給站: 'Ration station',
+  家書亭: 'Letter kiosk',
+  管理區: 'Admin block',
+  空無一人的餐館: 'The empty diner',
+  '山下是一座港城。街道乾淨，窗戶都亮著燈，門口擺著鞋子——可是一個人都沒有。城門上刻著：「歡迎回家。」':
+    'Below the mountains lies a harbour town. Clean streets, every window lit, shoes set out at the doors — but no one at all. Carved over the gate: "Welcome home."',
+  '你不在新生之界。': "You're not in the New World.",
+  '嘯岳背著你越過山脊，回到了湖岸。': 'Xiaoyue carries you back over the ridge to the lake shore.',
+  '歡迎回家，0412 號。……啊，抱歉。我是說——歡迎來到新生之界。':
+    "Welcome home, number 0412. …Oh, I'm sorry. I mean — welcome to the New World.",
+  '我是引路人，晴。從今天起，你在這裡的生活，由我們來照顧。':
+    "I'm your guide, Qing. From today on, we'll take care of your life here.",
+  '你……知道我是誰？': 'You… know who I am?',
+  '當然。你吃了很多苦——從那天早上的雨開始。': "Of course. You've suffered so much — ever since the rain that morning.",
+  '（我從來沒有跟任何人說過那天在下雨。）': '(I never told anyone it was raining that day.)',
+  '這裡的每一位居民，都是被選中的人。這裡不會再有痛苦。':
+    'Every resident here was chosen. There will be no more pain here.',
+  '這是你的居民證，和新生者手冊。公寓 0412 號房已經為你準備好了；配給站每天都能免費領取口糧和水。':
+    "Here's your resident card and the newcomer's handbook. Room 0412 in the apartments is ready for you, and the ration station gives out food and water free every day.",
+  '還有——你的家人寫了信給你。到家書亭就能讀。':
+    'And — your family has written to you. You can read it at the letter kiosk.',
+  '家人？可是我已經……': "My family? But I'm already…",
+  '在新生之界，沒有什麼是真正失去的。': 'In the New World, nothing is ever truly lost.',
+  '住得還習慣嗎？有任何需要，都可以來找我。': 'Settling in all right? Come to me if you need anything at all.',
+  '別擔心其他居民。大家只是還不習慣見面而已。':
+    "Don't worry about the other residents. They just aren't used to meeting people yet.",
+  '你的家人很好。我們每週都會去看他們。': 'Your family is well. We visit them every week.',
+  '慈愛組織，與你同在。': 'Compassion is with you.',
+  '晚上請早點休息。管理區？那裡只是辦公室，沒什麼好看的。':
+    "Please get to bed early tonight. The admin block? It's only offices — nothing to see.",
+  '這裡的味道不對。像研究員的盒子，像沒有風的湖。我不進去——我在城外等你。':
+    "This place smells wrong. Like the researcher's box, like a lake with no wind. I won't go in — I'll wait for you outside the town.",
+  '引路人 ·': 'Guide ·',
+  '她叫我 0412——和夢裡那個聲音說的數字一樣。她還知道那天早上在下雨。我領到了居民證和新生者手冊。':
+    "She called me 0412 — the same number the voice in my dreams said. She knew it was raining that morning, too. I was given a resident card and a newcomer's handbook.",
+  '門上的名牌寫著「0412」。門鎖著——也許該先去歡迎中心。':
+    'The nameplate on the door says "0412". It\'s locked — maybe I should go to the welcome centre first.',
+  '公寓 0412 號房': 'Apartment room 0412',
+  '房間很乾淨，床鋪好了，衣櫃裡的衣服是我的尺寸。窗台上有一盆剛澆過水的花。':
+    'The room is spotless, the bed made, the clothes in the wardrobe my size. On the windowsill, a flower that has just been watered.',
+  '0412 號房是你的了。晚上可以在這裡睡到天亮。': 'Room 0412 is yours. At night you can sleep here until morning.',
+  '夜深了，可以睡了。': "It's late. Time to sleep.",
+  '房間和早上離開時一模一樣。花又被澆過了。':
+    'The room is exactly as I left it this morning. The flower has been watered again.',
+  '窗口後面沒有人。櫃台上寫著：「請先完成居民登記。」':
+    'There\'s no one behind the window. A sign on the counter: "Please complete resident registration first."',
+  '今天的配給已經領過了。明天再來。': "You've had today's ration. Come back tomorrow.",
+  '窗口後面沒有人，配給卻已經裝好袋了。口糧的味道很淡，淡得像……醫院的流質。':
+    'No one behind the window, yet the ration was already bagged. The food tastes faint — as faint as… hospital liquid food.',
+  '領到今天的配給：口糧 3、淡水 3。一毛錢都不用付。': "Today's ration: 3 food, 3 water. Not a cent to pay.",
+  '第 3 天。有人晚上也會聽到嗶嗶聲嗎？': 'Day 3. Does anyone else hear beeping at night?',
+  '配給站的口糧，味道跟醫院的流質一模一樣。': 'The ration food tastes exactly like hospital liquid food.',
+  '我在湖邊住了 40 天才翻過山。你們呢？': 'I lived by the lake 40 days before I crossed the mountains. You?',
+  '公寓很好。可是我從來沒在走廊遇過任何人。':
+    "The apartments are nice. But I've never once met anyone in the corridor.",
+  '晴小姐說我女兒過得很好。我好想她。': 'Miss Qing says my daughter is doing well. I miss her so much.',
+  '有沒有人知道，「山的另一邊」再過去是什麼？': 'Does anyone know what lies beyond "the other side of the mountains"?',
+  '別相信——': "Don't trust —",
+  '（No.0156 的留言後半段被磨掉了，刻痕很新。）':
+    "(The rest of No.0156's message has been ground away. The marks are fresh.)",
+  留言碑: 'Message stele',
+  '石碑上刻滿了其他居民的留言。他們都在這座城裡——可是我一個人也沒見過。有一則留言被磨掉了。':
+    "The stele is covered in other residents' messages. They're all in this town — yet I haven't seen a single one. One message has been ground away.",
+  '慈愛公告 · 第 1 號': 'Compassion notice · No. 1',
+  '新生之界歡迎每一位被選中的居民。': 'The New World welcomes every chosen resident.',
+  '配給、住所、醫療，全部免費。': 'Rations, housing, medical care — all free.',
+  '請不要擔心家人——我們每週都會探望他們。': "Please don't worry about your families — we visit them every week.",
+  '請居民不要進入管理區。': 'Residents are asked not to enter the admin block.',
+  '孩子，你在那邊好嗎？慈愛的晴小姐說你很快就能適應。家裡一切都好，你不用擔心。你出門前說到公司再打給我，媽一直在等那通電話。現在知道你過得好，就夠了。':
+    "My child, are you well over there? Miss Qing from Compassion says you'll settle in soon. Everything's fine at home, don't worry. Before you left you said you'd call me when you got to work — Mom has been waiting for that call. Knowing you're well now is enough.",
+  '（那則訊息……我根本沒有寄出去。媽怎麼會知道我要說什麼？）':
+    '(That message… I never sent it. How would Mom know what I was going to say?)',
+  '醫生說你的狀況越來越好，報告上說你在那邊交到朋友了，還有一張你在湖邊笑的照片。媽媽把它貼在冰箱上。慈愛的人每週都來，費用的事你不要放在心上。':
+    "The doctor says you're getting better and better. The report says you've made friends over there, and there's a photo of you laughing by the lake. Mom put it on the fridge. The Compassion people come every week — don't you worry about the bills.",
+  '（湖邊笑的照片。夢裡那個溫和的聲音，也說過一模一樣的話。）':
+    '(A photo of me laughing by the lake. The gentle voice in my dream said exactly the same.)',
+  '他們說，你在那邊不會再痛了。媽媽有時候會想，如果你醒過來，會不會反而比較痛？……對不起，媽媽不該這樣寫。你在那邊快樂就好。':
+    "They say you won't hurt any more over there. Sometimes Mom wonders — if you woke up, would it hurt more? …I'm sorry, Mom shouldn't write that. As long as you're happy there.",
+  '（「醒過來」。如果我已經死了，要從哪裡醒過來？）': '("Woke up." If I\'m dead, what would I wake up from?)',
+  '亭子裡的信箱都上了鎖。每一格都貼著一個編號。':
+    'The mailboxes in the kiosk are all locked. Each one has a number on it.',
+  '信箱是空的。': 'The mailbox is empty.',
+  '0412 號信箱是空的。下一封信大約在第 {0} 天送到。':
+    'Mailbox 0412 is empty. The next letter should arrive around day {0}.',
+  '家書 ·': 'Letter from home ·',
+  '桌上有一碗吃到一半的湯，還在冒煙。椅子是拉開的，好像有人剛剛站起來。':
+    'On the table, a half-eaten bowl of soup, still steaming. The chair is pushed back, as if someone has just stood up.',
+  '「管理區 · 僅限職員」。門是鎖著的，窗戶貼著霧面紙。':
+    '"Admin block · staff only". The door is locked and the windows are frosted over.',
+  '深夜，管理區的門縫裡透出白光。裡面有人在說話，一個聲音很冷，我好像在哪裡聽過。整座城只有這裡，真的有人。':
+    "Late at night, white light shows under the admin block's door. Someone is talking inside — one voice is cold, and I think I've heard it before. In the whole town, only here is there really anyone.",
+  '門縫裡透出白光，裡面有人在說話。……那個冰冷的聲音，我在夢裡聽過。':
+    "White light under the door, and voices inside. …That cold voice — I've heard it in my dreams.",
+  '門縫裡透出白光。裡面有人在說話，聽不清楚。':
+    "White light under the door. Someone is talking inside; you can't make it out.",
+  '管理區 · 僅限職員': 'Admin block · staff only',
+  '嘯岳 · 回到湖區': 'Xiaoyue · back to the lake',
+  '抵達新生之界 · {0}': 'Reach the New World · {0}',
+  '和引路人{0}交談（新生歡迎中心前）': 'Talk to the guide, {0} (in front of the welcome centre)',
+  '入住居民公寓 0412 號房': 'Move into room 0412 in the apartments',
+  到配給站領取配給: 'Collect a ration at the ration station',
+  讀廣場上的留言碑: 'Read the message stele in the plaza',
+  到家書亭讀家人的信: "Read your family's letter at the letter kiosk",
+  '夜裡，管理區還亮著燈……': "At night, the admin block's light is still on…",
+  '慈愛組織的引路人 · 按 E 交談': "Compassion's guide · press E to talk",
+  '你的房間 · 按 E 進門': 'Your room · press E to go in',
+  進門: 'Go in',
+  '每日免費配給 · 按 E 領取': 'Free daily ration · press E to collect',
+  '0412 號信箱 · 按 E 查看': 'Mailbox 0412 · press E to check',
+  '居民的留言 · 按 E 閱讀': "Residents' messages · press E to read",
+  閱讀: 'Read',
+  '慈愛組織的公告 · 按 E 閱讀': 'Notices from Compassion · press E to read',
+  '門開著，燈也亮著 · 按 E 看看': 'Door open, lights on · press E to look',
+  看看: 'Look',
+  '門是鎖著的 · 按 E 靠近': 'The door is locked · press E to go closer',
+  靠近: 'Go closer',
+  '牠在城門外等你 · 按 E 回到湖區': 'Waiting outside the gate · press E to go back to the lake',
+  回去: 'Go back'
 };

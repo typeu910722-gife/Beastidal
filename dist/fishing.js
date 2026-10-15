@@ -1,12 +1,12 @@
 // Fishing (0.23): with a rod in hand, press E on open water (from the boat or a shore) to cast. After a few
 // seconds something bites; press E again within the window to hook it. Deep water gives bigger fish, the
 // fishing skill shortens the wait and improves the catch, and the odd pearl turns up.
-import { groundAt } from './lake.js?v=0.46.0';
-import { hasGear } from './gear.js?v=0.46.0';
-import { give, bagRoom } from './bag.js?v=0.46.0';
-import { tally } from './stats.js?v=0.46.0';
-import { fishBonus, skillLevel } from './skills.js?v=0.46.0';
-import { fishingWaitFactor, bigFishFactor } from './weather.js?v=0.46.0';
+import { groundAt } from './lake.js?v=0.47.0';
+import { hasGear } from './gear.js?v=0.47.0';
+import { give, bagRoom } from './bag.js?v=0.47.0';
+import { tally } from './stats.js?v=0.47.0';
+import { fishBonus, skillLevel } from './skills.js?v=0.47.0';
+import { fishingWaitFactor, bigFishFactor } from './weather.js?v=0.47.0';
 
 export const BITE_WINDOW = 1.6;
 export const CATCHES = {
@@ -19,7 +19,7 @@ const fail = error => ({ ok: false, error });
 // where you can fish from: afloat (not riding), or standing on a shore next to water
 export function canFishHere(s) {
   if (!hasGear(s, 'rod')) return fail('需要魚竿。到工作桌製作。');
-  if (s.inCave || s.player.mode === 'cabin' || s.player.mode === 'aboard') return fail('這裡沒辦法垂釣。');
+  if (s.inCave || s.inTown || s.player.mode === 'cabin' || s.player.mode === 'aboard') return fail('這裡沒辦法垂釣。');
   if (s.expedition?.mounted) return fail('騎乘時不能垂釣。');
   if (s.player.mode === 'foot') {
     const near = [0, 1, 2, 3].some(i => {

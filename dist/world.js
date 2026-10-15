@@ -1,39 +1,41 @@
-import { expansionModels } from './expansion-models.js?v=0.46.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.46.0';
-import { normalizeHousing, penId } from './housing.js?v=0.46.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.46.0';
-export { makeCreature } from './creatures.js?v=0.46.0';
-import { makeIslands } from './island-models.js?v=0.46.0';
-import { facilityId } from './facilities.js?v=0.46.0';
+import { expansionModels } from './expansion-models.js?v=0.47.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.47.0';
+import { normalizeHousing, penId } from './housing.js?v=0.47.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.47.0';
+export { makeCreature } from './creatures.js?v=0.47.0';
+import { makeIslands } from './island-models.js?v=0.47.0';
+import { facilityId } from './facilities.js?v=0.47.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.46.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.46.0';
-import { surface } from './surfaces.js?v=0.46.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.46.0';
-import { makeLake } from './lake-models.js?v=0.46.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.46.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.46.0';
-import { makeStatues } from './statues.js?v=0.46.0';
-import { animateGarden } from './garden-models.js?v=0.46.0';
-import { ViewModel } from './viewmodel.js?v=0.46.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.46.0';
-import { PostFX } from './postfx.js?v=0.46.0';
-import { makeHuman, animateHuman } from './human.js?v=0.46.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.46.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.46.0';
-import { buildError } from './rules.js?v=0.46.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.46.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.46.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.46.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.46.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.46.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.46.0';
-import { CombatFX } from './combat-fx.js?v=0.46.0';
-import { syncPlots } from './land-models.js?v=0.46.0';
-import { plotTargets } from './reclaim.js?v=0.46.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.46.0';
-import { dayPhase } from './clock.js?v=0.46.0';
-import { weatherAt, season } from './weather.js?v=0.46.0';
+import { phenotype, seeded } from './genetics.js?v=0.47.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.47.0';
+import { surface } from './surfaces.js?v=0.47.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.47.0';
+import { makeLake } from './lake-models.js?v=0.47.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.47.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.47.0';
+import { makeStatues } from './statues.js?v=0.47.0';
+import { animateGarden } from './garden-models.js?v=0.47.0';
+import { ViewModel } from './viewmodel.js?v=0.47.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.47.0';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.47.0';
+import { townWalkable, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.47.0';
+import { PostFX } from './postfx.js?v=0.47.0';
+import { makeHuman, animateHuman } from './human.js?v=0.47.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.47.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.47.0';
+import { buildError } from './rules.js?v=0.47.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.47.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.47.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.47.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.47.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.47.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.47.0';
+import { CombatFX } from './combat-fx.js?v=0.47.0';
+import { syncPlots } from './land-models.js?v=0.47.0';
+import { plotTargets } from './reclaim.js?v=0.47.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.47.0';
+import { dayPhase } from './clock.js?v=0.47.0';
+import { weatherAt, season } from './weather.js?v=0.47.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -864,6 +866,14 @@ export class OceanWorld {
     this.walker = character();
     this.walker.visible = false;
     this.scene.add(this.walker);
+    // 0.47: 慈光港, the town past the mountains, and 晴 waiting in white before the welcome centre
+    this.town = makeTown();
+    this.town.visible = false;
+    this.scene.add(this.town);
+    this.guide = character(true, 'female');
+    this.guide.position.set(GUIDE_WORLD.x, 0, GUIDE_WORLD.z);
+    this.guide.visible = false;
+    this.scene.add(this.guide);
     this.walkPhase = 0;
     this.moveSpeed = 0;
     this.playerAnchor = new V();
@@ -1128,7 +1138,7 @@ export class OceanWorld {
   }
   groundFn(s) {
     const diving = !!s.expedition?.diving;
-    return (x, z) => (diving ? this.diveY : s.inCave ? 0 : Math.max(0, groundAt(x, z)));
+    return (x, z) => (diving ? this.diveY : s.inCave || s.inTown ? 0 : Math.max(0, groundAt(x, z)));
   }
   // 0.25: what combat.js reported this frame — effects, the swing animation, recoil and shake
   combatEvents(s, events) {
@@ -1158,7 +1168,7 @@ export class OceanWorld {
       y = c.y - 1.7;
     }
     const g = new T.Group(),
-      base = y ?? (this.lastState?.inCave ? 0.05 : Math.max(0, groundAt(x, z)) + 0.05);
+      base = y ?? (this.lastState?.inCave || this.lastState?.inTown ? 0.05 : Math.max(0, groundAt(x, z)) + 0.05);
     g.position.set(x, base, z);
     const ring = new T.Mesh(
       new T.RingGeometry(0.6, 0.85, 48),
@@ -1212,6 +1222,7 @@ export class OceanWorld {
     }
     // 0.36.3: in the garden the hedges are walls for beasts too (they used to walk straight through)
     if (s.inCave) return mazeWalkable(x - GARDEN.x, z - GARDEN.z, Math.min(1.1, 0.45 + r * 0.5));
+    if (s.inTown) return townWalkable(x, z, Math.min(1.1, 0.45 + r * 0.5));
     const g = groundAt(x, z);
     return onLand ? g > 0.35 : g < -0.6;
   }
@@ -1357,8 +1368,8 @@ export class OceanWorld {
     this.lookUpFree = diving;
     if (!diving && this.pitch < 0.06) this.pitch += (0.06 - this.pitch) * Math.min(1, dt * 5);
     // a dive follows the lakebed down into the sunken city; ashore you stand on the terrain itself
-    const ground = s.inCave || cabin ? 0 : groundAt(s.player.x, s.player.z),
-      onTerrain = foot && !s.player.level && !s.inCave && ground > 0.05;
+    const ground = s.inCave || s.inTown || cabin ? 0 : groundAt(s.player.x, s.player.z),
+      onTerrain = foot && !s.player.level && !s.inCave && (s.inTown || ground > 0.05);
     // the dive follows the depth the player swims to (game.js clamps it between the lakebed and the surface)
     this.diveY = diving
       ? (this.diveY || 0) + ((s.expedition.depth ?? -3) - (this.diveY || 0)) * Math.min(1, dt * 7)
@@ -1881,7 +1892,7 @@ export class OceanWorld {
     place(camDist);
     // never let the orbit camera sink into a hillside, the lakebed or (above water) the surface: when the player
     // looks up, the camera slides in closer along its line of sight instead of being pushed off that line
-    if (!s.inCave && !cabin) {
+    if (!s.inCave && !s.inTown && !cabin) {
       const floorAt = () =>
         Math.max(
           groundAt(this.camera.position.x, this.camera.position.z) + 1.4,
@@ -1909,7 +1920,7 @@ export class OceanWorld {
       this.targetRing.visible = true;
       this.targetRing.position.set(
         this.target.x,
-        Math.max(this.baseY, s.inCave ? this.baseY : groundAt(this.target.x, this.target.z)) + 0.43,
+        Math.max(this.baseY, s.inCave || s.inTown ? this.baseY : groundAt(this.target.x, this.target.z)) + 0.43,
         this.target.z
       );
       this.targetRing.scale.setScalar(this.target.type === 'wild' ? 1.7 : 1);
@@ -1919,31 +1930,45 @@ export class OceanWorld {
       this.navMarker.visible = true;
       this.navMarker.position.set(
         opts.destination.x,
-        Math.max(this.baseY, s.inCave ? this.baseY : groundAt(opts.destination.x, opts.destination.z)) + 0.38,
+        Math.max(this.baseY, s.inCave || s.inTown ? this.baseY : groundAt(opts.destination.x, opts.destination.z)) +
+          0.38,
         opts.destination.z
       );
       this.navMarker.scale.setScalar(1 + Math.sin(t * 4) * 0.15);
     } else this.navMarker.visible = false;
     this.extra.cave.visible = !!s.inCave;
     if (s.inCave) animateGarden(this.extra.cave, t);
-    this.statues.visible = !s.inCave && !cabin;
+    // 0.47: in town the lake and everything on it is out of sight, the sky stays
+    const town = !!s.inTown && !cabin;
+    this.town.visible = town;
+    this.guide.visible = town;
+    if (town) {
+      animateTown(this.town, t, night > 0.5);
+      // 晴 turns to face you as you come near
+      const g = this.guide,
+        near = Math.hypot(s.player.x - g.position.x, s.player.z - g.position.z) < 14,
+        want = near ? Math.atan2(s.player.x - g.position.x, s.player.z - g.position.z) : 0;
+      g.rotation.y += Math.atan2(Math.sin(want - g.rotation.y), Math.cos(want - g.rotation.y)) * Math.min(1, dt * 2);
+      animateHuman(g, dt, { speed: 0 });
+    }
+    this.statues.visible = !s.inCave && !town && !cabin;
     this.cabin.group.visible = cabin;
     this.fortress.visible = cabin;
     for (const l of this.cabin.lights) l.visible = cabin;
     if (cabin) this.cabin.update(t, s.player.floor | 0);
     this.extra.seabed.visible = diving;
     this.sky.visible = !diving && !s.inCave && !cabin;
-    this.water.visible = !diving && !s.inCave && !cabin;
-    this.islandModels.group.visible = !s.inCave && !cabin;
-    this.lake.group.visible = !s.inCave && !cabin;
+    this.water.visible = !diving && !s.inCave && !town && !cabin;
+    this.islandModels.group.visible = !s.inCave && !town && !cabin;
+    this.lake.group.visible = !s.inCave && !town && !cabin;
     this.lake.update(t, diving);
     for (const site of EXPLORE) {
       const m = this.extra.sites.get(site.id);
-      m.visible = !!site.cave === !!s.inCave && (!site.deep || diving);
+      m.visible = !!site.cave === !!s.inCave && !town && (!site.deep || diving);
       m.scale.setScalar(s.expedition.collected.includes(site.id) ? 0.65 : 1);
     }
     const boss = s.expedition.boss;
-    this.extra.boss.visible = !boss.defeated && !s.inCave && !cabin;
+    this.extra.boss.visible = !boss.defeated && !s.inCave && !town && !cabin;
     // 0.28: it rears out of the water as it winds up, faces where it will strike, and sinks back after
     const bai = boss.ai,
       rear =
@@ -2136,7 +2161,10 @@ export class OceanWorld {
       roar = 0;
     // 0.31: before the pact it lies in the garden at the cave's heart — asleep, raging, or awake and calm
     if (st.beast && (st.stage || 0) < 5 && !!st.beast.cave === !!s.inCave) at = { x: st.beast.x, z: st.beast.z };
-    else if (pet) {
+    else if (pet && s.inTown) {
+      // 0.47: it will not come into the town; it waits outside the gate
+      if (s.expedition?.activeId === PACT_ID) at = townPoint(XIAOYUE_WAITS);
+    } else if (pet) {
       if (s.expedition?.activeId === PACT_ID && !s.inCave) {
         // pads along a few metres behind you, ashore or swimming beside the boat
         const h = s.player.heading || 0;
@@ -2145,8 +2173,8 @@ export class OceanWorld {
     }
     beast.visible = !!at;
     if (!at) return;
-    const ground = s.inCave ? 0.2 : groundAt(at.x, at.z),
-      y = s.inCave ? ground : Math.max(ground, foot ? ground : -0.9);
+    const ground = s.inCave ? 0.2 : s.inTown ? 0 : groundAt(at.x, at.z),
+      y = s.inCave || s.inTown ? ground : Math.max(ground, foot ? ground : -0.9);
     const prev = beast.position.clone();
     if (beast.userData.placed) beast.position.lerp(new V(at.x, y, at.z), 1 - Math.exp(-dt * 3));
     else beast.position.set(at.x, y, at.z);

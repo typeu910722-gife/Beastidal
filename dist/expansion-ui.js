@@ -6,8 +6,9 @@ import {
   upgradeBoat,
   boatUpgradeCost,
   awaken
-} from './expansion.js?v=0.46.0';
-import { objectives, normalizeStory } from './story.js?v=0.46.0';
+} from './expansion.js?v=0.47.0';
+import { objectives, normalizeStory } from './story.js?v=0.47.0';
+import { townObjectives } from './town.js?v=0.47.0';
 let tab = 'beasts',
   page = 0,
   pick = null,
@@ -52,8 +53,12 @@ export function renderAdventure(body, s, ctx) {
     }
   } else if (tab === 'pact') {
     body.innerHTML += `<ul class="pact-list">${story.map(([text, done]) => `<li class="${done ? 'done' : ''}">${done ? '✓' : '○'} ${esc(text)}</li>`).join('')}</ul>`;
+    // 0.47: chapter two, part one — 慈光港
+    const town = townObjectives(s);
+    if (town.length)
+      body.innerHTML += `<p class="dv-note">第二章 · 新生之界</p><ul class="pact-list">${town.map(([text, done]) => `<li class="${done ? 'done' : ''}">${done ? '✓' : '○'} ${esc(text)}</li>`).join('')}</ul>`;
     if (s.story.stage >= 5)
-      body.innerHTML += `<button type="button" id="pact-cross" class="primary full-button">${s.story.stage >= 6 ? '再次越嶺' : '請嘯岳帶你越過群山'}</button>`;
+      body.innerHTML += `<button type="button" id="pact-cross" class="primary full-button">${s.story.stage >= 6 ? '越過群山，前往新生之界' : '請嘯岳帶你越過群山'}</button>`;
   } else {
     body.innerHTML += s.ship
       ? '<p class="dv-note">⚓ 比斯泰德號 · 掌舵時按空白鍵開砲（每發 1 廢金屬）</p>'
