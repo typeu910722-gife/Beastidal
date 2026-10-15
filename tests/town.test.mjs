@@ -48,7 +48,8 @@ test('Walls, gate and buildings: the plaza is open, buildings and walls are soli
   assert.ok(at(ARRIVE_AT)); // outside the gate
   assert.ok(at({ x: 0, z: 46 })); // through the gate
   assert.ok(!at({ x: 20, z: 46 })); // the wall beside it
-  assert.ok(!at({ x: 0, z: 70 })); // beyond the road's apron
+  assert.ok(at({ x: 0, z: 70 })); // 0.48: out of the gate the open country goes on
+  assert.ok(!at({ x: -46, z: 0 }) && !at({ x: 0, z: -46 })); // the wall all round
   assert.ok(!at({ x: STATUE.x, z: STATUE.z }));
   for (const b of BUILDINGS) {
     assert.ok(!at(b), b.id);

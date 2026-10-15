@@ -1,17 +1,17 @@
 // 0.47 抵達新生之界: 慈光港, the first town past the mountains. Chapter two, part one.
 // Everything here is free and gentle, and the town is full of signs of life — but the only person you ever see is
 // the guide. The rules of the town live here; town-models.js draws it, game.js wires it up. See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.47.0';
-import { give } from './bag.js?v=0.47.0';
+import { dayOf, isNight } from './clock.js?v=0.48.0';
+import { give } from './bag.js?v=0.48.0';
+import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.48.0';
+export { TOWN, toWorld };
 
-// The town sits in its own corner of the world, like the garden maze and the cabin. Local coordinates are metres
-// from the plaza's centre; +z is south, towards the gate.
-export const TOWN = { x: 3000, z: 3000 };
+// The town sits in its own corner of the world, like the garden maze and the cabin, in the open country under the
+// dome (dome.js). Local coordinates are metres from the plaza's centre; +z is south, towards the gate.
 export const TOWN_NAME = '慈光港';
 export const GUIDE_NAME = '晴';
 export const WALL = 46; // the town wall's half-width; the gate is the gap in its south side
 export const GATE_HALF = 4.5;
-const APRON = { x0: -14, x1: 14, z0: WALL, z1: 60 }; // the open ground outside the gate
 
 // Buildings are solid boxes (local centre, width along x, depth along z). `door` is where you stand to use one.
 export const BUILDINGS = [
@@ -36,24 +36,31 @@ export const BOARD = { x: -10, z: -18, r: 0.8 };
 export const XIAOYUE_WAITS = { x: 8, z: 54 };
 export const ARRIVE_AT = { x: 0, z: 52 };
 
-export const toWorld = p => ({ x: TOWN.x + p.x, z: TOWN.z + p.z });
-const local = (x, z) => ({ x: x - TOWN.x, z: z - TOWN.z });
-
-// Where you can walk, in world coordinates.
+// Where you can walk, in world coordinates: the streets inside the wall, out through the gate, and the open country
+// under the dome (0.48).
 export function townWalkable(x, z, pad = 0.35) {
-  const p = local(x, z);
-  const inside = Math.abs(p.x) < WALL - pad && p.z > -WALL + pad && p.z < WALL - pad;
-  const gate = Math.abs(p.x) < GATE_HALF - pad && p.z >= WALL - pad - 1 && p.z <= WALL + pad + 1;
-  const apron = p.x > APRON.x0 + pad && p.x < APRON.x1 - pad && p.z > APRON.z0 + pad && p.z < APRON.z1 - pad;
-  if (!inside && !gate && !apron) return false;
+  const p = toLocal(x, z);
+  if (!countryWalkable(p.x, p.z, pad)) return false;
+  // the wall: a band round the town, open only at the gate
+  const W = WALL,
+    t = 0.5 + pad,
+    inX = Math.abs(p.x) < W + t,
+    inZ = p.z > -W - t && p.z < W + t;
+  if (inX && inZ) {
+    const onWall =
+      Math.abs(Math.abs(p.x) - W) < t ||
+      Math.abs(p.z + W) < t ||
+      (Math.abs(p.z - W) < t && Math.abs(p.x) > GATE_HALF - pad);
+    if (onWall) return false;
+  }
   for (const b of BUILDINGS)
     if (Math.abs(p.x - b.x) < b.w / 2 + pad && Math.abs(p.z - b.z) < b.d / 2 + pad) return false;
   for (const c of [STATUE, STELE, BOARD]) if (Math.hypot(p.x - c.x, p.z - c.z) < c.r + pad) return false;
   return true;
 }
 export const insideWalls = s => {
-  const p = local(s.player.x, s.player.z);
-  return p.z < WALL;
+  const p = toLocal(s.player.x, s.player.z);
+  return Math.abs(p.x) < WALL && Math.abs(p.z) < WALL;
 };
 
 // ---------- state ----------

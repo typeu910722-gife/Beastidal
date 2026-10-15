@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.47.0';
-import { renderAdventure } from './expansion-ui.js?v=0.47.0';
+} from './expansion.js?v=0.48.0';
+import { renderAdventure } from './expansion-ui.js?v=0.48.0';
 import {
   normalizeShip,
   tickShip,
@@ -42,9 +42,9 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.47.0';
-import { monologue, markGuide, pride, markPride } from './guide.js?v=0.47.0';
-import { climb, demolish, relocate } from './construction.js?v=0.47.0';
+} from './ship.js?v=0.48.0';
+import { monologue, markGuide, pride, markPride } from './guide.js?v=0.48.0';
+import { climb, demolish, relocate } from './construction.js?v=0.48.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.47.0';
+} from './housing.js?v=0.48.0';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,10 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.47.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.47.0';
-import { lakeMinimap } from './lake-map.js?v=0.47.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.47.0';
+} from './islands.js?v=0.48.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.48.0';
+import { lakeMinimap } from './lake-map.js?v=0.48.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.48.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +89,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.47.0';
+} from './cabin.js?v=0.48.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +101,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.47.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.47.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.47.0';
-import { QUALITY } from './realism.js?v=0.47.0';
-import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.47.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.47.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.47.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.47.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.47.0';
-import { CONFIG } from './config.js?v=0.47.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.47.0';
+} from './story.js?v=0.48.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.48.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.48.0';
+import { QUALITY } from './realism.js?v=0.48.0';
+import { MusicPlayer, WaterRush, playSplash, soundPref } from './sound.js?v=0.48.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.48.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.48.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.48.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.48.0';
+import { CONFIG } from './config.js?v=0.48.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.48.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,7 +122,7 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.47.0';
+} from './codex.js?v=0.48.0';
 import {
   ensureLandBeasts,
   normalizeWildlife,
@@ -130,12 +130,12 @@ import {
   spawnWild,
   spawnUnder,
   ashore
-} from './wildlife.js?v=0.47.0';
-import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.47.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.47.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.47.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.47.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.47.0';
+} from './wildlife.js?v=0.48.0';
+import { CRAFTS, ITEMS, costLabel as itemCost } from './items.js?v=0.48.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.48.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.48.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.48.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.48.0';
 import {
   startFishing,
   tickFishing,
@@ -144,7 +144,7 @@ import {
   canFishHere,
   BITE_WINDOW,
   CATCHES
-} from './fishing.js?v=0.47.0';
+} from './fishing.js?v=0.48.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -154,10 +154,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.47.0';
-import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.47.0';
-import { setClimbing } from './lake.js?v=0.47.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.47.0';
+} from './reclaim.js?v=0.48.0';
+import { TIERS, ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.48.0';
+import { setClimbing } from './lake.js?v=0.48.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.48.0';
 import {
   RARITY,
   FRENZY,
@@ -184,7 +184,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.47.0';
+} from './taming.js?v=0.48.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -203,8 +203,8 @@ import {
   AI_RANGE,
   onLayer,
   callAssist
-} from './combat.js?v=0.47.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.47.0';
+} from './combat.js?v=0.48.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.48.0';
 import {
   ECHOES,
   LAPTOP_PARTS,
@@ -214,7 +214,7 @@ import {
   missingParts,
   normalizeEchoes,
   repairLaptop
-} from './echoes.js?v=0.47.0';
+} from './echoes.js?v=0.48.0';
 import {
   TOWN_NAME,
   BUILDINGS as TOWN_BUILDINGS,
@@ -226,6 +226,7 @@ import {
   useRoom,
   takeRation,
   readStele,
+  STELE_POSTS,
   readLetter,
   lookDiner,
   lookAdmin,
@@ -233,14 +234,34 @@ import {
   TOWN_HINTS,
   toWorld as townWorld,
   normalizeTown
-} from './town.js?v=0.47.0';
-import { BeastStage } from './beast-stage.js?v=0.47.0';
-import { loadArt, art, artImg } from './art.js?v=0.47.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.47.0';
-import { separateBodies } from './bodies.js?v=0.47.0';
-import { STATUES } from './statues.js?v=0.47.0';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.47.0';
-import { lookOf } from './beast-look.js?v=0.47.0';
+} from './town.js?v=0.48.0';
+import {
+  TEMPLATES,
+  WORDS,
+  PLAYER_TEMPLATES,
+  POSTS_PER_DAY,
+  REMOVED,
+  phrase,
+  stelePosts,
+  postsToday,
+  writePost,
+  resonate as resonatePost,
+  sendDrift,
+  driftReply,
+  tickComms,
+  guideWarning,
+  noteTrace,
+  normalizeComms
+} from './comms.js?v=0.48.0';
+import { Community } from './community.js?v=0.48.0';
+import { tickDome, nearShell, toLocal as domeLocal, countryWalkable } from './dome.js?v=0.48.0';
+import { BeastStage } from './beast-stage.js?v=0.48.0';
+import { loadArt, art, artImg } from './art.js?v=0.48.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.48.0';
+import { separateBodies } from './bodies.js?v=0.48.0';
+import { STATUES } from './statues.js?v=0.48.0';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.48.0';
+import { lookOf } from './beast-look.js?v=0.48.0';
 import {
   TREE,
   BRANCHES,
@@ -252,8 +273,8 @@ import {
   personalityLine,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.47.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.47.0';
+} from './beast-tree.js?v=0.48.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.48.0';
 import {
   funds,
   normalizeBag,
@@ -274,12 +295,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.47.0';
-import { iconFor } from './icons.js?v=0.47.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.47.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.47.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.47.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.47.0';
+} from './bag.js?v=0.48.0';
+import { iconFor } from './icons.js?v=0.48.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.48.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.48.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.48.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.48.0';
 import {
   homePos,
   facilityPos,
@@ -291,10 +312,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.47.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.47.0';
-export const GAME_VERSION = '0.47.0';
-import { CloudSave } from './cloud-save.js?v=0.47.0';
+} from './fortress.js?v=0.48.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.48.0';
+export const GAME_VERSION = '0.48.0';
+import { CloudSave } from './cloud-save.js?v=0.48.0';
 import {
   readLocal,
   writeLocal,
@@ -311,9 +332,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.47.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.47.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.47.0';
+} from './save-store.js?v=0.48.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.48.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, makeGenome, geneName } from './genetics.js?v=0.48.0';
 import {
   RESOURCE_NAMES,
   RECIPES,
@@ -334,8 +355,8 @@ import {
   validateSave,
   log,
   uid
-} from './rules.js?v=0.47.0';
-import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.47.0';
+} from './rules.js?v=0.48.0';
+import { DAY, dayPhase, hourOf, isNight, nextMorning } from './clock.js?v=0.48.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -3382,6 +3403,149 @@ function crossMountains() {
     2600
   );
 }
+// 0.48: the message stele — residents' posts, writing your own from set phrases, drifting letters, old carvings.
+// Real players' posts join in when CONFIG.communityUrl points at the community Worker.
+const community = new Community({ url: CONFIG.communityUrl || '' });
+let steleTab = 'posts',
+  steleT = 'hear',
+  steleW = 'dream',
+  remotePosts = [],
+  remoteAt = -1e9;
+function refreshRemote() {
+  if (!community.enabled || performance.now() - remoteAt < 60000) return;
+  remoteAt = performance.now();
+  community
+    .list()
+    .then(list => {
+      remotePosts = list.map(p => ({ ...p, remote: true }));
+      if (!$('modal-shade').hidden && $('modal-body').querySelector('.stele')) openStele(steleTab);
+    })
+    .catch(() => {});
+}
+function chooser() {
+  return (
+    `<div class="stele-pick">${PLAYER_TEMPLATES.map(k => `<button type="button" data-st="${k}" class="${k === steleT ? 'active' : ''}">${esc(TEMPLATES[k].replace('{0}', '＿'))}</button>`).join('')}</div>` +
+    `<div class="stele-pick words">${Object.entries(WORDS)
+      .map(
+        ([k, w]) =>
+          `<button type="button" data-sw="${k}" class="${k === steleW ? 'active' : ''}">${esc(w.text)}</button>`
+      )
+      .join('')}</div>` +
+    `<p class="stele-preview">「${esc(phrase(steleT, steleW))}」</p>`
+  );
+}
+function openStele(tab = steleTab) {
+  steleTab = tab;
+  normalizeComms(state);
+  refreshRemote();
+  const tabs = [
+    ['posts', '留言'],
+    ['write', '刻字'],
+    ['drift', '漂流信'],
+    ['old', '舊刻痕']
+  ];
+  let body = `<div class="stele"><div class="tabs">${tabs.map(([k, l]) => `<button type="button" data-tab="${k}" class="${k === tab ? 'active' : ''}">${l}</button>`).join('')}</div>`;
+  if (tab === 'posts') {
+    const mine = stelePosts(state),
+      all = [...mine, ...remotePosts].slice(0, 14),
+      done = normalizeComms(state).resonated;
+    body += all.length
+      ? all
+          .map(
+            p =>
+              `<article class="stele-post${p.mine ? ' mine' : ''}${p.removed ? ' removed' : ''}"><small>${esc(p.who)}${p.mine ? ' · 你' : ''}${p.remote ? ' · 居民' : ''}</small><p>${esc(p.removed ? REMOVED : phrase(p.t, p.w))}</p>${p.mine || p.removed ? `<span class="stele-res">共鳴 ${p.res || 0}</span>` : `<button type="button" data-res="${esc(p.id)}" ${done.includes(p.id) ? 'disabled' : ''}>共鳴 ${p.res || 0}</button>`}</article>`
+          )
+          .join('')
+      : '<p class="dv-note">石碑上還沒有留言。</p>';
+    if (community.enabled) body += '<p class="dv-note">（線上：其他居民的留言會出現在這裡。）</p>';
+  } else if (tab === 'write') {
+    const left = POSTS_PER_DAY - postsToday(state);
+    body +=
+      chooser() +
+      `<button type="button" class="primary full-button" id="stele-write" ${left > 0 ? '' : 'disabled'}>刻下留言 · 今天還能刻 ${left} 則</button>`;
+  } else if (tab === 'drift') {
+    const r = driftReply(state);
+    if (r?.reply)
+      body += `<article class="stele-post reply"><small>回信 · ${esc(r.reply[0])}</small><p class="pact-line">${esc(r.reply[1])}</p><small>你寄出的：「${esc(r.sent)}」</small></article>`;
+    else if (r?.waiting) body += `<p class="dv-note">上一封漂流信還在漂。回音大約在第 ${r.back} 天到。</p>`;
+    body +=
+      '<p class="dv-note">把一句話放進瓶子，漂給隨便一位居民。</p>' +
+      chooser() +
+      `<button type="button" class="primary full-button" id="stele-drift" ${r?.waiting ? 'disabled' : ''}>寄出漂流信</button>`;
+    if (r?.reply) save(true);
+  } else {
+    body += STELE_POSTS.map(([who, text]) =>
+      who ? `<p class="pact-line"><small>${esc(who)}</small> ${esc(text)}</p>` : `<p>${esc(text)}</p>`
+    ).join('');
+  }
+  body += '</div>';
+  modal('慈光港 · 留言碑', '居民的留言', body, [{ label: '離開', primary: true, action: closeModal }]);
+  const root = $('modal-body');
+  root.querySelectorAll('[data-tab]').forEach(b => (b.onclick = () => openStele(b.dataset.tab)));
+  root.querySelectorAll('[data-st]').forEach(b => (b.onclick = () => ((steleT = b.dataset.st), openStele(steleTab))));
+  root.querySelectorAll('[data-sw]').forEach(b => (b.onclick = () => ((steleW = b.dataset.sw), openStele(steleTab))));
+  root.querySelectorAll('[data-res]').forEach(
+    b =>
+      (b.onclick = () => {
+        const r = resonatePost(state, b.dataset.res);
+        toast(r.ok ? r.message : r.error, !r.ok);
+        if (r.ok && b.dataset.res.startsWith('o')) community.resonate(b.dataset.res).catch(() => {});
+        save(true);
+        openStele('posts');
+      })
+  );
+  const w = root.querySelector('#stele-write');
+  if (w)
+    w.onclick = () => {
+      const r = writePost(state, steleT, steleW);
+      toast(r.ok ? r.message : r.error, !r.ok);
+      if (r.ok) {
+        community.post(steleT, steleW, 'No.0412').catch(() => {});
+        save(true);
+        openStele('posts');
+      }
+    };
+  const d = root.querySelector('#stele-drift');
+  if (d)
+    d.onclick = () => {
+      const r = sendDrift(state, steleT, steleW);
+      toast(r.ok ? r.message : r.error, !r.ok);
+      if (r.ok) {
+        save(true);
+        openStele('drift');
+      }
+    };
+}
+// 0.48: being in the New World — the dome's tells, the shell's ripple, and other residents' glowing footprints
+let shellRippleAt = -1e9,
+  traceTimer = 30;
+function tickNewWorld(dt) {
+  for (const e of tickDome(state, dt)) {
+    discover('新生之界 · 破綻', e.text);
+    save(true);
+  }
+  const p = domeLocal(state.player.x, state.player.z);
+  if (nearShell(p.x, p.z) && performance.now() - shellRippleAt > 1600) {
+    shellRippleAt = performance.now();
+    const a = Math.atan2(p.x, p.z);
+    world.domeRipple(Math.sin(a) * 289, Math.cos(a) * 289, world.baseY + 1.6);
+    audio.note(1320, 0.12);
+  }
+  // footprints show up now and then out in the country, a little ahead of you
+  const outside = Math.abs(p.x) > 50 || Math.abs(p.z) > 50;
+  if (outside && (traceTimer -= dt) <= 0) {
+    traceTimer = 45 + Math.random() * 40;
+    const h = state.player.heading + (Math.random() - 0.5) * 1.6,
+      d = 10 + Math.random() * 10,
+      x = p.x + Math.sin(h) * d,
+      z = p.z + Math.cos(h) * d;
+    if (countryWalkable(x, z, 1)) {
+      world.showTrace(x, z, Math.random() * Math.PI * 2);
+      const first = noteTrace(state);
+      if (first) setTimeout(() => discover('殘影', first), 2500);
+    }
+  }
+}
 // 0.47: over the mountains on 嘯岳's back, down to 慈光港 — and back to the lake
 function townFade(then) {
   const fade = $('focus-fade');
@@ -3431,6 +3595,13 @@ function townAction(id) {
     }
   };
   if (id === 'guide') {
+    // 0.48: once a post of yours has been removed, she brings it up — gently
+    const warn = state.town?.met && guideWarning(state);
+    if (warn) {
+      save(true);
+      playLines(warn, '引路人');
+      return;
+    }
     const r = meetGuide(state);
     save(true);
     updateUI();
@@ -3464,19 +3635,10 @@ function townAction(id) {
     return done(r);
   }
   if (id === 'stele') {
-    const r = readStele(state);
+    readStele(state);
     save(true);
     updateUI();
-    modal(
-      '慈光港 · 留言碑',
-      '居民的留言',
-      r.posts
-        .map(([who, text]) =>
-          who ? `<p class="pact-line"><small>${esc(who)}</small> ${esc(text)}</p>` : `<p>${esc(text)}</p>`
-        )
-        .join('') + '<p class="dv-note">（石碑上沒有可以刻字的地方……現在還沒有。）</p>',
-      [{ label: '離開', primary: true, action: closeModal }]
-    );
+    openStele('posts');
     return;
   }
   if (id === 'board') {
@@ -8100,6 +8262,12 @@ function frame(now, manual = false) {
       updateUI();
       updateNearest();
       checkSightings();
+      if (state.inTown) tickNewWorld(0.2);
+      // 0.48: posts with forbidden words disappear the next day
+      for (const p of tickComms(state)) {
+        discover('留言碑', `你刻的「${phrase(p.t, p.w)}」被移除了。`);
+        save(true);
+      }
       updateFishingHUD();
       // 0.36.5: a stone sleeper you have stood near is named in the codex
       if (!state.inCave && !state.inTown)

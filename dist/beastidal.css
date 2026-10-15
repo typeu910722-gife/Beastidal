@@ -3641,3 +3641,66 @@ body.landscape-play.beast-on .supply-row {
 body:has(#discovery:not([hidden])) #toasts {
   top: 124px;
 }
+
+/* 0.48: the message stele — set phrases, posts, resonance */
+.stele .tabs {
+  margin-bottom: 10px;
+}
+.stele-post {
+  border-left: 2px solid #6f8090;
+  padding: 4px 10px;
+  margin: 8px 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 2px 10px;
+}
+.stele-post small {
+  grid-column: 1 / -1;
+  opacity: 0.7;
+}
+.stele-post p {
+  margin: 0;
+  font-size: 16px;
+}
+.stele-post.mine {
+  border-left-color: #e9c46a;
+}
+.stele-post.removed p {
+  font-style: italic;
+  opacity: 0.55;
+}
+.stele-post.reply {
+  display: block;
+  border-left-color: #9ff0ff;
+}
+.stele-post button,
+.stele-res {
+  font-size: 12px;
+  padding: 3px 9px;
+  opacity: 0.85;
+}
+.stele-pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+.stele-pick button {
+  padding: 5px 10px;
+  border-radius: 14px;
+  font-size: 13px;
+}
+.stele-pick button.active {
+  background: #e9c46a;
+  color: #1d1a12;
+}
+.stele-pick.words button {
+  font-size: 12px;
+}
+.stele-preview {
+  font-size: 18px;
+  text-align: center;
+  margin: 10px 0;
+  color: #f3ead4;
+}

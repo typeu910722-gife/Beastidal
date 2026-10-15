@@ -2,8 +2,8 @@
 // meal still steaming — and nobody. At the plaza's heart 慈愛組織's statue: two open hands holding up a sun.
 // Layout and rules: town.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT } from './town.js?v=0.47.0';
-import { grainTexture } from './realism.js?v=0.47.0';
+import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT } from './town.js?v=0.48.0';
+import { grainTexture } from './realism.js?v=0.48.0';
 
 let seed = 412;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -25,36 +25,17 @@ export function makeTown() {
   const grain = grainTexture().clone();
   grain.repeat.set(40, 40);
   grain.needsUpdate = true;
-  // the land around the town: meadow, out to distant hills
-  const meadow = new T.Mesh(new T.CircleGeometry(900, 48), mat(0x5d7246, { roughness: 1, bumpMap: grain }));
-  meadow.rotation.x = -Math.PI / 2;
-  meadow.position.y = -0.02;
-  meadow.receiveShadow = true;
-  g.add(meadow);
-  const hillMat = mat(0x4f6447, { roughness: 1, flatShading: true });
-  for (let i = 0; i < 26; i++) {
-    const a = (i / 26) * Math.PI * 2 + rnd() * 0.2,
-      r = 380 + rnd() * 300,
-      h = 30 + rnd() * 70;
-    const hill = add(
-      g,
-      new T.ConeGeometry(70 + rnd() * 90, h, 7),
-      hillMat,
-      Math.sin(a) * r,
-      h / 2 - 2,
-      Math.cos(a) * r
-    );
-    hill.castShadow = false;
-  }
+  // 0.48: the land around the town is dome-models.js's (rolling country under the dome)
   // paving inside the walls, and the road out of the gate
   const paving = mat(0xb9b2a4, { roughness: 0.95, bumpMap: grain, bumpScale: 0.3 });
   const floor = new T.Mesh(new T.PlaneGeometry(WALL * 2, WALL * 2), paving);
   floor.rotation.x = -Math.PI / 2;
+  floor.position.y = 0.02;
   floor.receiveShadow = true;
   g.add(floor);
-  const road = new T.Mesh(new T.PlaneGeometry(28, 90), mat(0xc4bba8, { roughness: 1, bumpMap: grain }));
+  const road = new T.Mesh(new T.PlaneGeometry(14, 90), mat(0x9c8f74, { roughness: 1, bumpMap: grain }));
   road.rotation.x = -Math.PI / 2;
-  road.position.set(0, 0.01, WALL + 44);
+  road.position.set(0, 0.03, WALL + 44);
   road.receiveShadow = true;
   g.add(road);
   // a ring of darker stone round the plaza

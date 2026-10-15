@@ -3480,5 +3480,104 @@ export default {
   '門是鎖著的 · 按 E 靠近': 'The door is locked · press E to go closer',
   靠近: 'Go closer',
   '牠在城門外等你 · 按 E 回到湖區': 'Waiting outside the gate · press E to go back to the lake',
-  回去: 'Go back'
+  回去: 'Go back',
+  // 0.48 穹頂與留言
+  '小心{0}': 'Beware of {0}',
+  '{0}就在這附近': '{0} is near here',
+  '有人聽到{0}嗎？': 'Does anyone else hear {0}?',
+  '我想念{0}': 'I miss {0}',
+  '別相信{0}': "Don't trust {0}",
+  '我在找{0}': "I'm looking for {0}",
+  '{0}很好': '{0} is good',
+  '為什麼會有{0}？': 'Why is there {0}?',
+  '{0}……我也是。': '{0}… me too.',
+  家人: 'family',
+  配給: 'the rations',
+  夢: 'dreams',
+  湖: 'the lake',
+  雨: 'the rain',
+  家: 'home',
+  天空: 'the sky',
+  鳥群: 'the flock of birds',
+  家書: 'letters from home',
+  嗶嗶聲: 'the beeping',
+  醫院: 'the hospital',
+  山的另一邊: 'the other side of the mountains',
+  穹頂: 'the dome',
+  '本則留言因違反居民守則，已由慈愛組織移除。':
+    "This message broke the residents' code and has been removed by Compassion.",
+  '我也一直在想我的家人。晴小姐說他們很好，可是我好想親眼看看。':
+    "I keep thinking about my family too. Miss Qing says they're well, but I so want to see for myself.",
+  '我媽媽每週都寫信給我。可是她的字，好像比以前工整了。':
+    'My mom writes to me every week. But her handwriting seems neater than it used to be.',
+  '晴小姐人很好。……她是我在這裡唯一見過的人。你也是嗎？':
+    "Miss Qing is very kind. …She's the only person I've seen here. You too?",
+  '配給的味道你也覺得怪嗎？我以為只有我這樣。': 'You think the rations taste strange too? I thought it was just me.',
+  '我也做夢。夢裡有人一直叫我的編號。': 'I dream too. In my dreams someone keeps calling my number.',
+  '我想念湖。在那裡，至少我知道自己在哪裡。': 'I miss the lake. There, at least, I knew where I was.',
+  '我的御獸也不肯進城。牠們是不是知道什麼？': "My beasts won't come into town either. Do they know something?",
+  '這裡的雨，好像只下在城裡。': 'The rain here seems to fall only on the town.',
+  '家……我已經想不太起來家長什麼樣子了。': 'Home… I can hardly remember what home looked like.',
+  '你有沒有在黃昏的時候，仔細看過天空？': 'Have you ever looked closely at the sky at sunset?',
+  '那群鳥！我數過，每次都是九隻。': "Those birds! I counted. It's always nine.",
+  '再讀一次你的家書。仔細讀。': 'Read your letters from home again. Carefully.',
+  '（漂流信被退回了。信封上蓋著慈愛組織的印章：「內容不符居民守則」。）':
+    '(The drifting letter came back. Its envelope bears Compassion\'s stamp: "Content does not comply with the residents\' code.")',
+  '選一個句型和一個詞。': 'Choose a phrase and a word.',
+  '今天已經刻了 {0} 則留言。明天再來。': "You've carved {0} messages today. Come back tomorrow.",
+  '我在石碑上刻下第一則留言：「{0}」。會有人看到嗎？':
+    'I carved my first message on the stele: "{0}". Will anyone see it?',
+  '刻下了：「{0}」': 'Carved: "{0}"',
+  '已經共鳴過了。': "You've already resonated with this.",
+  '你按下了共鳴。石碑上的字微微亮了一下。': 'You resonate. The words on the stele glow faintly.',
+  '上一封漂流信還沒有回音。': "Your last drifting letter hasn't been answered yet.",
+  '漂流信寄出去了：「{0}」。不知道會漂到誰手上。':
+    'The drifting letter is on its way: "{0}". Who knows whose hands it will reach.',
+  慈愛組織: 'Compassion',
+  '……我也是。': '…Me too.',
+  '漂流信 ·': 'Drifting letter ·',
+  '我刻的「{0}」不見了。原來的位置只剩一行字：「{1}」':
+    'The "{0}" I carved is gone. In its place, a single line: "{1}"',
+  '對了，0412。留言碑上的事，我聽說了。': 'Oh, and 0412 — I heard about the stele.',
+  '有些話，說出來只會讓大家不安喔。這裡的每個人，都是好不容易才不痛了。':
+    "Some things only upset everyone when they're said. Everyone here has only just stopped hurting.",
+  '你是個溫柔的人，對吧？': "You're a kind person, aren't you?",
+  殘影: 'Afterimage',
+  '草地上有一串發著淡光的腳印，走近就散了。剛才，有人站在這裡。':
+    'A trail of faintly glowing footprints in the grass — they scatter as you come near. Someone stood here a moment ago.',
+  '天上的紫色裂縫……不見了。在湖上，它一直都在那裡。':
+    'The purple rift in the sky… is gone. Over the lake it was always there.',
+  遠山: 'Far hills',
+  '那排山……我走了這麼久，它們一點也沒有變近。': "Those hills… I've walked so far, and they haven't come any closer.",
+  看不見的牆: 'The invisible wall',
+  '前面明明還有路……可是我走不過去。空氣裡閃過一圈六角形的光。':
+    "There's ground ahead, plain as day… but I can't walk on. A ring of hexagonal light flickers in the air.",
+  '那群鳥又飛過去了。同一個方向，同一個高度……跟剛才一模一樣。':
+    'The flock flies over again. Same direction, same height… exactly like before.',
+  夕陽: 'Sunset',
+  '夕陽下，天空好像有一格一格的線。眨一下眼，又不見了。':
+    "In the sunset the sky seems to have lines, a grid of cells. I blink, and it's gone.",
+  鹿: 'Deer',
+  '那頭鹿又從同一棵樹旁邊走過去了。牠每天走的，都是同一條路嗎？':
+    'That deer walks past the same tree again. Does it walk the very same path every day?',
+  '＿': '___',
+  '「{0}」': '"{0}"',
+  留言: 'Messages',
+  刻字: 'Carve',
+  漂流信: 'Drifting letters',
+  舊刻痕: 'Old carvings',
+  '· 你': '· you',
+  '· 居民': '· resident',
+  '共鳴 {0}': 'Resonate {0}',
+  '石碑上還沒有留言。': 'No messages on the stele yet.',
+  '（線上：其他居民的留言會出現在這裡。）': "(Online: other residents' messages appear here.)",
+  '刻下留言 · 今天還能刻 {0} 則': 'Carve a message · {0} left today',
+  '回信 · {0}': 'Reply · {0}',
+  '你寄出的：「{0}」': 'You sent: "{0}"',
+  '上一封漂流信還在漂。回音大約在第 {0} 天到。':
+    'Your last letter is still drifting. An answer should come around day {0}.',
+  '把一句話放進瓶子，漂給隨便一位居民。': 'Put a phrase in a bottle and let it drift to any resident.',
+  寄出漂流信: 'Send a drifting letter',
+  '新生之界 · 破綻': 'The New World · a crack',
+  '你刻的「{0}」被移除了。': 'The "{0}" you carved has been removed.'
 };
