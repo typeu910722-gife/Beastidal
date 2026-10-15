@@ -3705,6 +3705,101 @@ body:has(#discovery:not([hidden])) #toasts {
   color: #f3ead4;
 }
 
+/* 0.54: the stele reads as carved stone, the board as a pinned paper notice */
+.stele {
+  background:
+    radial-gradient(120% 80% at 30% 0%, rgba(255, 255, 255, 0.07), transparent 60%),
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.018) 0 2px, transparent 2px 7px),
+    linear-gradient(180deg, #4b4f57, #3a3d44);
+  border: 1px solid #2a2c31;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.35),
+    0 6px 18px rgba(0, 0, 0, 0.3);
+  padding: 12px 14px;
+  max-height: min(58vh, 520px);
+  overflow-y: auto;
+}
+.stele-post {
+  border-left: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+  padding: 8px 4px;
+  margin: 0;
+}
+.stele-post p {
+  font-family: 'Noto Serif TC', 'Songti TC', serif;
+  color: #e7e3da;
+  letter-spacing: 0.04em;
+  text-shadow:
+    0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.stele-post small {
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  color: #b9c0c8;
+}
+.stele-post.mine p {
+  color: #f1d58a;
+}
+.stele-post.removed p {
+  color: #9aa0a6;
+  text-decoration: line-through rgba(154, 160, 166, 0.5);
+}
+.stele-post.reply {
+  border-bottom-color: rgba(159, 240, 255, 0.25);
+}
+.notice {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 30%), #f3ecda;
+  color: #3d3428;
+  padding: 22px 22px 18px;
+  margin: 6px auto 4px;
+  max-width: 440px;
+  transform: rotate(-0.8deg);
+  box-shadow:
+    0 1px 0 #d8ceb5,
+    0 10px 24px rgba(0, 0, 0, 0.35);
+  font-family: 'Noto Serif TC', 'Songti TC', serif;
+}
+.notice h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: 0.12em;
+  color: #8a5a20;
+  border-bottom: 1px double #c9a75e;
+  padding-bottom: 8px;
+}
+.notice p {
+  margin: 6px 0;
+  line-height: 1.7;
+}
+.notice-pin {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ff9d8a, #b23a2a 60%, #6d1f15);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+.notice-seal {
+  display: block;
+  width: 46px;
+  height: 46px;
+  margin: 10px 0 0 auto;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 142, 46, 0.75);
+  background: radial-gradient(circle, rgba(233, 196, 106, 0.85) 0 30%, transparent 32%);
+  box-shadow: inset 0 0 0 5px rgba(201, 142, 46, 0.18);
+  transform: rotate(-12deg);
+}
+
 /* 0.50: the rift trial */
 .trial {
   display: grid;
@@ -3827,4 +3922,32 @@ body:has(#discovery:not([hidden])) #toasts {
   75% {
     transform: translateX(4px);
   }
+}
+
+/* 0.54: dialogue in town during the camera's close-up: a subtitle bar over a clear view */
+body.talk-cam #modal-shade {
+  backdrop-filter: none;
+  background: linear-gradient(180deg, transparent 50%, rgba(2, 14, 20, 0.7));
+  align-items: flex-end;
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
+}
+body.talk-cam #modal {
+  width: min(720px, 100%);
+  padding: 18px 26px 16px;
+  background: rgba(8, 32, 40, 0.86);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+body.talk-cam #modal-title {
+  font-size: 20px;
+  margin: 2px 0 6px;
+}
+body.talk-cam #modal-eyebrow {
+  display: none;
+}
+body.talk-cam #modal-body {
+  font-size: 16px;
+  color: #e3eee9;
+}
+body.talk-cam #modal-actions {
+  margin-top: 10px;
 }

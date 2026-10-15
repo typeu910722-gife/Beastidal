@@ -1,9 +1,9 @@
 // 0.47 抵達新生之界: 慈光港, the first town past the mountains. Chapter two, part one.
 // Everything here is free and gentle, and the town is full of signs of life — but the only person you ever see is
 // the guide. The rules of the town live here; town-models.js draws it, game.js wires it up. See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.54.0';
-import { give } from './bag.js?v=0.54.0';
-import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.54.0';
+import { dayOf, isNight } from './clock.js?v=0.55.0';
+import { give } from './bag.js?v=0.55.0';
+import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.55.0';
 export { TOWN, toWorld };
 
 // The town sits in its own corner of the world, like the garden maze and the cabin, in the open country under the
@@ -36,6 +36,35 @@ export const BOARD = { x: -10, z: -18, r: 0.8 };
 export const XIAOYUE_WAITS = { x: 8, z: 54 };
 export const ARRIVE_AT = { x: 0, z: 52 };
 
+// 0.54: street lamps round the plaza and along the main street (solid: you walk round them, the camera stops short)
+export const LAMPS = [
+  ...Array.from({ length: 8 }, (_, i) => ({
+    x: Math.sin((i / 8) * Math.PI * 2) * 13,
+    z: Math.cos((i / 8) * Math.PI * 2) * 13
+  })),
+  ...[20, 32, 42].flatMap(z => [
+    { x: -5, z },
+    { x: 5, z }
+  ])
+];
+export const LAMP_R = 0.18;
+// Would the orbit camera be inside something solid here? (world coordinates; y is height)
+export function townCameraBlocked(x, y, z) {
+  const p = toLocal(x, z),
+    W = WALL;
+  if (y < 4.6 && Math.abs(p.x) < W + 0.8 && p.z > -W - 0.8 && p.z < W + 0.8) {
+    const onWall =
+      Math.abs(Math.abs(p.x) - W) < 0.8 ||
+      Math.abs(p.z + W) < 0.8 ||
+      (Math.abs(p.z - W) < 0.8 && Math.abs(p.x) > GATE_HALF - 0.3);
+    if (onWall) return true;
+  }
+  for (const b of BUILDINGS)
+    if (y < b.h + 2 && Math.abs(p.x - b.x) < b.w / 2 + 0.6 && Math.abs(p.z - b.z) < b.d / 2 + 0.6) return true;
+  for (const l of LAMPS) if (y < 4.6 && Math.hypot(p.x - l.x, p.z - l.z) < 0.5) return true;
+  return y < 5 && Math.hypot(p.x - STATUE.x, p.z - STATUE.z) < STATUE.r + 0.4;
+}
+
 // Where you can walk, in world coordinates: the streets inside the wall, out through the gate, and the open country
 // under the dome (0.48).
 export function townWalkable(x, z, pad = 0.35, open = false) {
@@ -56,6 +85,7 @@ export function townWalkable(x, z, pad = 0.35, open = false) {
   for (const b of BUILDINGS)
     if (Math.abs(p.x - b.x) < b.w / 2 + pad && Math.abs(p.z - b.z) < b.d / 2 + pad) return false;
   for (const c of [STATUE, STELE, BOARD]) if (Math.hypot(p.x - c.x, p.z - c.z) < c.r + pad) return false;
+  for (const l of LAMPS) if (Math.hypot(p.x - l.x, p.z - l.z) < LAMP_R + pad * 0.5) return false;
   return true;
 }
 export const insideWalls = s => {

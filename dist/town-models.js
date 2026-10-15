@@ -2,9 +2,9 @@
 // meal still steaming — and nobody. At the plaza's heart 慈愛組織's statue: two open hands holding up a sun.
 // Layout and rules: town.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT } from './town.js?v=0.54.0';
-import { grainTexture } from './realism.js?v=0.54.0';
-import { tr } from './i18n.js?v=0.54.0';
+import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT, LAMPS } from './town.js?v=0.55.0';
+import { grainTexture } from './realism.js?v=0.55.0';
+import { tr } from './i18n.js?v=0.55.0';
 
 let seed = 412;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -418,10 +418,7 @@ export function makeTown() {
   const lamps = [];
   const lampMat = new T.MeshStandardMaterial({ color: 0xfff1cf, emissive: 0xffd990, emissiveIntensity: 0.1 });
   const poleMat = mat(0x3b3d40, { metalness: 0.6, roughness: 0.4 });
-  const lampAt = [];
-  for (let i = 0; i < 8; i++) lampAt.push([Math.sin((i / 8) * Math.PI * 2) * 13, Math.cos((i / 8) * Math.PI * 2) * 13]);
-  for (const z of [20, 32, 42]) lampAt.push([-5, z], [5, z]);
-  for (const [x, z] of lampAt) {
+  for (const { x, z } of LAMPS) {
     add(g, new T.CylinderGeometry(0.07, 0.09, 4, 8), poleMat, x, 2, z);
     lamps.push(add(g, new T.SphereGeometry(0.28, 14, 10), lampMat, x, 4.15, z));
   }
