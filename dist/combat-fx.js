@@ -54,7 +54,7 @@ export class CombatFX {
       m.rotation.x = Math.PI / 2;
       g.add(m);
     }
-    // 0.61.5: a low wall of red light stands on the shape's edge, so it reads from a beast's-eye view too (from low
+    // 0.61.6: a low wall of red light stands on the shape's edge, so it reads from a beast's-eye view too (from low
     // down a shape flat on the ground is only a sliver)
     const H = 1.3,
       wm = this.wallMat(),

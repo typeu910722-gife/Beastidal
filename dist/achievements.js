@@ -1,8 +1,8 @@
 // Achievements (per save). `steam` ids are the API names to register in Steamworks; the native shell can unlock
 // them through window.BeastidalNative.steam.unlock(id). Checks read only save state, so they are safe to re-run.
-import { phenotype } from './genetics.js?v=0.61.5';
-import { codexProgress } from './codex.js?v=0.61.5';
-import { dayOf } from './clock.js?v=0.61.5';
+import { phenotype } from './genetics.js?v=0.61.6';
+import { codexProgress } from './codex.js?v=0.61.6';
+import { dayOf } from './clock.js?v=0.61.6';
 
 const n = (s, t) => (s.buildings || []).filter(b => b.type === t).length;
 const day = s => dayOf(s);

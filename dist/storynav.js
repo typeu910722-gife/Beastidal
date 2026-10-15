@@ -10,8 +10,8 @@ import {
   BOARD,
   XIAOYUE_WAITS,
   lettersReady
-} from './town.js?v=0.61.5';
-import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.61.5';
+} from './town.js?v=0.61.6';
+import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.61.6';
 import {
   chapter3Objectives,
   normalizeChapter3,
@@ -22,8 +22,8 @@ import {
   RIFT,
   TEAR_AT,
   layerOpen
-} from './chapter3.js?v=0.61.5';
-import { isNight } from './clock.js?v=0.61.5';
+} from './chapter3.js?v=0.61.6';
+import { isNight } from './clock.js?v=0.61.6';
 
 const door = id => BUILDINGS.find(b => b.id === id).door;
 const at = (p, name, night = false) => ({ ...toWorld(p), name, night });

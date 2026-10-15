@@ -1,4 +1,4 @@
-// Through your beast's eyes (0.61.5). While you are bonded (契合), its forelimbs and the ridge of its snout sit at the
+// Through your beast's eyes (0.61.6). While you are bonded (契合), its forelimbs and the ridge of its snout sit at the
 // bottom of the view in its own colours: they breathe and sway as it moves, rake across the screen with each blow of
 // a combo (right, left, right, left; both at once on a held heavy blow), snap the jaws up on a skill, lurch aside on
 // a dodge and jerk back when it is struck. They hang off the camera and draw on top of the world, like the hands.
@@ -23,7 +23,7 @@ function part(parent, geo, m, pos = [0, 0, 0], rot = [0, 0, 0], scale = [1, 1, 1
   return o;
 }
 // a forelimb: a forearm tapering to the wrist and flattened like a real one, a ridge of fur tufts along its top, a
-// broad paw with a knuckle over each of three long hooked claws (0.61.5: the plain tube read as a sausage)
+// broad paw with a knuckle over each of three long hooked claws (0.61.6: the plain tube read as a sausage)
 function makeLimb(side, hide, pale, claw, dark) {
   const g = new T.Group();
   part(g, new T.CylinderGeometry(0.05, 0.095, 0.55, 12), hide, [0, 0, 0.27], [Math.PI / 2, 0, 0], [1.25, 1, 0.8]);
@@ -86,6 +86,39 @@ export class BeastView {
     this.glow = new T.PointLight(0xffffff, 0, 1.4, 2);
     this.glow.position.set(0, -0.15, -0.5);
     this.root.add(this.glow);
+    // 0.61.6: what a skill throws out of it, in the skill's colour — a gout of breath from the snout (flame, frost,
+    // venom, a roar), crackling streaks (thunder), motes rising round the paws (hardening, regrowth)
+    const puff = document.createElement('canvas');
+    puff.width = puff.height = 64;
+    const g = puff.getContext('2d'),
+      grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grd.addColorStop(0, 'rgba(255,255,255,1)');
+    grd.addColorStop(0.35, 'rgba(255,255,255,0.55)');
+    grd.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = grd;
+    g.fillRect(0, 0, 64, 64);
+    const tex = new T.CanvasTexture(puff),
+      quad = new T.PlaneGeometry(1, 1);
+    this.motes = [];
+    for (let i = 0; i < 28; i++) {
+      const m = new T.Mesh(
+        quad,
+        new T.MeshBasicMaterial({
+          map: tex,
+          transparent: true,
+          opacity: 0,
+          depthTest: false,
+          depthWrite: false,
+          blending: T.AdditiveBlending
+        })
+      );
+      m.renderOrder = 999;
+      m.frustumCulled = false;
+      m.visible = false;
+      m.userData = { life: 0, max: 1, v: new T.Vector3(), grow: 0, jitter: 0 };
+      this.root.add(m);
+      this.motes.push(m);
+    }
     this.t = 0;
     this.act = null;
     this.beastId = null;
@@ -113,12 +146,74 @@ export class BeastView {
   play(kind, e = {}) {
     if (kind === 'enter' || kind === 'leave' || kind === 'ko') {
       this.act = null;
+      for (const m of this.motes) m.visible = false;
       return;
     }
     const dur = { slash: e.heavy ? 0.42 : 0.28, skill: 0.55, dodge: 0.32, hurt: 0.3, perfect: 0.4 }[kind];
     if (!dur) return;
     const side = kind === 'slash' && !e.heavy ? ((e.combo || 1) % 2 ? 1 : -1) : 0;
     this.act = { kind, e, t: 0, dur, side, color: e.color ? new T.Color(e.color) : null };
+    if (kind === 'skill') this.burst(e.skill, this.act.color || new T.Color(0xffffff));
+  }
+  burst(skill, color) {
+    const self = skill === 'guard' || skill === 'heal',
+      zap = skill === 'thunder',
+      claws = skill === 'dash' || skill === 'tail' || skill === 'jaw';
+    if (claws) return; // those are a lunge and a bite: the paws and teeth carry them
+    let n = 0;
+    for (const m of this.motes) {
+      if (n >= (zap ? 14 : 22)) break;
+      n++;
+      const u = m.userData,
+        r = Math.random,
+        side = r() < 0.5 ? -1 : 1;
+      m.visible = true;
+      m.material.color.copy(color);
+      if (self) {
+        m.position.set(side * (0.3 + r() * 0.2), -0.3 + r() * 0.1, -0.6 - r() * 0.1);
+        u.v.set((r() - 0.5) * 0.05, 0.25 + r() * 0.25, 0);
+        u.max = 0.6 + r() * 0.4;
+        u.grow = 0.02;
+        m.scale.setScalar(0.05 + r() * 0.04);
+      } else if (zap) {
+        m.position.set((r() - 0.5) * 0.1, -0.2, -0.7);
+        u.v.set((r() - 0.5) * 0.9, (r() - 0.3) * 0.6, -2.5 - r() * 2);
+        u.max = 0.18 + r() * 0.15;
+        u.grow = 0;
+        m.scale.set(0.025, 0.18 + r() * 0.12, 1);
+      } else {
+        // breath: out of the mouth, spreading as it goes
+        m.position.set((r() - 0.5) * 0.08, -0.2 + (r() - 0.5) * 0.05, -0.68);
+        u.v.set((r() - 0.5) * 0.6, (r() - 0.1) * 0.3, -1.2 - r() * 1.0);
+        u.max = 0.35 + r() * 0.3;
+        u.grow = 1.4 + r() * 0.8;
+        m.scale.setScalar(0.1 + r() * 0.08);
+      }
+      u.jitter = zap ? 1 : 0;
+      u.life = -r() * (zap ? 0.15 : 0.12); // a short stagger so it pours out instead of popping
+    }
+  }
+  tickMotes(dt) {
+    for (const m of this.motes) {
+      if (!m.visible) continue;
+      const u = m.userData;
+      u.life += dt;
+      if (u.life < 0) {
+        m.material.opacity = 0;
+        continue;
+      }
+      const f = u.life / u.max;
+      if (f >= 1) {
+        m.visible = false;
+        continue;
+      }
+      m.position.addScaledVector(u.v, dt);
+      if (u.jitter) {
+        m.position.x += (Math.random() - 0.5) * 0.04;
+        m.rotation.z = (Math.random() - 0.5) * 1.2;
+      } else m.scale.multiplyScalar(1 + u.grow * dt);
+      m.material.opacity = (f < 0.15 ? f / 0.15 : 1 - (f - 0.15) / 0.85) * 0.95;
+    }
   }
   // k: how far into its eyes the view is (0 out, 1 fully in); moving: how fast it is going, 0..1
   update(dt, k, moving = 0) {
@@ -215,5 +310,6 @@ export class BeastView {
       }
       if (p >= 1) this.act = null;
     }
+    this.tickMotes(dt);
   }
 }

@@ -2,14 +2,14 @@
 // gate, a water beast among the sunken ruins. Built from the same bodies the living beasts use, then given weathered
 // stone — moss for the plant one, silt and barnacle-green for the drowned one — on a carved plinth. Their eyes keep
 // the faintest glow. Not interactive yet; a later chapter can wake them (see STATUES for their ids).
-import { surface } from './surfaces.js?v=0.61.5';
+import { surface } from './surfaces.js?v=0.61.6';
 import * as T from './vendor/three.module.min.js';
-import { makeCreature } from './creatures.js?v=0.61.5';
-import { makeGenome } from './genetics.js?v=0.61.5';
-import { applyGeneMarks } from './bs-models.js?v=0.61.5';
-import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.61.5';
-import { grainTexture } from './realism.js?v=0.61.5';
-import { bakeStatic } from './bake.js?v=0.61.5';
+import { makeCreature } from './creatures.js?v=0.61.6';
+import { makeGenome } from './genetics.js?v=0.61.6';
+import { applyGeneMarks } from './bs-models.js?v=0.61.6';
+import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.61.6';
+import { grainTexture } from './realism.js?v=0.61.6';
+import { bakeStatic } from './bake.js?v=0.61.6';
 
 const place = (lm, dx, dz, opts) => landNear(lm.x + dx, lm.z + dz, opts);
 export const STATUES = [
