@@ -1,8 +1,9 @@
+import { surface } from './surfaces.js?v=0.45.0';
 import * as T from './vendor/three.module.min.js';
-import { ISLANDS, NODES } from './islands.js?v=0.44.0';
-import { groundAt, slopeAt } from './lake.js?v=0.44.0';
+import { ISLANDS, NODES } from './islands.js?v=0.45.0';
+import { groundAt, slopeAt } from './lake.js?v=0.45.0';
 const material = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.85, ...extra });
-const trunk = material(0x8e7952),
+const trunk = surface(material(0x8e7952), 'wood'),
   leaf = material(0x4c8263, { side: T.DoubleSide }),
   metal = material(0x658086, { metalness: 0.5 });
 function add(g, geo, mat, pos = [0, 0, 0], scale = [1, 1, 1]) {
@@ -43,7 +44,7 @@ function palm(g, x, z, h) {
     add(g, geo, leaf);
   }
 }
-const stoneMat = material(0x7d8a86),
+const stoneMat = surface(material(0x7d8a86), 'stone'),
   banner = material(0x2e7c78, { side: T.DoubleSide }),
   gold = material(0xd6b15c, { metalness: 0.4, roughness: 0.4 });
 function rnd(seed) {

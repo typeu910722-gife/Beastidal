@@ -4,6 +4,7 @@
 //    tone; with `planks`, the dark seams between deck boards
 //  · metal — brushed lines, patches of rust that are rough and dull where brushed steel is smooth and bright
 //  · cloth — a fine weave and grime, matte
+//  · stone — weathered, with cracks and moss on what faces the sky; with `blocks`, laid in staggered courses
 // The colour of the material stays as it was — the surface only modulates it. Detail finer than a pixel fades to
 // its mean, so nothing shimmers in the distance. No image files.
 const NOISE = `
@@ -34,6 +35,26 @@ const BODY = {
   sfAlb=mix(sfAlb*(.86+mix(.5,brushed,lod)*.28),vec3(.2,.095,.045)*(.7+pit*.6),rust*.75);
   sfRough=mix(.32+brushed*.16,.92,rust);
   sfMetal=rust;`,
+  stone: `
+  vec3 n0=sfNrm;bool top=abs(n0.y)>.7;
+  vec2 q=top?p.xz:vec2(abs(n0.x)>abs(n0.z)?p.z:p.x,p.y);
+  float tone=.5,joint=1.;
+  #ifdef SF_BLOCKS
+  float rowH=.46,blkW=.9;
+  float row=floor(q.y/rowH);float xx=q.x/blkW+row*.5;
+  vec2 cell=vec2(floor(xx),row);vec2 f=vec2(fract(xx)*blkW,fract(q.y/rowH)*rowH);
+  float edge=min(min(f.x,blkW-f.x),min(f.y,rowH-f.y));
+  joint=mix(1.,smoothstep(.008,.026+fw,edge),lod);
+  tone=sf_h(cell+3.7);
+  #endif
+  float weather=sf_fbm(q*.9+tone*5.);
+  float grit=mix(.5,sf_fbm(q*9.),lod);
+  float crack=1.-(1.-smoothstep(.0,.025+fw,abs(sf_n(q*2.3+tone*9.)-.5)))*smoothstep(.62,.7,sf_fbm(q*.6+4.))*lod;
+  sfAlb*=(.8+tone*.28)*(.78+weather*.38)*(.88+grit*.24)*mix(.42,1.,joint)*mix(.45,1.,crack);
+  // moss and lichen where rain and light fall on it, and at the foot of a wall
+  float moss=smoothstep(.5,.78,sf_fbm(q*1.6+7.))*(.35+.65*max(n0.y,0.))+smoothstep(.6,0.,p.y)*.25*(1.-abs(n0.y));
+  sfAlb=mix(sfAlb,vec3(.09,.13,.05)*(.8+weather*.5),clamp(moss,0.,1.)*.65);
+  sfRough=.94;`,
   cloth: `
   float weave=.5+.25*(sin(sfA*420.)+sin(sfB*420.));
   float grime=sf_fbm(vec2(sfA,sfB)*1.8+sfC);
@@ -45,7 +66,7 @@ const BODY = {
 export function surface(material, kind, opts = {}) {
   if (!BODY[kind] || material.userData.surface) return material;
   material.userData.surface = kind;
-  const key = `sf-${kind}-${opts.planks ? 1 : 0}-${opts.axis ?? 'a'}`;
+  const key = `sf-${kind}-${opts.planks ? 1 : 0}${opts.blocks ? 1 : 0}-${opts.axis ?? 'a'}`;
   const prev = material.onBeforeCompile;
   material.onBeforeCompile = (sh, r) => {
     prev?.(sh, r);
@@ -96,6 +117,7 @@ export function surface(material, kind, opts = {}) {
         '#include <metalnessmap_fragment>\nif(sfMetal>=0.)metalnessFactor=mix(metalnessFactor,.1,sfMetal);'
       );
     if (opts.planks) sh.fragmentShader = '#define SF_PLANKS\n' + sh.fragmentShader;
+    if (opts.blocks) sh.fragmentShader = '#define SF_BLOCKS\n' + sh.fragmentShader;
   };
   const prevKey = material.customProgramCacheKey?.bind(material);
   material.customProgramCacheKey = () => key + (prevKey ? prevKey() : '');

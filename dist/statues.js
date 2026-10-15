@@ -2,12 +2,13 @@
 // gate, a water beast among the sunken ruins. Built from the same bodies the living beasts use, then given weathered
 // stone — moss for the plant one, silt and barnacle-green for the drowned one — on a carved plinth. Their eyes keep
 // the faintest glow. Not interactive yet; a later chapter can wake them (see STATUES for their ids).
+import { surface } from './surfaces.js?v=0.45.0';
 import * as T from './vendor/three.module.min.js';
-import { makeCreature } from './creatures.js?v=0.44.0';
-import { makeGenome } from './genetics.js?v=0.44.0';
-import { applyGeneMarks } from './bs-models.js?v=0.44.0';
-import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.44.0';
-import { grainTexture } from './realism.js?v=0.44.0';
+import { makeCreature } from './creatures.js?v=0.45.0';
+import { makeGenome } from './genetics.js?v=0.45.0';
+import { applyGeneMarks } from './bs-models.js?v=0.45.0';
+import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.45.0';
+import { grainTexture } from './realism.js?v=0.45.0';
 
 const place = (lm, dx, dz, opts) => landNear(lm.x + dx, lm.z + dz, opts);
 export const STATUES = [
@@ -57,7 +58,10 @@ function stoneMat(color) {
     grain.repeat.set(3, 3);
     grain.needsUpdate = true;
   }
-  return new T.MeshStandardMaterial({ color, roughness: 0.95, metalness: 0, bumpMap: grain, bumpScale: 1.6 });
+  return surface(
+    new T.MeshStandardMaterial({ color, roughness: 0.95, metalness: 0, bumpMap: grain, bumpScale: 1.6 }),
+    'stone'
+  );
 }
 function statue(def) {
   const genome = makeGenome(9000 + def.id.length * 131, def.form ?? 0, def.family);

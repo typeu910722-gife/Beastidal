@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { groundTexture } from './lake-models.js?v=0.44.0';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.44.0';
+import { groundTexture } from './lake-models.js?v=0.45.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.45.0';
 export const TRAIL = 40,
   SPLASHES = 4;
 
@@ -187,11 +187,28 @@ export function makeSky(quality = QUALITY.high) {
    col+=vec3(.35,.45,.6)*smoothstep(1.4,1.,r2)*(1.-disc)*.12*(1.-uStorm);
   }
   float h=dir.y;vec2 uv=dir.xz/(max(.06,h)*1.4)+vec2(uTime*.004,uTime*.0015);
-  float cov=mix(.44,.24,uStorm);float n=fbm(uv*.7);float c=smoothstep(cov,cov+.3,n)*smoothstep(.0,.18,h);
-  float lit=.45+.55*pow(max(mu,0.),3.);float under=smoothstep(cov+.1,cov+.45,n);
-  vec3 cloud=mix(vec3(.015,.02,.03),mix(vec3(.6,.62,.6),vec3(.26,.29,.3),under)*lit,day);cloud=mix(cloud,vec3(.13,.15,.17)*(.2+.8*day),uStorm);
+  float golden=exp(-abs(uSunDir.y-.02)*9.);
+  // 0.43: a high veil of streaked cirrus, catching the sun first and the sunset longest
+  vec2 cu=dir.xz/(max(.06,h)*.7)*vec2(.35,1.)+vec2(uTime*.002,0.);
+  float ci=smoothstep(.55,.85,fbm(cu*vec2(.6,3.)+fbm(cu*.4)*1.5))*smoothstep(.04,.3,h)*(1.-uStorm*.8);
+  vec3 cir=mix(vec3(.02,.025,.035),vec3(.85,.86,.88)*(.6+.4*pow(max(mu,0.),2.)),day);
+  cir=mix(cir,cir*vec3(1.45,.85,.6),golden*.8);
+  col=mix(col,cir,ci*.45);
+  // the main deck: domain-warped puffs, lit from the sun's side — the density a step toward the sun shades the
+  // far side, and a bright rim where the sun shines through a thin edge
+  vec2 wu=uv*.7+vec2(fbm(uv*.35),fbm(uv*.35+7.3))*.8;
+  float cov=mix(.44,.24,uStorm);float n=fbm(wu);float c=smoothstep(cov,cov+.3,n)*smoothstep(.0,.18,h);
+  vec2 sd=normalize(uSunDir.xz+1e-4)*.12;
+  float nt=fbm(wu+sd);
+  float self=clamp((nt-n)*3.5+.55,0.,1.);
+  float rim=smoothstep(.0,.12,c)*(1.-smoothstep(.12,.5,c))*pow(max(mu,0.),6.);
+  float lit=.4+.6*pow(max(mu,0.),3.);float under=smoothstep(cov+.1,cov+.45,n);
+  vec3 top=vec3(.68,.69,.67)*mix(.55,1.15,self),base=vec3(.24,.27,.29);
+  vec3 cloud=mix(vec3(.015,.02,.03),mix(top,base,under*.8)*lit,day);
+  cloud+=vec3(1.,.9,.75)*rim*1.6*day*(1.-uStorm);
+  cloud=mix(cloud,vec3(.13,.15,.17)*(.2+.8*day),uStorm);
   cloud+=riftLight(normalize(dir+vec3(0.,-.05,0.))).rgb*.18;
-  float golden=exp(-abs(uSunDir.y-.02)*9.);cloud=mix(cloud,cloud*vec3(1.3,.75,.5),golden*.6);col=mix(col,cloud,c*.85);
+  cloud=mix(cloud,cloud*vec3(1.3,.75,.5),golden*.6);col=mix(col,cloud,c*.85);
   float stars=step(.9975,hash(floor(dir.xz/(h+.3)*420.)))*smoothstep(.05,.3,h)*(1.-day)*(1.-c)*(1.-uStorm);col+=stars*.8;
   col=mix(uFog,col,smoothstep(-.02,.16,h));
   gl_FragColor=vec4(col,1.);

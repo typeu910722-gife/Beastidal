@@ -6,7 +6,7 @@
 // materials, iris-textured eyes and ray-veined fin membranes. Swimming is done on the GPU: the body and its baked-on
 // parts share one wave deformation, so tails, crests and ribbons ripple together.
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded, dnaCode } from './genetics.js?v=0.44.0';
+import { phenotype, seeded, dnaCode } from './genetics.js?v=0.45.0';
 
 const V = T.Vector3;
 let detail = 'high';
@@ -444,6 +444,9 @@ function kit(genome) {
     const tx = skinTextures(p, pal, kind, seed);
     const m = physical({
       map: tx.map,
+      // 0.43: the skin's own pattern as relief — scales and plates stand out, smooth hide gets soft folds
+      bumpMap: tx.map,
+      bumpScale: kind === 'scale' ? 2.2 : kind === 'fur' ? 1.2 : 0.8,
       emissiveMap: tx.glow,
       emissive: new T.Color(0xffffff),
       emissiveIntensity: 0.25 + p.glow * 1.1,
