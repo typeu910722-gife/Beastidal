@@ -2,8 +2,9 @@
 // meal still steaming — and nobody. At the plaza's heart 慈愛組織's statue: two open hands holding up a sun.
 // Layout and rules: town.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT } from './town.js?v=0.53.0';
-import { grainTexture } from './realism.js?v=0.53.0';
+import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT } from './town.js?v=0.54.0';
+import { grainTexture } from './realism.js?v=0.54.0';
+import { tr } from './i18n.js?v=0.54.0';
 
 let seed = 412;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -17,6 +18,35 @@ function add(g, geo, material, x, y, z, ry = 0) {
   return m;
 }
 const box = (g, material, x, y, z, w, h, d, ry = 0) => add(g, new T.BoxGeometry(w, h, d), material, x, y, z, ry);
+// 0.54: a painted sign board (the text is drawn on a canvas, in the player's language)
+function sign(text, w, h, bg = '#f4efe2', fg = '#5a4636') {
+  const c = document.createElement('canvas');
+  c.width = 512;
+  c.height = Math.round((512 * h) / w);
+  const x = c.getContext('2d');
+  x.fillStyle = bg;
+  x.fillRect(0, 0, c.width, c.height);
+  x.strokeStyle = fg;
+  x.lineWidth = 10;
+  x.strokeRect(12, 12, c.width - 24, c.height - 24);
+  x.fillStyle = fg;
+  x.textAlign = 'center';
+  x.textBaseline = 'middle';
+  let size = c.height * 0.5;
+  x.font = `600 ${size}px "Noto Serif TC", "Songti TC", serif`;
+  while (x.measureText(text).width > c.width * 0.86 && size > 12) x.font = `600 ${(size -= 4)}px serif`;
+  x.fillText(text, c.width / 2, c.height / 2 + 4);
+  const tex = new T.CanvasTexture(c);
+  tex.colorSpace = T.SRGBColorSpace;
+  tex.anisotropy = 4;
+  const m = new T.Mesh(new T.BoxGeometry(w, h, 0.08), [
+    ...Array(4).fill(new T.MeshStandardMaterial({ color: 0x6b5442, roughness: 0.8 })),
+    new T.MeshStandardMaterial({ map: tex, roughness: 0.7 }),
+    new T.MeshStandardMaterial({ color: 0x6b5442, roughness: 0.8 })
+  ]);
+  m.castShadow = true;
+  return m;
+}
 
 export function makeTown() {
   seed = 412;
@@ -68,6 +98,8 @@ export function makeTown() {
   const roofMat = mat(0x8a5a44, { roughness: 0.8, flatShading: true });
   const trim = mat(0xcfc6b2, { roughness: 0.8 });
   const doorMat = mat(0x5a4636, { roughness: 0.7 });
+  const poleMat0 = mat(0x3b3d40, { metalness: 0.6, roughness: 0.4 });
+  const plinth = mat(0xa79f8e, { roughness: 0.95, bumpMap: grain, bumpScale: 0.5 });
   const windowMat = new T.MeshStandardMaterial({
     color: 0x2a2c30,
     emissive: 0xffd9a0,
@@ -82,6 +114,9 @@ export function makeTown() {
     const p = plaster[Math.floor(rnd() * plaster.length)];
     box(g, p, b.x, b.h / 2, b.z, b.w, b.h, b.d);
     box(g, trim, b.x, b.h + 0.15, b.z, b.w + 0.5, 0.3, b.d + 0.5);
+    // 0.54: a stone plinth, and a band of trim between the floors
+    box(g, plinth, b.x, 0.3, b.z, b.w + 0.16, 0.6, b.d + 0.16);
+    for (let f = 1; f * 3.2 < b.h - 1; f++) box(g, trim, b.x, f * 3.2 + 0.2, b.z, b.w + 0.14, 0.14, b.d + 0.14);
     if (b.id !== 'welcome' && b.id !== 'admin' && b.id !== 'kiosk') {
       // a pitched roof along the longer side
       const along = b.w >= b.d,
@@ -112,6 +147,7 @@ export function makeTown() {
             z: b.z + (nz ? (nz * b.d) / 2 + nz * 0.03 : u * face),
             ry: nx ? (nx > 0 ? Math.PI / 2 : -Math.PI / 2) : nz > 0 ? 0 : Math.PI
           };
+          pos.house = b.id.startsWith('house');
           (b.id === 'admin' ? frost : windows).push(pos);
         }
     }
@@ -126,6 +162,57 @@ export function makeTown() {
       ry: onX ? Math.PI / 2 : 0
     };
     box(g, doorMat, door.x, 1.15, door.z, onX ? 0.08 : 1.4, 2.3, onX ? 1.4 : 0.08);
+    // 0.54: a door frame, a step, and a little canopy over the door
+    {
+      const nx = onX ? Math.sign(dx) : 0,
+        nz = onX ? 0 : Math.sign(dz),
+        along = (a, b) => (onX ? b : a);
+      box(g, trim, door.x - nx * 0.02, 1.25, door.z - nz * 0.02, along(1.8, 0.1), 2.6, along(0.1, 1.8));
+      box(g, plinth, door.x + nx * 0.35, 0.08, door.z + nz * 0.35, along(2, 0.7), 0.16, along(0.7, 2));
+      if (b.id !== 'welcome') {
+        const canopy = box(
+          g,
+          roofMat,
+          door.x + nx * 0.5,
+          2.85,
+          door.z + nz * 0.5,
+          along(2.3, 1.1),
+          0.1,
+          along(1.1, 2.3)
+        );
+        if (onX) canopy.rotation.z = -nx * 0.2;
+        else canopy.rotation.x = nz * 0.2;
+        for (const k of [-0.9, 0.9])
+          box(g, doorMat, door.x + nx * 0.4 + (onX ? 0 : k), 2.6, door.z + nz * 0.4 + (onX ? k : 0), 0.06, 0.4, 0.06);
+      }
+      if (b.name && b.id !== 'welcome') {
+        const admin = b.id === 'admin';
+        const plate = sign(
+          admin ? tr('管理區 · 非請勿入') : tr(b.name),
+          admin ? 3.4 : 2.8,
+          0.7,
+          admin ? '#eef2f4' : '#f4efe2',
+          admin ? '#43515a' : '#5a4636'
+        );
+        plate.position.set(door.x + nx * 0.06, b.h > 4.5 ? 3.55 : 3.1, door.z + nz * 0.06);
+        plate.rotation.y = onX ? (nx > 0 ? Math.PI / 2 : -Math.PI / 2) : nz > 0 ? 0 : Math.PI;
+        g.add(plate);
+      }
+    }
+    // 0.54: balconies up the residents' apartment, facing the street
+    if (b.id === 'apartment') {
+      const rail = new T.MeshStandardMaterial({ color: 0xdfe8ea, transparent: true, opacity: 0.45, roughness: 0.1 });
+      const count = Math.floor(b.d / 3.2);
+      for (let f = 1; f < Math.floor((b.h - 1) / 3.2); f++)
+        for (let i = 1; i < count; i += 2) {
+          const z = b.z + ((i + 0.5) / count - 0.5) * b.d,
+            x = b.x - b.w / 2 - 0.6,
+            y = f * 3.2 + 0.3;
+          box(g, trim, x, y, z, 1.2, 0.16, 2.6);
+          box(g, rail, x - 0.58, y + 0.5, z, 0.04, 0.9, 2.6);
+          box(g, poleMat0, x - 0.58, y + 0.97, z, 0.08, 0.06, 2.65);
+        }
+    }
     // shoes left at the door, as if someone just went in
     if (b.id.startsWith('house') || b.id === 'apartment') {
       const out = { x: onX ? Math.sign(dx) * 0.5 : 0, z: onX ? 0 : Math.sign(dz) * 0.5 };
@@ -152,6 +239,42 @@ export function makeTown() {
       add(g, new T.CircleGeometry(1.1, 32), gold, 0, 7.6, b.z + b.d / 2 + 0.06);
     }
   }
+  // 0.54: frames and sills round every window, shutters on the houses, and instanced so they cost four draws
+  const shutterMat = mat(0x6f8a94, { roughness: 0.75 });
+  const instance = (geo, material, list, place) => {
+    const m = new T.InstancedMesh(geo, material, list.length),
+      o = new T.Object3D();
+    list.forEach((w, i) => {
+      o.position.set(w.x, w.y, w.z);
+      o.rotation.set(0, w.ry, 0);
+      place(o, w, i);
+      o.updateMatrix();
+      m.setMatrixAt(i, o.matrix);
+    });
+    m.castShadow = m.receiveShadow = true;
+    g.add(m);
+    return m;
+  };
+  const allWindows = [...windows, ...frost];
+  instance(new T.BoxGeometry(1.62, 1.92, 0.08), trim, allWindows, o => o.translateZ(-0.03));
+  instance(new T.BoxGeometry(1.8, 0.12, 0.3), trim, allWindows, o => o.translateY(-0.96).translateZ(0.1));
+  const shuttered = windows.filter(w => w.house);
+  instance(new T.BoxGeometry(0.6, 1.7, 0.06), shutterMat, [...shuttered, ...shuttered], (o, w, i) =>
+    o.translateX(i < shuttered.length ? -1.12 : 1.12).translateZ(0.03)
+  );
+  // flower boxes under the houses' ground-floor windows: someone waters them every morning
+  const blooms = shuttered.filter(w => w.y < 3);
+  instance(new T.BoxGeometry(1.4, 0.28, 0.32), mat(0x7b5b3a), blooms, o => o.translateY(-1.15).translateZ(0.2));
+  instance(
+    new T.SphereGeometry(0.2, 8, 6),
+    mat(0xd77a8a, { roughness: 0.9 }),
+    [...blooms, ...blooms, ...blooms],
+    (o, w, i) =>
+      o
+        .translateY(-0.92)
+        .translateZ(0.22)
+        .translateX(((i / blooms.length) | 0) * 0.45 - 0.45)
+  );
   const quad = new T.PlaneGeometry(1.3, 1.6);
   for (const [list, material] of [
     [windows, windowMat],
@@ -176,6 +299,26 @@ export function makeTown() {
   doorLight.position.set(admin.x - admin.w / 2 - 0.06, 1.15, admin.z);
   doorLight.rotation.y = Math.PI / 2;
   g.add(doorLight);
+  // 0.54: the admin block wears the sun over its door, and watches the plaza
+  add(g, new T.CircleGeometry(0.9, 32), gold, admin.x - admin.w / 2 - 0.05, admin.h - 2, admin.z, -Math.PI / 2);
+  add(g, new T.TorusGeometry(1.1, 0.08, 8, 32), gold, admin.x - admin.w / 2 - 0.06, admin.h - 2, admin.z, -Math.PI / 2);
+  const camBody = mat(0x2a2d31, { metalness: 0.5, roughness: 0.4 }),
+    camEye = new T.MeshStandardMaterial({ color: 0x300000, emissive: 0xff3030, emissiveIntensity: 1.5 });
+  for (const [x, z, ry] of [
+    [admin.x - admin.w / 2 - 0.4, admin.z - admin.d / 2 + 0.4, -2.2],
+    [admin.x - admin.w / 2 - 0.4, admin.z + admin.d / 2 - 0.4, -1],
+    [-GATE_HALF - 0.4, WALL - 1.2, Math.PI]
+  ]) {
+    const cam = new T.Group();
+    cam.position.set(x, x < 0 ? 6.4 : admin.h - 0.8, z);
+    cam.rotation.y = ry;
+    const body = new T.Mesh(new T.BoxGeometry(0.28, 0.24, 0.6), camBody);
+    body.rotation.x = 0.35;
+    const eye = new T.Mesh(new T.SphereGeometry(0.05, 8, 6), camEye);
+    eye.position.set(0, -0.08, 0.31);
+    cam.add(body, eye);
+    g.add(cam);
+  }
 
   // the statue: a pedestal, two open hands, and the sun they hold up
   const stone = mat(0xf2eee6, { roughness: 0.6, bumpMap: grain, bumpScale: 0.15 });

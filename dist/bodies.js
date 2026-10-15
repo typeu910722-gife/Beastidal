@@ -3,7 +3,7 @@
 // hull and the parked boat — so nothing walks or swims through anything else. The player, the hull and the boat
 // do not get shoved; everything else gives way in proportion to its weight, and only where it is allowed to stand
 // (env.canMove: land for land things, water for swimmers, the maze in the cave).
-import { phenotype } from './genetics.js?v=0.53.0';
+import { phenotype } from './genetics.js?v=0.54.0';
 
 // a rough footprint for a creature or beast at its rendered size
 export function bodyRadius(w) {

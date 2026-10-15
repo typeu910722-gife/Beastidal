@@ -127,6 +127,7 @@ function attach(h, look, { scene, clips, fit }) {
     t: 0,
     idle: { yaw: 0, pitch: 0, toYaw: 0, toPitch: 0, next: 2 }
   };
+  h.userData.onDressed?.(m); // 0.54: a figure may restyle its body (晴's white uniform)
 }
 
 const smooth = (a, b, x) => {

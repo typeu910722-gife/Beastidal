@@ -2,9 +2,22 @@
 // deer on their circles, the flock on its figure of eight, far hills that never come nearer, and the shell itself:
 // invisible, except for a ripple of hexagons where you touch it and its seams at sunset. Rules: dome.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, DOME_R, domeHeight, riverX, RIVER_HALF, BRIDGE, TREES, DEER, birdAt, deerAt } from './dome.js?v=0.53.0';
-import { grainTexture } from './realism.js?v=0.53.0';
-import { OUTPOST, RIFT } from './chapter3.js?v=0.53.0';
+import {
+  TOWN,
+  DOME_R,
+  OUTER_R,
+  domeHeight,
+  riverX,
+  RIVER_HALF,
+  BRIDGE,
+  TREES,
+  DEER,
+  birdAt,
+  deerAt
+} from './dome.js?v=0.54.0';
+import { grainTexture } from './realism.js?v=0.54.0';
+import { OUTPOST, RIFT, TEAR_AT } from './chapter3.js?v=0.54.0';
+import { mergeGeometries } from './vendor/addons/utils/BufferGeometryUtils.js';
 
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.9, ...extra });
 const SIZE = 640,
@@ -329,7 +342,264 @@ function outsideProps() {
   light.position.set(R.x, 3, R.z);
   g.add(light);
   g.userData.shards = shards;
+  wasteland(g);
   return g;
+}
+
+// 0.54: the wasteland itself — scorched ground, rocks and boulders, fragments of the shell blown out by the tear,
+// violet cracks that run back to the rift, and a low mist that glows.
+function wasteland(g) {
+  let seed = 9071;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+  const clear = (x, z, r) =>
+    Math.hypot(x - OUTPOST.x, z - OUTPOST.z) > r + 7 &&
+    Math.hypot(x - RIFT.x, z - RIFT.z) > r + 12 &&
+    !(Math.abs(x - TEAR_AT.x) < r + 7 && z < TEAR_AT.z + 40);
+  // the ground: a ring from the shell out past the horizon, rough and stained
+  const geo = new T.RingGeometry(DOME_R + 0.6, OUTER_R + 260, 180, 24);
+  geo.rotateX(-Math.PI / 2);
+  const pos = geo.attributes.position,
+    col = new Float32Array(pos.count * 3),
+    c = new T.Color(),
+    ash = new T.Color(0x6e6870),
+    rust = new T.Color(0x86705f),
+    violet = new T.Color(0x5d4180);
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i),
+      z = pos.getZ(i),
+      d = Math.hypot(x, z),
+      n = 0.5 + 0.5 * Math.sin(x * 0.07 + Math.sin(z * 0.05) * 3) * Math.cos(z * 0.06 - x * 0.02);
+    // past the walkable edge the land heaves up into ridges that hide the horizon line
+    pos.setY(i, d > OUTER_R + 10 ? Math.min(28, (d - OUTER_R - 10) * 0.12) * (0.6 + n) : 0);
+    c.copy(ash).lerp(rust, n * 0.7);
+    c.lerp(violet, Math.max(0, 1 - Math.hypot(x - RIFT.x, z - RIFT.z) / 90) * 0.8);
+    col.set([c.r, c.g, c.b], i * 3);
+  }
+  geo.setAttribute('color', new T.BufferAttribute(col, 3));
+  geo.computeVertexNormals();
+  const grain = grainTexture().clone();
+  grain.repeat.set(120, 120);
+  grain.needsUpdate = true;
+  // a detail map: ash blotches, light grit and a web of dried cracks, tiled small
+  const dc = document.createElement('canvas');
+  dc.width = dc.height = 256;
+  const dx = dc.getContext('2d');
+  dx.fillStyle = '#b8b2b8';
+  dx.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 70; i++) {
+    const x = rnd() * 256,
+      y = rnd() * 256,
+      r = 6 + rnd() * 30,
+      gr = dx.createRadialGradient(x, y, 0, x, y, r);
+    const v = rnd() < 0.6 ? '60,52,62' : '220,210,200';
+    gr.addColorStop(0, `rgba(${v},${0.18 + rnd() * 0.25})`);
+    gr.addColorStop(1, `rgba(${v},0)`);
+    dx.fillStyle = gr;
+    for (const ox of [-256, 0, 256]) for (const oy of [-256, 0, 256]) dx.fillRect(x - r + ox, y - r + oy, r * 2, r * 2);
+  }
+  for (let i = 0; i < 1600; i++) {
+    dx.fillStyle = rnd() < 0.5 ? 'rgba(40,36,44,0.35)' : 'rgba(235,228,220,0.3)';
+    dx.fillRect(rnd() * 256, rnd() * 256, 1 + rnd() * 2, 1 + rnd() * 2);
+  }
+  dx.strokeStyle = 'rgba(45,38,50,0.55)';
+  for (let i = 0; i < 26; i++) {
+    let x = rnd() * 256,
+      y = rnd() * 256,
+      a = rnd() * 6.3;
+    dx.lineWidth = 0.6 + rnd() * 1.2;
+    dx.beginPath();
+    dx.moveTo(x, y);
+    for (let k = 0; k < 8; k++) {
+      a += (rnd() - 0.5) * 1.2;
+      x += Math.cos(a) * 9;
+      y += Math.sin(a) * 9;
+      dx.lineTo(x, y);
+    }
+    dx.stroke();
+  }
+  const detail = new T.CanvasTexture(dc);
+  detail.wrapS = detail.wrapT = T.RepeatWrapping;
+  detail.colorSpace = T.SRGBColorSpace;
+  detail.repeat.set(160, 160);
+  detail.anisotropy = 4;
+  const ground = new T.Mesh(
+    geo,
+    mat(0xffffff, {
+      map: detail,
+      vertexColors: true,
+      roughness: 1,
+      bumpMap: grain,
+      bumpScale: 0.8,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2
+    })
+  );
+  ground.position.y = 0.02;
+  ground.receiveShadow = true;
+  g.add(ground);
+  // rocks: small ones underfoot, boulders towards the edge, a wall of crags past it
+  const rockGeo = new T.IcosahedronGeometry(1, 1);
+  {
+    const p = rockGeo.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const k = 0.75 + 0.5 * Math.abs(Math.sin(p.getX(i) * 5.1 + p.getY(i) * 3.7 + p.getZ(i) * 4.3));
+      p.setXYZ(i, p.getX(i) * k, p.getY(i) * k * 0.7, p.getZ(i) * k);
+    }
+    rockGeo.computeVertexNormals();
+  }
+  const rocks = [];
+  // scattered stones, rock outcrops in clusters, and the crags past the edge
+  for (let n = 0; rocks.length < 900 && n < 6000; n++) {
+    const a = rnd() * Math.PI * 2,
+      d = DOME_R + 6 + rnd() * (OUTER_R - DOME_R - 10),
+      x = Math.cos(a) * d,
+      z = Math.sin(a) * d,
+      sc = 0.12 + rnd() * rnd() * 0.7;
+    if (clear(x, z, sc)) rocks.push({ x, z, sc, ry: rnd() * 6.3, tilt: rnd() * 0.4 });
+  }
+  for (let k = 0; k < 40; k++) {
+    const a = rnd() * Math.PI * 2,
+      d = DOME_R + 25 + rnd() * (OUTER_R - DOME_R - 30),
+      cx = Math.cos(a) * d,
+      cz = Math.sin(a) * d;
+    if (!clear(cx, cz, 6)) continue;
+    for (let i = 0; i < 6; i++) {
+      const sc = (i ? 0.5 + rnd() * 1.2 : 1.6 + rnd() * 1.6) * (d > OUTER_R - 40 ? 1.6 : 1);
+      rocks.push({ x: cx + (rnd() - 0.5) * 7, z: cz + (rnd() - 0.5) * 7, sc, ry: rnd() * 6.3, tilt: rnd() * 0.5 });
+    }
+  }
+  for (let n = 0; n < 160; n++) {
+    const a = rnd() * Math.PI * 2,
+      d = OUTER_R - 4 + rnd() * 70;
+    rocks.push({ x: Math.cos(a) * d, z: Math.sin(a) * d, sc: 3 + rnd() * 6, ry: rnd() * 6.3, tilt: rnd() * 0.4 });
+  }
+  const rockMesh = new T.InstancedMesh(rockGeo, mat(0x8a8590, { roughness: 0.95, flatShading: true }), rocks.length),
+    o = new T.Object3D();
+  rocks.forEach((r, i) => {
+    o.position.set(r.x, r.sc * 0.25, r.z);
+    o.rotation.set(r.tilt, r.ry, r.tilt * 0.5);
+    o.scale.setScalar(r.sc);
+    o.updateMatrix();
+    rockMesh.setMatrixAt(i, o.matrix);
+  });
+  rockMesh.castShadow = rockMesh.receiveShadow = true;
+  g.add(rockMesh);
+  // gravel and pebbles underfoot: plain low-poly stones, thick round the paths you walk
+  const pebbles = new T.InstancedMesh(
+    new T.IcosahedronGeometry(1, 0),
+    mat(0x77707a, { roughness: 1, flatShading: true }),
+    2400
+  );
+  let np = 0;
+  for (let n = 0; np < 2400 && n < 9000; n++) {
+    const a = rnd() * Math.PI * 2,
+      d = DOME_R + 3 + Math.pow(rnd(), 1.6) * (OUTER_R - DOME_R),
+      x = Math.cos(a) * d,
+      z = Math.sin(a) * d,
+      sc = 0.05 + rnd() * rnd() * 0.3;
+    if (Math.hypot(x - RIFT.x, z - RIFT.z) < 8) continue;
+    o.position.set(x, sc * 0.2, z);
+    o.rotation.set(rnd(), rnd() * 6.3, rnd());
+    o.scale.set(sc * (1 + rnd()), sc * 0.6, sc);
+    o.updateMatrix();
+    pebbles.setMatrixAt(np++, o.matrix);
+  }
+  pebbles.count = np;
+  pebbles.receiveShadow = true;
+  g.add(pebbles);
+  // fragments of the shell, thrown outward from the tear: hexagonal panels, half sunk in the ash
+  const panelGeo = new T.CylinderGeometry(1, 1, 0.06, 6);
+  const panels = new T.InstancedMesh(
+    panelGeo,
+    new T.MeshStandardMaterial({
+      color: 0x9fd6e8,
+      emissive: 0x3a8fb0,
+      emissiveIntensity: 0.6,
+      metalness: 0.3,
+      roughness: 0.15,
+      transparent: true,
+      opacity: 0.75
+    }),
+    46
+  );
+  for (let i = 0; i < 46; i++) {
+    const a = Math.PI / 2 + (rnd() - 0.5) * 1.1,
+      d = DOME_R + 3 + rnd() * rnd() * 60,
+      x = Math.cos(a) * d,
+      z = Math.sin(a) * d,
+      sc = 0.4 + rnd() * 1.2;
+    o.position.set(x, 0.05 + sc * 0.25, z);
+    o.rotation.set((rnd() - 0.5) * 1.6, rnd() * 6.3, (rnd() - 0.5) * 1.6);
+    o.scale.set(sc, 1, sc);
+    o.updateMatrix();
+    panels.setMatrixAt(i, o.matrix);
+  }
+  panels.castShadow = true;
+  g.add(panels);
+  // cracks of violet light, wandering out from the rift and the tear
+  const parts = [];
+  const crack = (x, z, a, len, w) => {
+    for (let k = 0; k < len; k++) {
+      const step = 1.6 + rnd() * 2.2;
+      a += (rnd() - 0.5) * 0.9;
+      const nx = x + Math.cos(a) * step,
+        nz = z + Math.sin(a) * step;
+      if (Math.hypot(nx, nz) < DOME_R + 1.5) return;
+      const seg = new T.BoxGeometry(step + 0.3, 0.04, w * (1 - k / len) + 0.04);
+      seg.rotateY(-a);
+      seg.translate((x + nx) / 2, 0.06, (z + nz) / 2);
+      parts.push(seg);
+      if (rnd() < 0.12 && k < len - 3) crack(nx, nz, a + (rnd() < 0.5 ? 0.8 : -0.8), (len - k) >> 1, w * 0.6);
+      x = nx;
+      z = nz;
+    }
+  };
+  for (let i = 0; i < 14; i++) crack(RIFT.x, RIFT.z, rnd() * Math.PI * 2, 10 + ((rnd() * 18) | 0), 0.35);
+  for (let i = 0; i < 5; i++)
+    crack(TEAR_AT.x, TEAR_AT.z + 3, Math.PI / 2 + (rnd() - 0.5) * 2, 6 + ((rnd() * 8) | 0), 0.18);
+  const veins = new T.Mesh(
+    mergeGeometries(parts),
+    new T.MeshStandardMaterial({ color: 0x1a0624, emissive: 0xa050ff, emissiveIntensity: 1.4 })
+  );
+  g.add(veins);
+  // the mist: soft violet billows hanging low over the ground, thickest by the rift
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = 128;
+  const cx = cv.getContext('2d'),
+    grad = cx.createRadialGradient(64, 64, 4, 64, 64, 64);
+  grad.addColorStop(0, 'rgba(255,255,255,1)');
+  grad.addColorStop(0.5, 'rgba(255,255,255,0.35)');
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  cx.fillStyle = grad;
+  cx.fillRect(0, 0, 128, 128);
+  const puff = new T.CanvasTexture(cv);
+  const mist = [];
+  for (let i = 0; i < 26; i++) {
+    const nearRift = i < 10,
+      a = rnd() * Math.PI * 2,
+      d = nearRift ? rnd() * 22 : DOME_R + 20 + rnd() * (OUTER_R - DOME_R),
+      x = nearRift ? RIFT.x + Math.cos(a) * d : Math.cos(a) * d,
+      z = nearRift ? RIFT.z + Math.sin(a) * d : Math.sin(a) * d;
+    const m = new T.Sprite(
+      new T.SpriteMaterial({
+        map: puff,
+        color: nearRift ? 0xb070ff : 0x8a6aa8,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        blending: T.AdditiveBlending,
+        fog: false
+      })
+    );
+    const sc = nearRift ? 10 + rnd() * 8 : 18 + rnd() * 20;
+    m.scale.set(sc, sc * 0.35, 1);
+    m.position.set(x, sc * 0.12, z);
+    m.userData = { phase: rnd() * 6.3, base: nearRift ? 0.32 : 0.16, x, z };
+    g.add(m);
+    mist.push(m);
+  }
+  g.userData.mist = mist;
 }
 export function makeDome() {
   const group = new T.Group();
@@ -387,6 +657,12 @@ export function animateDome(d, t, dt, { player, seams, cracked = false, outside 
   d.props.visible = cracked;
   d.ground.material.color.setHex(cracked ? 0x4a4550 : 0x5a7044);
   d.ground.position.y = cracked ? -0.05 : -0.4;
+  if (cracked)
+    for (const m of d.props.userData.mist) {
+      const u = m.userData;
+      m.material.opacity = u.base * (0.65 + 0.35 * Math.sin(t * 0.3 + u.phase));
+      m.position.x = u.x + Math.sin(t * 0.05 + u.phase) * 4;
+    }
   for (const c of d.props.userData.shards) {
     c.position.y = 2 + (c.userData.phase % 4) + Math.sin(t + c.userData.phase) * 0.3;
     c.rotation.y = t * 0.6 + c.userData.phase;

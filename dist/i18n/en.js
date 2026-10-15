@@ -3859,5 +3859,6 @@ export default {
   'CHAPTER 03 · 裂縫之外': 'CHAPTER 03 · Beyond the Rift',
   'CHAPTER 02 · 新生之界': 'CHAPTER 02 · The New World',
   '（夜裡）': ' (at night)',
-  '下一步：{0} · {1} {2} m{3}': 'Next: {0} · {1} {2} m{3}'
+  '下一步：{0} · {1} {2} m{3}': 'Next: {0} · {1} {2} m{3}',
+  '管理區 · 非請勿入': 'Administration · Staff Only'
 };
