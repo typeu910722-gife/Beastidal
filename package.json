@@ -1,6 +1,6 @@
 {
   "name": "beastidal",
-  "version": "0.59.0",
+  "version": "0.59.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "smoke": "node tests/smoke.mjs",
     "verify": "npm run format:check && npm run lint && npm run check && npm test && npm run i18n:check && npm run smoke",
-    "i18n:check": "node scripts/i18n-check.mjs"
+    "i18n:check": "node scripts/i18n-check.mjs",
+    "deploy:community": "node scripts/deploy-community.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

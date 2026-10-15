@@ -8,7 +8,27 @@
 
 留言只能由遊戲內建的**句型 + 詞**組成（例如「有人聽到＿嗎？」＋「嗶嗶聲」）。伺服器只收這兩個代號，並用和遊戲同一份清單（`dist/comms.js`）檢查，所以不存在自由輸入的文字。每台裝置每天最多 3 則，每則留言每台裝置只能共鳴一次。
 
-## 部署步驟
+## 一鍵部署（0.59）
+
+需要 Cloudflare API 權杖（權限：Workers Scripts 編輯、D1 編輯；要用自訂網域再加 Workers Routes／Zone DNS 編輯）和帳號 ID：
+
+```sh
+CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npm run deploy:community
+```
+
+腳本會：找到或建立 D1 資料庫 `beastidal-community` → 套用 `worker/schema.sql` → 改寫 `wrangler.toml`（加上 Worker、靜態資源綁定、資料庫，保留原本的網域）→ 把 `dist/config.js` 的 `communityUrl` 設成網站網址 → `wrangler deploy`。重跑是安全的。跑完記得把 `wrangler.toml` 和 `dist/config.js` 的變更 commit。
+
+## 本機測試
+
+```sh
+# 一個本機用的設定（database_id 隨便填，本機不會用到雲端）
+npx wrangler@4 d1 execute beastidal-community --local --config wrangler.local.toml --file worker/schema.sql
+npx wrangler@4 dev --local --config wrangler.local.toml
+```
+
+`wrangler.local.toml` 的內容和下面第 3 步一樣，只是不需要 routes。0.59 用這個方式端到端測過：遊戲裡的留言碑會顯示伺服器上的留言（標示「居民」），在遊戲裡刻下的留言也會寫進資料庫；句型檢查、每日 3 則上限、每台裝置只能共鳴一次都正常。
+
+## 手動部署步驟
 
 需要 Node.js 和 Cloudflare 帳號，在專案根目錄執行：
 

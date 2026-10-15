@@ -1,9 +1,10 @@
 // 0.48: the optional online stele. With CONFIG.communityUrl set (the Cloudflare Worker in worker/community.js),
 // real players' posts appear on the stele and yours are shared. Off by default; any failure falls back silently to
 // the simulated residents (comms.js), so offline and download builds play the same.
-import { validPost } from './comms.js?v=0.59.0';
+import { validPost } from './comms.js?v=0.59.1';
 
 const DEVICE_KEY = 'beastidal-device-v1';
+let sessionId = null;
 function deviceId(storage) {
   try {
     let id = storage.getItem(DEVICE_KEY);
@@ -13,7 +14,10 @@ function deviceId(storage) {
     }
     return id;
   } catch {
-    return 'anon';
+    // no storage (private mode): a random id for this session; the server only accepts hex ids
+    return (sessionId ??= Array.from(crypto.getRandomValues(new Uint8Array(12)), b =>
+      b.toString(16).padStart(2, '0')
+    ).join(''));
   }
 }
 export class Community {
