@@ -1,9 +1,9 @@
 // 據點評價 (0.23): one score for how far your home has come — the raft and its facilities, the warship and its
 // furniture, the islands claimed and built up, the beasts and their bonds, the codex. Five tiers, each reached
 // once, each paying out and giving the base a new name.
-import { countLandBuilds, countCleared } from './reclaim.js?v=0.61.7';
-import { codexProgress } from './codex.js?v=0.61.7';
-import { give } from './bag.js?v=0.61.7';
+import { countLandBuilds, countCleared } from './reclaim.js?v=0.61.8';
+import { codexProgress } from './codex.js?v=0.61.8';
+import { give } from './bag.js?v=0.61.8';
 
 export const TIERS = [
   { id: 0, name: '漂流木筏', at: 0 },

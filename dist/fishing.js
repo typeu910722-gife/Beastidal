@@ -1,12 +1,12 @@
 // Fishing (0.23): with a rod in hand, press E on open water (from the boat or a shore) to cast. After a few
 // seconds something bites; press E again within the window to hook it. Deep water gives bigger fish, the
 // fishing skill shortens the wait and improves the catch, and the odd pearl turns up.
-import { groundAt } from './lake.js?v=0.61.7';
-import { hasGear } from './gear.js?v=0.61.7';
-import { give, bagRoom } from './bag.js?v=0.61.7';
-import { tally } from './stats.js?v=0.61.7';
-import { fishBonus, skillLevel } from './skills.js?v=0.61.7';
-import { fishingWaitFactor, bigFishFactor } from './weather.js?v=0.61.7';
+import { groundAt } from './lake.js?v=0.61.8';
+import { hasGear } from './gear.js?v=0.61.8';
+import { give, bagRoom } from './bag.js?v=0.61.8';
+import { tally } from './stats.js?v=0.61.8';
+import { fishBonus, skillLevel } from './skills.js?v=0.61.8';
+import { fishingWaitFactor, bigFishFactor } from './weather.js?v=0.61.8';
 
 export const BITE_WINDOW = 1.6;
 export const CATCHES = {

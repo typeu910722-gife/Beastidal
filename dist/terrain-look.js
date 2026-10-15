@@ -8,7 +8,7 @@
 //    ground near the player, swaying in the wind, parting where you walk and thinning out into the distance. It
 //    is built in 16 m tiles placed on a world-fixed grid (so it never shifts under you), a couple of tiles a frame.
 import * as T from './vendor/three.module.min.js';
-import { groundAt, slopeAt } from './lake.js?v=0.61.7';
+import { groundAt, slopeAt } from './lake.js?v=0.61.8';
 
 const NOISE = `
 float tl_h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
