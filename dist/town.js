@@ -1,9 +1,9 @@
 // 0.47 抵達新生之界: 慈光港, the first town past the mountains. Chapter two, part one.
 // Everything here is free and gentle, and the town is full of signs of life — but the only person you ever see is
 // the guide. The rules of the town live here; town-models.js draws it, game.js wires it up. See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.48.0';
-import { give } from './bag.js?v=0.48.0';
-import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.48.0';
+import { dayOf, isNight } from './clock.js?v=0.49.0';
+import { give } from './bag.js?v=0.49.0';
+import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.49.0';
 export { TOWN, toWorld };
 
 // The town sits in its own corner of the world, like the garden maze and the cabin, in the open country under the
@@ -254,6 +254,7 @@ export function lookAdmin(s) {
   if (!isNight(s)) return { ok: true, message: '「管理區 · 僅限職員」。門是鎖著的，窗戶貼著霧面紙。' };
   if (!t.adminSeen && t.letters > 0) {
     t.adminSeen = true;
+    t.adminDay = dayOf(s); // part two (chapter2.js) counts from here
     log(
       s,
       '第二章（上）完 · 慈光',

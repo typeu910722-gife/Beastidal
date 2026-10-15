@@ -1,43 +1,44 @@
-import { expansionModels } from './expansion-models.js?v=0.48.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.48.0';
-import { normalizeHousing, penId } from './housing.js?v=0.48.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.48.0';
-export { makeCreature } from './creatures.js?v=0.48.0';
-import { makeIslands } from './island-models.js?v=0.48.0';
-import { facilityId } from './facilities.js?v=0.48.0';
+import { expansionModels } from './expansion-models.js?v=0.49.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.49.0';
+import { normalizeHousing, penId } from './housing.js?v=0.49.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.49.0';
+export { makeCreature } from './creatures.js?v=0.49.0';
+import { makeIslands } from './island-models.js?v=0.49.0';
+import { facilityId } from './facilities.js?v=0.49.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.48.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.48.0';
-import { surface } from './surfaces.js?v=0.48.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.48.0';
-import { makeLake } from './lake-models.js?v=0.48.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.48.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.48.0';
-import { makeStatues } from './statues.js?v=0.48.0';
-import { animateGarden } from './garden-models.js?v=0.48.0';
-import { ViewModel } from './viewmodel.js?v=0.48.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.48.0';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.48.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.48.0';
-import { domeGround, duskSeams, toLocal as domeLocal } from './dome.js?v=0.48.0';
-import { townWalkable, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.48.0';
-import { PostFX } from './postfx.js?v=0.48.0';
-import { makeHuman, animateHuman } from './human.js?v=0.48.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.48.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.48.0';
-import { buildError } from './rules.js?v=0.48.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.48.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.48.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.48.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.48.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.48.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.48.0';
-import { CombatFX } from './combat-fx.js?v=0.48.0';
-import { syncPlots } from './land-models.js?v=0.48.0';
-import { plotTargets } from './reclaim.js?v=0.48.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.48.0';
-import { dayPhase } from './clock.js?v=0.48.0';
-import { weatherAt, season } from './weather.js?v=0.48.0';
+import { phenotype, seeded } from './genetics.js?v=0.49.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.49.0';
+import { surface } from './surfaces.js?v=0.49.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.49.0';
+import { makeLake } from './lake-models.js?v=0.49.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.49.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.49.0';
+import { makeStatues } from './statues.js?v=0.49.0';
+import { animateGarden } from './garden-models.js?v=0.49.0';
+import { ViewModel } from './viewmodel.js?v=0.49.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.49.0';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.49.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.49.0';
+import { domeGround, duskSeams, toLocal as domeLocal } from './dome.js?v=0.49.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.49.0';
+import { townWalkable, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.49.0';
+import { PostFX } from './postfx.js?v=0.49.0';
+import { makeHuman, animateHuman } from './human.js?v=0.49.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.49.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.49.0';
+import { buildError } from './rules.js?v=0.49.0';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.49.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.49.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.49.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.49.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.49.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.49.0';
+import { CombatFX } from './combat-fx.js?v=0.49.0';
+import { syncPlots } from './land-models.js?v=0.49.0';
+import { plotTargets } from './reclaim.js?v=0.49.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.49.0';
+import { dayPhase } from './clock.js?v=0.49.0';
+import { weatherAt, season } from './weather.js?v=0.49.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -1959,15 +1960,15 @@ export class OceanWorld {
     // 0.47: in town the lake and everything on it is out of sight, the sky stays
     const town = !!s.inTown && !cabin;
     this.town.visible = town;
-    this.guide.visible = town;
+    this.guide.visible = town && !guideGone(s);
     this.dome.group.visible = this.dome.hills.visible = town;
     // the projected sky under the dome has no rift (0.48)
-    this.sky.material.uniforms.uRift.value = this.water.material.uniforms.uRift.value = town ? 0 : 1;
+    this.sky.material.uniforms.uRift.value = this.water.material.uniforms.uRift.value = town && !domeCracked(s) ? 0 : 1;
     if (town) {
       const lp = domeLocal(s.player.x, s.player.z);
       animateDome(this.dome, t, dt, {
         player: { x: s.player.x, z: s.player.z, lx: lp.x, lz: lp.z },
-        seams: duskSeams(s)
+        seams: Math.max(duskSeams(s), domeCracked(s) ? 0.3 : 0)
       });
       animateTown(this.town, t, night > 0.5);
       // 晴 turns to face you as you come near

@@ -4,7 +4,8 @@
 // By default the other residents are simulated (they post over the days and answer you); with CONFIG.communityUrl
 // set, the stele also shows real players' posts through community.js. This module is pure data and rules, so the
 // Cloudflare Worker (worker/community.js) uses the very same lists to validate posts.
-import { dayOf } from './clock.js?v=0.48.0';
+import { dayOf } from './clock.js?v=0.49.0';
+import { graduated, GRADUATE } from './chapter2.js?v=0.49.0';
 
 export const TEMPLATES = {
   beware: '小心{0}',
@@ -143,6 +144,9 @@ export function stelePosts(s) {
       });
     }
   }
+  // 0.49: once No.0156 has "graduated", every word of theirs is ground away
+  if (graduated(s))
+    for (const p of out) if (p.who === GRADUATE) Object.assign(p, { graduated: true, removed: true, res: 0 });
   return out.sort((a, b) => b.day - a.day || (a.mine ? -1 : 1));
 }
 export function postsToday(s) {

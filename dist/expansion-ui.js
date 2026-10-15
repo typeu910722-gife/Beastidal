@@ -6,9 +6,10 @@ import {
   upgradeBoat,
   boatUpgradeCost,
   awaken
-} from './expansion.js?v=0.48.0';
-import { objectives, normalizeStory } from './story.js?v=0.48.0';
-import { townObjectives } from './town.js?v=0.48.0';
+} from './expansion.js?v=0.49.0';
+import { objectives, normalizeStory } from './story.js?v=0.49.0';
+import { townObjectives } from './town.js?v=0.49.0';
+import { chapter2Objectives } from './chapter2.js?v=0.49.0';
 let tab = 'beasts',
   page = 0,
   pick = null,
@@ -54,7 +55,7 @@ export function renderAdventure(body, s, ctx) {
   } else if (tab === 'pact') {
     body.innerHTML += `<ul class="pact-list">${story.map(([text, done]) => `<li class="${done ? 'done' : ''}">${done ? '✓' : '○'} ${esc(text)}</li>`).join('')}</ul>`;
     // 0.47: chapter two, part one — 慈光港
-    const town = townObjectives(s);
+    const town = [...townObjectives(s), ...chapter2Objectives(s)];
     if (town.length)
       body.innerHTML += `<p class="dv-note">第二章 · 新生之界</p><ul class="pact-list">${town.map(([text, done]) => `<li class="${done ? 'done' : ''}">${done ? '✓' : '○'} ${esc(text)}</li>`).join('')}</ul>`;
     if (s.story.stage >= 5)

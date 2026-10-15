@@ -3579,5 +3579,93 @@ export default {
   '把一句話放進瓶子，漂給隨便一位居民。': 'Put a phrase in a bottle and let it drift to any resident.',
   寄出漂流信: 'Send a drifting letter',
   '新生之界 · 破綻': 'The New World · a crack',
-  '你刻的「{0}」被移除了。': 'The "{0}" you carved has been removed.'
+  '你刻的「{0}」被移除了。': 'The "{0}" you carved has been removed.',
+  // 0.49 第二章（下）
+  '（這位居民已「畢業」，前往更好的地方。）': '(This resident has "graduated" and gone on to a better place.)',
+  '慈愛公告 · 第 2 號': 'Compassion notice · No. 2',
+  '恭喜居民 {0} 完成新生，順利「畢業」，前往更好的地方。':
+    'Congratulations to resident {0}, who has completed their new life and "graduated" to a better place.',
+  '請大家為他獻上祝福。': 'Please send them your blessings.',
+  '畢業是每一位居民的目標。': "Graduation is every resident's goal.",
+  '{0} 「畢業」了。就是在留言碑上寫「別相信——」的那個人。留言碑上他的字，一夜之間全被磨平了。':
+    '{0} has "graduated" — the one who wrote "Don\'t trust —" on the stele. Overnight, every word they carved there was ground smooth.',
+  '湯已經涼了。桌子底下好像卡著什麼……太亮了，看不清楚。晚上再來。':
+    'The soup has gone cold. Something seems wedged under the table… too bright to make out. Come back at night.',
+  '{0} 的居民證': "{0}'s resident card",
+  '桌子底下卡著一張居民證：{0}。背面用膠帶黏著一張白色的卡片，印著太陽徽章——管理區的門禁卡。卡片邊緣刻了一行小字：「去看槽。」':
+    'A resident card was wedged under the table: {0}. Taped to its back, a white card with the sun emblem — a key to the admin block. Scratched along its edge: "Go see the tanks."',
+  '桌子底下卡著一張居民證。照片上的人很瘦，對著鏡頭笑。':
+    'A resident card is wedged under the table. The person in the photo is thin, smiling at the camera.',
+  '{0}。就是留言碑上寫「別相信——」的那個人。': '{0}. The one who wrote "Don\'t trust —" on the stele.',
+  '背面用膠帶黏著一張白色的卡片，印著太陽徽章——管理區的門禁卡。':
+    'Taped to the back is a white card with the sun emblem — a key to the admin block.',
+  '卡片邊緣刻了一行很小的字：「去看槽。」': 'Scratched along its edge, very small: "Go see the tanks."',
+  '門禁卡一刷，門無聲地滑開。裡面很冷，像醫院。':
+    "One swipe of the card and the door slides open without a sound. Inside it's cold, like a hospital.",
+  '牆上一整排螢幕，每一格都是一個房間——公寓的房間。0388 號房的床上躺著一個人，一動也不動。不是在睡覺。':
+    'A whole wall of screens, each one a room — the apartment rooms. In room 0388 someone lies on the bed, perfectly still. Not asleep.',
+  終端機: 'Terminal',
+  'NWP 適應監測 · 載體 0412 · 適應率 88%。家屬端週報：自動生成中。附件：〈湖邊微笑_week3.png〉——來源：載體視覺紀錄＋表情合成。':
+    'NWP adaptation monitoring · carrier 0412 · adaptation 88%. Weekly family report: generating automatically. Attachment: <smiling_by_the_lake_week3.png> — source: carrier visual record + expression synthesis.',
+  '湖邊笑的照片。媽媽貼在冰箱上的那一張。是他們做出來的。':
+    'The photo of me laughing by the lake. The one Mom put on the fridge. They made it.',
+  '畢業名單 · {0}：適應失敗。狀態：回收。意識資料封存，載體送回培育槽。家屬端：「已安詳離世」通知已寄出。':
+    'Graduation list · {0}: adaptation failed. Status: recycled. Consciousness data archived, carrier returned to the growth tanks. Family: "passed away peacefully" notice sent.',
+  '走廊盡頭是一排玻璃槽。淡綠色的液體裡，漂著一具一具的身體。':
+    'At the end of the corridor, a row of glass tanks. In the pale green liquid float bodies, one after another.',
+  'B-12 號槽的標籤寫著：「0412 · 備用載體 · 第 2 號」。槽裡那張臉……是我的臉。':
+    'The label on tank B-12 reads: "0412 · spare carrier · no. 2". The face in the tank… is my face.',
+  '伴生體計畫：以契約連結異晶突變生物與載體，可穩定意識錨定。契約書規格：前導觀測員 K.。':
+    'Companion project: binding crystal-mutated creatures to carriers by contract stabilises the consciousness anchor. Contract scroll specification: advance observer K.',
+  '我跟御獸的契約……也是他們的實驗？': 'My contracts with my beasts… are those their experiment too?',
+  '我不是轉生的。這個身體，是他們做的。': "I wasn't reborn. They made this body.",
+  '……0412。這麼晚了，你不該在這裡。': "…0412. It's late. You shouldn't be here.",
+  '你看到的那些，都是真的。可是你在這裡，不會痛。外面的你，每一天都在痛。':
+    "Everything you saw is real. But here, you don't hurt. Out there, you hurt every single day.",
+  '你媽媽每週都去看你。她握著你的手——那隻手，已經不會動了。':
+    'Your mother visits you every week. She holds your hand — a hand that can no longer move.',
+  '我可以幫你忘記今晚。明天早上醒來，你還是那個在湖邊笑的人。':
+    "I can help you forget tonight. Tomorrow morning you'll wake up still the person laughing by the lake.",
+  '門禁卡已經刷不開了。門上的太陽徽章，暗了。':
+    'The key card no longer works. The sun emblem on the door has gone dark.',
+  '白天門口有人進出的腳步聲。晚上再來。': 'By day there are footsteps going in and out. Come back at night.',
+  '第二章 完 · 遺忘': 'End of Chapter Two · Forgetting',
+  '……晚安，0412。': '…Good night, 0412.',
+  '醒來的時候，我躺在 0412 號房。窗台上的花又被澆過了。':
+    "When I wake, I'm lying in room 0412. The flower on the windowsill has been watered again.",
+  '日誌裡有幾頁是空白的。最後一頁，是我自己的字：「別相信晴。去城門外找嘯岳。」':
+    'A few pages of my journal are blank. On the last page, in my own handwriting: "Don\'t trust Qing. Find Xiaoyue outside the gate."',
+  '你身上有那個盒子的味道。……你忘了什麼，對吧？': "You smell of that box. …You've forgotten something, haven't you?",
+  '沒關係。我記得。': "It's all right. I remember.",
+  '我醒在 0412 號房，日誌少了幾頁。最後一頁是我自己的字：「別相信晴。去城門外找嘯岳。」嘯岳說，牠記得。第三章——敬請期待。':
+    'I woke in room 0412 with pages missing from my journal. The last page is in my own hand: "Don\'t trust Qing. Find Xiaoyue outside the gate." Xiaoyue says it remembers. Chapter Three — coming soon.',
+  '第二章 完 · 穹頂之外': 'End of Chapter Two · Beyond the Dome',
+  '我要知道真相。': 'I want to know the truth.',
+  '「0412 號越權存取。啟動記憶調整程序。」': '"Unauthorised access by 0412. Starting memory adjustment."',
+  '……快走。去城門。別回頭。': "…Go. To the gate. Don't look back.",
+  '整座城的燈同時熄了。我一路跑到城門，嘯岳已經站了起來。':
+    'Every light in town goes out at once. I run all the way to the gate; Xiaoyue is already on its feet.',
+  '我說過，這裡的味道不對。抓緊。': 'I told you this place smelled wrong. Hold on.',
+  '嘯岳撲向城門外的空氣——爪子底下，傳來玻璃碎裂的聲音。':
+    'Xiaoyue leaps at the empty air outside the gate — and under its claws comes the sound of breaking glass.',
+  '天空裂開一道縫。縫的另一邊，是那道紫色的裂縫，和真正的、比斯泰德的天空。':
+    'The sky splits open. On the other side is the purple rift, and the real sky of Beastidal.',
+  '晴放走了我。嘯岳撕開了穹頂，縫的另一邊是紫色的裂縫和真正的天空。我不是轉生的——我是 0412 號載體。第三章——敬請期待。':
+    "Qing let me go. Xiaoyue tore the dome open; beyond the tear are the purple rift and the real sky. I wasn't reborn — I am carrier 0412. Chapter Three — coming soon.",
+  '現在沒有要選擇的事。': "There's nothing to choose right now.",
+  '你今天氣色很好，0412。昨晚睡得好嗎？': 'You look well today, 0412. Did you sleep well last night?',
+  '{0} 不見了……公告板上有新的公告': "{0} is gone… there's a new notice on the board",
+  '（隔天，城裡好像少了一個人）': '(The next day, the town seems to be one person short)',
+  '夜裡，到空無一人的餐館找找看': 'At night, search the empty diner',
+  '夜裡，用門禁卡進入管理區': 'At night, use the key card to enter the admin block',
+  做出選擇: 'Make your choice',
+  晴在等你的回答: 'Qing is waiting for your answer',
+  '「讓我幫你忘記今晚，好嗎？」': '"Let me help you forget tonight, all right?"',
+  讓我忘記: 'Let me forget',
+  我要知道真相: 'I want the truth',
+  '第三章——敬請期待': 'Chapter Three — coming soon',
+  '晴不在歡迎中心前。地上只留著她的太陽徽章。':
+    "Qing isn't in front of the welcome centre. Only her sun badge lies on the ground.",
+  管理區門禁卡: 'Admin block key card',
+  '夜裡，到管理區刷卡。': 'At night, swipe it at the admin block.'
 };
