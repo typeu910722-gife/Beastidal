@@ -2,15 +2,15 @@
 // few rare ones found nowhere else. Creatures spawn where the player is heading, keep a modest density, and
 // drift away again when left far behind. Sea and deep species roam the water; land species and plant mutants
 // live on the islands and along the foot of the mountains.
-import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded, familyOf } from './genetics.js?v=0.61.9';
-import { ISLANDS, onIsland, islandAt } from './islands.js?v=0.61.9';
-import { walkable, landNear, waterNear, groundAt } from './lake.js?v=0.61.9';
-import { stepFlee, turnToward } from './physics.js?v=0.61.9';
-import { ZONES, pickSpecies } from './species.js?v=0.61.9';
-import { rollTame } from './taming.js?v=0.61.9';
-import { makeWildBeast, beastsFor, BEAST_SPAWN_P } from './beasts.js?v=0.61.9';
-import { addRandomGene } from './bsgenes.js?v=0.61.9';
-import { spawnMods } from './weather.js?v=0.61.9';
+import { makeGenome, normalizeGenome, LINEAGE_BASE, phenotype, seeded, familyOf } from './genetics.js?v=0.61.10';
+import { ISLANDS, onIsland, islandAt } from './islands.js?v=0.61.10';
+import { walkable, landNear, waterNear, groundAt } from './lake.js?v=0.61.10';
+import { stepFlee, turnToward } from './physics.js?v=0.61.10';
+import { ZONES, pickSpecies } from './species.js?v=0.61.10';
+import { rollTame } from './taming.js?v=0.61.10';
+import { makeWildBeast, beastsFor, BEAST_SPAWN_P } from './beasts.js?v=0.61.10';
+import { addRandomGene } from './bsgenes.js?v=0.61.10';
+import { spawnMods } from './weather.js?v=0.61.10';
 
 export const WILD_CAP = 40;
 export const DESPAWN_RANGE = 260;

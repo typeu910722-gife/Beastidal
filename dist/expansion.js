@@ -1,26 +1,26 @@
-import { phenotype, clamp } from './genetics.js?v=0.61.9';
-import { NODES, harvest } from './islands.js?v=0.61.9';
-import { restPlace } from './ship.js?v=0.61.9';
-import { dayOf, dayPhase } from './clock.js?v=0.61.9';
-import { remember, rememberFirst } from './memories.js?v=0.61.9';
-import { spend, give, stow } from './bag.js?v=0.61.9';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.61.9';
-import { islandAt } from './islands.js?v=0.61.9';
-import { hasPerk } from './codex.js?v=0.61.9';
-import { tally } from './stats.js?v=0.61.9';
-import { rollDrops } from './species.js?v=0.61.9';
-import { bsOf, geneStats } from './bsgenes.js?v=0.61.9';
-import { WILD_BEASTS } from './beasts.js?v=0.61.9';
-import { hasGear, MASK_OXYGEN } from './gear.js?v=0.61.9';
-import { damageBonus } from './skills.js?v=0.61.9';
-import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.61.9';
-import { ITEM_NAMES } from './items.js?v=0.61.9';
-import { personality } from './beast-tree.js?v=0.61.9';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT } from './story.js?v=0.61.9';
-import { findPart, partForSite } from './echoes.js?v=0.61.9';
+import { phenotype, clamp } from './genetics.js?v=0.61.10';
+import { NODES, harvest } from './islands.js?v=0.61.10';
+import { restPlace } from './ship.js?v=0.61.10';
+import { dayOf, dayPhase } from './clock.js?v=0.61.10';
+import { remember, rememberFirst } from './memories.js?v=0.61.10';
+import { spend, give, stow } from './bag.js?v=0.61.10';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.61.10';
+import { islandAt } from './islands.js?v=0.61.10';
+import { hasPerk } from './codex.js?v=0.61.10';
+import { tally } from './stats.js?v=0.61.10';
+import { rollDrops } from './species.js?v=0.61.10';
+import { bsOf, geneStats } from './bsgenes.js?v=0.61.10';
+import { WILD_BEASTS } from './beasts.js?v=0.61.10';
+import { hasGear, MASK_OXYGEN } from './gear.js?v=0.61.10';
+import { damageBonus } from './skills.js?v=0.61.10';
+import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.61.10';
+import { ITEM_NAMES } from './items.js?v=0.61.10';
+import { personality } from './beast-tree.js?v=0.61.10';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT } from './story.js?v=0.61.10';
+import { findPart, partForSite } from './echoes.js?v=0.61.10';
 // The crystal cave is its own pocket of the world, far outside the basin — since 0.31 a corrupted garden maze
 // (cave-maze.js), with 嘯岳 asleep at its heart.
-import { CAVE, ENTRANCE, DEAD_ENDS, mazeWalkable } from './cave-maze.js?v=0.61.9';
+import { CAVE, ENTRANCE, DEAD_ENDS, mazeWalkable } from './cave-maze.js?v=0.61.10';
 export { CAVE };
 const inMaze = (x, z) => ({ x: CAVE.x + x, z: CAVE.z + z });
 const KEY_WALL = inMaze(DEAD_ENDS[0].x, DEAD_ENDS[0].z),

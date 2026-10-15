@@ -5,10 +5,10 @@
 //     whip tails, claws, bone wings, crystal horns), its eyes burn, a crown of horns rises from its head and a
 //     contract sigil turns beneath it — gold for yours, violet for a wild one.
 import * as T from './vendor/three.module.min.js';
-import { BS_GENES, bsOf } from './bsgenes.js?v=0.61.9';
-import { phenotype } from './genetics.js?v=0.61.9';
-import { makeCreature } from './creatures.js?v=0.61.9';
-import { bodyAnchors, applyBeastLook, lookOf } from './beast-look.js?v=0.61.9';
+import { BS_GENES, bsOf } from './bsgenes.js?v=0.61.10';
+import { phenotype } from './genetics.js?v=0.61.10';
+import { makeCreature } from './creatures.js?v=0.61.10';
+import { bodyAnchors, applyBeastLook, lookOf } from './beast-look.js?v=0.61.10';
 
 export const FORM_SCALE = 1.5;
 const geo = {

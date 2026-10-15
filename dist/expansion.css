@@ -286,3 +286,18 @@ body.syncing.landscape-play #boss-bar {
   min-width: 240px;
   font-size: 12px;
 }
+/* 0.61.10: 嘯岳's bar carries a notch where it yields */
+#boss-bar {
+  position: absolute;
+}
+#boss-bar::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: var(--yield, -99px);
+  width: 2px;
+  background: #ffe7a8;
+  box-shadow: 0 0 6px #ffd27a;
+  pointer-events: none;
+}

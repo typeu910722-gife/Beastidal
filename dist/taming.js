@@ -6,16 +6,16 @@
 //     bound by trust; hostile ones must be worn down in a fight — the weaker, the better the odds — and stay
 //     modest even bound. A failed contract can send anything into a frenzy: 1.2× speed and bite, hunting you for
 //     10–20 seconds, and nothing frenzied can be repelled.
-import { phenotype, geneName, makeGenome } from './genetics.js?v=0.61.9';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.61.9';
-import { spend, give } from './bag.js?v=0.61.9';
-import { remember } from './memories.js?v=0.61.9';
-import { nearFacility } from './fortress.js?v=0.61.9';
-import { hasPerk } from './codex.js?v=0.61.9';
-import { tally } from './stats.js?v=0.61.9';
-import { bsOf, canEvolve, EVOLVE_GENES, addRandomGene } from './bsgenes.js?v=0.61.9';
-import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.61.9';
-import { trustBonus } from './skills.js?v=0.61.9';
+import { phenotype, geneName, makeGenome } from './genetics.js?v=0.61.10';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.61.10';
+import { spend, give } from './bag.js?v=0.61.10';
+import { remember } from './memories.js?v=0.61.10';
+import { nearFacility } from './fortress.js?v=0.61.10';
+import { hasPerk } from './codex.js?v=0.61.10';
+import { tally } from './stats.js?v=0.61.10';
+import { bsOf, canEvolve, EVOLVE_GENES, addRandomGene } from './bsgenes.js?v=0.61.10';
+import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.61.10';
+import { trustBonus } from './skills.js?v=0.61.10';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 10, max: 20, below: 60 };
