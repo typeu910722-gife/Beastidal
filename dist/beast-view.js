@@ -1,4 +1,4 @@
-// Through your beast's eyes (0.61.4). While you are bonded (契合), its forelimbs and the ridge of its snout sit at the
+// Through your beast's eyes (0.61.5). While you are bonded (契合), its forelimbs and the ridge of its snout sit at the
 // bottom of the view in its own colours: they breathe and sway as it moves, rake across the screen with each blow of
 // a combo (right, left, right, left; both at once on a held heavy blow), snap the jaws up on a skill, lurch aside on
 // a dodge and jerk back when it is struck. They hang off the camera and draw on top of the world, like the hands.
@@ -22,24 +22,36 @@ function part(parent, geo, m, pos = [0, 0, 0], rot = [0, 0, 0], scale = [1, 1, 1
   parent.add(o);
   return o;
 }
-// a forelimb: a furred forearm, a broad paw, three hooked claws
-function makeLimb(side, hide, pale, claw) {
+// a forelimb: a forearm tapering to the wrist and flattened like a real one, a ridge of fur tufts along its top, a
+// broad paw with a knuckle over each of three long hooked claws (0.61.5: the plain tube read as a sausage)
+function makeLimb(side, hide, pale, claw, dark) {
   const g = new T.Group();
-  part(g, new T.CylinderGeometry(0.06, 0.085, 0.5, 9), hide, [0, 0, 0.25], [Math.PI / 2, 0, 0]);
+  part(g, new T.CylinderGeometry(0.05, 0.095, 0.55, 12), hide, [0, 0, 0.27], [Math.PI / 2, 0, 0], [1.25, 1, 0.8]);
+  part(g, new T.CylinderGeometry(0.035, 0.07, 0.5, 10), pale, [0, -0.03, 0.27], [Math.PI / 2, 0, 0], [1.2, 1, 0.6]);
+  for (let i = 0; i < 6; i++)
+    part(
+      g,
+      new T.ConeGeometry(0.022 - i * 0.001, 0.07, 5),
+      dark,
+      [side * 0.01, 0.055 + i * 0.006, 0.05 + i * 0.075],
+      [-1.1, 0, side * 0.15]
+    );
   const paw = new T.Group();
   paw.position.set(0, 0, -0.02);
   g.add(paw);
-  part(paw, new T.SphereGeometry(0.075, 12, 9), hide, [0, 0, 0], [0, 0, 0], [1.15, 0.6, 1.2]);
-  part(paw, new T.SphereGeometry(0.05, 10, 8), pale, [0, -0.025, -0.02], [0, 0, 0], [1.2, 0.4, 1]);
+  part(paw, new T.SphereGeometry(0.08, 14, 10), hide, [0, 0, 0], [0, 0, 0], [1.3, 0.62, 1.15]);
+  part(paw, new T.SphereGeometry(0.055, 10, 8), pale, [0, -0.03, -0.01], [0, 0, 0], [1.3, 0.4, 1]);
   const claws = [];
   for (let i = 0; i < 3; i++) {
-    const c = part(
-      paw,
-      new T.ConeGeometry(0.014, 0.1, 7),
-      claw,
-      [(i - 1) * 0.04 + side * 0.006, -0.005, -0.09],
-      [-Math.PI / 2 - 0.45, 0, (i - 1) * -0.12]
-    );
+    const x = (i - 1) * 0.045 + side * 0.006;
+    part(paw, new T.SphereGeometry(0.026, 9, 7), hide, [x, 0.008, -0.07], [0, 0, 0], [1, 0.8, 1.2]);
+    // a claw: a long cone, bent down at the tip by a second, shorter one
+    const c = new T.Group();
+    c.position.set(x, 0, -0.095);
+    c.rotation.set(-0.25, 0, (i - 1) * -0.1);
+    paw.add(c);
+    part(c, new T.ConeGeometry(0.016, 0.11, 8), claw, [0, 0, -0.04], [-Math.PI / 2, 0, 0]);
+    part(c, new T.ConeGeometry(0.009, 0.05, 6), claw, [0, -0.018, -0.1], [-Math.PI / 2 - 0.9, 0, 0]);
     claws.push(c);
   }
   g.userData.paw = paw;
@@ -52,10 +64,11 @@ export class BeastView {
     this.root.visible = false;
     camera.add(this.root);
     this.hide = mat(0x8a7a66);
-    this.pale = mat(0xd8cbb4);
+    this.pale = mat(0xb0a28c, { roughness: 0.95 });
     this.claw = mat(0xf2ead8, { roughness: 0.35, metalness: 0.1, emissive: 0x000000 });
-    this.right = makeLimb(1, this.hide, this.pale, this.claw);
-    this.left = makeLimb(-1, this.hide, this.pale, this.claw);
+    this.dark = mat(0x5a4c3e, { roughness: 0.9 });
+    this.right = makeLimb(1, this.hide, this.pale, this.claw, this.dark);
+    this.left = makeLimb(-1, this.hide, this.pale, this.claw, this.dark);
     // the ridge of its snout, low in the middle of the view, and the teeth that show when it bites
     this.snout = new T.Group();
     part(this.snout, new T.SphereGeometry(0.16, 16, 10), this.hide, [0, 0, 0], [0, 0, 0], [1, 0.42, 1.6]);
@@ -94,7 +107,8 @@ export class BeastView {
     });
     const c = best ? best.color.clone() : new T.Color(0x8a7a66);
     this.hide.color.copy(c);
-    this.pale.color.copy(c).lerp(new T.Color(0xfff4e0), 0.55);
+    this.pale.color.copy(c).lerp(new T.Color(0xf4e6cc), 0.3);
+    this.dark.color.copy(c).multiplyScalar(0.62);
   }
   play(kind, e = {}) {
     if (kind === 'enter' || kind === 'leave' || kind === 'ko') {

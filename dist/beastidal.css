@@ -4421,6 +4421,8 @@ body.syncing #sync-fx::before {
 
 /* while you are inside your beast, the everyday prompts step aside */
 body.syncing #context-action,
+body.syncing #dock-btn,
+body.syncing #home-btn,
 body.syncing #contract-btn,
 body.syncing #travel-status {
   display: none !important;
