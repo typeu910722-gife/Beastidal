@@ -247,7 +247,7 @@ test('The crossing needs Xiaoyue deployed on the basin shore, and it closes chap
   assert.equal(loaded.story.stage, 6);
 });
 console.log(`story tests: ${n} passed`);
-test('0.61.12: when the frenzy turns past half strength it says so, once', () => {
+test('0.61.13: when the frenzy turns past half strength it says so, once', () => {
   const s = inGarden(),
     st = s.story;
   tickStory(s, 0.1, { team: WAKE_TEAM });

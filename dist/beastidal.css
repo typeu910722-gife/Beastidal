@@ -4692,3 +4692,68 @@ body.syncing.landscape-play #app #discovery {
     transform: scale(1.04);
   }
 }
+
+/* 0.61.13: the chain of blows, right of centre */
+#sync-combo {
+  position: absolute;
+  right: 18%;
+  top: 38%;
+  z-index: 6;
+  pointer-events: none;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: #fff3d6;
+  text-shadow:
+    0 2px 0 #3a1a0c,
+    0 0 14px #ffb04a88;
+  font-weight: 900;
+}
+#sync-combo b {
+  font-size: 44px;
+  font-style: italic;
+  line-height: 1;
+}
+#sync-combo span {
+  font-size: 15px;
+  letter-spacing: 0.2em;
+}
+#sync-combo.pop b {
+  animation: combo-pop 0.22s ease-out;
+}
+#sync-combo.hot {
+  color: #ffd27a;
+}
+#sync-combo.blaze {
+  color: #ff8a4a;
+}
+#sync-combo.blaze b {
+  text-shadow:
+    0 2px 0 #3a1a0c,
+    0 0 22px #ff6a2a;
+}
+#sync-combo.broken {
+  animation: combo-break 0.42s ease-in forwards;
+}
+@keyframes combo-pop {
+  0% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes combo-break {
+  to {
+    opacity: 0;
+    transform: translateY(14px) rotate(-6deg);
+    filter: grayscale(1);
+  }
+}
+.landscape-play #sync-combo {
+  right: 22%;
+  top: 30%;
+}
+.landscape-play #sync-combo b {
+  font-size: 32px;
+}

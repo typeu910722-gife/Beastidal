@@ -3879,5 +3879,6 @@ export default {
   '牠狂怒了——攻勢更快、更重。': 'It is enraged — faster, heavier blows.',
   擊破: 'Broken',
   止息: 'Stilled',
-  擊退: 'Repelled'
+  擊退: 'Repelled',
+  連擊: 'hits'
 };
