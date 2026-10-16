@@ -54,10 +54,58 @@ export class CombatFX {
       m.rotation.x = Math.PI / 2;
       g.add(m);
     }
+    // 0.61.14: a low wall of red light stands on the shape's edge, so it reads from a beast's-eye view too (from low
+    // down a shape flat on the ground is only a sliver)
+    const H = 1.3,
+      wm = this.wallMat(),
+      wall = new T.Group();
+    if (info.move === 'bite' || info.move === 'sweep') {
+      const half = info.move === 'sweep' ? Math.PI : info.half || 0.85,
+        cyl = new T.CylinderGeometry(
+          info.range,
+          info.range,
+          H,
+          info.move === 'sweep' ? 40 : 24,
+          1,
+          true,
+          -half,
+          half * 2
+        );
+      cyl.translate(0, H / 2, 0);
+      wall.add(new T.Mesh(cyl, wm));
+    } else {
+      const w = info.move === 'spit' ? 0.5 : info.width || 1.6;
+      for (const side of [-1, 1]) {
+        const pl = new T.PlaneGeometry(info.range, H);
+        pl.rotateY(Math.PI / 2);
+        pl.translate((side * w) / 2, H / 2, info.range / 2);
+        wall.add(new T.Mesh(pl, wm));
+      }
+      const end = new T.PlaneGeometry(w, H);
+      end.translate(0, H / 2, info.range);
+      wall.add(new T.Mesh(end, wm));
+    }
+    g.add(wall);
     g.rotation.y = info.dir;
     g.position.set(info.x, 0, info.z);
     this.root.add(g);
-    return { group: g, fill, outline, info };
+    return { group: g, fill, outline, wall: wm, info };
+  }
+  // one material per telegraph (its opacity follows that windup), with a shared fade toward the top
+  wallMat() {
+    if (!CombatFX.fade) {
+      const c = document.createElement('canvas');
+      c.width = 4;
+      c.height = 64;
+      const x = c.getContext('2d'),
+        gr = x.createLinearGradient(0, 0, 0, 64);
+      gr.addColorStop(0, '#000');
+      gr.addColorStop(1, '#fff');
+      x.fillStyle = gr;
+      x.fillRect(0, 0, 4, 64);
+      CombatFX.fade = new T.CanvasTexture(c);
+    }
+    return basic(RED, 0.2, { alphaMap: CombatFX.fade, blending: T.AdditiveBlending });
   }
   handle(events, now, groundY) {
     for (const e of events) {
@@ -125,8 +173,8 @@ export class CombatFX {
       born: now,
       life: 0.22,
       kind: 'fade',
-      mats: [t.fill.material, t.outline.material],
-      base: [0.75, 0.22]
+      mats: [t.fill.material, t.outline.material, t.wall].filter(Boolean),
+      base: [0.75, 0.22, 0.6]
     });
   }
   swing(e, y, now) {
@@ -300,7 +348,9 @@ export class CombatFX {
     const c = s.combat || {};
     // telegraphs fill up as the windup runs; gone when the foe is gone or the windup ended unseen
     for (const [id, t] of this.tele) {
-      const foe = (s.wild || []).find(w => w.id === id);
+      // (the watcher and 嘯岳 are not among the wild: their warnings vanished the frame after they appeared)
+      const foe =
+        id === 'boss' ? s.expedition?.boss : id === 'duel' ? s.story?.beast : (s.wild || []).find(w => w.id === id);
       if (!foe || !foe.ai || foe.ai.state !== 'windup' || now > t.info.until + 0.1) {
         this.clearTele(id);
         continue;
@@ -309,6 +359,7 @@ export class CombatFX {
       t.fill.scale.setScalar(Math.max(0.02, k));
       t.fill.material.opacity = 0.25 + k * 0.35;
       t.outline.material.opacity = 0.18 + Math.sin(now * 18) * 0.06 + k * 0.1;
+      if (t.wall) t.wall.opacity = 0.12 + k * 0.45 + (k > 0.8 ? Math.sin(now * 30) * 0.1 : 0);
     }
     // projectiles in flight
     const live = new Set();

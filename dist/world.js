@@ -1,45 +1,47 @@
-import { expansionModels } from './expansion-models.js?v=0.60.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.60.0';
-import { normalizeHousing, penId } from './housing.js?v=0.60.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.60.0';
-export { makeCreature } from './creatures.js?v=0.60.0';
-import { makeIslands } from './island-models.js?v=0.60.0';
-import { facilityId } from './facilities.js?v=0.60.0';
+import { expansionModels } from './expansion-models.js?v=0.61.14';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.61.14';
+import { normalizeHousing, penId } from './housing.js?v=0.61.14';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.61.14';
+export { makeCreature } from './creatures.js?v=0.61.14';
+import { makeIslands } from './island-models.js?v=0.61.14';
+import { facilityId } from './facilities.js?v=0.61.14';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.60.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.60.0';
-import { surface } from './surfaces.js?v=0.60.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.60.0';
-import { makeLake } from './lake-models.js?v=0.60.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.60.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.60.0';
-import { makeStatues } from './statues.js?v=0.60.0';
-import { animateGarden } from './garden-models.js?v=0.60.0';
-import { ViewModel } from './viewmodel.js?v=0.60.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.60.0';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.60.0';
-import { bakeStatic } from './bake.js?v=0.60.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.60.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.60.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.60.0';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.60.0';
-import { PostFX } from './postfx.js?v=0.60.0';
-import { makeHuman, animateHuman } from './human.js?v=0.60.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.60.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.60.0';
-import { buildError } from './rules.js?v=0.60.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.60.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.60.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.60.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.60.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.60.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.60.0';
-import { CombatFX } from './combat-fx.js?v=0.60.0';
-import { syncPlots } from './land-models.js?v=0.60.0';
-import { plotTargets } from './reclaim.js?v=0.60.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.60.0';
-import { dayPhase } from './clock.js?v=0.60.0';
-import { weatherAt, season } from './weather.js?v=0.60.0';
+import { phenotype, seeded } from './genetics.js?v=0.61.14';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.61.14';
+import { surface } from './surfaces.js?v=0.61.14';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.61.14';
+import { makeLake } from './lake-models.js?v=0.61.14';
+import { groundAt, LANDMARKS } from './lake.js?v=0.61.14';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.61.14';
+import { makeStatues } from './statues.js?v=0.61.14';
+import { animateGarden } from './garden-models.js?v=0.61.14';
+import { ViewModel } from './viewmodel.js?v=0.61.14';
+import { BeastView } from './beast-view.js?v=0.61.14';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.61.14';
+import { SYNC } from './combat.js?v=0.61.14';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.61.14';
+import { bakeStatic } from './bake.js?v=0.61.14';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.61.14';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.61.14';
+import { guideGone, domeCracked } from './chapter2.js?v=0.61.14';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.61.14';
+import { PostFX } from './postfx.js?v=0.61.14';
+import { makeHuman, animateHuman } from './human.js?v=0.61.14';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.61.14';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.61.14';
+import { buildError } from './rules.js?v=0.61.14';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.61.14';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.61.14';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.61.14';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.61.14';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.61.14';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.61.14';
+import { CombatFX } from './combat-fx.js?v=0.61.14';
+import { syncPlots } from './land-models.js?v=0.61.14';
+import { plotTargets } from './reclaim.js?v=0.61.14';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.61.14';
+import { dayPhase } from './clock.js?v=0.61.14';
+import { weatherAt, season } from './weather.js?v=0.61.14';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -767,6 +769,7 @@ export class OceanWorld {
     // 0.32: the camera carries the first-person hands, so it lives in the scene
     this.scene.add(this.camera);
     this.viewmodel = new ViewModel(this.camera);
+    this.beastView = new BeastView(this.camera);
     // 0.34: a flashlight in the dark (under water, in the garden maze) — a beam where you look, a glow around you
     this.torch = new T.SpotLight(0xfff0d2, 0, 48, 0.62, 0.55, 1.5);
     this.torch.position.set(0.3, -0.25, 0);
@@ -1023,7 +1026,10 @@ export class OceanWorld {
     yawDelta *= k;
     pitchDelta *= k * (this.settings.invertY ? -1 : 1);
     this.yaw += yawDelta;
-    if (this.firstPerson && !this.placement)
+    this.lastLook = performance.now();
+    // 0.61: behind your beast's eyes, looking up and down is its own
+    if (this.syncK > 0.5) this.syncPitch = Math.max(-0.5, Math.min(0.6, (this.syncPitch || 0) + pitchDelta));
+    else if (this.firstPerson && !this.placement)
       this.firstPitch = Math.max(-1.15, Math.min(1.15, (this.firstPitch || 0) + pitchDelta));
     else this.pitch = Math.max(this.lookUpFree ? -0.62 : 0.06, Math.min(1.25, this.pitch + pitchDelta));
   }
@@ -1569,7 +1575,35 @@ export class OceanWorld {
           m.position.z += Math.cos(c.heading || 0) * k;
         }
         if (ud.hitAt && s.elapsed - ud.hitAt < 0.16) m.rotation.x += 0.3 * (1 - (s.elapsed - ud.hitAt) / 0.16);
-        // 0.58: a struck body squashes and springs back (the line above resets the scale each frame)
+        // 0.61.14: and flashes white for a moment (its materials are shared with its kind, so on its first hit it gets
+        // copies of its own — keeping any shader hooks, so it looks the same)
+        if (ud.hitAt && s.elapsed - ud.hitAt < 0.14) {
+          if (!ud.ownMats) {
+            ud.ownMats = [];
+            m.traverse(o => {
+              const mt = o.isMesh && !Array.isArray(o.material) ? o.material : null;
+              if (!mt?.emissive) return;
+              const c = mt.clone();
+              c.onBeforeCompile = mt.onBeforeCompile;
+              c.customProgramCacheKey = mt.customProgramCacheKey;
+              o.material = c;
+              ud.ownMats.push([c, c.emissive.getHex(), c.emissiveIntensity]);
+            });
+          }
+          const f = 1 - (s.elapsed - ud.hitAt) / 0.14;
+          for (const [mt] of ud.ownMats) {
+            mt.emissive.setHex(0xffffff);
+            mt.emissiveIntensity = 0.85 * f;
+          }
+          ud.flashing = true;
+        } else if (ud.flashing) {
+          for (const [mt, hex, k] of ud.ownMats) {
+            mt.emissive.setHex(hex);
+            mt.emissiveIntensity = k;
+          }
+          ud.flashing = false;
+        }
+        // 0.58: a struck body squashes and springs back (its scale is reset each frame further up)
         if (ud.hitAt && s.elapsed - ud.hitAt < 0.22) {
           const q = Math.sin((1 - (s.elapsed - ud.hitAt) / 0.22) * Math.PI) * 0.14,
             z = ud.phenotype.size;
@@ -2165,8 +2199,12 @@ export class OceanWorld {
     const nightDark = !cabin && !opts.title && (this.nightLevel || 0) > 0.45,
       dark = (diving || s.inCave) && !cabin && !opts.title,
       ease = Math.min(1, dt * 4);
-    this.torch.intensity += ((dark ? (diving ? 260 : 130) : nightDark ? 110 : 0) - this.torch.intensity) * ease;
-    this.torchGlow.intensity += ((dark ? (diving ? 22 : 12) : nightDark ? 8 : 0) - this.torchGlow.intensity) * ease;
+    // 0.61.14: through your beast's eyes the foe is a few metres off, not across the cave — a full beam blew 嘯岳 out
+    // to white; the bond dims it to a lantern's worth
+    const dimK = 1 - 0.7 * (this.syncK || 0);
+    this.torch.intensity += ((dark ? (diving ? 260 : 130) : nightDark ? 110 : 0) * dimK - this.torch.intensity) * ease;
+    this.torchGlow.intensity +=
+      ((dark ? (diving ? 22 : 12) : nightDark ? 8 : 0) * dimK - this.torchGlow.intensity) * ease;
     if (cabin) {
       // warm lamplight indoors
       this.scene.background.set(0x1a120c);
@@ -2501,7 +2539,78 @@ export class OceanWorld {
         const open = g.userData.facilityId === this.inside && !this.firstPerson;
         for (const m of g.userData.roof) m.visible = !open;
       }
-    if (this.firstPerson && !this.placement && !this.titleMode) {
+    // 0.61 契合: the view slides from over your shoulder into your beast's eyes as the bond forms, and back out
+    const st0 = this.lastState,
+      sy = st0?.combat?.sync && !st0.expedition?.mounted && !this.placement && !this.titleMode ? st0.combat.sync : null,
+      syPm = sy ? this.petMeshes.get(st0.expedition?.activeId) : null,
+      nowR = performance.now(),
+      rdt = Math.min(0.1, (nowR - (this.lastRenderAt || nowR)) / 1000);
+    this.lastRenderAt = nowR;
+    if (syPm) {
+      if (this.syncPm && this.syncPm !== syPm) this.syncPm.visible = true;
+      this.syncPm = syPm;
+      this.syncK = Math.max(this.syncK || 0, Math.min(1, (st0.elapsed - sy.at) / SYNC.enter));
+    } else this.syncK = Math.max(0, (this.syncK || 0) - rdt / 0.5);
+    const pmS = this.syncPm;
+    if (this.syncK > 0 && pmS) {
+      if (!pmS.userData.eye) {
+        // where its eyes are: near the top of its body, toward the front
+        const vis = pmS.visible;
+        pmS.visible = true;
+        pmS.updateMatrixWorld(true);
+        const box = new T.Box3().setFromObject(pmS),
+          sc = pmS.scale.y || 1;
+        pmS.userData.eye = {
+          up: ((box.max.y - pmS.position.y) / sc) * 0.82,
+          fwd: (Math.max(box.max.x - box.min.x, box.max.z - box.min.z) / 2 / sc) * 0.62
+        };
+        pmS.visible = vis;
+      }
+      const eye = pmS.userData.eye,
+        sc = pmS.scale.y || 1,
+        fx = -Math.sin(this.yaw),
+        fz = -Math.cos(this.yaw),
+        pch = this.syncPitch || 0,
+        k = this.syncK * this.syncK * (3 - 2 * this.syncK);
+      // 0.61.14: a big beast's eyes are capped at a rider's height (at 3.5 m the fight was something seen from a
+      // ladder), and when a foe is right on top of it the view eases back a little so a giant like 嘯岳 still fits
+      let back = 0;
+      const near = [...(st0?.wild || []), st0?.story?.duel && st0.story.beast, st0?.expedition?.boss].filter(
+        w => w && !w.defeated && (w.hostile || w.duelBeast || w === st0?.expedition?.boss)
+      );
+      for (const w of near) {
+        const d = Math.hypot(w.x - pmS.position.x, w.z - pmS.position.z),
+          r = w.duelBeast || w === st0?.expedition?.boss ? 9 : 5;
+        back = Math.max(back, Math.min(1.6, (r - d) * 0.35));
+      }
+      this.syncBack = (this.syncBack || 0) + (back - (this.syncBack || 0)) * Math.min(1, rdt * 4);
+      const fwdD = eye.fwd * sc - this.syncBack,
+        ex = pmS.position.x + fx * fwdD,
+        ey = pmS.position.y + Math.min(2.5, Math.max(1.35, eye.up * sc)) + this.syncBack * 0.15,
+        ez = pmS.position.z + fz * fwdD;
+      const from = this.camera.position.clone(),
+        aim = from.clone().add(this.camera.getWorldDirection(new T.Vector3()).multiplyScalar(10)),
+        to = new T.Vector3(ex + fx * Math.cos(pch) * 10, ey - Math.sin(pch) * 10, ez + fz * Math.cos(pch) * 10);
+      this.camera.position.lerpVectors(from, new T.Vector3(ex, ey, ez), k);
+      this.camera.lookAt(aim.lerp(to, k));
+      this.camera.fov = 44 + (74 - 44) * k;
+      // its own body would fill the view; its paws and snout stand in for it (beast-view.js)
+      pmS.visible = k < 0.55;
+      const lp = this.syncLastPos || pmS.position.clone(),
+        sp = rdt > 0 ? Math.hypot(pmS.position.x - lp.x, pmS.position.z - lp.z) / rdt : 0;
+      this.syncLastPos = pmS.position.clone();
+      this.beastView.dress(pmS, st0?.expedition?.activeId);
+      this.beastView.update(rdt, this.syncK, Math.min(1, sp / SYNC.speed));
+      this.boat.userData.human.visible = !this.onFoot && !this.onRiding && !this.hasShip;
+      this.walker.visible = this.onFoot || this.onRiding;
+      for (const m of this.boat.userData.stern || []) m.visible = true;
+      this.water.material.uniforms.uCamera.value.copy(this.camera.position);
+    } else if (this.firstPerson && !this.placement && !this.titleMode) {
+      this.beastView.update(rdt, 0);
+      if (pmS) {
+        pmS.visible = true;
+        this.syncPm = null;
+      }
       // 0.32: first person everywhere — on foot, on deck, at the helm, in the boat, on a beast's back, under water
       let x = this.playerAnchor.x,
         z = this.playerAnchor.z,
@@ -2550,6 +2659,11 @@ export class OceanWorld {
       this.hideAroundEye();
       this.water.material.uniforms.uCamera.value.copy(this.camera.position);
     } else {
+      this.beastView.update(rdt, 0);
+      if (pmS) {
+        pmS.visible = true;
+        this.syncPm = null;
+      }
       this.camera.fov = 44;
       this.boat.userData.human.visible = !this.onFoot && !this.onRiding && !this.hasShip;
       this.walker.visible = this.onFoot || this.onRiding;
@@ -2571,8 +2685,13 @@ export class OceanWorld {
     // (0.43: nor through your own eyes at all — the far shore was focused on an orbit distance first person no longer
     // has, and the mountains melted into smudges; the title's slow orbit keeps its film look)
     this.post.handsUp =
-      this.viewmodel.busy || this.diveY < -0.5 || !!this.lastState?.inCave || (this.firstPerson && !this.titleView);
+      this.viewmodel.busy ||
+      (this.syncK || 0) > 0.6 ||
+      this.diveY < -0.5 ||
+      !!this.lastState?.inCave ||
+      (this.firstPerson && !this.titleView);
     this.post.warmth = this.diveY < -0.5 ? 0.3 : 1;
+    this.post.bloomK = 1 - 0.45 * (this.syncK || 0);
     const frameDt = Math.min(0.1, (now - (this.lastRender || now)) / 1000);
     this.post.render(this.scene, this.camera, frameDt);
     this.lastRender = now;

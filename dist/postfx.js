@@ -194,6 +194,8 @@ export class PostFX {
     u.uNear.value = camera.near;
     u.uFar.value = camera.far;
     u.uWarmth.value = this.warmth;
+    // 0.61.14: the glow eases off through your beast's eyes, where the foe's burning parts are a few metres away
+    u.uBloom.value = (this.preset.bloom ? 1 : 0) * (this.bloomK ?? 1);
     this.hurt = Math.max(0, this.hurt - dt * 1.6);
     u.uHurt.value = this.hurt;
     this.pass(this.finalMat, old);

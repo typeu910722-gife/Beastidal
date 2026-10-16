@@ -247,3 +247,16 @@ test('The crossing needs Xiaoyue deployed on the basin shore, and it closes chap
   assert.equal(loaded.story.stage, 6);
 });
 console.log(`story tests: ${n} passed`);
+test('0.61.14: when the frenzy turns past half strength it says so, once', () => {
+  const s = inGarden(),
+    st = s.story;
+  tickStory(s, 0.1, { team: WAKE_TEAM });
+  const env = { rng: () => 0.5, canReach: () => true, canMove: () => true };
+  st.beast.hp = FRENZY_HP * 0.4;
+  let told = 0;
+  for (let i = 0; i < 60; i++) {
+    s.elapsed += 0.05;
+    told += tickCombat(s, 0.05, env).filter(e => e.type === 'phase2' && e.id === 'duel').length;
+  }
+  assert.equal(told, 1);
+});

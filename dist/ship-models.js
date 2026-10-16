@@ -1,7 +1,7 @@
 // Procedural warship "比斯泰德號": keel + five walkable deck bands that can be cut away.
-import { surface } from './surfaces.js?v=0.60.0';
+import { surface } from './surfaces.js?v=0.61.14';
 import * as T from './vendor/three.module.min.js';
-import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.60.0';
+import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.61.14';
 export const LOUNGE_SLOTS = [
   [-2.4, -7],
   [2.4, -7],
