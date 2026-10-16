@@ -9,15 +9,15 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.61.13';
-import { bsOf, geneStats } from './bsgenes.js?v=0.61.13';
-import { WILD_BEASTS } from './beasts.js?v=0.61.13';
-import { rollDrops } from './species.js?v=0.61.13';
-import { give } from './bag.js?v=0.61.13';
-import { tally } from './stats.js?v=0.61.13';
-import { damageBonus } from './skills.js?v=0.61.13';
-import { remember } from './memories.js?v=0.61.13';
-import { perks, personality, normalizeTree } from './beast-tree.js?v=0.61.13';
+import { phenotype } from './genetics.js?v=0.61.14';
+import { bsOf, geneStats } from './bsgenes.js?v=0.61.14';
+import { WILD_BEASTS } from './beasts.js?v=0.61.14';
+import { rollDrops } from './species.js?v=0.61.14';
+import { give } from './bag.js?v=0.61.14';
+import { tally } from './stats.js?v=0.61.14';
+import { damageBonus } from './skills.js?v=0.61.14';
+import { remember } from './memories.js?v=0.61.14';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.61.14';
 
 // 0.61 契合 (sync): when a fight starts and your beast is out beside you (not ridden), you sink into it — the view
 // moves behind its eyes and you fight as it: you move it, aim it, time its blows and dodge for it. Your own body
@@ -872,7 +872,7 @@ function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
       (syncOn(s) || dist(w, ally) + 2 < dist(w, me) || (personality(p)?.taunt && dist(w, ally) < 9)),
     target = onAlly ? ally : me,
     d = dist(w, target);
-  // 0.61.13: the moment it turns — faster, harder — is told once, so you know the fight has changed
+  // 0.61.14: the moment it turns — faster, harder — is told once, so you know the fight has changed
   if (phase2 && !ai.phase2Told) {
     ai.phase2Told = true;
     ev.push({ type: 'phase2', id, x: w.x, z: w.z });

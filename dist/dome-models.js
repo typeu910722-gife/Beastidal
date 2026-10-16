@@ -14,9 +14,9 @@ import {
   DEER,
   birdAt,
   deerAt
-} from './dome.js?v=0.61.13';
-import { grainTexture } from './realism.js?v=0.61.13';
-import { OUTPOST, RIFT, TEAR_AT } from './chapter3.js?v=0.61.13';
+} from './dome.js?v=0.61.14';
+import { grainTexture } from './realism.js?v=0.61.14';
+import { OUTPOST, RIFT, TEAR_AT } from './chapter3.js?v=0.61.14';
 import { mergeGeometries } from './vendor/addons/utils/BufferGeometryUtils.js';
 
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.9, ...extra });

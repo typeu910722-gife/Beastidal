@@ -1,8 +1,8 @@
 // Loads the baked sculpted bodies (dist/models/sculpt-<plan>.json, made by scripts/bake-sculpt.mjs) and hands
 // them to creatures.js. Without them the standing beasts fall back to their composite bodies.
 import * as T from './vendor/three.module.min.js';
-import { setSculpt } from './creatures.js?v=0.61.13';
-import { setXiaoyueSculpt } from './story-models.js?v=0.61.13';
+import { setSculpt } from './creatures.js?v=0.61.14';
+import { setXiaoyueSculpt } from './story-models.js?v=0.61.14';
 
 export const SCULPT_PLANS = ['dragon', 'wraith', 'dryad'];
 const bytes = b64 => {

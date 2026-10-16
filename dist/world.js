@@ -1,47 +1,47 @@
-import { expansionModels } from './expansion-models.js?v=0.61.13';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.61.13';
-import { normalizeHousing, penId } from './housing.js?v=0.61.13';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.61.13';
-export { makeCreature } from './creatures.js?v=0.61.13';
-import { makeIslands } from './island-models.js?v=0.61.13';
-import { facilityId } from './facilities.js?v=0.61.13';
+import { expansionModels } from './expansion-models.js?v=0.61.14';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.61.14';
+import { normalizeHousing, penId } from './housing.js?v=0.61.14';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.61.14';
+export { makeCreature } from './creatures.js?v=0.61.14';
+import { makeIslands } from './island-models.js?v=0.61.14';
+import { facilityId } from './facilities.js?v=0.61.14';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.61.13';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.61.13';
-import { surface } from './surfaces.js?v=0.61.13';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.61.13';
-import { makeLake } from './lake-models.js?v=0.61.13';
-import { groundAt, LANDMARKS } from './lake.js?v=0.61.13';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.61.13';
-import { makeStatues } from './statues.js?v=0.61.13';
-import { animateGarden } from './garden-models.js?v=0.61.13';
-import { ViewModel } from './viewmodel.js?v=0.61.13';
-import { BeastView } from './beast-view.js?v=0.61.13';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.61.13';
-import { SYNC } from './combat.js?v=0.61.13';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.61.13';
-import { bakeStatic } from './bake.js?v=0.61.13';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.61.13';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.61.13';
-import { guideGone, domeCracked } from './chapter2.js?v=0.61.13';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.61.13';
-import { PostFX } from './postfx.js?v=0.61.13';
-import { makeHuman, animateHuman } from './human.js?v=0.61.13';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.61.13';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.61.13';
-import { buildError } from './rules.js?v=0.61.13';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.61.13';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.61.13';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.61.13';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.61.13';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.61.13';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.61.13';
-import { CombatFX } from './combat-fx.js?v=0.61.13';
-import { syncPlots } from './land-models.js?v=0.61.13';
-import { plotTargets } from './reclaim.js?v=0.61.13';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.61.13';
-import { dayPhase } from './clock.js?v=0.61.13';
-import { weatherAt, season } from './weather.js?v=0.61.13';
+import { phenotype, seeded } from './genetics.js?v=0.61.14';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.61.14';
+import { surface } from './surfaces.js?v=0.61.14';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.61.14';
+import { makeLake } from './lake-models.js?v=0.61.14';
+import { groundAt, LANDMARKS } from './lake.js?v=0.61.14';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.61.14';
+import { makeStatues } from './statues.js?v=0.61.14';
+import { animateGarden } from './garden-models.js?v=0.61.14';
+import { ViewModel } from './viewmodel.js?v=0.61.14';
+import { BeastView } from './beast-view.js?v=0.61.14';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.61.14';
+import { SYNC } from './combat.js?v=0.61.14';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.61.14';
+import { bakeStatic } from './bake.js?v=0.61.14';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.61.14';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.61.14';
+import { guideGone, domeCracked } from './chapter2.js?v=0.61.14';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.61.14';
+import { PostFX } from './postfx.js?v=0.61.14';
+import { makeHuman, animateHuman } from './human.js?v=0.61.14';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.61.14';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.61.14';
+import { buildError } from './rules.js?v=0.61.14';
+import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.61.14';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.61.14';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.61.14';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.61.14';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.61.14';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.61.14';
+import { CombatFX } from './combat-fx.js?v=0.61.14';
+import { syncPlots } from './land-models.js?v=0.61.14';
+import { plotTargets } from './reclaim.js?v=0.61.14';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.61.14';
+import { dayPhase } from './clock.js?v=0.61.14';
+import { weatherAt, season } from './weather.js?v=0.61.14';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -1575,7 +1575,7 @@ export class OceanWorld {
           m.position.z += Math.cos(c.heading || 0) * k;
         }
         if (ud.hitAt && s.elapsed - ud.hitAt < 0.16) m.rotation.x += 0.3 * (1 - (s.elapsed - ud.hitAt) / 0.16);
-        // 0.61.13: and flashes white for a moment (its materials are shared with its kind, so on its first hit it gets
+        // 0.61.14: and flashes white for a moment (its materials are shared with its kind, so on its first hit it gets
         // copies of its own — keeping any shader hooks, so it looks the same)
         if (ud.hitAt && s.elapsed - ud.hitAt < 0.14) {
           if (!ud.ownMats) {
@@ -2199,7 +2199,7 @@ export class OceanWorld {
     const nightDark = !cabin && !opts.title && (this.nightLevel || 0) > 0.45,
       dark = (diving || s.inCave) && !cabin && !opts.title,
       ease = Math.min(1, dt * 4);
-    // 0.61.13: through your beast's eyes the foe is a few metres off, not across the cave — a full beam blew 嘯岳 out
+    // 0.61.14: through your beast's eyes the foe is a few metres off, not across the cave — a full beam blew 嘯岳 out
     // to white; the bond dims it to a lantern's worth
     const dimK = 1 - 0.7 * (this.syncK || 0);
     this.torch.intensity += ((dark ? (diving ? 260 : 130) : nightDark ? 110 : 0) * dimK - this.torch.intensity) * ease;
@@ -2572,7 +2572,7 @@ export class OceanWorld {
         fz = -Math.cos(this.yaw),
         pch = this.syncPitch || 0,
         k = this.syncK * this.syncK * (3 - 2 * this.syncK);
-      // 0.61.13: a big beast's eyes are capped at a rider's height (at 3.5 m the fight was something seen from a
+      // 0.61.14: a big beast's eyes are capped at a rider's height (at 3.5 m the fight was something seen from a
       // ladder), and when a foe is right on top of it the view eases back a little so a giant like 嘯岳 still fits
       let back = 0;
       const near = [...(st0?.wild || []), st0?.story?.duel && st0.story.beast, st0?.expedition?.boss].filter(

@@ -295,9 +295,13 @@ body.syncing.landscape-play #boss-bar {
   position: absolute;
   top: -3px;
   bottom: -3px;
-  left: var(--yield, -99px);
+  left: var(--yield, 0);
   width: 2px;
+  display: none;
   background: #ffe7a8;
   box-shadow: 0 0 6px #ffd27a;
   pointer-events: none;
+}
+#boss-bar.yields::after {
+  display: block;
 }
