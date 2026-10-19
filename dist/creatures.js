@@ -6,7 +6,8 @@
 // materials, iris-textured eyes and ray-veined fin membranes. Swimming is done on the GPU: the body and its baked-on
 // parts share one wave deformation, so tails, crests and ribbons ripple together.
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded, dnaCode } from './genetics.js?v=0.63.0';
+import { phenotype, seeded, dnaCode } from './genetics.js?v=0.64.0';
+import { mergeGeometries } from './vendor/addons/utils/BufferGeometryUtils.js';
 
 const V = T.Vector3;
 let detail = 'high';
@@ -415,12 +416,75 @@ function addMesh(parent, geo, mat, pos, rot, scale) {
 // Moves a part's transform into its geometry so the shared swim wave (which works in body space) bends it too.
 function bake(m) {
   m.updateMatrix();
-  m.geometry = m.geometry.clone();
-  m.geometry.applyMatrix4(m.matrix);
+  m.geometry = transformed(m.geometry, m.matrix);
   m.position.set(0, 0, 0);
   m.rotation.set(0, 0, 0);
   m.scale.set(1, 1, 1);
   return m;
+}
+
+// Body outlines shared by the builders and the species signatures (u = 0 at the tail end, 1 at the head end)
+const FISH_RX = curve([
+    [0, 0.03],
+    [0.12, 0.09],
+    [0.4, 0.4],
+    [0.62, 0.46],
+    [0.86, 0.33],
+    [1, 0.03]
+  ]),
+  FISH_RY = curve([
+    [0, 0.05],
+    [0.12, 0.14],
+    [0.4, 0.52],
+    [0.62, 0.55],
+    [0.86, 0.36],
+    [1, 0.05]
+  ]);
+const RAY_RX = curve([
+    [0, 0.12],
+    [0.2, 0.95],
+    [0.45, 1.75],
+    [0.62, 1.7],
+    [0.82, 0.95],
+    [1, 0.25]
+  ]),
+  RAY_RY = curve([
+    [0, 0.06],
+    [0.3, 0.17],
+    [0.55, 0.24],
+    [0.8, 0.2],
+    [1, 0.08]
+  ]);
+const SERPENT_R = curve([
+  [0, 0.02],
+  [0.08, 0.14],
+  [0.5, 0.36],
+  [0.8, 0.4],
+  [0.88, 0.33],
+  [0.95, 0.4],
+  [1, 0.14]
+]);
+const LIZARD_R = curve([
+  [0, 0.02],
+  [0.35, 0.12],
+  [0.55, 0.3],
+  [0.75, 0.3],
+  [0.85, 0.17],
+  [0.92, 0.2],
+  [1, 0.05]
+]);
+
+// A copy of geo moved by matrix. A mirroring matrix also reverses the triangles' winding, so their front faces (and
+// the lighting of double-sided membranes) stay on the side the normals point to.
+function transformed(geo, matrix) {
+  const g = geo.clone().applyMatrix4(matrix);
+  if (matrix.determinant() < 0) {
+    if (!g.index) g.setIndex([...Array(g.attributes.position.count).keys()]);
+    const ix = g.index.array;
+    for (let i = 0; i < ix.length; i += 3) [ix[i + 1], ix[i + 2]] = [ix[i + 2], ix[i + 1]];
+    g.index.needsUpdate = true;
+  }
+  return g;
 }
 
 /* ---------------------------------------------------------------- the kit handed to species builders */
@@ -687,22 +751,8 @@ function fish(K, body) {
   K.u.uLen.value = 2.8;
   K.u.uSwimA.value = 0.2;
   K.u.uSwimF.value = 2.4;
-  const rx = curve([
-      [0, 0.03],
-      [0.12, 0.09],
-      [0.4, 0.4],
-      [0.62, 0.46],
-      [0.86, 0.33],
-      [1, 0.03]
-    ]),
-    ry = curve([
-      [0, 0.05],
-      [0.12, 0.14],
-      [0.4, 0.52],
-      [0.62, 0.55],
-      [0.86, 0.36],
-      [1, 0.05]
-    ]);
+  const rx = FISH_RX,
+    ry = FISH_RY;
   addMesh(
     body,
     sweepGeometry(straight(-1.45, 1.35), u => [rx(u), ry(u), (u - 0.6) * 0.06], segs(44, 22), segs(28, 14)),
@@ -728,7 +778,9 @@ function fish(K, body) {
         [0, side * 0.3, 0]
       )
     );
-  crest(K, body, -0.75, 0.55, 0.42, 0.35 + p.fin * 0.22, p.horn ? p.horn * 2 + 2 : 0);
+  // 骨刃 and 雷紋 grow their own dorsal blades (signature below)
+  if (!(p.family === 'sea' && (p.strain === 0 || p.strain === 3)))
+    crest(K, body, -0.75, 0.55, 0.42, 0.35 + p.fin * 0.22, p.horn ? p.horn * 2 + 2 : 0);
   // caudal fin by tail gene: fan, forked, ribbon, spiked
   const L = 0.7 + p.tail * 0.18,
     tails = [
@@ -809,21 +861,8 @@ function ray(K, body) {
   const { p } = K;
   K.u.uSwimA.value = 0.32;
   K.u.uSpan.value = 1.85;
-  const rx = curve([
-      [0, 0.12],
-      [0.2, 0.95],
-      [0.45, 1.75],
-      [0.62, 1.7],
-      [0.82, 0.95],
-      [1, 0.25]
-    ]),
-    ry = curve([
-      [0, 0.06],
-      [0.3, 0.17],
-      [0.55, 0.24],
-      [0.8, 0.2],
-      [1, 0.08]
-    ]);
+  const rx = RAY_RX,
+    ry = RAY_RY;
   addMesh(
     body,
     sweepGeometry(straight(-0.95, 1.05), u => [rx(u), ry(u), 0], segs(36, 18), segs(40, 18)),
@@ -1046,11 +1085,12 @@ function turtle(K, body) {
     opacity: 0.85,
     metalness: 0.1
   });
-  const crystals = 3 + p.horn * 3;
+  // 0.64: only the crystal-shelled species (晶甲) grows them, and more of them
+  const crystals = p.family === 'sea' && p.strain === 0 ? 8 + p.horn * 3 : 0;
   for (let i = 0; i < crystals; i++) {
     const a = K.rnd() * Math.PI * 2,
       r = K.rnd() * 0.65,
-      h = 0.18 + K.rnd() * 0.35;
+      h = 0.25 + K.rnd() * 0.45;
     addMesh(
       body,
       new T.OctahedronGeometry(1, 0),
@@ -1128,15 +1168,7 @@ function serpent(K, body) {
   K.u.uSwimA.value = 0.32;
   K.u.uSwimF.value = 1.5;
   const len = 5 + p.tail * 0.6;
-  const r = curve([
-    [0, 0.02],
-    [0.08, 0.14],
-    [0.5, 0.36],
-    [0.8, 0.4],
-    [0.88, 0.33],
-    [0.95, 0.4],
-    [1, 0.14]
-  ]);
+  const r = SERPENT_R;
   addMesh(
     body,
     sweepGeometry(straight(1.9 - len, 1.9), u => [r(u), r(u) * 0.95, 0], segs(80, 36), segs(24, 12)),
@@ -1261,6 +1293,7 @@ function cephalopod(K, body) {
   armGroup.position.set(0, -0.05, 0.85);
   armGroup.rotation.x = -Math.PI / 2.4;
   body.add(armGroup);
+  K.parts.arms = armGroup;
   const armMat = K.skinMat('smooth', 3);
   K.u.uLen.value = 2;
   for (let i = 0; i < 10; i++) {
@@ -1542,15 +1575,7 @@ function lizard(K, body) {
   K.u.uSwimA.value = 0.08;
   K.u.uSwimF.value = 2;
   const mat = K.skinMat('scale');
-  const r = curve([
-    [0, 0.02],
-    [0.35, 0.12],
-    [0.55, 0.3],
-    [0.75, 0.3],
-    [0.85, 0.17],
-    [0.92, 0.2],
-    [1, 0.05]
-  ]);
+  const r = LIZARD_R;
   addMesh(
     body,
     sweepGeometry(straight(-2.1, 1.45), u => [r(u) * 1.15, r(u) * 0.85, 0.55], segs(56, 24), segs(22, 12)),
@@ -1653,10 +1678,10 @@ function deer(K, body) {
   if (p.eyes > 2) extraEyes(K, head, [0, 0.16, 0.1], p.eyes - 2);
   for (const side of [-1, 1])
     addMesh(head, new T.ConeGeometry(0.05, 0.2, 6), fur, [side * 0.12, 0.14, -0.08], [-0.3, 0, side * 0.9]);
-  // branching antlers with crystal tips
+  // branching antlers with crystal tips (岸角; the other deer grow horns of their own, see the signatures)
   const antler = K.plain(pal.belly.clone().offsetHSL(0.05, -0.3, 0), { roughness: 0.6 }),
     tip = K.glowMat();
-  for (const side of [-1, 1]) {
+  for (const side of p.strain ? [] : [-1, 1]) {
     const base = [side * 0.07, 0.12, -0.02],
       top = [side * 0.35, 0.65 + p.horn * 0.08, -0.15];
     addMesh(head, taper([base, [side * 0.2, 0.4, -0.05], top], 0.03, 0.014, 10, 6), antler);
@@ -1866,7 +1891,7 @@ function armadillo(K, body) {
   );
   // moss tufts in the band grooves
   const moss = K.plain(hsl(0.28, 0.55, 0.32), { roughness: 0.9 });
-  for (let i = 0; i < 6 + p.pattern * 3; i++) {
+  for (let i = 0; i < (p.strain ? 0 : 14 + p.pattern * 3); i++) {
     const a = K.rnd() * Math.PI,
       z = -0.6 + K.rnd() * 1.2;
     addMesh(body, new T.IcosahedronGeometry(0.07, 0), moss, [Math.cos(a) * 0.48, 0.55 + Math.sin(a) * 0.48, z]);
@@ -1948,6 +1973,1915 @@ function fusionTrait(K, body, info) {
     );
   } else if (key === 'land-0' || key === 'land-1') {
     horns(K, body, info.head, 1, 0.4, 0.8);
+  }
+}
+
+/* ---------------------------------------------------------------- 0.64: species signatures */
+// The four strains of a form used to share one body and differ only in colour. Now every species has a build of its
+// own (PROPORTIONS) and a signature feature (SIGNATURES), so the 64 tell apart by silhouette alone. Parts on
+// swimming bodies are baked with the body's swim mode so they ripple with it.
+function sail(K, parent, outline, y, mat, mode = 1) {
+  // a membrane standing on the midline; outline points are [z, height]
+  const m = addMesh(parent, membraneGeometry(outline), mat, [0, y, 0], [0, -Math.PI / 2, 0]);
+  if (mode) bake(m);
+  return m;
+}
+function rod(parent, pts, r0, r1, mat, mode = 0, S = 10, R = 6) {
+  const m = addMesh(parent, taper(pts, r0, r1, S, R), mat);
+  if (mode) bake(m);
+  return m;
+}
+function knob(parent, geo, mat, pos, rot, scale, mode = 0) {
+  const m = addMesh(parent, geo, mat, pos, rot, scale);
+  if (mode) bake(m);
+  return m;
+}
+// a saw-toothed outline from z0 to z1: n teeth, tallest mid-way
+function teeth(z0, z1, h, n, drop = 0.45) {
+  const o = [[z0, 0]];
+  for (let i = 0; i < n; i++) {
+    const env = 0.45 + 0.55 * Math.sin(((i + 0.5) / n) * Math.PI);
+    o.push([mix(z0, z1, (i + 0.5) / n), h * env], [mix(z0, z1, (i + 1) / n), h * env * drop]);
+  }
+  o.push([z1, 0]);
+  return o;
+}
+// a ring of n petals of length len round `at`, tilted up by `tilt` (negative droops), starting r0 out from the centre
+function petalRing(parent, at, n, len, tilt, mat, mode = 0, phase = 0, r0 = 0) {
+  const geo = membraneGeometry([
+    [0, 0],
+    [0.25, 0.3],
+    [0.7, 0.33],
+    [1, 0],
+    [0.7, -0.33],
+    [0.25, -0.3]
+  ]);
+  for (let k = 0; k < n; k++) {
+    const a = (k / n) * Math.PI * 2 + phase,
+      m = addMesh(parent, geo, mat, [at[0] + Math.cos(a) * r0, at[1], at[2] - Math.sin(a) * r0], null, [
+        len,
+        len * 0.6,
+        1
+      ]);
+    m.rotation.set(Math.PI / 2, a, tilt, 'YZX');
+    if (mode) bake(m);
+  }
+}
+// a cone standing on `at`, leaning by `rot`
+const spike = (parent, mat, at, r, h, rot = [0, 0, 0], mode = 0, sides = 6) =>
+  knob(parent, new T.ConeGeometry(r, h, sides), mat, at, rot, null, mode);
+const boneMat = (K, mode = 0) =>
+  K.plain(K.pal.belly.clone().offsetHSL(0.04, -0.25, 0.06), { roughness: 0.5, clearcoat: 0.5 }, mode);
+const crystalOf = (K, mode = 0, color = K.pal.glow) =>
+  K.plain(
+    color,
+    { emissive: color, emissiveIntensity: 0.45 + K.p.glow, roughness: 0.08, transparent: true, opacity: 0.86 },
+    mode
+  );
+const emberOf = (K, mode = 0) =>
+  K.plain(hsl(0.05, 0.95, 0.55), { emissive: hsl(0.06, 1, 0.5), emissiveIntensity: 1.3, roughness: 0.4 }, mode);
+const rockOf = (K, mode = 0) =>
+  K.plain(hsl(K.pal.hue * 0.2 + 0.07, 0.12, 0.38), { roughness: 0.95, clearcoat: 0 }, mode);
+const goldOf = (K, mode = 0) => K.plain(hsl(0.12, 0.75, 0.52), { metalness: 0.85, roughness: 0.28 }, mode);
+// tops of the swept bodies, in body space
+const fishTop = z => FISH_RY((z + 1.45) / 2.8) + ((z + 1.45) / 2.8 - 0.6) * 0.06;
+const rayTop = (x, z) => {
+  const u = Math.max(0, Math.min(1, (z + 0.95) / 2)),
+    k = 1 - (x / RAY_RX(u)) ** 2;
+  return RAY_RY(u) * Math.sqrt(Math.max(0, k));
+};
+const serpentTop = (z, len) => SERPENT_R(Math.max(0, Math.min(1, (z - 1.9 + len) / len))) * 0.95;
+const lizardTop = z => 0.55 + LIZARD_R(Math.max(0, Math.min(1, (z + 2.1) / 3.55))) * 0.85;
+const shellTop = (x, z) => 0.12 + 0.55 * Math.sqrt(Math.max(0, 1 - (x / 0.92) ** 2 - ((z + 0.02) / 1.12) ** 2));
+const carapaceTop = (x, z) => 0.25 + 0.42 * Math.sqrt(Math.max(0, 1 - (x / 1.05) ** 2 - (z / 0.82) ** 2));
+// the nautilus shell's spiral (see nautilus()): centre line, tube radius and outward direction at t in 0..1
+function whorl(t) {
+  const a = t * 3 * Math.PI,
+    r = 0.1 * Math.exp(a * 0.105);
+  return {
+    at: [0, 0.75 + Math.sin(a) * r, -0.25 - Math.cos(a) * r],
+    rad: r * 0.62,
+    n: [0, Math.sin(a), -Math.cos(a)],
+    a
+  };
+}
+const along = (a, n, d) => a.map((v, i) => v + n[i] * d);
+
+// body scale per species [x, y, z]; land feet stand at y = 0, so any scale keeps them on the ground
+const PROPORTIONS = {
+  'sea-0-0': [1, 1.1, 0.95],
+  'sea-0-1': [0.72, 0.78, 1.22],
+  'sea-0-2': [1.1, 1.15, 0.86],
+  'sea-0-3': [0.9, 1, 1.08],
+  'sea-1-0': [1.05, 1, 1],
+  'sea-1-1': [1.28, 0.85, 0.78],
+  'sea-1-2': [1, 0.62, 1.12],
+  'sea-1-3': [1.12, 1, 0.95],
+  'sea-2-1': [0.82, 1.35, 0.82],
+  'sea-2-2': [1.32, 0.66, 1.32],
+  'sea-2-3': [0.95, 1.12, 0.95],
+  'sea-3-0': [1, 1.05, 1],
+  'sea-3-1': [1.12, 0.88, 1.05],
+  'sea-3-2': [0.9, 0.8, 1.2],
+  'sea-3-3': [1, 1.22, 0.98],
+  'deep-0-0': [1.12, 1.1, 0.95],
+  'deep-0-1': [0.78, 0.85, 1.28],
+  'deep-0-2': [1, 1, 1.05],
+  'deep-0-3': [1.05, 1.05, 0.92],
+  'deep-1-0': [1.05, 1, 0.88],
+  'deep-1-1': [0.85, 0.9, 1.3],
+  'deep-1-2': [1.22, 1.2, 0.78],
+  'deep-2-0': [1.18, 0.85, 1],
+  'deep-2-1': [1, 1.12, 1],
+  'deep-2-2': [1.05, 1, 1],
+  'deep-2-3': [0.85, 1, 0.85],
+  'deep-3-0': [1.1, 1.1, 1.1],
+  'deep-3-1': [1.15, 1.15, 1.15],
+  'land-0-0': [1.15, 1, 0.9],
+  'land-0-1': [0.82, 0.88, 1.2],
+  'land-0-3': [1.1, 1.05, 0.95],
+  'land-1-1': [0.95, 1.08, 0.95],
+  'land-1-2': [1.15, 0.95, 1.08],
+  'land-1-3': [0.9, 1.04, 1],
+  'land-2-0': [0.95, 1, 1.05],
+  'land-2-1': [1.15, 1, 1.05],
+  'land-2-2': [1, 1.08, 1],
+  'land-2-3': [1.15, 0.92, 0.92],
+  'land-3-1': [1.15, 1.1, 1],
+  'land-3-2': [1.05, 0.95, 1.12],
+  'land-3-3': [0.95, 1, 1],
+  'flora-0-1': [0.9, 1.05, 1.05],
+  'flora-0-2': [1.05, 1.1, 0.9],
+  'flora-0-3': [0.95, 0.95, 1.1],
+  'flora-1-1': [1.15, 0.8, 1.05],
+  'flora-1-3': [0.95, 1, 1.1],
+  'flora-2-1': [1.2, 0.8, 1.2],
+  'flora-2-2': [0.9, 1.1, 0.9],
+  'flora-3-1': [1.05, 0.95, 1.05],
+  'flora-3-3': [1.1, 1, 1.05]
+};
+
+const SIGNATURES = {
+  /* ------------ 鰭獸 (fish) */
+  // 骨刃: a serrated blade of bone down the back, a bony ram on the snout, spurred cheeks
+  'sea-0-0'(K, b) {
+    const bone = boneMat(K, 1),
+      z0 = -1.05,
+      z1 = 0.75,
+      n = 7;
+    sail(K, b, teeth(z0, z1, 0.95, n, 0.5), 0.36, K.finMat(1));
+    for (let i = 0; i < n; i++) {
+      const t = (i + 0.5) / n,
+        z = mix(z0, z1, t),
+        h = 0.95 * (0.45 + 0.55 * Math.sin(t * Math.PI));
+      rod(
+        b,
+        [
+          [0, 0.36, z + 0.04],
+          [0, 0.36 + h * 1.04, z]
+        ],
+        0.04,
+        0.006,
+        bone,
+        1,
+        6,
+        5
+      );
+    }
+    rod(
+      b,
+      [
+        [0, 0.0, 1.22],
+        [0, -0.01, 1.5],
+        [0, 0.03, 1.78]
+      ],
+      0.075,
+      0.01,
+      bone,
+      1
+    );
+    for (const side of [-1, 1])
+      rod(
+        b,
+        [
+          [side * 0.3, 0.25, 0.75],
+          [side * 0.46, 0.38, 0.35]
+        ],
+        0.045,
+        0.006,
+        bone,
+        1
+      );
+  },
+  // 銀梭: a slender torpedo with a needle bill, tuna finlets and a mirror stripe down each flank
+  'sea-0-1'(K, b) {
+    const bone = boneMat(K, 1),
+      silver = K.plain(hsl(0.55, 0.12, 0.86), { metalness: 0.9, roughness: 0.18 }, 1);
+    rod(
+      b,
+      [
+        [0, -0.03, 1.2],
+        [0, -0.04, 1.8],
+        [0, -0.02, 2.5]
+      ],
+      0.065,
+      0.005,
+      bone,
+      1,
+      14
+    );
+    for (let i = 0; i < 5; i++) {
+      const z = -1.32 + i * 0.13;
+      for (const [y, s] of [
+        [fishTop(z) - 0.03, 1],
+        [-fishTop(z) * 0.85 + 0.03, -1]
+      ])
+        sail(
+          K,
+          b,
+          [
+            [z + 0.05, 0],
+            [z - 0.02, 0.13 * s],
+            [z - 0.09, 0]
+          ],
+          y,
+          K.finMat(1)
+        );
+    }
+    for (const side of [-1, 1])
+      rod(
+        b,
+        [
+          [side * 0.4, 0.1, 0.85],
+          [side * 0.47, 0.08, 0.1],
+          [side * 0.3, 0.06, -0.7],
+          [side * 0.08, 0.03, -1.35]
+        ],
+        0.03,
+        0.01,
+        silver,
+        1,
+        24,
+        5
+      );
+  },
+  // 赤鬃: a lionfish mane of long banded spines round the head, and great fan pectorals
+  'sea-0-2'(K, b) {
+    const banded = [K.plain(K.pal.accent, { roughness: 0.45 }, 1), K.plain(K.pal.belly, { roughness: 0.45 }, 1)];
+    for (let k = 0; k < 13; k++) {
+      const a = mix(-1.95, 1.95, k / 12),
+        dx = Math.sin(a),
+        dy = Math.cos(a),
+        root = [dx * 0.3, 0.05 + dy * 0.4, 0.62],
+        L = 0.75 + (1 - Math.abs(a) / 2) * 0.45;
+      rod(
+        b,
+        [root, [root[0] + dx * L * 0.6, root[1] + dy * L * 0.6, 0.38], [root[0] + dx * L, root[1] + dy * L, 0.05]],
+        0.03,
+        0.005,
+        banded[k % 2],
+        1,
+        8,
+        5
+      );
+    }
+    for (const side of [-1, 1]) K.limbs.push(finFan(K, b, [side * 0.4, -0.12, 0.42], 1.2, 1.5, side));
+  },
+  // 雷紋: a lightning-bolt dorsal and keel, edged in light, and a forked bolt of a horn
+  'sea-0-3'(K, b) {
+    const glow = K.glowMat(1),
+      top = [
+        [-1.15, 0],
+        [-0.85, 0.55],
+        [-0.75, 0.3],
+        [-0.35, 0.95],
+        [-0.2, 0.5],
+        [0.25, 0.85],
+        [0.35, 0.35],
+        [0.7, 0]
+      ],
+      keel = [
+        [-0.95, 0],
+        [-0.7, -0.55],
+        [-0.55, -0.25],
+        [-0.2, -0.6],
+        [0.1, 0]
+      ];
+    sail(K, b, top, 0.4, K.finMat(1));
+    sail(K, b, keel, -0.3, K.finMat(1));
+    for (const [line, y] of [
+      [top, 0.4],
+      [keel, -0.3]
+    ])
+      for (let i = 1; i < line.length - 1; i++)
+        rod(
+          b,
+          [
+            [0, y + line[i][1], line[i][0]],
+            [0, y + line[i + 1][1], line[i + 1][0]]
+          ],
+          0.02,
+          0.02,
+          glow,
+          1,
+          2,
+          4
+        );
+    const bolt = [
+      [0, 0.42, 0.95],
+      [0.05, 0.72, 1.02],
+      [-0.06, 0.78, 1.18],
+      [0.02, 1.08, 1.38]
+    ];
+    for (let i = 0; i < bolt.length - 1; i++)
+      rod(b, [bolt[i], bolt[i + 1]], 0.05 - i * 0.012, 0.035 - i * 0.012, glow, 1, 2, 5);
+  },
+  /* ------------ 魔魟 (ray) */
+  // 裂翼: each wing splits into a long back-swept blade
+  'sea-1-0'(K, b) {
+    for (const side of [-1, 1])
+      knob(
+        b,
+        membraneGeometry([
+          [0.55, -0.25],
+          [1.55, 0.05],
+          [2.4, -1.3],
+          [1.5, -0.6],
+          [0.6, -0.72]
+        ]),
+        K.finMat(2),
+        [0, 0.02, 0],
+        [Math.PI / 2, 0, 0],
+        [side, 1, 1],
+        2
+      );
+  },
+  // 月影: a crescent, its horns swept far forward, a pale moon on its back
+  'sea-1-1'(K, b) {
+    const skin = K.skinMat('smooth', 2);
+    for (const side of [-1, 1])
+      rod(
+        b,
+        [
+          [side * 0.35, 0, 0.92],
+          [side * 0.9, 0.04, 1.5],
+          [side * 1.25, 0.08, 1.75],
+          [side * 1.48, 0.1, 1.5]
+        ],
+        0.12,
+        0.012,
+        skin,
+        2,
+        16,
+        8
+      );
+    knob(
+      b,
+      new T.CylinderGeometry(0.34, 0.34, 0.04, 32),
+      K.glowMat(2),
+      [0, rayTop(0, 0) + 0.005, -0.05],
+      null,
+      null,
+      2
+    );
+    knob(
+      b,
+      new T.TorusGeometry(0.4, 0.025, 6, 40),
+      K.plain(K.pal.belly, {}, 2),
+      [0, rayTop(0, 0), -0.05],
+      [Math.PI / 2, 0, 0],
+      null,
+      2
+    );
+  },
+  // 砂紋: a flat bottom-dweller studded with thorny tubercles, a trio of barbs on the tail
+  'sea-1-2'(K, b) {
+    const bone = boneMat(K, 2);
+    for (let i = 0; i < 9; i++) {
+      const z = mix(-0.75, 0.85, i / 8);
+      spike(b, bone, [0, rayTop(0, z) + 0.08, z], 0.06, 0.24, [0, 0, 0], 2, 5);
+      for (const side of [-1, 1])
+        if (i % 2 === 0) {
+          const x = side * 0.55;
+          spike(b, bone, [x, rayTop(x, z) + 0.05, z], 0.04, 0.16, [0, 0, -side * 0.3], 2, 5);
+        }
+    }
+    for (const x of [-0.07, 0, 0.07]) spike(b, bone, [x, 0.07, -1.25], 0.035, 0.3, [-Math.PI / 2.3, 0, x * 3], 2, 5);
+  },
+  // 焰緣: tongues of flame lick all along the wing edges
+  'sea-1-3'(K, b) {
+    const flame = K.plain(
+        hsl(0.06, 0.95, 0.55),
+        { emissive: hsl(0.07, 1, 0.5), emissiveIntensity: 1, side: T.DoubleSide, transparent: true, opacity: 0.9 },
+        2
+      ),
+      tongue = membraneGeometry([
+        [0, 0.09],
+        [0.2, 0.15],
+        [0.32, 0.05],
+        [0.55, 0.1],
+        [0.44, -0.02],
+        [0.62, -0.06],
+        [0.22, -0.1],
+        [0, -0.09]
+      ]);
+    for (const side of [-1, 1])
+      for (let k = 0; k < 8; k++) {
+        const u = 0.2 + k * 0.09,
+          z = -0.95 + 2 * u,
+          x = RAY_RX(u) * 0.95,
+          size = 0.7 + Math.sin(((u - 0.2) / 0.65) * Math.PI) * 0.6;
+        knob(b, tongue, flame, [side * x, 0, z], [Math.PI / 2, 0, side * -0.35], [side * size, size, 1], 2);
+      }
+  },
+  /* ------------ 觸母 (jelly) */
+  // 星眸: a star of long glowing rays round the rim, one great eye on the crown
+  'sea-2-0'(K, b) {
+    const glow = K.glowMat();
+    for (let k = 0; k < 6; k++) {
+      const a = (k / 6) * Math.PI * 2;
+      spike(b, glow, [Math.cos(a) * 1.3, 0.18, -Math.sin(a) * 1.3], 0.09, 0.75, [0, a, -Math.PI / 2], 0, 4);
+    }
+    const star = [];
+    for (let k = 0; k < 10; k++) {
+      const a = (k / 10) * Math.PI * 2,
+        r = k % 2 ? 0.16 : 0.42;
+      star.push([Math.cos(a) * r, Math.sin(a) * r]);
+    }
+    knob(
+      b,
+      membraneGeometry(star),
+      K.plain(K.pal.glow, { emissive: K.pal.glow, emissiveIntensity: 0.8, side: T.DoubleSide }),
+      [0, 1.0, 0],
+      [-Math.PI / 2, 0, 0]
+    );
+    K.eye(b, [0, 1.04, 0.05], 0.15);
+  },
+  // 霧鈴: a tall bell with a glowing clapper and veils of mist trailing below
+  'sea-2-1'(K, b) {
+    const mist = K.plain(
+      K.pal.accent.clone().lerp(new T.Color(0xffffff), 0.5),
+      {
+        transparent: true,
+        opacity: 0.32,
+        side: T.DoubleSide,
+        depthWrite: false,
+        emissive: K.pal.glow,
+        emissiveIntensity: 0.15
+      },
+      3
+    );
+    rod(
+      b,
+      [
+        [0, 0.45, 0],
+        [0, -0.4, 0],
+        [0, -0.95, 0]
+      ],
+      0.03,
+      0.02,
+      K.plain(K.pal.belly, {}, 3),
+      3
+    );
+    knob(b, new T.SphereGeometry(0.16, 16, 12), K.glowMat(3), [0, -1.05, 0], null, [1, 1.25, 1], 3);
+    for (let k = 0; k < 6; k++) {
+      const a = (k / 6) * Math.PI * 2 + 0.25,
+        pts = [];
+      for (let i = 0; i <= 6; i++)
+        pts.push([Math.cos(a) * (0.82 - i * 0.04), 0.1 - i * 0.32, Math.sin(a) * (0.82 - i * 0.04)]);
+      addMesh(
+        b,
+        sweepGeometry(line(pts), u => [mix(0.06, 0.3, u), 0.012, 0], segs(20, 10), 6),
+        mist
+      );
+    }
+  },
+  // 琉璃: a wide glass saucer ringed with crystal facets and a flared skirt
+  'sea-2-2'(K, b) {
+    const crystal = crystalOf(K);
+    for (let k = 0; k < 12; k++) {
+      const a = (k / 12) * Math.PI * 2;
+      knob(
+        b,
+        new T.OctahedronGeometry(1, 0),
+        crystal,
+        [Math.cos(a) * 1.02, 0.28, Math.sin(a) * 1.02],
+        [0, -a, -0.5],
+        [0.08, 0.24, 0.08]
+      );
+    }
+    const skirt = [];
+    for (let i = 0; i <= 5; i++) skirt.push(new T.Vector2(1.0 + i * 0.07, 0.14 - i * 0.05 - i * i * 0.006));
+    addMesh(
+      b,
+      new T.LatheGeometry(skirt, segs(40, 20)),
+      K.plain(K.pal.accent, {
+        transparent: true,
+        opacity: 0.5,
+        side: T.DoubleSide,
+        depthWrite: false,
+        roughness: 0.1,
+        clearcoat: 1
+      })
+    );
+    knob(b, new T.IcosahedronGeometry(0.2, 0), crystal, [0, 1.05, 0]);
+  },
+  // 夜燈: a lantern bell, ribbed with light, a lure dangling from its crown
+  'sea-2-3'(K, b) {
+    const glow = K.glowMat(),
+      stalk = K.plain(K.pal.side, { roughness: 0.5 });
+    rod(
+      b,
+      [
+        [0, 1.0, 0],
+        [0, 1.5, 0.15],
+        [0, 1.72, 0.5],
+        [0, 1.6, 0.75]
+      ],
+      0.04,
+      0.015,
+      stalk,
+      0,
+      14
+    );
+    knob(b, new T.SphereGeometry(0.14, 16, 12), glow, [0, 1.52, 0.78]);
+    knob(b, new T.CylinderGeometry(0.12, 0.18, 0.12, 12), stalk, [0, 1.03, 0]);
+    for (let k = 0; k < 6; k++) {
+      const a = (k / 6) * Math.PI * 2,
+        pts = [];
+      for (let i = 0; i <= 6; i++) {
+        const t = 0.08 + (i / 6) * 0.9,
+          r = Math.sin(t * Math.PI * 0.55) * 1.015 + (t > 0.85 ? (t - 0.85) * 0.6 : 0);
+        pts.push([Math.cos(a) * r, Math.cos(t * Math.PI * 0.5) * 0.95 + 0.1, Math.sin(a) * r]);
+      }
+      rod(b, pts, 0.022, 0.022, glow, 0, 14, 4);
+    }
+  },
+  /* ------------ 靈龜 (turtle) — 晶甲's crystals grow in turtle() */
+  // 苔背: a carpet of moss on the shell, weed trailing from its rim
+  'sea-3-1'(K, b) {
+    const moss = K.plain(hsl(0.27, 0.5, 0.3), { roughness: 0.95, clearcoat: 0 }),
+      weed = K.plain(hsl(0.24, 0.55, 0.26), { roughness: 0.8 });
+    for (let i = 0; i < 30; i++) {
+      const a = K.rnd() * Math.PI * 2,
+        r = Math.sqrt(K.rnd()) * 0.85,
+        x = Math.cos(a) * r * 0.92,
+        z = Math.sin(a) * r * 1.1;
+      knob(b, new T.IcosahedronGeometry(0.08 + K.rnd() * 0.08, 0), moss, [x, shellTop(x, z), z], null, [1, 0.6, 1]);
+    }
+    for (let k = 0; k < 11; k++) {
+      const a = Math.PI * (0.05 + (k / 10) * 0.9) + Math.PI,
+        x = Math.cos(a) * 0.9,
+        z = Math.sin(a) * 1.08,
+        L = 0.45 + K.rnd() * 0.35;
+      rod(
+        b,
+        [
+          [x, 0.15, z],
+          [x * 1.05, 0.15 - L * 0.5, z * 1.05 - 0.08],
+          [x, 0.15 - L, z * 1.02 - 0.1]
+        ],
+        0.025,
+        0.006,
+        weed,
+        0,
+        8,
+        4
+      );
+    }
+  },
+  // 潮紋: a streamlined swimmer with long wing-like fore flippers and wave keels on its shell
+  'sea-3-2'(K, b) {
+    for (const l of K.limbs) if (l.userData.front) l.scale.set(1.7, 1, 1.45);
+    const keel = K.plain(K.pal.accent, { roughness: 0.35, clearcoat: 0.8 });
+    for (const x of [-0.38, 0, 0.38]) {
+      const pts = [];
+      for (let i = 0; i <= 8; i++) {
+        const z = mix(-0.95, 0.95, i / 8);
+        pts.push([x + Math.sin(i * 1.2) * 0.04, shellTop(x, z) + 0.015, z]);
+      }
+      rod(b, pts, 0.045, 0.03, keel, 0, 24, 5);
+    }
+  },
+  // 金棱: a high dome studded with gilded pyramid scutes and a gold rim
+  'sea-3-3'(K, b) {
+    const gold = goldOf(K);
+    for (const x of [-0.42, 0, 0.42])
+      for (const z of [-0.62, -0.2, 0.22, 0.62]) {
+        const y = shellTop(x, z);
+        if (y < 0.25) continue;
+        spike(b, gold, [x, y + 0.08, z], 0.13, 0.3, [z * 0.35, 0, -x * 0.7], 0, 4);
+      }
+    knob(b, new T.TorusGeometry(1, 0.04, 6, 48), gold, [0, 0.13, -0.02], [Math.PI / 2, 0, 0], [0.93, 1.13, 1]);
+  },
+  /* ------------ 海龍 (serpent) */
+  // 淵鱗: armoured in keeled diamond scutes from crown to tail
+  'deep-0-0'(K, b, info) {
+    const plate = K.plain(
+        K.pal.accent.clone().offsetHSL(0, -0.1, -0.12),
+        { roughness: 0.3, clearcoat: 0.9, metalness: 0.35 },
+        1
+      ),
+      z0 = 1.9 - info.len * 0.85;
+    for (let i = 0; i < 16; i++) {
+      const z = mix(1.4, z0, i / 15),
+        s = 1 - i / 22,
+        y = serpentTop(z, info.len);
+      knob(b, new T.OctahedronGeometry(1, 0), plate, [0, y + 0.08, z], [-0.7, 0, 0], [0.09 * s, 0.3 * s, 0.34 * s], 1);
+      for (const side of [-1, 1])
+        if (i % 2 === 0)
+          knob(
+            b,
+            new T.OctahedronGeometry(1, 0),
+            plate,
+            [side * y * 0.8, y * 0.45, z],
+            [-0.6, 0, side * 1.0],
+            [0.06 * s, 0.2 * s, 0.26 * s],
+            1
+          );
+    }
+  },
+  // 黑潮: a long black eel, ribbon fins above and below, a paddle of a tail
+  'deep-0-1'(K, b, info) {
+    const tail = 1.9 - info.len;
+    sail(
+      K,
+      b,
+      [
+        [tail + 0.4, 0],
+        [tail + 1.2, -0.28],
+        [0.4, -0.22],
+        [1.0, 0]
+      ],
+      -serpentTop(0, info.len) * 0.6,
+      K.finMat(1)
+    );
+    sail(
+      K,
+      b,
+      [
+        [tail + 0.7, 0],
+        [tail - 0.25, 0.6],
+        [tail - 0.55, 0.05],
+        [tail - 0.55, -0.05],
+        [tail - 0.25, -0.6],
+        [tail + 0.7, 0]
+      ],
+      0,
+      K.finMat(1)
+    );
+  },
+  // 冥火: flames of ghost-light run down its spine, wisps stream from the tail
+  'deep-0-2'(K, b, info) {
+    const fire = K.plain(
+        K.pal.glow,
+        { emissive: K.pal.glow, emissiveIntensity: 1.4, transparent: true, opacity: 0.9 },
+        1
+      ),
+      z0 = 1.9 - info.len;
+    for (let i = 0; i < 11; i++) {
+      const z = mix(1.25, z0 + 0.8, i / 10),
+        y = serpentTop(z, info.len),
+        h = 0.32 + Math.sin((i / 10) * Math.PI) * 0.28;
+      rod(
+        b,
+        [
+          [0, y - 0.04, z],
+          [0.04, y + h * 0.5, z - 0.12],
+          [-0.03, y + h, z - 0.3]
+        ],
+        0.07,
+        0.004,
+        fire,
+        1,
+        8,
+        5
+      );
+    }
+    for (const side of [-1, 0, 1])
+      rod(
+        b,
+        [
+          [0, 0, z0 + 0.15],
+          [side * 0.15, 0.1, z0 - 0.35],
+          [side * 0.3, 0.2, z0 - 0.8]
+        ],
+        0.05,
+        0.004,
+        fire,
+        1,
+        10,
+        5
+      );
+  },
+  // 骨冠: a great frill of bone-ribbed membrane flares behind the skull, horns swept back
+  'deep-0-3'(K, b) {
+    const bone = boneMat(K, 1),
+      frill = [[0, -0.15]];
+    for (let k = 0; k <= 10; k++) {
+      const a = mix(-2.0, 2.0, k / 10),
+        r = k % 2 ? 0.62 : 0.95;
+      frill.push([Math.sin(a) * r, Math.cos(a) * r]);
+    }
+    knob(b, membraneGeometry(frill), K.finMat(1), [0, 0.18, 1.3], [-0.35, 0, 0], null, 1);
+    for (let k = 0; k <= 10; k += 2) {
+      const a = mix(-2.0, 2.0, k / 10),
+        tip = [Math.sin(a) * 1.0, 0.18 + Math.cos(a) * 0.94, 1.3 - Math.cos(a) * 0.34];
+      rod(b, [[0, 0.18, 1.32], tip], 0.04, 0.008, bone, 1, 6, 5);
+    }
+    horns(K, b, [0, 0.3, 1.5], 1, 0.95, 1.3, 1);
+  },
+  /* ------------ 觸獸 (cephalopod) */
+  // 千腕: a writhing ring of a thousand arms
+  'deep-1-0'(K, b) {
+    const arms = K.parts.arms,
+      mat = K.skinMat('smooth', 3);
+    for (let i = 0; i < 18; i++) {
+      const a = (i / 18) * Math.PI * 2 + 0.17,
+        r = 0.3 + (i % 2) * 0.06,
+        L = 1.0 + ((i * 7) % 5) * 0.22,
+        x = Math.cos(a) * r,
+        z = Math.sin(a) * r;
+      addMesh(
+        arms,
+        taper(
+          [
+            [x, 0, z],
+            [x * 1.5, -L * 0.5, z * 1.5],
+            [x * 1.25, -L, z * 1.25]
+          ],
+          0.04,
+          0.005,
+          14,
+          5
+        ),
+        mat
+      );
+    }
+  },
+  // 寒淵: a long icy mantle bristling with frost shards, an arrowhead of fins at its tip
+  'deep-1-1'(K, b) {
+    const ice = crystalOf(K, 0, hsl(0.54, 0.45, 0.82)),
+      fin = K.plain(hsl(0.55, 0.4, 0.75), {
+        transparent: true,
+        opacity: 0.7,
+        side: T.DoubleSide,
+        roughness: 0.2,
+        clearcoat: 1
+      });
+    for (const side of [-1, 1])
+      knob(
+        b,
+        membraneGeometry([
+          [0, 0.35],
+          [0.85, -0.15],
+          [0.12, -0.6],
+          [0, -0.5]
+        ]),
+        fin,
+        [side * 0.1, 0.05, -1.15],
+        [Math.PI / 2, 0, 0],
+        [side, 1, 1]
+      );
+    for (let i = 0; i < 9; i++) {
+      const z = mix(-1.2, 0.15, i / 8),
+        u = (z + 1.5) / 1.85,
+        y = 0.05 + Math.min(0.52, 0.02 + u * 0.7) * 0.92;
+      knob(
+        b,
+        new T.OctahedronGeometry(1, 0),
+        ice,
+        [0, y + 0.08, z],
+        [-0.5, 0, 0],
+        [0.05, 0.22 - Math.abs(i - 4) * 0.02, 0.05]
+      );
+      for (const side of [-1, 1])
+        if (i % 2)
+          knob(
+            b,
+            new T.OctahedronGeometry(1, 0),
+            ice,
+            [side * y * 0.75, y * 0.6, z],
+            [-0.4, 0, side * 0.9],
+            [0.04, 0.15, 0.04]
+          );
+    }
+  },
+  // 墨霧: a bulbous mantle, its arms webbed into a cloak, ink clouds trailing behind
+  'deep-1-2'(K, b) {
+    const web = K.plain(
+        K.pal.back.clone().offsetHSL(0, 0, -0.08),
+        { transparent: true, opacity: 0.75, side: T.DoubleSide, roughness: 0.5 },
+        3
+      ),
+      ink = K.plain(hsl(K.pal.hue, 0.3, 0.08), { transparent: true, opacity: 0.38, depthWrite: false, roughness: 1 });
+    knob(
+      K.parts.arms,
+      new T.CylinderGeometry(0.24, 0.62, 1.05, segs(24, 12), 1, true),
+      web,
+      [0, -0.52, 0],
+      null,
+      null,
+      3
+    );
+    for (let i = 0; i < 6; i++)
+      knob(b, new T.IcosahedronGeometry(0.18 + i * 0.05, 1), ink, [
+        Math.sin(i * 2.1) * 0.2,
+        0.05 + Math.cos(i * 1.7) * 0.12,
+        -1.65 - i * 0.28
+      ]);
+  },
+  // 虹腕: arms ringed in rainbow light, a frilled fin the length of its mantle
+  'deep-1-3'(K, b) {
+    const L = 1.4 + K.p.tail * 0.15;
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2,
+        x = Math.cos(a) * 0.22,
+        z = Math.sin(a) * 0.22,
+        ring = K.plain(hsl(i / 8, 0.85, 0.6), { emissive: hsl(i / 8, 0.9, 0.5), emissiveIntensity: 0.9 }, 3);
+      for (const t of [0.3, 0.55, 0.8]) {
+        const s = t < 0.5 ? mix(1, 1.4, t * 2) : mix(1.4, 1.1, (t - 0.5) * 2);
+        knob(
+          K.parts.arms,
+          new T.TorusGeometry(0.075 - t * 0.04, 0.016, 5, 14),
+          ring,
+          [x * s, -L * t, z * s],
+          [Math.PI / 2, 0, 0],
+          null,
+          3
+        );
+      }
+    }
+    const frill = [[0, -1.42]];
+    for (let k = 0; k <= 8; k++) frill.push([0.22 + (k % 2) * 0.12, mix(-1.3, 0.1, k / 8)]);
+    frill.push([0, 0.25]);
+    for (const side of [-1, 1])
+      knob(b, membraneGeometry(frill), K.finMat(0), [side * 0.4, 0.05, 0], [Math.PI / 2, 0, 0], [side, 1, 1]);
+  },
+  /* ------------ 蟹獸 (crab) */
+  // 潮鎧: a broad tiered shield with an armoured skirt of plates
+  'deep-2-0'(K, b) {
+    const plate = K.plain(K.pal.back.clone().offsetHSL(0, -0.08, 0.06), { roughness: 0.35, clearcoat: 0.8 });
+    for (let k = 0; k < 16; k++) {
+      const a = (k / 16) * Math.PI * 2;
+      if (Math.sin(a) > 0.75) continue; // the face stays clear
+      knob(
+        b,
+        new T.SphereGeometry(0.22, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2),
+        plate,
+        [Math.cos(a) * 1.0, 0.2, Math.sin(a) * 0.78],
+        [0, -a + Math.PI / 2, -0.25],
+        [1, 0.4, 0.75]
+      );
+    }
+    for (const [y, s] of [
+      [0.6, [0.72, 0.12, 0.56]],
+      [0.68, [0.42, 0.1, 0.32]]
+    ])
+      knob(b, new T.SphereGeometry(1, 24, 8, 0, Math.PI * 2, 0, Math.PI / 2), plate, [0, y, -0.02], null, s);
+  },
+  // 熔殼: a shell split by glowing seams of lava, smoking vents on its back
+  'deep-2-1'(K, b) {
+    const lava = emberOf(K),
+      vent = K.plain(hsl(0.05, 0.15, 0.18), { roughness: 0.9 });
+    for (let k = 0; k < 7; k++) {
+      const a = (k / 7) * Math.PI * 2 + 0.3,
+        pts = [];
+      for (let i = 0; i <= 4; i++) {
+        const r = 0.12 + i * 0.2,
+          w = a + (i % 2 ? 0.18 : -0.12),
+          x = Math.cos(w) * r,
+          z = Math.sin(w) * r * 0.78;
+        pts.push([x, carapaceTop(x, z) + 0.012, z]);
+      }
+      rod(b, pts, 0.03, 0.012, lava, 0, 12, 4);
+    }
+    for (const [x, z] of [
+      [-0.3, -0.2],
+      [0.25, -0.3],
+      [0.02, 0.15]
+    ]) {
+      const y = carapaceTop(x, z);
+      knob(b, new T.CylinderGeometry(0.07, 0.12, 0.2, 10), vent, [x, y + 0.07, z]);
+      knob(b, new T.CircleGeometry(0.065, 12), lava, [x, y + 0.175, z], [-Math.PI / 2, 0, 0]);
+    }
+  },
+  // 棘王: a crown of tall spikes and one great king-claw
+  'deep-2-2'(K, b) {
+    const bone = boneMat(K);
+    for (let k = 0; k < 7; k++) {
+      const a = mix(-1.2, 1.2, k / 6),
+        x = Math.sin(a) * 0.55,
+        z = Math.cos(a) * 0.35 - 0.1,
+        h = 0.75 - Math.abs(a) * 0.25;
+      spike(b, bone, [x, carapaceTop(x, z) + h / 2 - 0.04, z], 0.06, h, [-0.15, 0, -x * 0.5], 0, 6);
+    }
+    for (const l of K.limbs) if (l.userData.claw === 1) l.scale.setScalar(1.75);
+  },
+  // 幽光: a spider crab on long stilt legs, glowing whips of antennae
+  'deep-2-3'(K, b) {
+    for (const l of K.limbs) if (l.userData.leg !== undefined) l.scale.set(1.6, 1.5, 1.6);
+    const stalk = K.plain(K.pal.belly, { roughness: 0.4 }),
+      glow = K.glowMat();
+    for (const side of [-1, 1]) {
+      const tip = [side * 0.75, 1.35, 1.55];
+      rod(b, [[side * 0.1, 0.45, 0.75], [side * 0.35, 0.98, 1.3], tip], 0.022, 0.006, stalk, 0, 14, 5);
+      knob(b, new T.SphereGeometry(0.06, 10, 8), glow, tip);
+    }
+  },
+  /* ------------ 螺獸 (nautilus) */
+  // 渦殼: a keel spiralling round the shell and a flared, ringed mouth
+  'deep-3-0'(K, b) {
+    const keel = K.plain(K.pal.mark, { roughness: 0.3, clearcoat: 0.8 }),
+      pts = [];
+    for (let i = 0; i <= 40; i++) {
+      const w = whorl(0.15 + (i / 40) * 0.85);
+      pts.push(along(w.at, w.n, w.rad * 0.98));
+    }
+    rod(b, pts, 0.02, 0.04, keel, 0, 80, 5);
+    const end = whorl(1);
+    knob(b, new T.TorusGeometry(end.rad * 1.05, 0.035, 8, 28), keel, along(end.at, [0, 0, 1], 0.02));
+  },
+  // 沉鐘: its mouth flares into a great bronze bell
+  'deep-3-1'(K, b) {
+    const end = whorl(1),
+      bronze = K.plain(hsl(0.1, 0.6, 0.55), { metalness: 0.8, roughness: 0.25, side: T.DoubleSide }),
+      bell = [];
+    for (let i = 0; i <= 12; i++) {
+      const t = i / 12;
+      bell.push(new T.Vector2(end.rad * 1.02 + Math.sin(t * Math.PI * 0.5) * 0.08 + t ** 4 * 0.32, t * 0.6));
+    }
+    knob(b, new T.LatheGeometry(bell, segs(32, 16)), bronze, along(end.at, [0, 0, 1], -0.12), [Math.PI / 2, 0, 0]);
+    knob(b, new T.TorusGeometry(end.rad * 1.02 + 0.42, 0.03, 6, 36), bronze, along(end.at, [0, 0, 1], 0.48));
+    for (const t of [0.25, 0.45])
+      knob(
+        b,
+        new T.TorusGeometry(end.rad * 1.02 + 0.08 + t ** 4 * 0.32, 0.018, 5, 32),
+        K.glowMat(),
+        along(end.at, [0, 0, 1], -0.12 + t * 0.6)
+      );
+  },
+  // 稜晶: crystal prisms jut from every whorl
+  'deep-3-2'(K, b) {
+    const crystal = crystalOf(K);
+    for (let i = 0; i < 9; i++) {
+      const w = whorl(0.3 + (i / 8) * 0.65),
+        len = 0.16 + (i / 8) * 0.22,
+        th = w.a - Math.PI / 2;
+      knob(b, new T.CylinderGeometry(0.0, 0.05, len, 6), crystal, along(w.at, w.n, w.rad + len * 0.4), [th, 0, 0]);
+      for (const side of [-1, 1])
+        if (i % 3 === 1)
+          knob(
+            b,
+            new T.CylinderGeometry(0.0, 0.035, len * 0.6, 6),
+            crystal,
+            [side * w.rad * 0.8, ...along(w.at, w.n, w.rad * 0.5).slice(1)],
+            [th, 0, side * -0.7]
+          );
+    }
+  },
+  // 深歌: organ pipes rise from its shell, rings of song hang round it
+  'deep-3-3'(K, b) {
+    const pipe = K.plain(K.pal.belly.clone().offsetHSL(0, -0.1, 0.1), { roughness: 0.3, clearcoat: 0.9 }),
+      glow = K.glowMat();
+    for (const [x, z, h] of [
+      [-0.11, -0.38, 0.42],
+      [0, -0.3, 0.62],
+      [0.11, -0.38, 0.5]
+    ]) {
+      knob(b, new T.CylinderGeometry(0.05, 0.065, h, 12, 1, true), pipe, [x, 1.0 + h / 2, z]);
+      knob(b, new T.TorusGeometry(0.055, 0.015, 6, 14), glow, [x, 1.0 + h, z], [Math.PI / 2, 0, 0]);
+    }
+    const halo = K.plain(K.pal.glow, {
+      emissive: K.pal.glow,
+      emissiveIntensity: 0.9,
+      transparent: true,
+      opacity: 0.45,
+      depthWrite: false
+    });
+    for (const [r, y] of [
+      [0.3, 1.38],
+      [0.44, 1.56]
+    ])
+      knob(b, new T.TorusGeometry(r, 0.014, 4, 40), halo, [0, y, -0.33], [Math.PI / 2 - 0.25, 0, 0]);
+  },
+  /* ------------ 蜥獸 (lizard) */
+  // 礁岩: crusted with reef rock and barnacles
+  'land-0-0'(K, b) {
+    const rock = rockOf(K, 1),
+      barnacle = K.plain(hsl(0.1, 0.12, 0.78), { roughness: 0.8 }, 1);
+    for (let i = 0; i < 14; i++) {
+      const z = mix(-1.3, 0.85, i / 13),
+        y = lizardTop(z),
+        side = i % 3 === 0 ? 0 : i % 3 === 1 ? 1 : -1,
+        x = side * (y - 0.55) * 0.9;
+      knob(
+        b,
+        new T.DodecahedronGeometry(0.1 + (i % 4) * 0.025, 0),
+        rock,
+        [x, y - Math.abs(side) * 0.08, z],
+        [i, i * 2, 0],
+        null,
+        1
+      );
+      if (i % 2) spike(b, barnacle, [x * 0.6 + 0.05, y + 0.06, z + 0.08], 0.05, 0.08, [0, 0, 0], 1, 7);
+    }
+  },
+  // 沙丘: a lean dune-runner raising a tall ribbed sail
+  'land-0-1'(K, b) {
+    const bone = boneMat(K, 1),
+      outline = [
+        [-0.95, 0],
+        [-0.7, 0.62],
+        [-0.25, 0.95],
+        [0.2, 0.82],
+        [0.55, 0.3],
+        [0.65, 0]
+      ];
+    sail(K, b, outline, 0.72, K.finMat(1));
+    for (let i = 1; i < 9; i++) {
+      const z = mix(-0.92, 0.6, i / 9),
+        h = 0.95 * Math.sin((i / 9) * Math.PI) * (z < -0.25 ? 1 : 0.9);
+      rod(
+        b,
+        [
+          [0, 0.72, z],
+          [0, 0.72 + h, z - 0.05]
+        ],
+        0.022,
+        0.006,
+        bone,
+        1,
+        5,
+        4
+      );
+    }
+  },
+  // 赤斑: a great umbrella frill round the neck, ribbed and spotted
+  'land-0-2'(K, b) {
+    const bone = boneMat(K, 1),
+      frill = [];
+    for (let k = 0; k <= 16; k++) {
+      const a = (k / 16) * Math.PI * 2,
+        r = k % 2 ? 0.5 : 0.62;
+      frill.push([Math.sin(a) * r, Math.cos(a) * r * 0.85]);
+    }
+    knob(b, membraneGeometry(frill), K.finMat(1), [0, 0.78, 0.82], [-0.25, 0, 0], null, 1);
+    for (let k = 0; k < 16; k += 2) {
+      const a = (k / 16) * Math.PI * 2;
+      rod(
+        b,
+        [
+          [0, 0.78, 0.84],
+          [Math.sin(a) * 0.6, 0.78 + Math.cos(a) * 0.51, 0.84 - Math.cos(a) * 0.13]
+        ],
+        0.02,
+        0.008,
+        bone,
+        1,
+        4,
+        4
+      );
+    }
+  },
+  // 雷鱗: a horned face and rows of spikes down its flanks
+  'land-0-3'(K, b) {
+    const bone = boneMat(K, 1);
+    rod(
+      b,
+      [
+        [0, 0.72, 1.3],
+        [0, 0.92, 1.42],
+        [0, 1.15, 1.45]
+      ],
+      0.07,
+      0.008,
+      bone,
+      1
+    );
+    for (const side of [-1, 1]) {
+      rod(
+        b,
+        [
+          [side * 0.12, 0.85, 1.0],
+          [side * 0.28, 1.05, 0.85],
+          [side * 0.36, 1.2, 0.6]
+        ],
+        0.05,
+        0.006,
+        bone,
+        1
+      );
+      for (let i = 0; i < 7; i++) {
+        const z = mix(-1.0, 0.6, i / 6),
+          y = lizardTop(z),
+          r = (y - 0.55) / 0.85;
+        spike(b, bone, [side * r * 1.15, 0.55 + r * 0.2, z], 0.04, 0.22, [0, 0, -side * 1.2], 1, 5);
+      }
+    }
+  },
+  /* ------------ 靈鹿 (deer) — 岸角's branching antlers grow in deer() */
+  // 霜角: twisted spiral horns tipped with ice, a frosted mane down the neck
+  'land-1-1'(K, b) {
+    const head = K.parts.head,
+      horn = K.plain(hsl(0.58, 0.15, 0.85), { roughness: 0.35, clearcoat: 0.8 }),
+      ice = crystalOf(K, 0, hsl(0.54, 0.5, 0.85));
+    for (const side of [-1, 1]) {
+      const pts = [];
+      for (let i = 0; i <= 10; i++) {
+        const t = i / 10,
+          a = t * Math.PI * 3;
+        pts.push([
+          side * (0.08 + t * 0.12 + Math.cos(a) * 0.04 * t),
+          0.12 + t * 0.85,
+          -0.02 - t * 0.3 + Math.sin(a) * 0.04 * t
+        ]);
+      }
+      rod(head, pts, 0.04, 0.008, horn, 0, 30, 6);
+      knob(head, new T.OctahedronGeometry(0.06, 0), ice, pts[10], null, [1, 1.8, 1]);
+    }
+    for (let i = 0; i < 7; i++) {
+      const t = i / 6;
+      spike(b, ice, [0, mix(1.82, 1.32, t) + 0.1, mix(0.9, 0.55, t) - 0.08], 0.05, 0.25, [-0.9, 0, 0], 0, 4);
+    }
+  },
+  // 林影: broad palmate antlers like a forest stag's, a shaggy beard
+  'land-1-2'(K, b) {
+    const head = K.parts.head,
+      antler = K.plain(K.pal.belly.clone().offsetHSL(0.05, -0.35, -0.05), { roughness: 0.65, side: T.DoubleSide }),
+      palm = membraneGeometry([
+        [0, 0],
+        [0.12, 0.06],
+        [0.18, 0.3],
+        [0.25, 0.15],
+        [0.33, 0.38],
+        [0.4, 0.18],
+        [0.5, 0.36],
+        [0.55, 0.14],
+        [0.66, 0.24],
+        [0.6, 0.02],
+        [0.4, -0.08],
+        [0.12, -0.06]
+      ]);
+    for (const side of [-1, 1]) {
+      rod(
+        head,
+        [
+          [side * 0.07, 0.12, -0.02],
+          [side * 0.2, 0.22, -0.06]
+        ],
+        0.035,
+        0.03,
+        antler,
+        0,
+        4,
+        6
+      );
+      knob(head, palm, antler, [side * 0.18, 0.2, -0.06], [-0.2, side * 0.3, side * 0.5], [side * 1.25, 1.25, 1]);
+    }
+    const fur = K.skinMat('fur', 0);
+    knob(head, new T.ConeGeometry(0.07, 0.3, 6), fur, [0, -0.2, 0.12], [Math.PI, 0, 0]);
+  },
+  // 晶角: one spiral crystal horn on the brow, crystals along the back
+  'land-1-3'(K, b) {
+    const head = K.parts.head,
+      crystal = crystalOf(K);
+    knob(head, new T.ConeGeometry(0.06, 0.8, 6), crystal, [0, 0.42, 0.18], [0.55, 0, 0]);
+    for (let i = 0; i < 6; i++) {
+      const z = mix(0.55, -0.6, i / 5);
+      knob(
+        b,
+        new T.OctahedronGeometry(1, 0),
+        crystal,
+        [Math.sin(i * 2.3) * 0.06, 1.5 + 0.06, z],
+        [i * 0.4, i, 0.3],
+        [0.05, 0.16 + (i % 2) * 0.06, 0.05]
+      );
+    }
+  },
+  /* ------------ 鷗獸 (gull) */
+  // 風翼: albatross wings and long streamer tail feathers
+  'land-2-0'(K, b) {
+    for (const l of K.limbs) if (l.userData.wing) l.scale.set(1.65, 1, 1.3);
+    const tip = K.plain(K.pal.back, { roughness: 0.75 });
+    for (const side of [-1, 1])
+      rod(
+        b,
+        [
+          [side * 0.04, 0.72, -0.6],
+          [side * 0.1, 0.62, -1.1],
+          [side * 0.18, 0.62, -1.65]
+        ],
+        0.025,
+        0.004,
+        tip,
+        0,
+        12,
+        4
+      );
+  },
+  // 暴羽: a stormy punk crest and ragged feather shards along the back
+  'land-2-1'(K, b) {
+    const head = K.parts.head,
+      tip = K.plain(K.pal.back, { roughness: 0.75 });
+    for (let k = 0; k < 7; k++)
+      spike(
+        head,
+        tip,
+        [0, 0.18 + Math.sin((k / 6) * Math.PI) * 0.06, 0.08 - k * 0.05],
+        0.035,
+        0.28 + Math.sin((k / 6) * Math.PI) * 0.16,
+        [-0.5 - k * 0.12, 0, 0],
+        0,
+        4
+      );
+    for (let k = 0; k < 6; k++)
+      spike(
+        b,
+        tip,
+        [Math.sin(k * 2.1) * 0.08, 1.02, 0.25 - k * 0.14],
+        0.04,
+        0.24,
+        [-1.1, 0, Math.sin(k * 2.1) * 0.5],
+        0,
+        3
+      );
+  },
+  // 雪喉: a great snowy throat pouch beneath a heavy bill
+  'land-2-2'(K, b) {
+    const head = K.parts.head,
+      pouch = K.plain(hsl(0.02, 0.25, 0.9), {
+        roughness: 0.3,
+        clearcoat: 0.9,
+        sheen: 1,
+        sheenColor: hsl(0.98, 0.5, 0.8)
+      });
+    knob(head, new T.SphereGeometry(0.18, 18, 14), pouch, [0, -0.17, 0.12], null, [0.85, 1, 1.25]);
+    knob(
+      head,
+      new T.ConeGeometry(0.075, 0.5, 8),
+      K.plain(hsl(0.11, 0.7, 0.55), { roughness: 0.4 }),
+      [0, -0.01, 0.38],
+      [Math.PI / 2, 0, 0]
+    );
+  },
+  // 夜哨: an owl's face — a pale disc, great glowing eyes, ear tufts
+  'land-2-3'(K, b) {
+    const head = K.parts.head,
+      disc = K.plain(K.pal.belly.clone().offsetHSL(0, -0.1, 0.1), { roughness: 0.8, side: T.DoubleSide }),
+      glow = K.glowMat(),
+      pupil = K.plain(0x101010, { roughness: 0.1, clearcoat: 1 });
+    knob(head, new T.CircleGeometry(0.27, 24), disc, [0, 0.02, 0.1]);
+    for (const side of [-1, 1]) {
+      knob(head, new T.SphereGeometry(0.08, 14, 10), glow, [side * 0.1, 0.04, 0.12]);
+      knob(head, new T.SphereGeometry(0.04, 10, 8), pupil, [side * 0.1, 0.04, 0.18]);
+      spike(
+        head,
+        K.plain(K.pal.back, { roughness: 0.75 }),
+        [side * 0.14, 0.26, -0.02],
+        0.05,
+        0.3,
+        [0, 0, -side * 0.35],
+        0,
+        4
+      );
+    }
+  },
+  /* ------------ 犰獸 (armadillo) — 苔甲's moss grows in armadillo() */
+  // 岩甲: boulders heaped on its banded back
+  'land-3-1'(K, b) {
+    const rock = rockOf(K);
+    for (let i = 0; i < 10; i++) {
+      const a = Math.PI / 2 + Math.sin(i * 1.9) * 0.6,
+        z = mix(-0.55, 0.6, i / 9);
+      knob(
+        b,
+        new T.DodecahedronGeometry(0.14 + (i % 3) * 0.04, 0),
+        rock,
+        [Math.cos(a) * 0.5, 0.55 + Math.sin(a) * 0.5, z],
+        [i, i * 1.7, 0],
+        [1, 0.75, 1]
+      );
+    }
+  },
+  // 鐵背: rows of iron spikes and a spiked club of a tail
+  'land-3-2'(K, b) {
+    const iron = K.plain(hsl(0.6, 0.06, 0.42), { metalness: 0.85, roughness: 0.32 });
+    for (let i = 0; i < 6; i++) {
+      const z = mix(-0.55, 0.5, i / 5);
+      for (const a of [Math.PI * 0.5, Math.PI * 0.22, Math.PI * 0.78])
+        spike(
+          b,
+          iron,
+          [Math.cos(a) * 0.55, 0.55 + Math.sin(a) * 0.55, z],
+          0.06,
+          a === Math.PI * 0.5 ? 0.3 : 0.22,
+          [0, 0, a - Math.PI / 2],
+          0,
+          5
+        );
+    }
+    knob(b, new T.IcosahedronGeometry(0.17, 1), iron, [0, 0.15, -1.45]);
+    for (let k = 0; k < 6; k++) {
+      const a = (k / 6) * Math.PI * 2;
+      spike(b, iron, [Math.cos(a) * 0.18, 0.15 + Math.sin(a) * 0.18, -1.45], 0.04, 0.16, [0, 0, a - Math.PI / 2], 0, 5);
+    }
+  },
+  // 曜晶: clusters of obsidian crystal erupt along its back
+  'land-3-3'(K, b) {
+    const obsidian = K.plain(hsl(K.pal.hue, 0.35, 0.12), { roughness: 0.05, clearcoat: 1, metalness: 0.3 }),
+      core = crystalOf(K);
+    for (let i = 0; i < 5; i++) {
+      const z = mix(-0.5, 0.55, i / 4),
+        a = Math.PI / 2 + (i % 2 ? 0.45 : -0.45) * (i % 3 ? 1 : 0.3);
+      const at = [Math.cos(a) * 0.5, 0.55 + Math.sin(a) * 0.5, z];
+      for (let k = 0; k < 3; k++)
+        knob(
+          b,
+          new T.OctahedronGeometry(1, 0),
+          k ? obsidian : core,
+          [at[0] + (k - 1) * 0.07, at[1] + 0.05, at[2] + (k === 2 ? 0.05 : 0)],
+          [0.2 * (k - 1), i, a - Math.PI / 2 + (k - 1) * 0.35],
+          [0.06, 0.22 - k * 0.04, 0.06]
+        );
+    }
+  },
+  /* ------------ 花獸 (flora fish) */
+  // 藻鰭: streamers of kelp trail from its back and sides, buoyed by little bladders
+  'flora-0-0'(K, b) {
+    const kelp = K.plain(hsl(0.17, 0.55, 0.32), { side: T.DoubleSide, roughness: 0.7 }, 1),
+      bladder = K.plain(hsl(0.14, 0.6, 0.45), { roughness: 0.35, clearcoat: 0.7 }, 1);
+    for (let k = 0; k < 7; k++) {
+      const z0 = 0.45 - k * 0.22,
+        side = k % 2 ? 1 : -1,
+        x0 = k === 3 ? 0 : side * 0.18,
+        y0 = fishTop(z0) * 0.85,
+        pts = [];
+      for (let i = 0; i <= 8; i++)
+        pts.push([x0 + side * i * 0.035 + Math.sin(i * 1.3 + k) * 0.07, y0 + 0.06 - i * 0.03, z0 - i * 0.3]);
+      bake(
+        addMesh(
+          b,
+          sweepGeometry(line(pts), u => [0.04 + Math.sin(u * Math.PI) * 0.07, 0.008, 0], segs(26, 12), 4),
+          kelp
+        )
+      );
+      knob(b, new T.SphereGeometry(0.06, 10, 8), bladder, pts[3], null, [1, 1, 1.4], 1);
+    }
+  },
+  // 蕨鰭: fern fronds for fins, the tallest uncurling from a fiddlehead
+  'flora-0-1'(K, b) {
+    const leaf = K.finMat(1, true),
+      stem = K.plain(hsl(0.25, 0.45, 0.28), { roughness: 0.7 }, 1),
+      leaflet = leafGeometry();
+    const frond = (pts, size, normal) => {
+      rod(b, pts, 0.03, 0.01, stem, 1, 16, 5);
+      const path = line(pts),
+        N = new V(...normal).normalize();
+      for (let i = 1; i < 12; i++) {
+        const t = i / 12,
+          p = path.getPointAt(t),
+          tg = path.getTangentAt(t),
+          s = size * (1 - t * 0.7);
+        // leaflets lie flat in the frond's plane, swept toward its tip
+        for (const sd of [-1, 1]) {
+          const X = new V().crossVectors(N, tg).multiplyScalar(sd).addScaledVector(tg, 0.6).normalize(),
+            m = addMesh(b, leaflet, leaf, [p.x, p.y, p.z], null, s);
+          m.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(X, new V().crossVectors(N, X), N));
+          bake(m);
+        }
+      }
+    };
+    frond(
+      [
+        [0, 0.45, 0.45],
+        [0, 1.05, 0.1],
+        [0, 1.35, -0.45],
+        [0, 1.2, -0.9]
+      ],
+      1.3,
+      [1, 0, 0]
+    );
+    for (const side of [-1, 1])
+      frond(
+        [
+          [side * 0.35, 0.05, 0.55],
+          [side * 0.8, 0.1, 0.2],
+          [side * 1.15, 0.0, -0.3]
+        ],
+        1,
+        [0, 1, 0]
+      );
+    const curl = [];
+    for (let i = 0; i <= 12; i++) {
+      const a = (i / 12) * Math.PI * 2.2,
+        r = 0.16 * (1 - i / 14);
+      curl.push([0, 1.2 + Math.sin(a) * r, -0.9 - 0.16 + Math.cos(a) * r]);
+    }
+    rod(b, curl, 0.03, 0.012, stem, 1, 24, 5);
+  },
+  // 蓮冠: a full lotus crown on its brow over a round leaf pad
+  'flora-0-2'(K, b) {
+    const pink = K.plain(
+        hsl(0.93, 0.55, 0.78),
+        { side: T.DoubleSide, roughness: 0.45, sheen: 1, sheenColor: hsl(0.95, 0.6, 0.9) },
+        1
+      ),
+      pad = K.plain(hsl(0.3, 0.5, 0.33), { side: T.DoubleSide, roughness: 0.6 }, 1),
+      at = [0, 0.5, 0.55];
+    knob(b, new T.CircleGeometry(0.62, 24), pad, [at[0], at[1] - 0.02, at[2]], [-Math.PI / 2 + 0.12, 0, 0], null, 1);
+    petalRing(b, at, 9, 0.62, 0.55, pink, 1);
+    petalRing(b, [at[0], at[1] + 0.02, at[2]], 7, 0.48, 1.0, pink, 1, 0.3);
+    knob(
+      b,
+      new T.CylinderGeometry(0.14, 0.1, 0.14, 16),
+      K.plain(hsl(0.16, 0.7, 0.55), { roughness: 0.5 }, 1),
+      [at[0], at[1] + 0.1, at[2]],
+      null,
+      null,
+      1
+    );
+  },
+  // 棘藤: thorned vines coil round and round its body
+  'flora-0-3'(K, b) {
+    const vine = K.plain(hsl(0.22, 0.45, 0.24), { roughness: 0.75 }, 1),
+      thorn = K.plain(hsl(0.08, 0.35, 0.55), { roughness: 0.5 }, 1);
+    for (const phase of [0, Math.PI]) {
+      const pts = [];
+      for (let i = 0; i <= 40; i++) {
+        const t = i / 40,
+          z = mix(1.0, -1.35, t),
+          u = (z + 1.45) / 2.8,
+          a = phase + t * Math.PI * 5,
+          rx = FISH_RX(u) + 0.03,
+          ry = FISH_RY(u) + 0.03;
+        pts.push([Math.cos(a) * rx, Math.sin(a) * ry + (u - 0.6) * 0.06, z]);
+        if (i % 4 === 2) spike(b, thorn, pts[i], 0.03, 0.18, [0, 0, a - Math.PI / 2], 1, 4);
+      }
+      rod(b, pts, 0.035, 0.025, vine, 1, 90, 5);
+    }
+  },
+  /* ------------ 葉魟 (flora ray) */
+  // 花翼: its wings are fringed with petals, a great bloom open on its back
+  'flora-1-0'(K, b) {
+    const petal = [
+        K.plain(hsl(0.92, 0.6, 0.78), { side: T.DoubleSide, roughness: 0.45 }, 2),
+        K.plain(hsl(0.13, 0.7, 0.85), { side: T.DoubleSide, roughness: 0.45 }, 2)
+      ],
+      geo = membraneGeometry([
+        [0, 0.05],
+        [0.18, 0.12],
+        [0.36, 0.06],
+        [0.42, 0],
+        [0.36, -0.06],
+        [0.18, -0.12],
+        [0, -0.05]
+      ]);
+    for (const side of [-1, 1])
+      for (let k = 0; k < 10; k++) {
+        const u = 0.16 + k * 0.075,
+          x = RAY_RX(u) * 0.94;
+        knob(
+          b,
+          geo,
+          petal[k % 2],
+          [side * x, 0.01, -0.95 + 2 * u],
+          [Math.PI / 2, 0, side * -0.2],
+          [side * 1.2, 1.2, 1],
+          2
+        );
+      }
+    petalRing(b, [0, rayTop(0, 0.1), 0.1], 10, 0.45, 0.45, petal[0], 2);
+    knob(b, new T.SphereGeometry(0.1, 12, 8), K.glowMat(2), [0, rayTop(0, 0.1) + 0.04, 0.1], null, null, 2);
+  },
+  // 枯葉: veined like a fallen leaf, midrib to ragged edge
+  'flora-1-1'(K, b) {
+    const vein = K.plain(hsl(0.09, 0.45, 0.3), { roughness: 0.8 }, 2);
+    rod(
+      b,
+      [
+        [0, rayTop(0, 0.95) + 0.01, 0.95],
+        [0, rayTop(0, 0) + 0.01, 0],
+        [0, rayTop(0, -0.9) + 0.01, -0.9]
+      ],
+      0.035,
+      0.02,
+      vein,
+      2,
+      20,
+      5
+    );
+    for (const side of [-1, 1])
+      for (let k = 0; k < 6; k++) {
+        const z = 0.75 - k * 0.3,
+          u = (z - 0.35 + 0.95) / 2,
+          x1 = RAY_RX(Math.max(0, u)) * 0.92,
+          zm = z - 0.18;
+        rod(
+          b,
+          [
+            [0, rayTop(0, z) + 0.01, z],
+            [side * x1 * 0.5, rayTop(x1 * 0.5, zm) + 0.01, zm],
+            [side * x1, 0.01, z - 0.35]
+          ],
+          0.022,
+          0.008,
+          vein,
+          2,
+          12,
+          4
+        );
+      }
+  },
+  // 楓紅: each wingtip opens into a red maple leaf, smaller leaves strewn on its back
+  'flora-1-2'(K, b) {
+    const red = K.plain(hsl(0.01, 0.75, 0.46), { side: T.DoubleSide, roughness: 0.55 }, 2),
+      maple = [[0, 0]];
+    for (let k = 0; k <= 10; k++) {
+      const a = mix(-1.9, 1.9, k / 10),
+        r = k % 2 ? 0.42 : k % 4 === 0 ? 0.85 : 1;
+      maple.push([Math.cos(a) * r, Math.sin(a) * r]);
+    }
+    const geo = membraneGeometry(maple);
+    for (const side of [-1, 1]) {
+      knob(b, geo, red, [side * 1.45, 0.02, 0.05], [Math.PI / 2, 0, side * -0.25], [side * 0.75, 0.75, 1], 2);
+      for (let k = 0; k < 3; k++)
+        knob(
+          b,
+          geo,
+          red,
+          [side * (0.35 + k * 0.28), rayTop(0.35 + k * 0.28, -0.1 + k * 0.15) + 0.015, -0.1 + k * 0.15],
+          [Math.PI / 2, 0, k * 1.3],
+          [side * 0.18, 0.18, 1],
+          2
+        );
+    }
+  },
+  // 荊棘: hooked thorns in rows across its wings, a bramble coiled round its tail
+  'flora-1-3'(K, b) {
+    const thorn = K.plain(hsl(0.07, 0.4, 0.5), { roughness: 0.5 }, 2),
+      vine = K.plain(hsl(0.22, 0.45, 0.24), { roughness: 0.75 }, 2),
+      tailLen = 1.8 + K.p.tail * 0.5;
+    for (const side of [-1, 1])
+      for (let r = 0; r < 3; r++)
+        for (let k = 0; k < 5; k++) {
+          const z = 0.7 - k * 0.38,
+            x = side * (0.35 + r * 0.38);
+          if (Math.abs(x) > RAY_RX((z + 0.95) / 2) * 0.85) continue;
+          spike(b, thorn, [x, rayTop(x, z) + 0.06, z], 0.035, 0.18, [-0.6, 0, -side * 0.25], 2, 4);
+        }
+    const pts = [];
+    for (let i = 0; i <= 30; i++) {
+      const t = i / 30,
+        a = t * Math.PI * 7;
+      pts.push([Math.cos(a) * 0.09, 0.05 * t + Math.sin(a) * 0.09, -0.9 - tailLen * 0.8 * t]);
+      if (i % 3 === 1) spike(b, thorn, pts[i], 0.02, 0.12, [0, 0, a - Math.PI / 2], 2, 4);
+    }
+    rod(b, pts, 0.025, 0.012, vine, 2, 60, 4);
+  },
+  /* ------------ 燈母 (flora jelly) */
+  // 苔光: a bell carpeted in glowing moss, strands of it hanging below
+  'flora-2-0'(K, b) {
+    const moss = K.plain(hsl(0.27, 0.5, 0.3), { roughness: 0.95 }),
+      tips = K.glowMat(),
+      strand = K.plain(hsl(0.25, 0.4, 0.35), { roughness: 0.8 }, 3);
+    for (let i = 0; i < 34; i++) {
+      const t = 0.1 + Math.sqrt(K.rnd()) * 0.75,
+        a = K.rnd() * Math.PI * 2,
+        r = Math.sin(t * Math.PI * 0.55) * 1.0,
+        y = Math.cos(t * Math.PI * 0.5) * 0.95 + 0.1;
+      knob(
+        b,
+        new T.IcosahedronGeometry(0.07 + K.rnd() * 0.06, 0),
+        i % 4 ? moss : tips,
+        [Math.cos(a) * r, y, Math.sin(a) * r],
+        null,
+        [1, 0.7, 1]
+      );
+    }
+    for (let k = 0; k < 12; k++) {
+      const a = (k / 12) * Math.PI * 2,
+        L = 0.6 + (k % 3) * 0.3;
+      rod(
+        b,
+        [
+          [Math.cos(a) * 0.98, 0.1, Math.sin(a) * 0.98],
+          [Math.cos(a) * 1.0, -L * 0.5, Math.sin(a) * 1.0],
+          [Math.cos(a) * 0.95, -L, Math.sin(a) * 0.95]
+        ],
+        0.03,
+        0.008,
+        strand,
+        3,
+        10,
+        4
+      );
+    }
+  },
+  // 孢雲: a mushroom cap, gilled beneath and spotted above, in a drifting cloud of spores
+  'flora-2-1'(K, b) {
+    const cap = K.plain(hsl(0.05, 0.55, 0.45), { roughness: 0.6, clearcoat: 0.3 }),
+      spot = K.plain(hsl(0.12, 0.2, 0.92), { roughness: 0.7 }),
+      gill = K.plain(hsl(0.1, 0.3, 0.75), { side: T.DoubleSide, roughness: 0.8 }),
+      spore = K.plain(K.pal.glow, { emissive: K.pal.glow, emissiveIntensity: 1, transparent: true, opacity: 0.8 });
+    knob(
+      b,
+      new T.SphereGeometry(1, segs(32, 16), 10, 0, Math.PI * 2, 0, Math.PI / 2),
+      cap,
+      [0, 0.32, 0],
+      null,
+      [1.3, 0.98, 1.3]
+    );
+    for (let i = 0; i < 14; i++) {
+      const a = i * 2.4,
+        r = 0.2 + (i / 14) * 0.85,
+        y = 0.32 + 0.98 * Math.sqrt(Math.max(0, 1 - (r / 1.3) ** 2));
+      knob(b, new T.SphereGeometry(0.07, 8, 6), spot, [Math.cos(a) * r, y, Math.sin(a) * r], null, [1, 0.4, 1]);
+    }
+    for (let k = 0; k < 24; k++) {
+      const a = (k / 24) * Math.PI * 2;
+      knob(b, new T.PlaneGeometry(0.85, 0.16), gill, [Math.cos(a) * 0.82, 0.28, Math.sin(a) * 0.82], [0, -a, 0]);
+    }
+    for (let i = 0; i < 26; i++) {
+      const a = K.rnd() * Math.PI * 2,
+        r = 0.6 + K.rnd() * 1.1;
+      knob(b, new T.SphereGeometry(0.035 + K.rnd() * 0.03, 6, 5), spore, [
+        Math.cos(a) * r,
+        1.2 + K.rnd() * 1.0,
+        Math.sin(a) * r
+      ]);
+    }
+  },
+  // 螢蕊: a crown of long stamens, each tipped with a glowing anther
+  'flora-2-2'(K, b) {
+    const stem = K.plain(hsl(0.2, 0.4, 0.75), { roughness: 0.5 }),
+      anther = K.glowMat();
+    for (let k = 0; k < 11; k++) {
+      const a = (k / 11) * Math.PI * 2,
+        h = 0.75 + (k % 3) * 0.25,
+        tip = [Math.cos(a) * 0.55, 1.0 + h, Math.sin(a) * 0.55];
+      rod(
+        b,
+        [[Math.cos(a) * 0.12, 0.95, Math.sin(a) * 0.12], [Math.cos(a) * 0.3, 1.0 + h * 0.6, Math.sin(a) * 0.3], tip],
+        0.022,
+        0.012,
+        stem,
+        0,
+        10,
+        5
+      );
+      knob(b, new T.SphereGeometry(0.07, 10, 8), anther, tip, [0, -a, 0.6], [1, 1.7, 1]);
+    }
+    knob(b, new T.CylinderGeometry(0.1, 0.06, 0.6, 10), stem, [0, 1.25, 0]);
+    knob(b, new T.SphereGeometry(0.1, 12, 10), anther, [0, 1.58, 0]);
+  },
+  // 蜜露: a skirt of drooping petals, beads of amber honey hanging from their tips
+  'flora-2-3'(K, b) {
+    const petal = K.plain(hsl(0.11, 0.75, 0.7), {
+        side: T.DoubleSide,
+        roughness: 0.45,
+        sheen: 1,
+        sheenColor: hsl(0.1, 0.8, 0.85)
+      }),
+      honey = K.plain(hsl(0.09, 0.9, 0.5), {
+        transparent: true,
+        opacity: 0.85,
+        roughness: 0.05,
+        clearcoat: 1,
+        emissive: hsl(0.09, 0.9, 0.35),
+        emissiveIntensity: 0.4
+      });
+    petalRing(b, [0, 0.15, 0], 9, 0.75, -0.55, petal, 0, 0, 0.9);
+    for (let k = 0; k < 9; k++) {
+      const a = (k / 9) * Math.PI * 2,
+        r = 0.9 + 0.75 * Math.cos(0.55),
+        y = 0.15 - 0.75 * Math.sin(0.55) - 0.08;
+      knob(b, new T.SphereGeometry(0.065, 10, 8), honey, [Math.cos(a) * r, y, -Math.sin(a) * r], null, [1, 1.35, 1]);
+    }
+  },
+  /* ------------ 樹龜 (flora turtle) */
+  // 森甲: a little forest of conifers stands on its shell
+  'flora-3-0'(K, b) {
+    const bark = K.plain(hsl(0.07, 0.35, 0.27), { roughness: 0.9 }),
+      pine = K.plain(hsl(0.36, 0.45, 0.24), { roughness: 0.85 });
+    for (const [x, z, h] of [
+      [0, -0.1, 1.15],
+      [-0.4, 0.25, 0.8],
+      [0.38, 0.3, 0.7],
+      [0.3, -0.5, 0.9],
+      [-0.35, -0.45, 0.6]
+    ]) {
+      const y = shellTop(x, z);
+      rod(
+        b,
+        [
+          [x, y - 0.05, z],
+          [x, y + h * 0.3, z]
+        ],
+        0.05 * h,
+        0.04 * h,
+        bark,
+        0,
+        3,
+        6
+      );
+      for (let k = 0; k < 3; k++)
+        knob(b, new T.ConeGeometry(0.3 * h * (1 - k * 0.25), 0.45 * h, 8), pine, [x, y + h * (0.38 + k * 0.24), z]);
+    }
+  },
+  // 根鬚: a gnarled stump whose roots spill over the shell and hang like a beard
+  'flora-3-1'(K, b) {
+    const bark = K.plain(hsl(0.07, 0.3, 0.25), { roughness: 0.92 }),
+      leaf = K.plain(hsl(0.28, 0.5, 0.33), { roughness: 0.8 });
+    rod(
+      b,
+      [
+        [0, 0.55, -0.1],
+        [0.06, 0.9, -0.12],
+        [-0.04, 1.15, -0.05]
+      ],
+      0.2,
+      0.13,
+      bark,
+      0,
+      8,
+      9
+    );
+    for (const [dx, dz] of [
+      [0.25, 0.1],
+      [-0.2, -0.15]
+    ])
+      rod(
+        b,
+        [
+          [-0.02, 1.05, -0.08],
+          [dx, 1.3, -0.08 + dz],
+          [dx * 1.4, 1.38, -0.08 + dz * 1.5]
+        ],
+        0.06,
+        0.02,
+        bark,
+        0,
+        6,
+        5
+      );
+    for (let i = 0; i < 6; i++)
+      knob(b, new T.IcosahedronGeometry(0.16, 1), leaf, [
+        Math.sin(i * 2.3) * 0.3,
+        1.38 + (i % 2) * 0.1,
+        -0.08 + Math.cos(i * 2.3) * 0.25
+      ]);
+    for (let k = 0; k < 12; k++) {
+      const a = (k / 12) * Math.PI * 2 + 0.2,
+        cx = Math.cos(a),
+        cz = Math.sin(a),
+        mid = [cx * 0.5, shellTop(cx * 0.5, cz * 0.6) + 0.02, cz * 0.6],
+        rim = [cx * 0.95, 0.12, cz * 1.15],
+        L = 0.4 + (k % 3) * 0.2;
+      rod(
+        b,
+        [[cx * 0.12, 0.62, -0.1 + cz * 0.12], mid, rim, [cx * 1.0, 0.12 - L, cz * 1.2]],
+        0.05,
+        0.012,
+        bark,
+        0,
+        18,
+        5
+      );
+    }
+  },
+  // 果實: a round fruit tree, hung with glowing fruit
+  'flora-3-2'(K, b) {
+    const bark = K.plain(hsl(0.07, 0.35, 0.3), { roughness: 0.85 }),
+      leaf = K.plain(hsl(0.29, 0.55, 0.35), { roughness: 0.8 }),
+      fruit = K.plain(hsl(0.04 + K.pal.hue * 0.1, 0.85, 0.55), {
+        roughness: 0.25,
+        clearcoat: 1,
+        emissive: hsl(0.05, 0.9, 0.4),
+        emissiveIntensity: 0.5
+      });
+    rod(
+      b,
+      [
+        [0, 0.6, -0.1],
+        [0.05, 1.0, -0.12],
+        [0, 1.25, -0.1]
+      ],
+      0.09,
+      0.06,
+      bark,
+      0,
+      6,
+      7
+    );
+    for (let i = 0; i < 9; i++) {
+      const a = i * 2.39,
+        r = i ? 0.32 : 0;
+      knob(b, new T.IcosahedronGeometry(0.3, 1), leaf, [
+        Math.cos(a) * r,
+        1.45 + (i % 3) * 0.12,
+        -0.1 + Math.sin(a) * r
+      ]);
+    }
+    for (let i = 0; i < 12; i++) {
+      const a = i * 2.1,
+        r = 0.5 + (i % 2) * 0.08;
+      knob(b, new T.SphereGeometry(0.075, 10, 8), fruit, [
+        Math.cos(a) * r,
+        1.3 + (i % 4) * 0.12,
+        -0.1 + Math.sin(a) * r
+      ]);
+    }
+  },
+  // 古木: an ancient, twisted bonsai with flat pads of foliage and hanging moss
+  'flora-3-3'(K, b) {
+    const bark = K.plain(hsl(0.06, 0.25, 0.2), { roughness: 0.95 }),
+      leaf = K.plain(hsl(0.33, 0.45, 0.27), { roughness: 0.85 }),
+      moss = K.plain(hsl(0.25, 0.4, 0.4), { roughness: 0.9 });
+    rod(
+      b,
+      [
+        [0, 0.55, 0],
+        [0.25, 0.9, -0.1],
+        [-0.05, 1.25, -0.2],
+        [0.2, 1.55, -0.1],
+        [0.5, 1.7, 0.05]
+      ],
+      0.17,
+      0.06,
+      bark,
+      0,
+      24,
+      8
+    );
+    rod(
+      b,
+      [
+        [-0.04, 1.25, -0.2],
+        [-0.4, 1.4, -0.25],
+        [-0.65, 1.42, -0.15]
+      ],
+      0.07,
+      0.03,
+      bark,
+      0,
+      8,
+      6
+    );
+    for (const [x, y, z, s] of [
+      [0.55, 1.78, 0.05, 0.42],
+      [-0.65, 1.5, -0.15, 0.32],
+      [0.1, 1.95, -0.15, 0.3]
+    ])
+      knob(b, new T.IcosahedronGeometry(1, 1), leaf, [x, y, z], null, [s, s * 0.35, s * 0.85]);
+    for (let k = 0; k < 5; k++)
+      rod(
+        b,
+        [
+          [-0.65 + k * 0.28, 1.45, -0.15],
+          [-0.65 + k * 0.28, 1.2 - (k % 2) * 0.15, -0.15]
+        ],
+        0.015,
+        0.006,
+        moss,
+        0,
+        4,
+        4
+      );
+  }
+};
+
+function signature(K, body, info) {
+  const key = K.p.species,
+    parents = [body, K.parts.head, K.parts.arms].filter(Boolean),
+    before = parents.map(g => g.children.length);
+  SIGNATURES[key]?.(K, body, info);
+  // the signature's parts are static in their parent's space: fold those sharing a material into one mesh each
+  parents.forEach((g, i) => mergeParts(g, before[i]));
+  const s = PROPORTIONS[key];
+  if (s) body.scale.set(...s);
+}
+function mergeParts(parent, from) {
+  const byMat = new Map();
+  for (const m of parent.children.slice(from)) {
+    if (!m.isMesh || m.userData.eye) continue;
+    if (!byMat.has(m.material)) byMat.set(m.material, []);
+    byMat.get(m.material).push(m);
+  }
+  for (const [mat, list] of byMat) {
+    if (list.length < 2) continue;
+    const geos = list.map(m => {
+      m.updateMatrix();
+      let g = transformed(m.geometry, m.matrix);
+      if (g.index) g = g.toNonIndexed();
+      for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'uv'].includes(k)) g.deleteAttribute(k);
+      if (!g.attributes.normal) g.computeVertexNormals();
+      return g;
+    });
+    const merged = mergeGeometries(geos);
+    if (!merged) continue;
+    for (const m of list) parent.remove(m);
+    addMesh(parent, merged, mat);
   }
 }
 
@@ -2531,14 +4465,15 @@ export function makeCreature(genome, opts = {}) {
     body = new T.Group();
   group.add(body);
   const info = opts.upright ? upright(K, body, opts.upright, opts) : BUILDERS[p.family][p.body](K, body);
+  const grown = body.children.length;
   if (p.flora && !info.upright) {
     const [z0, z1, y] = info.flora;
     if (info.jelly) {
       for (let i = 0; i < 3 + p.flora * 4; i++)
         flower(K, body, [Math.cos(i * 1.7) * 0.5, y + 0.15, Math.sin(i * 1.7) * 0.5], 1.5, 0);
       floraGrowth(K, body, -0.5, 0.5, y, p.flora * 0.6);
-    } else if (info.shell) {
-      // a small tree takes root in the shell
+    } else if (info.shell && p.family !== 'flora') {
+      // a small tree takes root in the shell (a flora turtle grows its own, see the signatures)
       const bark = K.plain(hsl(0.08, 0.35, 0.3), { roughness: 0.85 });
       addMesh(
         body,
@@ -2565,11 +4500,15 @@ export function makeCreature(genome, opts = {}) {
       floraGrowth(K, body, z0, z1, y, p.flora);
     } else floraGrowth(K, body, z0, z1, y, p.flora);
   }
+  // leaves and blossoms are static on the body: one mesh per material
+  if (p.flora && !info.upright) mergeParts(body, grown);
   if (!info.upright) fusionTrait(K, body, info);
   if (p.fierce >= 0.55 && info.mouth) fangs(K, body, info.mouth);
   // savage beasts bristle with a ridge of spines (species that already grow a crest keep theirs)
   if (p.fierce >= 0.8 && !p.horn && !info.jelly && !info.shell && !info.rigid && !info.upright)
     crest(K, body, info.back[2] - info.len * 0.3, info.back[2] + info.len * 0.2, info.top * 0.92, 0.12, 7);
+  // 0.64: the species' own build and signature feature
+  if (!info.upright) signature(K, body, info);
   // land beasts get a hidden rock perch, shown when they rest in a sea pen
   let perch = null;
   if (p.habitat === 'land') {
