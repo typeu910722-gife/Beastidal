@@ -68,24 +68,43 @@ for (const size of SIZES) {
   await page.waitForFunction(() => window.__beastidal && !document.getElementById('hud').hidden, null, {
     timeout: 120000
   });
-  // let the first-person tutorial toast settle, then measure the sim + render cost per frame
+  // let the first-person tutorial toast settle, then measure whole frames: each one simulates AND renders, and
+  // gl.finish() waits for the GPU (here, the software rasteriser) so the time is the frame's real cost. The renderer's
+  // counters normally reset on every render call (the last one is the post-processing quad), so they are summed over
+  // one full frame instead.
   run.perf = await page.evaluate(() => {
     const B = window.__beastidal;
-    const info = B.world.renderer.info;
-    const sample = n => {
+    const renderer = B.world.renderer,
+      info = renderer.info,
+      gl = renderer.getContext();
+    const frame = () => {
       const t = performance.now();
-      B.step(1 / 30, n);
-      return (performance.now() - t) / n;
+      B.step(1 / 30, 1);
+      gl.finish();
+      return performance.now() - t;
     };
-    sample(10);
-    const ms = sample(60);
+    for (let i = 0; i < 10; i++) frame();
+    const times = Array.from({ length: 60 }, frame).sort((a, b) => a - b);
+    const pct = q => times[Math.min(times.length - 1, Math.floor(q * times.length))];
+    info.autoReset = false;
+    info.reset();
+    frame();
+    const counted = { calls: info.render.calls, triangles: info.render.triangles };
+    info.autoReset = true;
     return {
-      msPerFrame: +ms.toFixed(1),
-      calls: info.render.calls,
-      triangles: info.render.triangles,
+      frames: times.length,
+      msMedian: +pct(0.5).toFixed(1),
+      msP95: +pct(0.95).toFixed(1),
+      fpsMedian: +(1000 / pct(0.5)).toFixed(1),
+      calls: counted.calls,
+      triangles: counted.triangles,
       geometries: info.memory.geometries,
       textures: info.memory.textures,
-      heapMB: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null
+      heapMB: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null,
+      renderer: (() => {
+        const d = gl.getExtension('WEBGL_debug_renderer_info');
+        return d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : 'unknown';
+      })()
     };
   });
   // sail a bit, then audit every panel
