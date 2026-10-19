@@ -1,7 +1,7 @@
 // 0.23: gear, skills, fishing, island reclamation with land buildings, and the base rating.
 import assert from 'node:assert/strict';
 import { createState, craftItem, placeBuilding } from '../dist/rules.js';
-import { GEAR, GEAR_IDS, hasGear, normalizeGear } from '../dist/gear.js';
+import { GEAR_IDS, hasGear, normalizeGear } from '../dist/gear.js';
 import {
   SKILLS,
   SKILL_IDS,
@@ -32,7 +32,6 @@ import { TIERS, ratingScore, ratingTier, tickRating, ratingStars } from '../dist
 import { oxygenMax, normalizeExpansion } from '../dist/expansion.js';
 import { setClimbing, walkable } from '../dist/lake.js';
 import { ITEMS, CRAFTS, CARRYABLE } from '../dist/items.js';
-import { ISLANDS } from '../dist/islands.js';
 
 let n = 0;
 const test = (name, fn) => {

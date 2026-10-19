@@ -1,7 +1,7 @@
 // Procedural warship "比斯泰德號": keel + five walkable deck bands that can be cut away.
-import { surface } from './surfaces.js?v=0.61.0';
+import { surface } from './surfaces.js?v=0.61.1';
 import * as T from './vendor/three.module.min.js';
-import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.61.0';
+import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.61.1';
 export const LOUNGE_SLOTS = [
   [-2.4, -7],
   [2.4, -7],
@@ -386,7 +386,7 @@ export function makeWarship(mat, halo) {
     helm.position.set(0, y + 1.35, -10.6);
     b.add(helm);
     cyl(b, 0x5a3f27, 0, y + 0.6, -10.75, 0.14, 1.2);
-    const wheel = add(helm, new T.TorusGeometry(0.62, 0.06, 8, 28), 0x8b5e3c, [0, 0, 0]);
+    add(helm, new T.TorusGeometry(0.62, 0.06, 8, 28), 0x8b5e3c, [0, 0, 0]);
     for (let i = 0; i < 8; i++) {
       const a = (i * Math.PI) / 4;
       rod(helm, [0, 0, 0], [Math.cos(a) * 0.8, Math.sin(a) * 0.8, 0], 0.035, 0x8b5e3c);
@@ -441,7 +441,7 @@ export function dockMesh(mat) {
     add(new T.SphereGeometry(0.2, 10, 8), 0x2f3a3d, [x, 0.85, 1.4], [1, 0.6, 1], { metalness: 0.5 });
   }
   add(Cy, 0x6b4b2e, [-1.3, 1.9, -1.3], [0.13, 3.2, 0.13]);
-  const arm = add(B, 0x6b4b2e, [-0.4, 3.4, -1.3], [2.2, 0.16, 0.16]);
+  add(B, 0x6b4b2e, [-0.4, 3.4, -1.3], [2.2, 0.16, 0.16]);
   add(Cy, 0xd6c19b, [0.6, 2.6, -1.3], [0.02, 1.6, 0.02]);
   add(B, 0x8d5b38, [0.6, 1.7, -1.3], [0.4, 0.3, 0.4]);
   add(new T.TorusGeometry(0.32, 0.08, 6, 16), 0xd6c19b, [1.2, 0.5, -0.4]).rotation.x = Math.PI / 2;
@@ -450,7 +450,7 @@ export function dockMesh(mat) {
     emissive: 0xffc06a,
     emissiveIntensity: 1.4
   });
-  const sign = add(B, 0x2e7c78, [0, 1.1, -1.65], [1.6, 0.5, 0.06]);
+  add(B, 0x2e7c78, [0, 1.1, -1.65], [1.6, 0.5, 0.06]);
   add(B, 0xd6b15c, [0, 1.1, -1.62], [1.3, 0.08, 0.02], { emissive: 0xb08a3a, emissiveIntensity: 0.5 });
   return g;
 }
