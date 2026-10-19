@@ -9,15 +9,16 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.60.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.60.0';
-import { WILD_BEASTS } from './beasts.js?v=0.60.0';
-import { rollDrops } from './species.js?v=0.60.0';
-import { give } from './bag.js?v=0.60.0';
-import { tally } from './stats.js?v=0.60.0';
-import { damageBonus } from './skills.js?v=0.60.0';
-import { remember } from './memories.js?v=0.60.0';
-import { perks, personality, normalizeTree } from './beast-tree.js?v=0.60.0';
+import { phenotype } from './genetics.js?v=0.61.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.61.0';
+import { WILD_BEASTS } from './beasts.js?v=0.61.0';
+import { rollDrops } from './species.js?v=0.61.0';
+import { give } from './bag.js?v=0.61.0';
+import { tally } from './stats.js?v=0.61.0';
+import { damageBonus } from './skills.js?v=0.61.0';
+import { remember } from './memories.js?v=0.61.0';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.61.0';
+import { hullDamageFactor } from './warship.js?v=0.61.0';
 
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;
@@ -713,7 +714,7 @@ export const SPECIAL = {
   }
 };
 // a warship or a better boat takes the edge off the watcher's blows
-const vesselFactor = s => Math.max(0.35, 1 - (s.ship ? 0.6 : (s.expedition?.boatLevel || 0) * 0.15));
+const vesselFactor = s => (s.ship ? hullDamageFactor(s) : Math.max(0.35, 1 - (s.expedition?.boatLevel || 0) * 0.15));
 function specialTurn(s, w, def, env, ev, dt, rng, p, ally, riding, me) {
   const t = s.elapsed,
     id = w.id || 'boss',

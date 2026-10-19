@@ -4,7 +4,7 @@
 // family reports, the graduation list ("recycled"), a tank holding a body with your face, the truth about contracts
 // → 晴 finds you and offers to help you forget. Forget, or demand the truth: either way chapter two ends.
 // See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.60.0';
+import { dayOf, isNight } from './clock.js?v=0.61.0';
 
 export function normalizeChapter2(s) {
   s.chapter2 ??= {};
