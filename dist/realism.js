@@ -1,7 +1,7 @@
 // Realistic atmosphere: physically-inspired sky, Gerstner ocean, moving sun, image-based lighting and quality presets.
 import * as T from './vendor/three.module.min.js';
-import { groundTexture } from './lake-models.js?v=0.61.1';
-import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.61.1';
+import { groundTexture } from './lake-models.js?v=0.62.0';
+import { WAVE_SET, WAVE_TIME } from './physics.js?v=0.62.0';
 export const TRAIL = 40,
   SPLASHES = 4;
 
@@ -299,6 +299,13 @@ void main(){
  vec3 L=normalize(uSunDir.y>-.05?uSunDir:-uSunDir);float sunlit=max(L.y,0.)*mix(.08,1.,day);
  vec3 body=mix(deep,shallow,sh)*(.25+.75*sunlit)+vec3(.008,.024,.036)*(1.-day);body+=skyRadiance(vec3(0.,1.,0.))*.045*(1.-F);
  float cr=max(vCrest,0.)*.15;float sss=pow(max(dot(V,-L),0.),4.)*cr*1.6+cr*.35;body+=vec3(.02,.12,.085)*sss*sunlit;
+  #if OCTAVES > 3
+  // 0.62: caustics — the ripples focus sunlight into a moving web of bright lines on the sand of the shallows
+  // (0.3 to 9 m deep). Two noise layers drifting apart are equal along thin curves; those curves are the web.
+  float shoal=smoothstep(0.,.3,-gh)*(1.-smoothstep(3.,9.,-gh));
+  if(shoal>0.){vec2 cq=p*.9;float c1=noise(cq+vec2(uTime*.35,uTime*.21)),c2=noise(cq*1.6-vec2(uTime*.27,-uTime*.31));
+   body+=vec3(.55,.8,.62)*pow(1.-abs(c1-c2),8.)*shoal*sunlit*day*(1.-uStorm)*detail*.9;}
+  #endif
  vec3 col=mix(body,refl*mix(1.,.8,lowSun*day),min(F,mix(.92,.72,lowSun*day)));
  vec3 H=normalize(L+V);float NdH=max(dot(n,H),0.);float rough=mix(.05,.12,uStorm);float a2=rough*rough;float dd=NdH*NdH*(a2-1.)+1.;float ggx=a2/(3.14159*dd*dd);
  vec3 sunCol=mix(vec3(.25,.32,.5)*.12,mix(vec3(1.,.55,.3),vec3(1.,.93,.82),smoothstep(.0,.35,uSunDir.y)),day);
