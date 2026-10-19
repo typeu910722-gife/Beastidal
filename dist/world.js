@@ -35,6 +35,7 @@ import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.62.0';
 import { makeCabin, tankMesh } from './cabin-models.js?v=0.62.0';
 import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.62.0';
 import { CombatFX } from './combat-fx.js?v=0.62.0';
+import { dressWithProp } from './props.js?v=0.62.0';
 import { syncPlots } from './land-models.js?v=0.62.0';
 import { plotTargets } from './reclaim.js?v=0.62.0';
 import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.62.0';
@@ -673,6 +674,8 @@ function makeBoat() {
   g.userData.stern = [flagpole, pennant, lamp, glow].filter(Boolean);
   g.userData.human = human;
   g.userData.flag = pennant;
+  // 0.63: the Blender skiff (scripts/blender/skiff.py) takes over the hull, planks, seats, oar and rope
+  dressWithProp(g, 'skiff', [human, ...g.userData.stern]);
   return g;
 }
 function lootMesh(kind) {

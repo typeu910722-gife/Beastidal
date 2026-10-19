@@ -114,6 +114,8 @@ const FILES = [
   './protagonist.js?v=0.62.0',
   './models/protagonist.glb',
   './models/protagonist-female.glb',
+  './props.js?v=0.62.0',
+  './models/props/skiff.glb?v=0.62.0',
   './vendor/addons/loaders/GLTFLoader.js',
   './vendor/addons/utils/BufferGeometryUtils.js',
   './bake.js?v=0.62.0',
