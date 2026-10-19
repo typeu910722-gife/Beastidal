@@ -370,6 +370,7 @@ function netMesh(parent) {
   parent.add(g);
   return g;
 }
+const PROP_BUILDINGS = new Set(['shelter', 'collector', 'pen', 'hatchery', 'beacon']);
 function buildingMesh(b) {
   const g = new T.Group();
   if (b.type === 'floor' || b.type === 'upperfloor') g.add(floorMesh());
@@ -470,7 +471,8 @@ function buildingMesh(b) {
     tarp.rotation.y = Math.PI / 4;
     rod(g, [0, 1.85, 0], [0, 1.1, 0], 0.065, 0xc8d0b6);
     // sight glass on the tank: the blue column is the water you can draw
-    pole(g, 0xcfe3e0, 0.78, 0.9, 0, 0.07, 1.0).material = new T.MeshStandardMaterial({
+    const glass = pole(g, 0xcfe3e0, 0.78, 0.9, 0, 0.07, 1.0);
+    glass.material = new T.MeshStandardMaterial({
       color: 0xcfe3e0,
       transparent: true,
       opacity: 0.35,
@@ -481,6 +483,7 @@ function buildingMesh(b) {
     g.userData.gauge = water;
     g.userData.gaugeBase = 0.42;
     g.userData.gaugeH = 0.94;
+    g.userData.keep = [glass, water];
   }
   if (b.type === 'pen') {
     for (const x of [-1.6, 1.6])
@@ -502,7 +505,7 @@ function buildingMesh(b) {
     for (const x of [-1, 1]) for (const z of [-0.65, 0.65]) pole(g, colors.metal, x, 0.8, z, 0.08, 1);
     box(g, 0x566d72, 0, 1.25, 0, 2.5, 0.18, 1.9);
     piece(g, cylG, 0x4c827f, [0, 1.44, 0], [0.65, 0.2, 0.65]);
-    ball(g, 0xa8e8df, 0, 1.85, 0, 0.62, 0.7, 0.62, {
+    const dome = ball(g, 0xa8e8df, 0, 1.85, 0, 0.62, 0.7, 0.62, {
       transparent: true,
       opacity: 0.4,
       metalness: 0.3,
@@ -514,7 +517,8 @@ function buildingMesh(b) {
     egg.visible = false;
     g.userData.egg = egg;
     box(g, 0x25464d, 1.02, 1.43, 0.43, 0.36, 0.3, 0.5);
-    box(g, 0xabdfb3, 1.02, 1.6, 0.43, 0.27, 0.035, 0.33, { emissive: 0x88ddb6, emissiveIntensity: 0.6 });
+    const screen = box(g, 0xabdfb3, 1.02, 1.6, 0.43, 0.27, 0.035, 0.33, { emissive: 0x88ddb6, emissiveIntensity: 0.6 });
+    g.userData.keep = [dome, egg, screen];
   }
   if (b.type === 'beacon') {
     for (const x of [-0.55, 0.55])
@@ -526,7 +530,7 @@ function buildingMesh(b) {
       rod(g, [0.55, j, -0.55], [-0.55, j, 0.55], 0.06, colors.metal);
     }
     pole(g, colors.metal, 0, 4.8, 0, 0.49, 0.4);
-    ball(g, 0xc0ffe3, 0, 5.3, 0, 0.35, 0.45, 0.35, { emissive: 0xb6ffdc, emissiveIntensity: 1.8 });
+    const lamp = ball(g, 0xc0ffe3, 0, 5.3, 0, 0.35, 0.45, 0.35, { emissive: 0xb6ffdc, emissiveIntensity: 1.8 });
     pole(g, colors.metal, 0, 5.9, 0, 0.06, 0.7);
     const beam = piece(g, new T.CylinderGeometry(0.1, 1.3, 75, 12, 1, true), 0xa2ffcc, [0, 43, 0], [1, 1, 1], {
       transparent: true,
@@ -537,6 +541,7 @@ function buildingMesh(b) {
       side: T.DoubleSide
     });
     beam.raycast = () => {};
+    g.userData.keep = [lamp, beam];
   }
   if (b.type === 'collector') {
     for (const y of [0.46, 0.91, 1.39])
@@ -596,11 +601,17 @@ function buildingMesh(b) {
     box(g, 0x9a8668, -0.85, 0.62, 0.55, 0.42, 0.3, 0.32);
     box(g, 0xcfc6ad, -0.86, 0.79, 0.55, 0.24, 0.02, 0.17).rotation.y = 0.4;
   }
-  if (b.type === 'beacon') halo(g, 0xaeffdb, 0, 5.3, 0, 2.6);
-  if (b.type === 'hatchery') halo(g, 0x9cebd6, 0, 1.85, 0, 1.8);
-  // 0.63: the Blender shelter (scripts/blender/shelter.py); its canvas roof still lifts away while you are inside
-  if (b.type === 'shelter')
-    dressWithProp(g, 'shelter', g.userData.keep, parts => (g.userData.roof = [parts.roof, ...g.userData.hang]));
+  if (b.type === 'beacon') g.userData.keep.push(halo(g, 0xaeffdb, 0, 5.3, 0, 2.6));
+  if (b.type === 'hatchery') g.userData.keep.push(halo(g, 0x9cebd6, 0, 1.85, 0, 1.8));
+  // 0.63: Blender props (scripts/blender/) for the raft's buildings; what userData.keep lists stays procedural (lights,
+  // glass, the gauge, the egg). The shelter's canvas roof still lifts away while you are inside.
+  if (PROP_BUILDINGS.has(b.type))
+    dressWithProp(
+      g,
+      b.type,
+      g.userData.keep || [],
+      b.type === 'shelter' ? parts => (g.userData.roof = [parts.roof, ...g.userData.hang]) : undefined
+    );
   g.userData.facilityId = b.type === 'floor' || b.type === 'upperfloor' ? null : facilityId(b);
   g.position.set(b.x * 3.6, (b.level || 0) * 3.3, b.z * 3.6);
   g.rotation.y = b.rot || 0;

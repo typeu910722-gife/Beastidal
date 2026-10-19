@@ -10,14 +10,26 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 import kit  # noqa: E402
+import facilities  # noqa: E402
 import shelter  # noqa: E402
 import skiff  # noqa: E402
 
-PROPS = {'skiff': skiff.build, 'shelter': shelter.build}
+PROPS = {
+    'skiff': skiff.build,
+    'shelter': shelter.build,
+    'collector': facilities.collector,
+    'pen': facilities.pen,
+    'hatchery': facilities.hatchery,
+    'beacon': facilities.beacon,
+}
 # where the preview camera stands and looks (game coordinates)
 VIEWS = {
     'skiff': {},
     'shelter': {'eye': (4.6, 3.6, 5.6), 'target': (0, 1.5, 0)},
+    'collector': {'eye': (4.2, 3.2, 4.8), 'target': (0, 1.2, 0)},
+    'pen': {'eye': (4.8, 3.6, 5.4), 'target': (0, 0.0, 0)},
+    'hatchery': {'eye': (3.6, 3.0, 4.0), 'target': (0, 1.4, 0)},
+    'beacon': {'eye': (6.0, 4.6, 7.0), 'target': (0, 3.0, 0)},
 }
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'dist', 'models', 'props')
 

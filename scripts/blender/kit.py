@@ -11,7 +11,7 @@ import math
 
 import bpy  # first: the bpy module is what makes bmesh and mathutils importable
 import bmesh  # noqa: E402
-from mathutils import Vector  # noqa: E402
+from mathutils import Matrix, Vector  # noqa: E402
 
 
 # material name -> (roughness, metallic, double-sided). wood-x/y/z: the grain runs along that game axis.
@@ -152,8 +152,8 @@ def torus(name, color, centre, major, minor, kind='rope'):
     bpy.ops.mesh.primitive_torus_add(major_radius=major, minor_radius=minor, major_segments=24, minor_segments=8)
     ob = bpy.context.active_object
     ob.name = name
-    ob.location = g2b(*centre)
-    apply_transforms(ob)
+    # move the mesh itself: an object's location only reaches matrix_world after a depsgraph update
+    ob.data.transform(Matrix.Translation(g2b(*centre)))
     return solid_color(ob, color, kind)
 
 

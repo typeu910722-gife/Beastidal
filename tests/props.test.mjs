@@ -20,10 +20,18 @@ function parse(name) {
 // name: [bounds min (x, y, z), bounds max, triangle budget, byte budget, named parts the game drives]. The bounds are
 // those of the procedural parts the prop replaces, so one that comes out mirrored, z-up or mis-scaled fails here.
 const PROPS = {
-  // hull ±1.0 plus the sculling oar out to x 1.77; blade tip below the keel to the stem head; transom to stem (+z)
-  skiff: [[-1.0, -0.04, -1.65], [1.77, 0.99, 2.01], 9000, 300 * 1024, []],
-  // the canvas roof's eaves at ±1.6; deck to the ridge pole; back wall to the door step (+z)
-  shelter: [[-1.6, -0.01, -1.55], [1.6, 3.18, 1.79], 12000, 350 * 1024, ['roof']]
+  // hull ±1.0 plus the sculling oar out to x 1.77; the oar blade's lower edge to the stem head; transom to stem (+z)
+  skiff: [[-1.0, 0.07, -1.65], [1.77, 0.99, 2.01], 9000, 300 * 1024, []],
+  // the canvas roof's eaves at ±1.6; the door step's legs to the ridge pole; back wall to the door step (+z)
+  shelter: [[-1.6, 0.21, -1.55], [1.6, 3.18, 1.79], 12000, 350 * 1024, ['roof']],
+  // tank and hoops, legs and the tarp's corners at ±1.16; tank base to the tarp's apex
+  collector: [[-1.16, 0.35, -1.16], [1.16, 2.5, 1.16], 4000, 150 * 1024, []],
+  // floats at ±1.87; the net down to -1.5 under the water, the post caps at 1.1
+  pen: [[-1.87, -1.5, -1.87], [1.87, 1.1, 1.87], 4000, 150 * 1024, []],
+  // the bench 2.5 x 1.9; legs to the upper ring
+  hatchery: [[-1.25, 0.3, -0.95], [1.25, 2.4, 0.95], 4000, 150 * 1024, []],
+  // the tower's foot at ±0.64; deck to the mast tip
+  beacon: [[-0.64, 0.39, -0.64], [0.64, 6.25, 0.64], 4000, 150 * 1024, []]
 };
 const MATERIALS = ['wood-x', 'wood-y', 'wood-z', 'rope', 'cloth', 'metal', 'plain'];
 const MAX_DRAWS = 12; // the procedural models these replace were 30 to 70 meshes each

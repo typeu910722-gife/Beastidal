@@ -48,9 +48,12 @@ export function loadProp(name) {
 // stay: the parts the game moves, hides or animates (a rider, a flag, a lantern). A prop may carry named parts of
 // its own that the game drives (a roof that lifts away); `bind` receives them by name, e.g. { roof: mesh }.
 export function dressWithProp(group, name, keep = [], bind) {
+  // only the procedural parts there now are replaced: anything the game adds to the group while the prop is still
+  // loading (a creature in a pen, a label) stays
+  const replaced = group.children.filter(c => !keep.includes(c));
   const dress = scene => {
     if (!scene) return false;
-    for (const child of [...group.children]) if (!keep.includes(child)) group.remove(child);
+    for (const child of replaced) group.remove(child);
     const copy = scene.clone(),
       parts = {};
     // a part with several materials loads as a group of meshes: name the group, not its pieces
