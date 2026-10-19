@@ -1,45 +1,45 @@
-import { expansionModels } from './expansion-models.js?v=0.60.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.60.0';
-import { normalizeHousing, penId } from './housing.js?v=0.60.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.60.0';
-export { makeCreature } from './creatures.js?v=0.60.0';
-import { makeIslands } from './island-models.js?v=0.60.0';
-import { facilityId } from './facilities.js?v=0.60.0';
+import { expansionModels } from './expansion-models.js?v=0.61.1';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.61.1';
+import { normalizeHousing, penId } from './housing.js?v=0.61.1';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.61.1';
+export { makeCreature } from './creatures.js?v=0.61.1';
+import { makeIslands } from './island-models.js?v=0.61.1';
+import { facilityId } from './facilities.js?v=0.61.1';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.60.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.60.0';
-import { surface } from './surfaces.js?v=0.60.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.60.0';
-import { makeLake } from './lake-models.js?v=0.60.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.60.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.60.0';
-import { makeStatues } from './statues.js?v=0.60.0';
-import { animateGarden } from './garden-models.js?v=0.60.0';
-import { ViewModel } from './viewmodel.js?v=0.60.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.60.0';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.60.0';
-import { bakeStatic } from './bake.js?v=0.60.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.60.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.60.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.60.0';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.60.0';
-import { PostFX } from './postfx.js?v=0.60.0';
-import { makeHuman, animateHuman } from './human.js?v=0.60.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.60.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.60.0';
-import { buildError } from './rules.js?v=0.60.0';
-import { makeWarship, dockMesh, LOUNGE_SLOTS, SHIP_COLORS } from './ship-models.js?v=0.60.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.60.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.60.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.60.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.60.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.60.0';
-import { CombatFX } from './combat-fx.js?v=0.60.0';
-import { syncPlots } from './land-models.js?v=0.60.0';
-import { plotTargets } from './reclaim.js?v=0.60.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.60.0';
-import { dayPhase } from './clock.js?v=0.60.0';
-import { weatherAt, season } from './weather.js?v=0.60.0';
+import { phenotype, seeded } from './genetics.js?v=0.61.1';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.61.1';
+import { surface } from './surfaces.js?v=0.61.1';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.61.1';
+import { makeLake } from './lake-models.js?v=0.61.1';
+import { groundAt, LANDMARKS } from './lake.js?v=0.61.1';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.61.1';
+import { makeStatues } from './statues.js?v=0.61.1';
+import { animateGarden } from './garden-models.js?v=0.61.1';
+import { ViewModel } from './viewmodel.js?v=0.61.1';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.61.1';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.61.1';
+import { bakeStatic } from './bake.js?v=0.61.1';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.61.1';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.61.1';
+import { guideGone, domeCracked } from './chapter2.js?v=0.61.1';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.61.1';
+import { PostFX } from './postfx.js?v=0.61.1';
+import { makeHuman, animateHuman } from './human.js?v=0.61.1';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.61.1';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.61.1';
+import { buildError } from './rules.js?v=0.61.1';
+import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.61.1';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.61.1';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.61.1';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.61.1';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.61.1';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.61.1';
+import { CombatFX } from './combat-fx.js?v=0.61.1';
+import { syncPlots } from './land-models.js?v=0.61.1';
+import { plotTargets } from './reclaim.js?v=0.61.1';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.61.1';
+import { dayPhase } from './clock.js?v=0.61.1';
+import { weatherAt, season } from './weather.js?v=0.61.1';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -77,7 +77,6 @@ const colors = {
 };
 const boxG = new T.BoxGeometry(1, 1, 1),
   sphereG = new T.SphereGeometry(1, 16, 12),
-  coneG = new T.ConeGeometry(1, 1, 8),
   cylG = new T.CylinderGeometry(1, 1, 1, 12);
 const mats = new Map();
 // 0.43: the raft's woods, ropes, sailcloth and metal get their surfaces (surfaces.js); the colour picks the kind
@@ -142,20 +141,6 @@ function rod(p, a, b, r, color) {
     m = piece(p, cylG, color, start.clone().add(end).multiplyScalar(0.5).toArray(), [r, start.distanceTo(end), r]);
   m.quaternion.setFromUnitVectors(new V(0, 1, 0), end.sub(start).normalize());
   return m;
-}
-function fin(parent, color, side = 1, length = 1, type = 0) {
-  const g = new T.BufferGeometry();
-  const pts =
-    type === 1
-      ? [0, 0, 0, side * length, 0.1, -0.1, side * length * 0.8, 0.04, -1.6, 0, 0, -0.9]
-      : [0, 0, 0.5, side * length, 0.08, -0.55, side * length * 0.4, 0, -1.2, 0, 0, -0.6];
-  g.setAttribute('position', new T.Float32BufferAttribute(pts, 3));
-  g.setIndex([0, 1, 2, 0, 2, 3]);
-  g.computeVertexNormals();
-  const mesh = new T.Mesh(g, mat(color, { side: T.DoubleSide, roughness: 0.45 }));
-  mesh.castShadow = true;
-  parent.add(mesh);
-  return mesh;
 }
 
 let woodTex, glowTex;
@@ -511,7 +496,7 @@ function buildingMesh(b) {
     for (const x of [-1, 1]) for (const z of [-0.65, 0.65]) pole(g, colors.metal, x, 0.8, z, 0.08, 1);
     box(g, 0x566d72, 0, 1.25, 0, 2.5, 0.18, 1.9);
     piece(g, cylG, 0x4c827f, [0, 1.44, 0], [0.65, 0.2, 0.65]);
-    const dome = ball(g, 0xa8e8df, 0, 1.85, 0, 0.62, 0.7, 0.62, {
+    ball(g, 0xa8e8df, 0, 1.85, 0, 0.62, 0.7, 0.62, {
       transparent: true,
       opacity: 0.4,
       metalness: 0.3,
@@ -670,7 +655,7 @@ function makeBoat() {
   piece(g, new T.TubeGeometry(new T.CatmullRomCurve3(pts, true), 100, 0.045, 6, true), 0xd5b783);
   for (const side of [-1, 1])
     for (const z of [-0.7, 0, 0.65]) {
-      const rib = rod(g, [side * 0.65, 0.32, z], [side * 0.79, 0.65, z], 0.035, 0x72583b);
+      rod(g, [side * 0.65, 0.32, z], [side * 0.79, 0.65, z], 0.035, 0x72583b);
     }
   const human = character();
   human.position.set(0, 0.5, -0.85);
@@ -1952,8 +1937,8 @@ export class OceanWorld {
     }
     const pitch = this.pitch,
       camDist = Math.min(dist, fogCap),
-      _focus = (this.focusDist = camDist),
       look = this.look;
+    this.focusDist = camDist;
     // looking up (0.19): the orbit pivots around a point above the player, so a low camera angle shows the sky
     // over their head instead of the water around their feet
     const up = diving ? 0 : Math.max(0, Math.min(1, (0.25 - pitch) / 0.85)),

@@ -6,7 +6,7 @@
 // materials, iris-textured eyes and ray-veined fin membranes. Swimming is done on the GPU: the body and its baked-on
 // parts share one wave deformation, so tails, crests and ribbons ripple together.
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded, dnaCode } from './genetics.js?v=0.60.0';
+import { phenotype, seeded, dnaCode } from './genetics.js?v=0.61.1';
 
 const V = T.Vector3;
 let detail = 'high';
@@ -304,7 +304,8 @@ function swimify(mat, u, mode) {
 }
 function physical(opts) {
   if (detail === 'low') {
-    const { clearcoat, clearcoatRoughness, sheen, sheenColor, sheenRoughness, ...rest } = opts;
+    const rest = { ...opts };
+    for (const k of ['clearcoat', 'clearcoatRoughness', 'sheen', 'sheenColor', 'sheenRoughness']) delete rest[k];
     return new T.MeshStandardMaterial(rest);
   }
   return new T.MeshPhysicalMaterial(opts);
@@ -1203,7 +1204,7 @@ function serpent(K, body) {
   };
 }
 function cephalopod(K, body) {
-  const { p, pal } = K;
+  const { p } = K;
   K.u.uLen.value = 2.2;
   K.u.uSwimA.value = 0.25;
   K.u.uSwimF.value = 2.6;

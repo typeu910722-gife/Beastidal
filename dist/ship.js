@@ -1,15 +1,16 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.60.0';
-import { waterNear, groundAt } from './lake.js?v=0.60.0';
-import { onWatcherDown } from './story.js?v=0.60.0';
-import { dayOf } from './clock.js?v=0.60.0';
-import { spend, give, bagRoom } from './bag.js?v=0.60.0';
-import { pens, penId } from './housing.js?v=0.60.0';
-import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.60.0';
-import { normalizeCabin, syncCabin } from './cabin.js?v=0.60.0';
-import { rollDrops } from './species.js?v=0.60.0';
-import { phenotype } from './genetics.js?v=0.60.0';
-import { ITEM_NAMES } from './items.js?v=0.60.0';
+import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.61.1';
+import { waterNear, groundAt } from './lake.js?v=0.61.1';
+import { onWatcherDown } from './story.js?v=0.61.1';
+import { dayOf } from './clock.js?v=0.61.1';
+import { spend, give, bagRoom } from './bag.js?v=0.61.1';
+import { pens, penId } from './housing.js?v=0.61.1';
+import { RAFT_HOME, moveBaseAboard } from './fortress.js?v=0.61.1';
+import { normalizeCabin, syncCabin } from './cabin.js?v=0.61.1';
+import { rollDrops } from './species.js?v=0.61.1';
+import { phenotype } from './genetics.js?v=0.61.1';
+import { ITEM_NAMES } from './items.js?v=0.61.1';
+import { SHIP_TIERS, SHIP_MAX_TIER, shipUpgradeCost, shipTier, cargoCapacity, shipStats } from './warship.js?v=0.61.1';
 export const LIMITS = { floor: 20, pen: 5, dock: 1 };
 export const LIMIT_NAMES = { floor: '浮動地基', pen: '海洋展示池', dock: '船隻停靠站' };
 export const CLAIM_COST = { wood: 20, metal: 12, fiber: 8, crystal: 5 };
@@ -18,7 +19,7 @@ export const FUSION_COST = { wood: 100, metal: 70, fiber: 40, crystal: 25, food:
 export const FUSION_NEEDS = { floor: 12, pen: 3 };
 export const FUSION_TIME = 120;
 export const LOUNGE_CAPACITY = 6;
-export const CARGO_CAPACITY = 300;
+export const CARGO_CAPACITY = SHIP_TIERS[1].cargo;
 export const CANNON = { damage: 34, cooldown: 5, range: 32, ammo: { metal: 1 } };
 export const SHIP_LEN = 30,
   SHIP_BEAM = 5;
@@ -79,6 +80,7 @@ export function normalizeShip(s) {
       p.cargo[k] = Math.max(0, Math.floor(p.cargo[k] || 0));
     p.lounge = (p.lounge || []).filter(id => s.tamed.some(t => t.id === id)).slice(0, LOUNGE_CAPACITY);
     p.lastCannon ??= -999;
+    p.tier = shipTier(s);
     // saves from before the basin map may have the hull sitting on what is now land
     if (groundAt(p.x, p.z) > -0.8) Object.assign(p, waterNear(p.x, p.z, 8));
     // the base goes to sea with the ship (also settles saves made before it did)
@@ -205,7 +207,7 @@ export function tickShip(s) {
   const events = [];
   if (s.shipFusion && s.elapsed >= s.shipFusion.readyAt) {
     const m = dockMoor(s) || { x: s.boat.x + 8, z: s.boat.z, heading: 0 };
-    s.ship = { x: m.x, z: m.z, heading: m.heading, cargo: {}, lounge: [], lastCannon: -999 };
+    s.ship = { x: m.x, z: m.z, heading: m.heading, cargo: {}, lounge: [], lastCannon: -999, tier: 1 };
     delete s.shipFusion;
     // 0.35: whoever stood on the raft goes aboard too — the raft's floor is gone, and they were left standing on
     // open water, unable to move (only the "unstuck" menu got them out)
@@ -445,9 +447,9 @@ export function transferCargo(s, kind, amount) {
   if (s.player.mode !== 'cabin') return fail('請到船艙下層的物資艙操作。');
   const c = s.ship.cargo;
   if (amount > 0) {
-    const n = Math.min(amount, s.resources[kind], CARGO_CAPACITY - cargoTotal(s));
-    if (n <= 0)
-      return fail(cargoTotal(s) >= CARGO_CAPACITY ? '貨艙已滿（上限 ' + CARGO_CAPACITY + '）。' : '背包沒有這項物資。');
+    const cap = cargoCapacity(s),
+      n = Math.min(amount, s.resources[kind], cap - cargoTotal(s));
+    if (n <= 0) return fail(cargoTotal(s) >= cap ? '貨艙已滿（上限 ' + cap + '）。' : '背包沒有這項物資。');
     s.resources[kind] -= n;
     c[kind] += n;
     return { ok: true, message: '存入 ' + n + '。' };
@@ -474,10 +476,21 @@ export function toggleLounge(s, petId) {
   L.push(petId);
   return { ok: true, message: p.name + ' 登船，進入御獸休息室。' };
 }
+// 0.61: the warship's own upgrades (tiers in warship.js). Done from the bridge or the hold, so the crew is aboard.
+export function upgradeShip(s) {
+  normalizeShip(s);
+  if (!s.ship) return fail('戰艦尚未完成。');
+  if (!['ship', 'aboard', 'cabin'].includes(s.player.mode)) return fail('請登上戰艦再升級。');
+  const tier = shipTier(s);
+  if (tier >= SHIP_MAX_TIER) return fail(`戰艦已升到最高 ${SHIP_MAX_TIER} 級。`);
+  if (!pay(s, shipUpgradeCost(tier))) return fail('升級材料不足。');
+  s.ship.tier = tier + 1;
+  return { ok: true, message: `戰艦升至 ${tier + 1} 級：航速、艦砲裝填、船體防禦與貨艙都提升了。` };
+}
 // ---------- cannon ----------
 export function fireCannon(s) {
   if (!s.ship || s.player.mode !== 'ship') return fail('需在駕駛室掌舵才能指揮艦砲。');
-  const left = s.ship.lastCannon + CANNON.cooldown - s.elapsed;
+  const left = s.ship.lastCannon + CANNON.cooldown * shipStats(s).cooldown - s.elapsed;
   if (left > 0) return fail('艦砲裝填中 ' + Math.ceil(left) + ' 秒。');
   const b = s.expedition.boss;
   const target =

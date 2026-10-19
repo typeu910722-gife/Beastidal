@@ -1,6 +1,13 @@
 // English dictionary: Chinese source text → English. Keys use {0}, {1}… for values filled in at runtime.
 // Regenerate the key list with `npm run i18n:check`, which reports strings that still need a translation.
 export default {
+  '戰艦已升到最高 {0} 級。': 'The warship is at the top tier, {0}.',
+  '戰艦 LV {0} / {1}': 'Warship LV {0} / {1}',
+  '戰艦尚未完成。': 'The warship is not finished yet.',
+  '請登上戰艦再升級。': 'Board the warship to upgrade it.',
+  '升級需登上戰艦。': 'Upgrading needs you aboard the warship.',
+  '戰艦升至 {0} 級：航速、艦砲裝填、船體防禦與貨艙都提升了。':
+    'The warship is now LV {0}: faster sailing, a quicker cannon reload, a tougher hull and a bigger hold.',
   '· 剩 {0}': '· {0} left',
   '點「契約」': 'Tap "Contract"',
   '工作桌 · 契約書': 'Work table · contract scrolls',

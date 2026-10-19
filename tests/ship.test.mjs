@@ -36,7 +36,6 @@ import {
   launchSkiff,
   stowSkiff,
   restPlace,
-  syncAboard,
   LIMITS,
   FUSION_COST,
   SHIP_POINTS,
