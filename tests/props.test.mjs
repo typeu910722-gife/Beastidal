@@ -31,7 +31,14 @@ const PROPS = {
   // the bench 2.5 x 1.9; legs to the upper ring
   hatchery: [[-1.25, 0.3, -0.95], [1.25, 2.4, 0.95], 4000, 150 * 1024, []],
   // the tower's foot at ±0.64; deck to the mast tip
-  beacon: [[-0.64, 0.39, -0.64], [0.64, 6.25, 0.64], 4000, 150 * 1024, []]
+  beacon: [[-0.64, 0.39, -0.64], [0.64, 6.25, 0.64], 4000, 150 * 1024, []],
+  // a raft tile: the drums and pontoons below the waterline, the deck planks on top (3.6 m tile)
+  floor: [[-1.8, -0.61, -1.73], [1.8, 0.4, 1.73], 2500, 120 * 1024, []],
+  // the flight along one side of the tile, up to the floor above and its rope rail
+  stairs: [[-1.43, 0.34, -1.68], [-0.27, 4.42, 1.58], 3000, 120 * 1024, []],
+  chair: [[-0.43, 0.4, -0.44], [0.43, 1.7, 0.4], 1500, 60 * 1024, []],
+  table: [[-0.88, 0.39, -0.53], [0.88, 1.5, 0.53], 1500, 60 * 1024, []],
+  lamp: [[-0.24, 0.38, -0.24], [0.24, 2.98, 0.24], 1000, 40 * 1024, []]
 };
 const MATERIALS = ['wood-x', 'wood-y', 'wood-z', 'rope', 'cloth', 'metal', 'plain'];
 const MAX_DRAWS = 12; // the procedural models these replace were 30 to 70 meshes each

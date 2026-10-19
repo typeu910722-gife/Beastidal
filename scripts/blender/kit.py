@@ -76,7 +76,7 @@ def solid_color(ob, color, kind='plain'):
     return paint(ob, lambda c, n: rgb(color))
 
 
-def box(name, color, cx, cy, cz, sx, sy, sz, rot_y=0.0, bevel=0.0, kind=None):
+def box(name, color, cx, cy, cz, sx, sy, sz, rot_y=0.0, bevel=0.0, kind=None, bevel_segments=2):
     """An axis box in game coordinates (centre, full sizes), optionally turned about the game's y axis."""
     bm = bmesh.new()
     bmesh.ops.create_cube(bm, size=1.0)
@@ -86,7 +86,7 @@ def box(name, color, cx, cy, cz, sx, sy, sz, rot_y=0.0, bevel=0.0, kind=None):
         x, z = x * c + z * s, -x * s + z * c
         v.co = g2b(cx + x, cy + y, cz + z)
     if bevel > 0:
-        bmesh.ops.bevel(bm, geom=list(bm.edges), offset=bevel, segments=2, affect='EDGES', profile=0.5)
+        bmesh.ops.bevel(bm, geom=list(bm.edges), offset=bevel, segments=bevel_segments, affect='EDGES', profile=0.5)
     # a board's grain runs along its longest side, as the game's surfaces do for its own boxes
     c, s = abs(math.cos(rot_y)), abs(math.sin(rot_y))
     extent = (sx * c + sz * s, sy, sx * s + sz * c)  # the box's size along the game axes once turned

@@ -226,6 +226,8 @@ function floorMesh() {
     for (const z of [-1.2, 1.2]) pole(g, 0x283e44, x, -0.21, z, 0.4, 0.7).rotation.z = Math.PI / 2;
   }
   for (const x of [-1.46, 1.46]) for (const z of [-1.44, 1.44]) ball(g, 0x695f4d, x, 0.405, z, 0.038, 0.018, 0.038);
+  // 0.63: the Blender tile (scripts/blender/raft.py): a handful of draw calls instead of 35 meshes, on every tile
+  dressWithProp(g, 'floor');
   return g;
 }
 // Screens for the wreck desk: a cracked laptop stuck on a boot error and the handheld's dim lock screen.
@@ -370,7 +372,17 @@ function netMesh(parent) {
   parent.add(g);
   return g;
 }
-const PROP_BUILDINGS = new Set(['shelter', 'collector', 'pen', 'hatchery', 'beacon']);
+const PROP_BUILDINGS = new Set([
+  'shelter',
+  'collector',
+  'pen',
+  'hatchery',
+  'beacon',
+  'stairs',
+  'chair',
+  'table',
+  'lamp'
+]);
 function buildingMesh(b) {
   const g = new T.Group();
   if (b.type === 'floor' || b.type === 'upperfloor') g.add(floorMesh());
@@ -396,12 +408,16 @@ function buildingMesh(b) {
   }
   if (b.type === 'lamp') {
     pole(g, colors.metal, 0, 1.5, 0, 0.05, 2.1);
-    ball(g, colors.glow, 0, 2.6, 0, 0.17, 0.3, 0.17, { emissive: colors.glow, emissiveIntensity: b.off ? 0 : 1.5 });
+    const crystal = ball(g, colors.glow, 0, 2.6, 0, 0.17, 0.3, 0.17, {
+      emissive: colors.glow,
+      emissiveIntensity: b.off ? 0 : 1.5
+    });
+    g.userData.keep = [crystal];
     if (!b.off) {
       const light = new T.PointLight(0xc2f5d9, 10, 8);
       light.position.set(0, 2.6, 0);
       g.add(light);
-      halo(g, 0xbbffcc, 0, 2.6, 0, 1.5);
+      g.userData.keep.push(light, halo(g, 0xbbffcc, 0, 2.6, 0, 1.5));
     }
   }
   if (b.type === 'shelter') {

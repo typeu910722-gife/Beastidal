@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import kit  # noqa: E402
 import facilities  # noqa: E402
+import raft  # noqa: E402
 import shelter  # noqa: E402
 import skiff  # noqa: E402
 
@@ -21,6 +22,11 @@ PROPS = {
     'pen': facilities.pen,
     'hatchery': facilities.hatchery,
     'beacon': facilities.beacon,
+    'floor': raft.floor,
+    'stairs': raft.stairs,
+    'chair': raft.chair,
+    'table': raft.table,
+    'lamp': raft.lamp,
 }
 # where the preview camera stands and looks (game coordinates)
 VIEWS = {
@@ -30,6 +36,11 @@ VIEWS = {
     'pen': {'eye': (4.8, 3.6, 5.4), 'target': (0, 0.0, 0)},
     'hatchery': {'eye': (3.6, 3.0, 4.0), 'target': (0, 1.4, 0)},
     'beacon': {'eye': (6.0, 4.6, 7.0), 'target': (0, 3.0, 0)},
+    'floor': {'eye': (3.6, 2.4, 4.2), 'target': (0, 0.0, 0)},
+    'stairs': {'eye': (4.4, 3.6, 4.6), 'target': (-0.8, 2.0, 0)},
+    'chair': {'eye': (1.8, 1.8, 2.2), 'target': (0, 0.9, 0)},
+    'table': {'eye': (2.4, 2.4, 2.8), 'target': (0, 1.0, 0)},
+    'lamp': {'eye': (1.8, 2.4, 2.4), 'target': (0, 1.6, 0)},
 }
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'dist', 'models', 'props')
 
