@@ -1,7 +1,7 @@
 // Procedural warship "比斯泰德號": keel + five walkable deck bands that can be cut away.
-import { surface } from './surfaces.js?v=0.62.0';
+import { surface } from './surfaces.js?v=0.63.0';
 import * as T from './vendor/three.module.min.js';
-import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.62.0';
+import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.63.0';
 export const LOUNGE_SLOTS = [
   [-2.4, -7],
   [2.4, -7],
@@ -446,10 +446,12 @@ export function dockMesh(mat) {
   add(B, 0x8d5b38, [0.6, 1.7, -1.3], [0.4, 0.3, 0.4]);
   add(new T.TorusGeometry(0.32, 0.08, 6, 16), 0xd6c19b, [1.2, 0.5, -0.4]).rotation.x = Math.PI / 2;
   add(Cy, 0xffd38c, [1.5, 1.2, -1.5], [0.07, 1.4, 0.07]);
-  add(new T.SphereGeometry(0.17, 10, 8), 0xffd38c, [1.5, 1.95, -1.5], [1, 1, 1], {
+  const bulb = add(new T.SphereGeometry(0.17, 10, 8), 0xffd38c, [1.5, 1.95, -1.5], [1, 1, 1], {
     emissive: 0xffc06a,
     emissiveIntensity: 1.4
   });
+  // the glowing bulb stays when the Blender dock (scripts/blender/raft.py) swaps in for the rest
+  g.userData.keep = [bulb];
   add(B, 0x2e7c78, [0, 1.1, -1.65], [1.6, 0.5, 0.06]);
   add(B, 0xd6b15c, [0, 1.1, -1.62], [1.3, 0.08, 0.02], { emissive: 0xb08a3a, emissiveIntensity: 0.5 });
   return g;

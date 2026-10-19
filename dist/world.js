@@ -1,45 +1,46 @@
-import { expansionModels } from './expansion-models.js?v=0.62.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.62.0';
-import { normalizeHousing, penId } from './housing.js?v=0.62.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.62.0';
-export { makeCreature } from './creatures.js?v=0.62.0';
-import { makeIslands } from './island-models.js?v=0.62.0';
-import { facilityId } from './facilities.js?v=0.62.0';
+import { expansionModels } from './expansion-models.js?v=0.63.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.63.0';
+import { normalizeHousing, penId } from './housing.js?v=0.63.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.63.0';
+export { makeCreature } from './creatures.js?v=0.63.0';
+import { makeIslands } from './island-models.js?v=0.63.0';
+import { facilityId } from './facilities.js?v=0.63.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.62.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.62.0';
-import { surface } from './surfaces.js?v=0.62.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.62.0';
-import { makeLake } from './lake-models.js?v=0.62.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.62.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.62.0';
-import { makeStatues } from './statues.js?v=0.62.0';
-import { animateGarden } from './garden-models.js?v=0.62.0';
-import { ViewModel } from './viewmodel.js?v=0.62.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.62.0';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.62.0';
-import { bakeStatic } from './bake.js?v=0.62.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.62.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.62.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.62.0';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.62.0';
-import { PostFX } from './postfx.js?v=0.62.0';
-import { makeHuman, animateHuman } from './human.js?v=0.62.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.62.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.62.0';
-import { buildError } from './rules.js?v=0.62.0';
-import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.62.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.62.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.62.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.62.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.62.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.62.0';
-import { CombatFX } from './combat-fx.js?v=0.62.0';
-import { syncPlots } from './land-models.js?v=0.62.0';
-import { plotTargets } from './reclaim.js?v=0.62.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.62.0';
-import { dayPhase } from './clock.js?v=0.62.0';
-import { weatherAt, season } from './weather.js?v=0.62.0';
+import { phenotype, seeded } from './genetics.js?v=0.63.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.63.0';
+import { surface } from './surfaces.js?v=0.63.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.63.0';
+import { makeLake } from './lake-models.js?v=0.63.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.63.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.63.0';
+import { makeStatues } from './statues.js?v=0.63.0';
+import { animateGarden } from './garden-models.js?v=0.63.0';
+import { ViewModel } from './viewmodel.js?v=0.63.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.63.0';
+import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.63.0';
+import { bakeStatic } from './bake.js?v=0.63.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.63.0';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.63.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.63.0';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.63.0';
+import { PostFX } from './postfx.js?v=0.63.0';
+import { makeHuman, animateHuman } from './human.js?v=0.63.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.63.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.63.0';
+import { buildError } from './rules.js?v=0.63.0';
+import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.63.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.63.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.63.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.63.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.63.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.63.0';
+import { CombatFX } from './combat-fx.js?v=0.63.0';
+import { dressWithProp } from './props.js?v=0.63.0';
+import { syncPlots } from './land-models.js?v=0.63.0';
+import { plotTargets } from './reclaim.js?v=0.63.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.63.0';
+import { dayPhase } from './clock.js?v=0.63.0';
+import { weatherAt, season } from './weather.js?v=0.63.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -225,6 +226,8 @@ function floorMesh() {
     for (const z of [-1.2, 1.2]) pole(g, 0x283e44, x, -0.21, z, 0.4, 0.7).rotation.z = Math.PI / 2;
   }
   for (const x of [-1.46, 1.46]) for (const z of [-1.44, 1.44]) ball(g, 0x695f4d, x, 0.405, z, 0.038, 0.018, 0.038);
+  // 0.63: the Blender tile (scripts/blender/raft.py): a handful of draw calls instead of 35 meshes, on every tile
+  dressWithProp(g, 'floor');
   return g;
 }
 // Screens for the wreck desk: a cracked laptop stuck on a boot error and the handheld's dim lock screen.
@@ -346,6 +349,8 @@ function deskMesh(g) {
   pole(g, 0x6c6f6a, 0.65, 1.42, -0.3, 0.06, 0.16);
   piece(g, new T.TorusGeometry(0.1, 0.012, 5, 14), 0x8a5a33, [0.1, 1.36, 0.3], [1, 1, 1]).rotation.x = Math.PI / 2;
   box(g, colors.wood, 0.1, 0.72, 0.95, 0.6, 0.62, 0.5);
+  // the Blender desk (0.63) leaves the laptop and the handheld: their screens glow, and the handheld can be taken
+  g.userData.keep = [lap, dev];
 }
 // A tangle of drift net and a float or two, wrapped round a beast.
 function netMesh(parent) {
@@ -369,6 +374,18 @@ function netMesh(parent) {
   parent.add(g);
   return g;
 }
+const PROP_BUILDINGS = new Set([
+  'desk',
+  'shelter',
+  'collector',
+  'pen',
+  'hatchery',
+  'beacon',
+  'stairs',
+  'chair',
+  'table',
+  'lamp'
+]);
 function buildingMesh(b) {
   const g = new T.Group();
   if (b.type === 'floor' || b.type === 'upperfloor') g.add(floorMesh());
@@ -394,12 +411,16 @@ function buildingMesh(b) {
   }
   if (b.type === 'lamp') {
     pole(g, colors.metal, 0, 1.5, 0, 0.05, 2.1);
-    ball(g, colors.glow, 0, 2.6, 0, 0.17, 0.3, 0.17, { emissive: colors.glow, emissiveIntensity: b.off ? 0 : 1.5 });
+    const crystal = ball(g, colors.glow, 0, 2.6, 0, 0.17, 0.3, 0.17, {
+      emissive: colors.glow,
+      emissiveIntensity: b.off ? 0 : 1.5
+    });
+    g.userData.keep = [crystal];
     if (!b.off) {
       const light = new T.PointLight(0xc2f5d9, 10, 8);
       light.position.set(0, 2.6, 0);
       g.add(light);
-      halo(g, 0xbbffcc, 0, 2.6, 0, 1.5);
+      g.userData.keep.push(light, halo(g, 0xbbffcc, 0, 2.6, 0, 1.5));
     }
   }
   if (b.type === 'shelter') {
@@ -438,12 +459,21 @@ function buildingMesh(b) {
     box(g, 0x546b58, 0, 0.55, -0.25, 1.2, 0.22, 1.6);
     box(g, colors.cloth, 0, 0.71, -0.75, 1, 0.18, 0.35);
     pole(g, colors.darkWood, 1.24, 2.15, 1.22, 0.075, 1.3);
-    ball(g, 0xffc875, 1.24, 1.8, 1.22, 0.15, 0.23, 0.15, { emissive: 0xffbd6b, emissiveIntensity: 1.2 });
+    const lantern = ball(g, 0xffc875, 1.24, 1.8, 1.22, 0.15, 0.23, 0.15, {
+      emissive: 0xffbd6b,
+      emissiveIntensity: 1.2
+    });
     const l = new T.PointLight(0xffd499, 6, 8);
     l.position.set(1.2, 1.8, 1.2);
     g.add(l);
+    // what stays when the Blender shelter swaps in: the lanterns, their lights and glows (0.63)
+    g.userData.keep = [lantern, l];
   }
-  if (b.type === 'dock') g.add(dockMesh(mat));
+  if (b.type === 'dock') {
+    const dock = dockMesh(mat);
+    g.add(dock);
+    dressWithProp(dock, 'dock', dock.userData.keep);
+  }
   if (b.type === 'shelter') {
     for (const s of [-1, 1])
       for (let k = 0; k < 5; k++) box(g, k % 2 ? 0xa98257 : 0xb8915f, s * 1.32, 0.62 + k * 0.3, -0.15, 0.08, 0.28, 2.3);
@@ -464,7 +494,8 @@ function buildingMesh(b) {
     tarp.rotation.y = Math.PI / 4;
     rod(g, [0, 1.85, 0], [0, 1.1, 0], 0.065, 0xc8d0b6);
     // sight glass on the tank: the blue column is the water you can draw
-    pole(g, 0xcfe3e0, 0.78, 0.9, 0, 0.07, 1.0).material = new T.MeshStandardMaterial({
+    const glass = pole(g, 0xcfe3e0, 0.78, 0.9, 0, 0.07, 1.0);
+    glass.material = new T.MeshStandardMaterial({
       color: 0xcfe3e0,
       transparent: true,
       opacity: 0.35,
@@ -475,6 +506,7 @@ function buildingMesh(b) {
     g.userData.gauge = water;
     g.userData.gaugeBase = 0.42;
     g.userData.gaugeH = 0.94;
+    g.userData.keep = [glass, water];
   }
   if (b.type === 'pen') {
     for (const x of [-1.6, 1.6])
@@ -496,7 +528,7 @@ function buildingMesh(b) {
     for (const x of [-1, 1]) for (const z of [-0.65, 0.65]) pole(g, colors.metal, x, 0.8, z, 0.08, 1);
     box(g, 0x566d72, 0, 1.25, 0, 2.5, 0.18, 1.9);
     piece(g, cylG, 0x4c827f, [0, 1.44, 0], [0.65, 0.2, 0.65]);
-    ball(g, 0xa8e8df, 0, 1.85, 0, 0.62, 0.7, 0.62, {
+    const dome = ball(g, 0xa8e8df, 0, 1.85, 0, 0.62, 0.7, 0.62, {
       transparent: true,
       opacity: 0.4,
       metalness: 0.3,
@@ -508,7 +540,8 @@ function buildingMesh(b) {
     egg.visible = false;
     g.userData.egg = egg;
     box(g, 0x25464d, 1.02, 1.43, 0.43, 0.36, 0.3, 0.5);
-    box(g, 0xabdfb3, 1.02, 1.6, 0.43, 0.27, 0.035, 0.33, { emissive: 0x88ddb6, emissiveIntensity: 0.6 });
+    const screen = box(g, 0xabdfb3, 1.02, 1.6, 0.43, 0.27, 0.035, 0.33, { emissive: 0x88ddb6, emissiveIntensity: 0.6 });
+    g.userData.keep = [dome, egg, screen];
   }
   if (b.type === 'beacon') {
     for (const x of [-0.55, 0.55])
@@ -520,7 +553,7 @@ function buildingMesh(b) {
       rod(g, [0.55, j, -0.55], [-0.55, j, 0.55], 0.06, colors.metal);
     }
     pole(g, colors.metal, 0, 4.8, 0, 0.49, 0.4);
-    ball(g, 0xc0ffe3, 0, 5.3, 0, 0.35, 0.45, 0.35, { emissive: 0xb6ffdc, emissiveIntensity: 1.8 });
+    const lamp = ball(g, 0xc0ffe3, 0, 5.3, 0, 0.35, 0.45, 0.35, { emissive: 0xb6ffdc, emissiveIntensity: 1.8 });
     pole(g, colors.metal, 0, 5.9, 0, 0.06, 0.7);
     const beam = piece(g, new T.CylinderGeometry(0.1, 1.3, 75, 12, 1, true), 0xa2ffcc, [0, 43, 0], [1, 1, 1], {
       transparent: true,
@@ -531,6 +564,7 @@ function buildingMesh(b) {
       side: T.DoubleSide
     });
     beam.raycast = () => {};
+    g.userData.keep = [lamp, beam];
   }
   if (b.type === 'collector') {
     for (const y of [0.46, 0.91, 1.39])
@@ -572,15 +606,17 @@ function buildingMesh(b) {
       curtain.rotation.z = side * 0.08;
     }
     box(g, 0x8c714c, -1.1, 0.64, -0.9, 0.46, 0.4, 0.42);
-    halo(g, 0xffce85, 1.24, 1.8, 1.22, 1.2);
+    const outer = halo(g, 0xffce85, 1.24, 1.8, 1.22, 1.2);
     // inside: a lantern hanging from the ridge, a rumpled blanket, a water jug and a few salvaged things
-    g.userData.roof.push(
+    const hang = (g.userData.hang = [
       rod(g, [0, 3.05, -0.2], [0, 2.45, -0.2], 0.01, colors.rope),
       ball(g, 0xffc27a, 0, 2.32, -0.2, 0.11, 0.15, 0.11, { emissive: 0xffa94d, emissiveIntensity: 1.6 })
-    );
+    ]);
+    g.userData.roof.push(...hang);
     const glow = new T.PointLight(0xffb36b, 5, 4.5, 1.6);
     glow.position.set(0, 2.25, -0.2);
     g.add(glow);
+    g.userData.keep.push(outer, ...hang, glow);
     box(g, 0x6e5a48, 0.12, 0.69, 0.05, 1.05, 0.06, 0.7).rotation.y = 0.12;
     box(g, 0x4c5e52, -0.2, 0.71, 0.35, 0.6, 0.05, 0.3).rotation.y = -0.3;
     pole(g, 0x7c8f93, 0.82, 0.78, 0.35, 0.11, 0.42);
@@ -588,8 +624,17 @@ function buildingMesh(b) {
     box(g, 0x9a8668, -0.85, 0.62, 0.55, 0.42, 0.3, 0.32);
     box(g, 0xcfc6ad, -0.86, 0.79, 0.55, 0.24, 0.02, 0.17).rotation.y = 0.4;
   }
-  if (b.type === 'beacon') halo(g, 0xaeffdb, 0, 5.3, 0, 2.6);
-  if (b.type === 'hatchery') halo(g, 0x9cebd6, 0, 1.85, 0, 1.8);
+  if (b.type === 'beacon') g.userData.keep.push(halo(g, 0xaeffdb, 0, 5.3, 0, 2.6));
+  if (b.type === 'hatchery') g.userData.keep.push(halo(g, 0x9cebd6, 0, 1.85, 0, 1.8));
+  // 0.63: Blender props (scripts/blender/) for the raft's buildings; what userData.keep lists stays procedural (lights,
+  // glass, the gauge, the egg). The shelter's canvas roof still lifts away while you are inside.
+  if (PROP_BUILDINGS.has(b.type))
+    dressWithProp(
+      g,
+      b.type,
+      g.userData.keep || [],
+      b.type === 'shelter' ? parts => (g.userData.roof = [parts.roof, ...g.userData.hang]) : undefined
+    );
   g.userData.facilityId = b.type === 'floor' || b.type === 'upperfloor' ? null : facilityId(b);
   g.position.set(b.x * 3.6, (b.level || 0) * 3.3, b.z * 3.6);
   g.rotation.y = b.rot || 0;
@@ -673,6 +718,8 @@ function makeBoat() {
   g.userData.stern = [flagpole, pennant, lamp, glow].filter(Boolean);
   g.userData.human = human;
   g.userData.flag = pennant;
+  // 0.63: the Blender skiff (scripts/blender/skiff.py) takes over the hull, planks, seats, oar and rope
+  dressWithProp(g, 'skiff', [human, ...g.userData.stern]);
   return g;
 }
 function lootMesh(kind) {

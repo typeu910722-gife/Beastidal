@@ -6,3 +6,4 @@ smoke-*.png
 shots/
 smoke-*.png
 build/
+__pycache__/
