@@ -105,7 +105,7 @@ def build():
     for i in range(7):
         x = -1.2 + i * 0.4
         tone = (0x7A5A3A, 0x80603E, 0x745536)[i % 3]
-        parts.append(kit.box(f'deck{i}', tone, x, 0.48, 0, 0.37, 0.14, 2.9, bevel=0.015))
+        parts.append(kit.box(f'deck{i}', tone, x, 0.48, 0, 0.37, 0.14, 2.9, bevel=0.015, kind='deck-z'))
     for z in (-1.3, 0, 1.3):
         parts.append(kit.box(f'joist{z}', 0x5E452C, 0, 0.38, z, 2.8, 0.08, 0.14))
     # corner posts and the lantern post at the door

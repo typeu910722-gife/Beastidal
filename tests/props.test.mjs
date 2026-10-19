@@ -44,7 +44,7 @@ const PROPS = {
   // the landing: piles down to -1.2 in the water, the derrick up to 3.5
   dock: [[-1.7, -1.2, -1.75], [1.7, 3.5, 1.75], 3000, 120 * 1024, []]
 };
-const MATERIALS = ['wood-x', 'wood-y', 'wood-z', 'rope', 'cloth', 'metal', 'plain'];
+const MATERIALS = ['wood-x', 'wood-y', 'wood-z', 'deck-x', 'deck-z', 'rope', 'cloth', 'metal', 'plain'];
 const MAX_DRAWS = 12; // the procedural models these replace were 30 to 70 meshes each
 const TOL = 0.06;
 

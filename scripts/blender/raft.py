@@ -42,7 +42,8 @@ def floor():
         x = (i - 3) * 0.49
         color = PLANK_B if i % 3 == 0 else PLANK
         tone = (1.0, 0.95, 1.04, 0.98, 1.02, 0.93, 1.0)[i]
-        plank = kit.box(f'plank{i}', color, x, 0.29, 0, 0.45, 0.2, 3.45, bevel=0.025, bevel_segments=1)
+        plank = kit.box(f'plank{i}', color, x, 0.29, 0, 0.45, 0.2, 3.45, bevel=0.025, bevel_segments=1,
+                        kind='deck-z')
         kit.paint(plank, lambda c, n, t=tone, col=kit.rgb(color): tuple(v * t for v in col))
         parts.append(plank)
         for z in (-1.5, 1.5):
@@ -156,7 +157,7 @@ def dock():
     parts = []
     for i in range(7):
         parts.append(kit.box(f'plank{i}', 0xBE9866 if i % 2 else 0xCBA574, (i - 3) * 0.49, 0.32, 0, 0.45, 0.18,
-                             3.5, bevel=0.02, bevel_segments=1))
+                             3.5, bevel=0.02, bevel_segments=1, kind='deck-z'))
     for x in (-1.5, 1.5):
         for z in (-1.5, 0.0, 1.5):
             parts.append(kit.rod(f'pile{x}{z}', 0x4A3626, (x, -1.2, z), (x, 0.42, z), 0.17, segments=10))

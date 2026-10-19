@@ -10,6 +10,9 @@ const SURFACES = {
   'wood-x': ['wood', { axis: 0 }],
   'wood-y': ['wood', { axis: 1 }],
   'wood-z': ['wood', { axis: 2 }],
+  // decks: the same seams and joints the game paints on its own planking
+  'deck-x': ['wood', { axis: 0, planks: true }],
+  'deck-z': ['wood', { axis: 2, planks: true }],
   rope: ['cloth'],
   cloth: ['cloth'],
   metal: ['metal']

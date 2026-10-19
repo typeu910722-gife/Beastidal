@@ -19,6 +19,9 @@ KINDS = {
     'wood-x': (0.62, 0.0, False),
     'wood-y': (0.62, 0.0, False),
     'wood-z': (0.62, 0.0, False),
+    # decking: wood with the dark seams and butt joints of laid boards, as the game paints its own decks
+    'deck-x': (0.62, 0.0, False),
+    'deck-z': (0.62, 0.0, False),
     'rope': (0.85, 0.0, False),
     'cloth': (0.9, 0.0, True),
     'metal': (0.45, 0.55, False),
