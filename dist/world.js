@@ -349,6 +349,8 @@ function deskMesh(g) {
   pole(g, 0x6c6f6a, 0.65, 1.42, -0.3, 0.06, 0.16);
   piece(g, new T.TorusGeometry(0.1, 0.012, 5, 14), 0x8a5a33, [0.1, 1.36, 0.3], [1, 1, 1]).rotation.x = Math.PI / 2;
   box(g, colors.wood, 0.1, 0.72, 0.95, 0.6, 0.62, 0.5);
+  // the Blender desk (0.63) leaves the laptop and the handheld: their screens glow, and the handheld can be taken
+  g.userData.keep = [lap, dev];
 }
 // A tangle of drift net and a float or two, wrapped round a beast.
 function netMesh(parent) {
@@ -373,6 +375,7 @@ function netMesh(parent) {
   return g;
 }
 const PROP_BUILDINGS = new Set([
+  'desk',
   'shelter',
   'collector',
   'pen',
@@ -466,7 +469,11 @@ function buildingMesh(b) {
     // what stays when the Blender shelter swaps in: the lanterns, their lights and glows (0.63)
     g.userData.keep = [lantern, l];
   }
-  if (b.type === 'dock') g.add(dockMesh(mat));
+  if (b.type === 'dock') {
+    const dock = dockMesh(mat);
+    g.add(dock);
+    dressWithProp(dock, 'dock', dock.userData.keep);
+  }
   if (b.type === 'shelter') {
     for (const s of [-1, 1])
       for (let k = 0; k < 5; k++) box(g, k % 2 ? 0xa98257 : 0xb8915f, s * 1.32, 0.62 + k * 0.3, -0.15, 0.08, 0.28, 2.3);

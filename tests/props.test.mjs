@@ -38,7 +38,11 @@ const PROPS = {
   stairs: [[-1.43, 0.34, -1.68], [-0.27, 4.42, 1.58], 3000, 120 * 1024, []],
   chair: [[-0.43, 0.4, -0.44], [0.43, 1.7, 0.4], 1500, 60 * 1024, []],
   table: [[-0.88, 0.39, -0.53], [0.88, 1.5, 0.53], 1500, 60 * 1024, []],
-  lamp: [[-0.24, 0.38, -0.24], [0.24, 2.98, 0.24], 1000, 40 * 1024, []]
+  lamp: [[-0.24, 0.38, -0.24], [0.24, 2.98, 0.24], 1000, 40 * 1024, []],
+  // the desk with its crate stool in front (+z)
+  desk: [[-0.88, 0.39, -0.52], [0.88, 1.5, 1.22], 2000, 80 * 1024, []],
+  // the landing: piles down to -1.2 in the water, the derrick up to 3.5
+  dock: [[-1.7, -1.2, -1.75], [1.7, 3.5, 1.75], 3000, 120 * 1024, []]
 };
 const MATERIALS = ['wood-x', 'wood-y', 'wood-z', 'rope', 'cloth', 'metal', 'plain'];
 const MAX_DRAWS = 12; // the procedural models these replace were 30 to 70 meshes each

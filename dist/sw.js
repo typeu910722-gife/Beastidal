@@ -126,6 +126,8 @@ const FILES = [
   './models/props/chair.glb?v=0.62.0',
   './models/props/table.glb?v=0.62.0',
   './models/props/lamp.glb?v=0.62.0',
+  './models/props/desk.glb?v=0.62.0',
+  './models/props/dock.glb?v=0.62.0',
   './vendor/addons/loaders/GLTFLoader.js',
   './vendor/addons/utils/BufferGeometryUtils.js',
   './bake.js?v=0.62.0',

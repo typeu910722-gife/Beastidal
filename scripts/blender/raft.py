@@ -125,3 +125,61 @@ def lamp():
     kit.smooth(ob, 40)
     kit.bake_ao(ob, strength=0.5)
     return [kit.finish(ob)]
+
+
+def desk():
+    """The wreck desk the story starts at; the laptop and the handheld stay in the game (their screens glow, and the
+    handheld leaves the desk when you take it)."""
+    parts = []
+    for i, (x, z) in enumerate(((-0.75, -0.4), (0.75, -0.4), (-0.75, 0.4), (0.72, 0.42))):
+        top = 1.27 if i != 3 else 1.25  # one leg a little short: the top sits crooked
+        parts.append(kit.rod(f'leg{i}', DARK, (x, 0.39, z), (x, top, z), 0.055, segments=8))
+    for k, z in enumerate((-0.36, 0.0, 0.36)):
+        board = kit.box(f'top{k}', PLANK, 0, 1.3 - 0.008 * k, z, 1.75, 0.09, 0.33, bevel=0.015)
+        parts.append(board)
+    parts.append(kit.box('apron', DARK, 0, 1.2, 0.47, 1.6, 0.14, 0.05))
+    parts.append(kit.box('apronback', DARK, 0, 1.2, -0.47, 1.6, 0.1, 0.04))
+    # salvage clutter: a dented can, a coil of wire, a crate for a stool
+    parts.append(kit.rod('can', 0x6C6F6A, (0.65, 1.34, -0.3), (0.65, 1.5, -0.3), 0.06, segments=10, kind='metal'))
+    parts.append(kit.torus('wire', 0x8A5A33, (0.1, 1.36, 0.3), 0.1, 0.012, kind='metal'))
+    for k, y in enumerate((0.5, 0.72, 0.94)):
+        parts.append(kit.box(f'crate{k}', WOOD, 0.1, y, 0.95, 0.6, 0.2, 0.5, bevel=0.012))
+    parts.append(kit.box('cratelid', 0x6B4B2E, 0.1, 1.04, 0.95, 0.64, 0.03, 0.54))
+    ob = kit.join('desk', parts)
+    kit.smooth(ob, 40)
+    kit.bake_ao(ob, strength=0.6)
+    return [kit.finish(ob)]
+
+
+def dock():
+    """The boat landing at the raft's edge (dockMesh in dist/ship-models.js); its lantern bulb stays in the game."""
+    parts = []
+    for i in range(7):
+        parts.append(kit.box(f'plank{i}', 0xBE9866 if i % 2 else 0xCBA574, (i - 3) * 0.49, 0.32, 0, 0.45, 0.18,
+                             3.5, bevel=0.02, bevel_segments=1))
+    for x in (-1.5, 1.5):
+        for z in (-1.5, 0.0, 1.5):
+            parts.append(kit.rod(f'pile{x}{z}', 0x4A3626, (x, -1.2, z), (x, 0.42, z), 0.17, segments=10))
+        parts.append(kit.box(f'stringer{x}', 0x3B342C, x, 0.18, 0, 0.16, 0.14, 3.5))
+    for x in (-1.2, 1.2):  # bollards
+        parts.append(kit.rod(f'bollard{x}', 0x2F3A3D, (x, 0.38, 1.4), (x, 0.84, 1.4), 0.16, segments=12,
+                             kind='metal'))
+        parts.append(kit.rod(f'bollardcap{x}', 0x2F3A3D, (x, 0.84, 1.4), (x, 0.92, 1.4), 0.21, segments=12,
+                             kind='metal'))
+    # a little derrick: post, boom, a line down to a crate
+    parts.append(kit.rod('derrick', 0x6B4B2E, (-1.3, 0.3, -1.3), (-1.3, 3.5, -1.3), 0.13, segments=10))
+    parts.append(kit.plank('boom', 0x6B4B2E, (-1.45, 3.4, -1.3), (0.7, 3.4, -1.3), 0.16, 0.16, kind='wood-x'))
+    parts.append(kit.rod('brace', 0x6B4B2E, (-1.3, 2.4, -1.3), (-0.3, 3.35, -1.3), 0.06))
+    parts.append(kit.rod('line', 0xD6C19B, (0.6, 1.85, -1.3), (0.6, 3.4, -1.3), 0.02, kind='rope'))
+    parts.append(kit.box('crate', 0x8D5B38, 0.6, 1.7, -1.3, 0.4, 0.3, 0.4, bevel=0.015))
+    parts.append(kit.torus('coil', 0xD6C19B, (1.2, 0.48, -0.4), 0.32, 0.08))
+    parts.append(kit.torus('coil2', 0xC8B48E, (1.2, 0.6, -0.4), 0.24, 0.07))
+    parts.append(kit.rod('lanternpost', 0x6B4B2E, (1.5, 0.4, -1.5), (1.5, 1.82, -1.5), 0.07))
+    parts.append(kit.box('sign', 0x2E7C78, 0, 1.1, -1.65, 1.6, 0.5, 0.06, bevel=0.012, kind='wood-x'))
+    parts.append(kit.box('signtrim', 0xD6B15C, 0, 1.1, -1.62, 1.3, 0.08, 0.02, kind='metal'))
+    for x in (-0.7, 0.7):
+        parts.append(kit.rod(f'signpost{x}', 0x3B342C, (x, 0.4, -1.66), (x, 1.35, -1.66), 0.04))
+    ob = kit.join('dock', parts)
+    kit.smooth(ob, 40)
+    kit.bake_ao(ob, strength=0.65)
+    return [kit.finish(ob)]

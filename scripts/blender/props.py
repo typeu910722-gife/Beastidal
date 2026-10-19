@@ -27,6 +27,8 @@ PROPS = {
     'chair': raft.chair,
     'table': raft.table,
     'lamp': raft.lamp,
+    'desk': raft.desk,
+    'dock': raft.dock,
 }
 # where the preview camera stands and looks (game coordinates)
 VIEWS = {
@@ -41,6 +43,8 @@ VIEWS = {
     'chair': {'eye': (1.8, 1.8, 2.2), 'target': (0, 0.9, 0)},
     'table': {'eye': (2.4, 2.4, 2.8), 'target': (0, 1.0, 0)},
     'lamp': {'eye': (1.8, 2.4, 2.4), 'target': (0, 1.6, 0)},
+    'desk': {'eye': (2.2, 2.4, 2.6), 'target': (0, 1.0, 0.2)},
+    'dock': {'eye': (4.4, 3.4, 5.0), 'target': (0, 1.0, 0)},
 }
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'dist', 'models', 'props')
 
