@@ -79,7 +79,7 @@ def solid_color(ob, color, kind='plain'):
     return paint(ob, lambda c, n: rgb(color))
 
 
-def box(name, color, cx, cy, cz, sx, sy, sz, rot_y=0.0, bevel=0.0, kind=None, bevel_segments=2):
+def box(name, color, cx, cy, cz, sx, sy, sz, rot_y=0.0, bevel=0.0, kind=None, bevel_segments=1):
     """An axis box in game coordinates (centre, full sizes), optionally turned about the game's y axis."""
     bm = bmesh.new()
     bmesh.ops.create_cube(bm, size=1.0)
@@ -94,7 +94,9 @@ def box(name, color, cx, cy, cz, sx, sy, sz, rot_y=0.0, bevel=0.0, kind=None, be
     c, s = abs(math.cos(rot_y)), abs(math.sin(rot_y))
     extent = (sx * c + sz * s, sy, sx * s + sz * c)  # the box's size along the game axes once turned
     longest = 'xyz'[extent.index(max(extent))]
-    return solid_color(mesh_object(name, bm), color, kind or 'wood-' + longest)
+    ob = solid_color(mesh_object(name, bm), color, kind or 'wood-' + longest)
+    ob['flat'] = True
+    return ob
 
 
 def rod(name, color, a, b, radius, segments=8, kind=None):
@@ -126,8 +128,11 @@ def plank(name, color, a, b, width, thick, bevel=0.0, kind=None):
     bmesh.ops.transform(bm, matrix=rot, verts=bm.verts)
     bmesh.ops.translate(bm, vec=(A + B) / 2, verts=bm.verts)
     if bevel > 0:
-        bmesh.ops.bevel(bm, geom=list(bm.edges), offset=bevel, segments=2, affect='EDGES', profile=0.5)
-    return solid_color(mesh_object(name, bm), color, kind or 'wood-' + axis_of(a, b))
+        # one segment: a flat-shaded board shows a single chamfer whatever the count, and each one costs vertices
+        bmesh.ops.bevel(bm, geom=list(bm.edges), offset=bevel, segments=1, affect='EDGES', profile=0.5)
+    ob = solid_color(mesh_object(name, bm), color, kind or 'wood-' + axis_of(a, b))
+    ob['flat'] = True
+    return ob
 
 
 def tube(name, color, points, radius, closed=False, segments=6, kind='rope'):
@@ -190,6 +195,9 @@ def join(name, parts):
     for p in parts:
         p.data.materials.clear()
         p.data.materials.append(kind_material(p.get('kind', 'plain')))
+        attr = p.data.attributes.new('flat_part', 'BOOLEAN', 'FACE')
+        for i in range(len(p.data.polygons)):
+            attr.data[i].value = bool(p.get('flat'))
     # join into the first part, so the result has only the parts' own material slots
     out = parts[0]
     with bpy.context.temp_override(active_object=out, selected_editable_objects=parts):
@@ -199,9 +207,16 @@ def join(name, parts):
 
 
 def smooth(ob, angle_deg=40):
-    for poly in ob.data.polygons:
-        poly.use_smooth = True
-    ob.data.set_sharp_from_angle(angle=math.radians(angle_deg))
+    """Round parts shade smooth, with creases sharper than angle_deg kept hard. Flat parts (boxes, boards, marked
+    'flat' when made) were set flat before the join and stay flat: a deck board's top must face straight up."""
+    me = ob.data
+    flat = me.attributes.get('flat_part')
+    # first: set_sharp_from_angle also marks every face smooth, so the flat parts are set after it
+    me.set_sharp_from_angle(angle=math.radians(angle_deg))
+    for poly in me.polygons:
+        poly.use_smooth = not (flat and flat.data[poly.index].value)
+    if flat:
+        me.attributes.remove(flat)
     return ob
 
 
