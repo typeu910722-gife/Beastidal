@@ -3,6 +3,8 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 
+// frames sampled per size: software rendering takes seconds per frame, so the default is small; raise it on a real GPU
+const FRAMES = Number(process.env.PLAYTEST_FRAMES) || 12;
 const URL_ = process.argv[2] || 'https://beastidal.yzprojecttw.com/',
   quality = process.argv[3] || 'balanced';
 mkdirSync('shots/play', { recursive: true });
@@ -72,7 +74,7 @@ for (const size of SIZES) {
   // gl.finish() waits for the GPU (here, the software rasteriser) so the time is the frame's real cost. The renderer's
   // counters normally reset on every render call (the last one is the post-processing quad), so they are summed over
   // one full frame instead.
-  run.perf = await page.evaluate(() => {
+  run.perf = await page.evaluate(FRAMES => {
     const B = window.__beastidal;
     const renderer = B.world.renderer,
       info = renderer.info,
@@ -83,8 +85,8 @@ for (const size of SIZES) {
       gl.finish();
       return performance.now() - t;
     };
-    for (let i = 0; i < 10; i++) frame();
-    const times = Array.from({ length: 60 }, frame).sort((a, b) => a - b);
+    for (let i = 0; i < 2; i++) frame();
+    const times = Array.from({ length: FRAMES }, frame).sort((a, b) => a - b);
     const pct = q => times[Math.min(times.length - 1, Math.floor(q * times.length))];
     info.autoReset = false;
     info.reset();
@@ -106,7 +108,7 @@ for (const size of SIZES) {
         return d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : 'unknown';
       })()
     };
-  });
+  }, FRAMES);
   // sail a bit, then audit every panel
   await page.evaluate(() => {
     const B = window.__beastidal;
