@@ -7,3 +7,4 @@ docs/
 *.md
 dist/lake-data.js
 shots/
+build/
