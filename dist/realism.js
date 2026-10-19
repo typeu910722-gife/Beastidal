@@ -301,10 +301,10 @@ void main(){
  float cr=max(vCrest,0.)*.15;float sss=pow(max(dot(V,-L),0.),4.)*cr*1.6+cr*.35;body+=vec3(.02,.12,.085)*sss*sunlit;
   #if OCTAVES > 3
   // 0.62: caustics — the ripples focus sunlight into a moving web of bright lines on the sand of the shallows
-  // (0.4 to 6 m deep). Two noise layers drifting apart are equal along thin curves; those curves are the web.
-  float shoal=smoothstep(0.,.4,-gh)*(1.-smoothstep(1.5,6.,-gh));
+  // (0.3 to 9 m deep). Two noise layers drifting apart are equal along thin curves; those curves are the web.
+  float shoal=smoothstep(0.,.3,-gh)*(1.-smoothstep(3.,9.,-gh));
   if(shoal>0.){vec2 cq=p*.9;float c1=noise(cq+vec2(uTime*.35,uTime*.21)),c2=noise(cq*1.6-vec2(uTime*.27,-uTime*.31));
-   body+=vec3(.55,.8,.62)*pow(1.-abs(c1-c2),10.)*shoal*sunlit*day*(1.-uStorm)*detail*.35;}
+   body+=vec3(.55,.8,.62)*pow(1.-abs(c1-c2),8.)*shoal*sunlit*day*(1.-uStorm)*detail*.9;}
   #endif
  vec3 col=mix(body,refl*mix(1.,.8,lowSun*day),min(F,mix(.92,.72,lowSun*day)));
  vec3 H=normalize(L+V);float NdH=max(dot(n,H),0.);float rough=mix(.05,.12,uStorm);float a2=rough*rough;float dd=NdH*NdH*(a2-1.)+1.;float ggx=a2/(3.14159*dd*dd);
