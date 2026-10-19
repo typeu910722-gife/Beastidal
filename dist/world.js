@@ -439,10 +439,15 @@ function buildingMesh(b) {
     box(g, 0x546b58, 0, 0.55, -0.25, 1.2, 0.22, 1.6);
     box(g, colors.cloth, 0, 0.71, -0.75, 1, 0.18, 0.35);
     pole(g, colors.darkWood, 1.24, 2.15, 1.22, 0.075, 1.3);
-    ball(g, 0xffc875, 1.24, 1.8, 1.22, 0.15, 0.23, 0.15, { emissive: 0xffbd6b, emissiveIntensity: 1.2 });
+    const lantern = ball(g, 0xffc875, 1.24, 1.8, 1.22, 0.15, 0.23, 0.15, {
+      emissive: 0xffbd6b,
+      emissiveIntensity: 1.2
+    });
     const l = new T.PointLight(0xffd499, 6, 8);
     l.position.set(1.2, 1.8, 1.2);
     g.add(l);
+    // what stays when the Blender shelter swaps in: the lanterns, their lights and glows (0.63)
+    g.userData.keep = [lantern, l];
   }
   if (b.type === 'dock') g.add(dockMesh(mat));
   if (b.type === 'shelter') {
@@ -573,15 +578,17 @@ function buildingMesh(b) {
       curtain.rotation.z = side * 0.08;
     }
     box(g, 0x8c714c, -1.1, 0.64, -0.9, 0.46, 0.4, 0.42);
-    halo(g, 0xffce85, 1.24, 1.8, 1.22, 1.2);
+    const outer = halo(g, 0xffce85, 1.24, 1.8, 1.22, 1.2);
     // inside: a lantern hanging from the ridge, a rumpled blanket, a water jug and a few salvaged things
-    g.userData.roof.push(
+    const hang = (g.userData.hang = [
       rod(g, [0, 3.05, -0.2], [0, 2.45, -0.2], 0.01, colors.rope),
       ball(g, 0xffc27a, 0, 2.32, -0.2, 0.11, 0.15, 0.11, { emissive: 0xffa94d, emissiveIntensity: 1.6 })
-    );
+    ]);
+    g.userData.roof.push(...hang);
     const glow = new T.PointLight(0xffb36b, 5, 4.5, 1.6);
     glow.position.set(0, 2.25, -0.2);
     g.add(glow);
+    g.userData.keep.push(outer, ...hang, glow);
     box(g, 0x6e5a48, 0.12, 0.69, 0.05, 1.05, 0.06, 0.7).rotation.y = 0.12;
     box(g, 0x4c5e52, -0.2, 0.71, 0.35, 0.6, 0.05, 0.3).rotation.y = -0.3;
     pole(g, 0x7c8f93, 0.82, 0.78, 0.35, 0.11, 0.42);
@@ -591,6 +598,9 @@ function buildingMesh(b) {
   }
   if (b.type === 'beacon') halo(g, 0xaeffdb, 0, 5.3, 0, 2.6);
   if (b.type === 'hatchery') halo(g, 0x9cebd6, 0, 1.85, 0, 1.8);
+  // 0.63: the Blender shelter (scripts/blender/shelter.py); its canvas roof still lifts away while you are inside
+  if (b.type === 'shelter')
+    dressWithProp(g, 'shelter', g.userData.keep, parts => (g.userData.roof = [parts.roof, ...g.userData.hang]));
   g.userData.facilityId = b.type === 'floor' || b.type === 'upperfloor' ? null : facilityId(b);
   g.position.set(b.x * 3.6, (b.level || 0) * 3.3, b.z * 3.6);
   g.rotation.y = b.rot || 0;

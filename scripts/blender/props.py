@@ -10,9 +10,15 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 import kit  # noqa: E402
+import shelter  # noqa: E402
 import skiff  # noqa: E402
 
-PROPS = {'skiff': skiff.build}
+PROPS = {'skiff': skiff.build, 'shelter': shelter.build}
+# where the preview camera stands and looks (game coordinates)
+VIEWS = {
+    'skiff': {},
+    'shelter': {'eye': (4.6, 3.6, 5.6), 'target': (0, 1.5, 0)},
+}
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'dist', 'models', 'props')
 
 
@@ -25,7 +31,7 @@ def main(names):
         stats = kit.export(ob, path)
         print(f'{name}: {stats["verts"]} verts, {stats["tris"]} triangles, {os.path.getsize(path) // 1024} KB')
         if os.environ.get('PREVIEW'):
-            kit.preview(ob, os.path.join(os.environ['PREVIEW'], name + '.png'))
+            kit.preview(ob, os.path.join(os.environ['PREVIEW'], name + '.png'), **VIEWS.get(name, {}))
 
 
 if __name__ == '__main__':

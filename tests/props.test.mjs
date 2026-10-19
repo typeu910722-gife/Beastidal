@@ -17,17 +17,19 @@ function parse(name) {
   return new Promise((resolve, reject) => new GLTFLoader().parse(ab, '', resolve, reject));
 }
 
-// name: [bounds min (x, y, z), bounds max, triangle budget, byte budget]. The bounds are those of the procedural
-// parts the prop replaces, so a prop that comes out mirrored, z-up or at the wrong scale fails here.
+// name: [bounds min (x, y, z), bounds max, triangle budget, byte budget, named parts the game drives]. The bounds are
+// those of the procedural parts the prop replaces, so one that comes out mirrored, z-up or mis-scaled fails here.
 const PROPS = {
   // hull ±1.0 plus the sculling oar out to x 1.77; blade tip below the keel to the stem head; transom to stem (+z)
-  skiff: [[-1.0, -0.04, -1.65], [1.77, 0.99, 2.01], 9000, 300 * 1024]
+  skiff: [[-1.0, -0.04, -1.65], [1.77, 0.99, 2.01], 9000, 300 * 1024, []],
+  // the canvas roof's eaves at ±1.6; deck to the ridge pole; back wall to the door step (+z)
+  shelter: [[-1.6, -0.01, -1.55], [1.6, 3.18, 1.79], 12000, 350 * 1024, ['roof']]
 };
 const MATERIALS = ['wood-x', 'wood-y', 'wood-z', 'rope', 'cloth', 'metal', 'plain'];
-const MAX_DRAWS = 8;
+const MAX_DRAWS = 12; // the procedural models these replace were 30 to 70 meshes each
 const TOL = 0.06;
 
-for (const [name, [min, max, maxTris, maxBytes]] of Object.entries(PROPS)) {
+for (const [name, [min, max, maxTris, maxBytes, named]] of Object.entries(PROPS)) {
   await test(`Prop "${name}" uses byte colours and known materials, fits its footprint and stays in budget`, async () => {
     const bytes = readFileSync(new URL(`../dist/models/props/${name}.glb`, import.meta.url)).length;
     assert.ok(bytes <= maxBytes, `${bytes} bytes`);
@@ -45,6 +47,7 @@ for (const [name, [min, max, maxTris, maxBytes]] of Object.entries(PROPS)) {
       tris += (m.geometry.index ? m.geometry.index.count : m.geometry.getAttribute('position').count) / 3;
     }
     assert.ok(tris <= maxTris, `${tris} triangles`);
+    for (const part of named) assert.ok(gltf.scene.getObjectByName(part), `has the "${part}" part`);
     const box = new Box3().setFromObject(gltf.scene);
     for (const [i, axis] of ['x', 'y', 'z'].entries()) {
       assert.ok(Math.abs(box.min[axis] - min[i]) <= TOL, `min ${axis}: ${box.min[axis].toFixed(2)} vs ${min[i]}`);
