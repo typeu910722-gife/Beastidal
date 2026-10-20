@@ -10,8 +10,8 @@ import {
   BOARD,
   XIAOYUE_WAITS,
   lettersReady
-} from './town.js?v=0.75.0';
-import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.75.0';
+} from './town.js?v=0.76.0';
+import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.76.0';
 import {
   chapter3Objectives,
   normalizeChapter3,
@@ -22,18 +22,21 @@ import {
   RIFT,
   TEAR_AT,
   layerOpen
-} from './chapter3.js?v=0.75.0';
-import { isNight } from './clock.js?v=0.75.0';
-import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.75.0';
-import { riftStatus } from './rift-fight.js?v=0.75.0';
+} from './chapter3.js?v=0.76.0';
+import { isNight } from './clock.js?v=0.76.0';
+import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.76.0';
+import { riftStatus } from './rift-fight.js?v=0.76.0';
 import {
   chapter4Objectives,
   normalizeChapter4,
   inPartTwo,
   talksDone,
   homeDone,
-  inLastDay
-} from './chapter4.js?v=0.75.0';
+  inLastDay,
+  choiceOpen,
+  thirdNext,
+  ENDING_NAMES
+} from './chapter4.js?v=0.76.0';
 // 0.75: part two's lake steps last until the last day is over
 const onLake4 = s => inPartTwo(s) && !normalizeChapter4(s).lastDone;
 
@@ -48,7 +51,7 @@ function insideGoal(s) {
       const q = INTERIORS[room].points.find(p => p.id === id);
       return { ...interiorWorld(room, q), name: q.name, night: false };
     };
-  if (room === 'admin' && s.chapter4?.terminal && !s.chapter4.tank) return pt('tank-b01');
+  if (room === 'admin' && s.chapter4?.terminal && (!s.chapter4.tank || thirdNext(s) === 'qing')) return pt('tank-b01');
   if (room === 'admin' && stage === 4) {
     if (adminReady(s)) return { ...interiorWorld('admin', QING_AT), name: '晴', night: false };
     const seen = s.town.insideSeen?.admin || [];
@@ -86,6 +89,13 @@ export function nextGoal(s) {
     if (!c4.manager) return at(RIFT, '裂縫的核心 · 橋');
     // 0.74 part two: what you would leave is on the lake — 嘯岳 takes you back
     if (onLake4(s)) return at({ x: XIAOYUE_WAITS.x - 2.5, z: XIAOYUE_WAITS.z - 1 }, '嘯岳 · 回到湖區');
+    // 0.76: the third way, step by step; otherwise the bridge, to choose
+    const step = thirdNext(s);
+    if (step === 'k0388') return at(OUTPOST, '研究員 K. 的前哨站 · 叫醒 0388');
+    if (step === 'qing') return at(door('admin'), '管理區 · 玻璃槽 B-01');
+    if (step === 'stele') return at({ x: STELE.x, z: STELE.z + 1.8 }, '留言碑 · 刻下真相');
+    if (step === 'graduation') return at(RIFT, '裂縫最深處 · 關掉「畢業」');
+    if (choiceOpen(s)) return at(RIFT, '裂縫的核心 · 橋前的選擇');
     return null;
   }
   if (!c3.cleared.includes(1) || !c3.vision || layerOpen(s, 2) || layerOpen(s, 3) || c3.cleared.includes(3))
@@ -112,8 +122,11 @@ export function storyPanel(s) {
   let list = inFour ? four : inThree ? three : two;
   // 0.73: back on the lake, the New World's chapter goes on — with the way back over the mountains first
   // (0.74: except in part two of chapter four, whose steps are on the lake)
-  const two4 = inFour && inPartTwo(s),
-    away = !s.inTown && !two4;
+  const c4 = inFour ? normalizeChapter4(s) : null,
+    two4 = inFour && inPartTwo(s),
+    // 0.76: after the last day, the bridge is over the mountains again (until an ending)
+    final = two4 && c4.lastDone,
+    away = !s.inTown && (!two4 || (final && !c4.ending));
   if (away) list = [['騎嘯岳翻過群山，回到新生之界', false], ...list];
   if (two4 && s.inTown && onLake4(s)) list = [['騎嘯岳回到湖區', false], ...list];
   const open = list.filter(([, d]) => !d);
@@ -133,13 +146,17 @@ export function storyPanel(s) {
                 ? '今天是最後一天：看夕陽、回到你的島、騎著夥伴跑一圈、一起釣魚、陪嘯岳坐在山腳'
                 : '';
   return {
-    chapter: two4
-      ? 'CHAPTER 04 · 牽絆'
-      : inFour
-        ? 'CHAPTER 04 · 第二份文件'
-        : inThree
-          ? 'CHAPTER 03 · 裂縫之外'
-          : 'CHAPTER 02 · 新生之界',
+    chapter: c4?.ending
+      ? `終章 · ${ENDING_NAMES[c4.ending]}`
+      : final
+        ? '終章 · 橋前的選擇'
+        : two4
+          ? 'CHAPTER 04 · 牽絆'
+          : inFour
+            ? 'CHAPTER 04 · 第二份文件'
+            : inThree
+              ? 'CHAPTER 03 · 裂縫之外'
+              : 'CHAPTER 02 · 新生之界',
     title: open.length ? open[0][0] : list.length ? list[list.length - 1][0] : '慈光港',
     quests: [...list.filter(([, d]) => d).slice(-1), ...open.slice(0, 2)],
     goal,

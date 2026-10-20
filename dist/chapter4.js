@@ -3,10 +3,10 @@
 // the second document — a consent to end the original body's life support, seven days out. Back in 慈光港, No.0388
 // answers on the stele; K.'s master code opens the admin block again, and tank B-01 holds what became of 晴. At the
 // bridge the manager speaks a second time: whose release it really is. Pure: reads and changes the state.
-import { dayOf } from './clock.js?v=0.75.0';
-import { give } from './bag.js?v=0.75.0';
-import { normalizeChapter3 } from './chapter3.js?v=0.75.0';
-import { homeMemories } from './farewell.js?v=0.75.0';
+import { dayOf } from './clock.js?v=0.76.0';
+import { give } from './bag.js?v=0.76.0';
+import { normalizeChapter3 } from './chapter3.js?v=0.76.0';
+import { homeMemories } from './farewell.js?v=0.76.0';
 
 const log = (s, title, text) => {
   s.log.unshift({ day: dayOf(s), title, text });
@@ -30,6 +30,10 @@ export function normalizeChapter4(s) {
   c.lastDay ??= 0; // the day you woke to the last day (0: not yet)
   c.lastDone ??= false; // that day is over
   c.lastMemories ??= []; // what you did with it: [{ id, text }]
+  // 0.76 · the choice at the bridge
+  c.path ??= ''; // 'third' once you set out on the third way
+  c.third ??= []; // its steps done, in order
+  c.ending ??= ''; // 'cross' | 'stay' | 'third'
   return c;
 }
 export const started4 = s => !!s.chapter3?.bridge;
@@ -268,6 +272,27 @@ export function tickLastDay(s, ctx) {
 export const lastDayFish = (s, active, fish) =>
   noteLastDay(s, 'fish', active ? `你和${active}一起釣到了${fish}。牠比你還開心。` : `你一個人釣到了${fish}。`);
 
+// ---------- 0.76 · the choice at the bridge ----------
+export const ENDING_NAMES = { cross: '橋的另一頭', stay: '湖邊的微笑', third: '撕開的文件' };
+// the third way: wake No.0388, free 晴, carve the truth on the stele, shut 「畢業」 off at the bottom of the rift
+export const THIRD_STEPS = [
+  ['k0388', '前哨站 · 用主控權限叫醒 0388'],
+  ['qing', '管理區 · 玻璃槽 B-01 · 放出晴'],
+  ['stele', '留言碑 · 把真相刻上去'],
+  ['graduation', '裂縫最深處 · 關掉「畢業」']
+];
+// the bridge asks you to choose once the last day is over (and until an ending is reached)
+export const choiceOpen = s => {
+  const c = normalizeChapter4(s);
+  return c.lastDone && !c.ending;
+};
+// the next step of the third way, or null
+export const thirdNext = s => {
+  const c = normalizeChapter4(s);
+  if (c.path !== 'third' || c.ending) return null;
+  return THIRD_STEPS.find(([id]) => !c.third.includes(id))?.[0] || null;
+};
+
 // ---------- the HUD ----------
 export function chapter4Objectives(s) {
   if (!started4(s)) return [];
@@ -290,7 +315,11 @@ export function chapter4Objectives(s) {
       list.push(['和嘯岳說說話（御獸倉庫 › 嘯岳）', c.xiaoyue]);
       if (c.xiaoyue) list.push(['睡一晚，迎接最後一天', !!c.lastDay]);
       if (c.lastDay) list.push([`最後一天 · 留下了 ${c.lastMemories.length} 段回憶`, c.lastDone]);
-      if (c.lastDone) list.push(['第四章（下）待續 · 橋前的選擇', true]);
+      if (c.lastDone) {
+        list.push(['回到橋前，做出選擇', !!(c.ending || c.path)]);
+        if (c.path === 'third') for (const [id, t] of THIRD_STEPS) list.push([t, c.third.includes(id)]);
+        if (c.ending) list.push([`結局 · ${ENDING_NAMES[c.ending]}`, true]);
+      }
     }
   }
   return list;

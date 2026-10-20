@@ -2,7 +2,7 @@
 // friendly and can be fed rations until they trust you. A hostile one has to be worn down in a fight — the lower
 // its strength, the better a contract's odds — and even bound it stays modest (a low level cap). The skeleton
 // kind only ever rides on the drifting merchant's boat.
-import { makeGenome } from './genetics.js?v=0.75.0';
+import { makeGenome } from './genetics.js?v=0.76.0';
 
 export const WILD_BEASTS = {
   flamemaw: {

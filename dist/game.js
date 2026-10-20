@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.75.0';
-import { renderAdventure } from './expansion-ui.js?v=0.75.0';
+} from './expansion.js?v=0.76.0';
+import { renderAdventure } from './expansion-ui.js?v=0.76.0';
 import {
   normalizeShip,
   tickShip,
@@ -41,10 +41,10 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.75.0';
-import { cargoCapacity, shipStats } from './warship.js?v=0.75.0';
-import { monologue, markGuide, pride, markPride } from './guide.js?v=0.75.0';
-import { climb, demolish, relocate } from './construction.js?v=0.75.0';
+} from './ship.js?v=0.76.0';
+import { cargoCapacity, shipStats } from './warship.js?v=0.76.0';
+import { monologue, markGuide, pride, markPride } from './guide.js?v=0.76.0';
+import { climb, demolish, relocate } from './construction.js?v=0.76.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.75.0';
+} from './housing.js?v=0.76.0';
 import {
   ISLANDS,
   NODES,
@@ -67,11 +67,11 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.75.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.75.0';
-import { lakeMinimap } from './lake-map.js?v=0.75.0';
-import { domeChart } from './dome-map.js?v=0.75.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.75.0';
+} from './islands.js?v=0.76.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.76.0';
+import { lakeMinimap } from './lake-map.js?v=0.76.0';
+import { domeChart } from './dome-map.js?v=0.76.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.76.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -90,7 +90,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.75.0';
+} from './cabin.js?v=0.76.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -103,17 +103,17 @@ import {
   duelActive,
   winDuel,
   PACT_ID
-} from './story.js?v=0.75.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.75.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.75.0';
-import { QUALITY } from './realism.js?v=0.75.0';
-import { MusicPlayer, WaterRush, NewWorldAmbience, playSplash, playImpact, soundPref } from './sound.js?v=0.75.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.75.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.75.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.75.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.75.0';
-import { CONFIG } from './config.js?v=0.75.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.75.0';
+} from './story.js?v=0.76.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.76.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.76.0';
+import { QUALITY } from './realism.js?v=0.76.0';
+import { MusicPlayer, WaterRush, NewWorldAmbience, playSplash, playImpact, soundPref } from './sound.js?v=0.76.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.76.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.76.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.76.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.76.0';
+import { CONFIG } from './config.js?v=0.76.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.76.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -124,7 +124,7 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.75.0';
+} from './codex.js?v=0.76.0';
 import {
   ensureLandBeasts,
   normalizeWildlife,
@@ -132,13 +132,13 @@ import {
   spawnWild,
   spawnUnder,
   ashore
-} from './wildlife.js?v=0.75.0';
-import { CRAFTS, ITEMS, ITEM_NAMES, costLabel as itemCost } from './items.js?v=0.75.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.75.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.75.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.75.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.75.0';
-import { startFishing, tickFishing, reel, cancelFishing, BITE_WINDOW, CATCHES } from './fishing.js?v=0.75.0';
+} from './wildlife.js?v=0.76.0';
+import { CRAFTS, ITEMS, ITEM_NAMES, costLabel as itemCost } from './items.js?v=0.76.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.76.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.76.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.76.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.76.0';
+import { startFishing, tickFishing, reel, cancelFishing, BITE_WINDOW, CATCHES } from './fishing.js?v=0.76.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -148,10 +148,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.75.0';
-import { ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.75.0';
-import { setClimbing } from './lake.js?v=0.75.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.75.0';
+} from './reclaim.js?v=0.76.0';
+import { ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.76.0';
+import { setClimbing } from './lake.js?v=0.76.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.76.0';
 import {
   RARITY,
   FRENZY,
@@ -177,7 +177,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.75.0';
+} from './taming.js?v=0.76.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -196,8 +196,8 @@ import {
   AI_RANGE,
   onLayer,
   callAssist
-} from './combat.js?v=0.75.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.75.0';
+} from './combat.js?v=0.76.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.76.0';
 import {
   ECHOES,
   LAPTOP_PARTS,
@@ -207,7 +207,7 @@ import {
   missingParts,
   normalizeEchoes,
   repairLaptop
-} from './echoes.js?v=0.75.0';
+} from './echoes.js?v=0.76.0';
 import {
   TOWN_NAME,
   BUILDINGS as TOWN_BUILDINGS,
@@ -228,7 +228,7 @@ import {
   toWorld as townWorld,
   normalizeTown,
   XIAOYUE_WAITS
-} from './town.js?v=0.75.0';
+} from './town.js?v=0.76.0';
 import {
   TEMPLATES,
   WORDS,
@@ -246,9 +246,9 @@ import {
   guideWarning,
   noteTrace,
   normalizeComms
-} from './comms.js?v=0.75.0';
-import { Community } from './community.js?v=0.75.0';
-import { storyPanel } from './storynav.js?v=0.75.0';
+} from './comms.js?v=0.76.0';
+import { Community } from './community.js?v=0.76.0';
+import { storyPanel } from './storynav.js?v=0.76.0';
 import {
   outsidePoints,
   tearShell,
@@ -263,7 +263,7 @@ import {
   bridgeReady,
   crossBridge,
   RIFT
-} from './chapter3.js?v=0.75.0';
+} from './chapter3.js?v=0.76.0';
 import {
   readNotice,
   searchDiner,
@@ -276,10 +276,10 @@ import {
   AFTER_FORGET,
   GRADUATED_TEXT,
   domeCracked
-} from './chapter2.js?v=0.75.0';
-import { tickDome, nearShell, toLocal as domeLocal, countryWalkable, DOME_R, domeHeight } from './dome.js?v=0.75.0';
-import { countryPoints, visitSpot, SPOT_HINTS } from './countryside.js?v=0.75.0';
-import { startRiftFight, tickRiftFight, endRiftFight, riftStatus } from './rift-fight.js?v=0.75.0';
+} from './chapter2.js?v=0.76.0';
+import { tickDome, nearShell, toLocal as domeLocal, countryWalkable, DOME_R, domeHeight } from './dome.js?v=0.76.0';
+import { countryPoints, visitSpot, SPOT_HINTS } from './countryside.js?v=0.76.0';
+import { startRiftFight, tickRiftFight, endRiftFight, riftStatus } from './rift-fight.js?v=0.76.0';
 import {
   started4,
   readTerminal,
@@ -295,9 +295,13 @@ import {
   hearXiaoyue,
   beginLastDay,
   tickLastDay,
-  lastDayFish
-} from './chapter4.js?v=0.75.0';
-import { heartToHeart, homeMemories, homeLine, HOME_MEMORIES } from './farewell.js?v=0.75.0';
+  lastDayFish,
+  choiceOpen,
+  thirdNext,
+  THIRD_STEPS
+} from './chapter4.js?v=0.76.0';
+import { CHOICE_LINES, choose, doThird, thirdLeft } from './endings.js?v=0.76.0';
+import { heartToHeart, homeMemories, homeLine, HOME_MEMORIES } from './farewell.js?v=0.76.0';
 import {
   INTERIORS,
   INTERIOR_Y,
@@ -309,14 +313,14 @@ import {
   useInterior,
   adminOpen,
   masterOpen
-} from './interiors.js?v=0.75.0';
-import { BeastStage } from './beast-stage.js?v=0.75.0';
-import { loadArt, art, artImg } from './art.js?v=0.75.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.75.0';
-import { separateBodies } from './bodies.js?v=0.75.0';
-import { STATUES } from './statues.js?v=0.75.0';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.75.0';
-import { lookOf } from './beast-look.js?v=0.75.0';
+} from './interiors.js?v=0.76.0';
+import { BeastStage } from './beast-stage.js?v=0.76.0';
+import { loadArt, art, artImg } from './art.js?v=0.76.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.76.0';
+import { separateBodies } from './bodies.js?v=0.76.0';
+import { STATUES } from './statues.js?v=0.76.0';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.76.0';
+import { lookOf } from './beast-look.js?v=0.76.0';
 import {
   TREE,
   BRANCHES,
@@ -327,8 +331,8 @@ import {
   personality,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.75.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.75.0';
+} from './beast-tree.js?v=0.76.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.76.0';
 import {
   funds,
   normalizeBag,
@@ -349,12 +353,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.75.0';
-import { iconFor } from './icons.js?v=0.75.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.75.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.75.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.75.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.75.0';
+} from './bag.js?v=0.76.0';
+import { iconFor } from './icons.js?v=0.76.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.76.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.76.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.76.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.76.0';
 import {
   homePos,
   facilityPos,
@@ -366,10 +370,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.75.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.75.0';
-export const GAME_VERSION = '0.75.0';
-import { CloudSave } from './cloud-save.js?v=0.75.0';
+} from './fortress.js?v=0.76.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.76.0';
+export const GAME_VERSION = '0.76.0';
+import { CloudSave } from './cloud-save.js?v=0.76.0';
 import {
   readLocal,
   writeLocal,
@@ -386,9 +390,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.75.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.75.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, geneName } from './genetics.js?v=0.75.0';
+} from './save-store.js?v=0.76.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.76.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, geneName } from './genetics.js?v=0.76.0';
 import {
   RESOURCE_NAMES,
   RECIPES,
@@ -408,8 +412,8 @@ import {
   tickSystems,
   validateSave,
   log
-} from './rules.js?v=0.75.0';
-import { hourOf, isNight, nextMorning } from './clock.js?v=0.75.0';
+} from './rules.js?v=0.76.0';
+import { hourOf, isNight, nextMorning } from './clock.js?v=0.76.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -4067,6 +4071,7 @@ function interiorAction(id) {
     return playLines(r.lines, room?.name || '', () => {
       if (r.then === 'choice') return chapterTwoChoice();
       if (r.chapter4) discover('玻璃槽 B-01', '下一步：回到裂縫的核心 · 橋。');
+      if (r.third) thirdDone(r.third);
       if (r.ready) discover('走廊上有腳步聲', '有人在走廊上等你。');
     });
   const got = Object.entries(r.got || {})
@@ -4126,6 +4131,13 @@ function townAction(id) {
     return done(r);
   }
   if (id === 'stele') {
+    // 0.76: on the third way, the truth goes on the stone
+    const t = doThird(state, 'stele');
+    if (t) {
+      save(true);
+      updateUI();
+      return playLines(t.lines, '留言碑', () => thirdDone(t.step));
+    }
     // 0.73: in chapter four, No.0388's words at the bottom of the stone come first
     const m = read0388(state);
     if (m) {
@@ -4210,6 +4222,13 @@ function townAction(id) {
   // 0.50: past the dome
   if (id === 'tear') return toast('穹頂的裂口。邊緣還在發著紫光。往北走就回到穹頂裡。');
   if (id === 'outpost') {
+    // 0.76: on the third way, K.'s master code reaches No.0388
+    const t = doThird(state, 'k0388');
+    if (t) {
+      save(true);
+      updateUI();
+      return playLines(t.lines, '研究員 K. 的終端機', () => thirdDone(t.step));
+    }
     // 0.73: after the bridge, the shards wake K.'s terminal
     if (started4(state)) {
       const t = readTerminal(state);
@@ -4251,8 +4270,84 @@ function townAction(id) {
         discover('第四章（上）完 · 第二份文件', '「解脫」，是誰的解脫？第四章（下）——敬請期待。')
       );
     }
+    // 0.76: the third way ends at the bottom of the rift; otherwise, after the last day, the bridge asks
+    const g = doThird(state, 'graduation');
+    if (g) {
+      save(true);
+      updateUI();
+      return playLines(g.lines, '裂縫最深處', () => playEnding(g));
+    }
+    if (choiceOpen(state)) return bridgeChoice();
     return openRift();
   }
+}
+// 0.76: the choice at the bridge (endings.js)
+function bridgeChoice(intro = true) {
+  if (intro) return playLines(CHOICE_LINES, '裂縫的核心 · 橋前的選擇', () => bridgeChoice(false));
+  const third = state.chapter4.path === 'third',
+    left = thirdLeft(state);
+  modal(
+    '裂縫的核心',
+    '橋前的選擇',
+    `<p>走過橋，回到病床上醒來；留下來，當下一個晴；或者，走第三條路。</p>${
+      third ? `<p>第三條路還差：${left.map(esc).join('、')}</p>` : ''
+    }`,
+    [
+      { label: '走過橋', action: () => confirmEnding('cross') },
+      { label: '留下來，當引路人', action: () => confirmEnding('stay') },
+      {
+        label: third ? `第三條路（${4 - left.length}/4）` : '第三條路',
+        primary: true,
+        action: () => {
+          const r = choose(state, 'third');
+          if (!r.ok) return toast(r.error, true);
+          if (r.again) return (closeModal(), toast(left[0] ? P('下一步：') + left[0] : ''));
+          save(true);
+          updateUI();
+          playLines(r.lines, '第三條路', () => discover('第三條路', P('下一步：') + left[0]));
+        }
+      },
+      { label: '往裂縫下面走', action: () => (closeModal(), openRift()) },
+      { label: '再想想', action: closeModal }
+    ]
+  );
+}
+function confirmEnding(path) {
+  modal(
+    '橋前的選擇',
+    path === 'cross' ? '走過橋？' : '留下來？',
+    '<p>這會進入結局。結局之後，你還可以繼續在比斯泰德走走。</p>',
+    [
+      {
+        label: '確定',
+        primary: true,
+        action: () => {
+          const r = choose(state, path);
+          if (!r.ok) return toast(r.error, true);
+          save(true);
+          updateUI();
+          playLines(r.lines, '結局', () => playEnding(r));
+        }
+      },
+      { label: '再想想', action: () => bridgeChoice(false) }
+    ]
+  );
+}
+// after the ending's lines: the epilogue from the save, then the end card
+function playEnding(r) {
+  playLines(r.epilogue, '尾聲', () =>
+    modal(
+      'THE END',
+      `結局 · ${r.name}`,
+      '<p>謝謝你一路玩到這裡。</p><p>比斯泰德還在。你可以繼續在湖上走走——這是你留下的那一份。</p>',
+      [{ label: '回到湖上', primary: true, action: closeModal }]
+    )
+  );
+}
+function thirdDone(step) {
+  const next = thirdNext(state),
+    t = THIRD_STEPS.find(([id]) => id === next)?.[1];
+  discover(`第三條路 ${step}/4`, t ? P('下一步：') + t : '');
 }
 // 0.51: which layer of the rift to go down into
 function openRift() {

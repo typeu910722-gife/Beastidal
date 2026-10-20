@@ -2351,6 +2351,181 @@ export default {
   '下一步：回避難所睡一晚': 'Next: go back to the shelter and sleep a night',
   '今天是最後一天：看夕陽、回到你的島、騎著夥伴跑一圈、一起釣魚、陪嘯岳坐在山腳':
     'Today is the last day: watch the sunset, visit your island, ride a partner round the lake, fish together, sit with Xiaoyue at the foothills',
+  橋的另一頭: 'The other side of the bridge',
+  湖邊的微笑: 'The smile by the lake',
+  撕開的文件: 'The torn document',
+  '前哨站 · 用主控權限叫醒 0388': 'Outpost · wake No.0388 with the master code',
+  '管理區 · 玻璃槽 B-01 · 放出晴': 'Admin block · tank B-01 · free Qing',
+  '留言碑 · 把真相刻上去': 'Stele · carve the truth on it',
+  '裂縫最深處 · 關掉「畢業」': 'The bottom of the rift · shut "graduation" off',
+  '回到橋前，做出選擇': 'Go back to the bridge and choose',
+  '結局 · {0}': 'Ending · {0}',
+  '橋還在。這一次，橋的另一頭很安靜。': 'The bridge is still there. This time the far side is quiet.',
+  '「最後一天，過完了。」': '"The last day is over."',
+  '「不管你選哪一邊，我都在這裡。」': '"Whichever side you choose, I am here."',
+  '你站在橋頭。這一次，你沒有再替自己找理由。':
+    'You stand at the head of the bridge. This time you make no more excuses.',
+  '「上一次，我在這裡看著她走。」': '"Last time, I stood here and watched her go."',
+  '「這次換我送你。」': '"This time, I see you off."',
+  '嘯岳陪你走到橋的正中央，停了下來。牠過不去。':
+    'Xiaoyue walks with you to the middle of the bridge and stops. It cannot cross.',
+  '「去吧。我記得你。」': '"Go. I remember you."',
+  '白光。消毒水的味道。很重、很重的眼皮。': 'White light. The smell of disinfectant. Heavy, heavy eyelids.',
+  '「……你醒了？你醒了！醫生——醫生！」': '"…You\'re awake? You\'re awake! Doctor — doctor!"',
+  '你的腿動不了。你知道，可能很久都動不了。可是她握著你的手，在哭，也在笑。':
+    "Your legs won't move. You know they may not for a long time. But she holds your hand, crying and laughing at once.",
+  '床邊的桌上，放著那份文件。日期那一欄，被她劃掉了。':
+    'The document lies on the bedside table. She has struck out the date.',
+  '你轉過身，背對著橋。': 'You turn your back on the bridge.',
+  '「明智的選擇，0412。」': '"A wise choice, 0412."',
+  '從那天起，你在慈光港的廣場上發居民證。你笑著。照片一張一張寄回去。':
+    "From that day on you hand out resident cards in Ciguang Harbour's square. You smile. The photos go home one by one.",
+  '「今天的照片裡，你又在湖邊笑了。」': '"In today\'s photo you\'re smiling by the lake again."',
+  '「醫生說，費用組織會一直付。……媽媽不知道該不該高興。」':
+    '"The doctor says the organisation will keep paying. …Mum doesn\'t know whether to be glad."',
+  '「媽媽會一直來。你在那邊，要快樂喔。」': '"Mum will keep coming. Be happy over there, all right?"',
+  '她對著照片說話。照片裡的你在笑。病床上的你，聽見了。':
+    'She talks to the photo. The you in the photo smiles. The you in the bed hears her.',
+  '「你留下來了。……那我不用再等了。我就在你旁邊。」':
+    '"You stayed. …Then I don\'t have to wait any more. I\'m right beside you."',
+  '橋的另一頭，病房的燈亮著。': 'On the far side of the bridge, the light is on in the ward.',
+  '「我收到一封信。寄件人寫著 0412。上面，是留言碑上的每一個字。」':
+    '"I got a letter. The sender says 0412. In it is every word on the stele."',
+  '她拿起那支筆。不是要簽名。': 'She picks up the pen. Not to sign.',
+  '她把第二份文件，從中間撕開。': 'She tears the second document down the middle.',
+  '「我不會再讓任何人，替我決定你的解脫。」': '"I won\'t let anyone decide your release for me again."',
+  '你走過了橋。0388 在另一邊等你；晴留在慈光港，替還醒著的人帶路。':
+    'You cross the bridge. No.0388 waits on the other side; Qing stays in Ciguang Harbour to guide those still awake.',
+  '「這次，你會回來嗎？」': '"This time, will you come back?"',
+  '「會。橋不會再關上了。」': '"Yes. The bridge won\'t close again."',
+  '嘯岳仰起頭，長長地叫了一聲。整座湖都聽見了。':
+    'Xiaoyue lifts its head and calls, long and loud. The whole lake hears it.',
+  '你沒有走上橋，也沒有轉身。': 'You neither step onto the bridge nor turn away.',
+  '「他給我的兩條路，我都不要。」': '"I don\'t want either of the two ways he gave me."',
+  '「汐當年也想過第三條路。她沒有走完。」': '"Xi thought of a third way too, back then. She never finished it."',
+  '「這次，我陪你走完。」': '"This time, I\'ll walk it with you to the end."',
+  'K. 的主控權限還在。0388 還醒著。晴還在。留言碑上，還有空的地方。':
+    "K.'s master code still works. No.0388 is still awake. Qing is still here. There is still room on the stele.",
+  '主控權限確認。載體 0388：狀態「待畢業」。': 'Master access confirmed. Carrier 0388: status "pending graduation".',
+  '你把 0388 的狀態改成「維持」，然後打開了通訊。': 'You change 0388\'s status to "sustain", then open a channel.',
+  '「……有人在嗎？我在留言碑上寫了好久，一直沒有人回。」':
+    '"…Is anyone there? I wrote on the stele for so long and no one ever answered."',
+  '「我看到了。我是 0412。我們一起出去。」': '"I saw it. I\'m 0412. We\'re getting out together."',
+  '「……好。我在橋那邊等你。」': '"…All right. I\'ll wait for you across the bridge."',
+  '你用主控權限打開了 B-01。冷氣湧出來，槽裡的光一點一點暗下去。':
+    'You open B-01 with the master code. Cold air pours out; the light in the tank fades bit by bit.',
+  '載體 0001：意識封存，解除。': 'Carrier 0001: consciousness seal, released.',
+  '「……0412？我睡了多久？」': '"…0412? How long was I asleep?"',
+  '「我發了好多張居民證。每一張，都是一個人的『畢業』。」':
+    "\"I handed out so many resident cards. Every one was someone's 'graduation'.\"",
+  '「這次讓我幫你帶路。真正的路。」': '"This time let me show you the way. The real way."',
+  '你用主控權限，刪掉了 B-01 的「備用」指令。': 'With the master code, you delete B-01\'s "spare" order.',
+  '那天晚上，晴第一次離開了廣場。她走進玻璃槽大廳，看著那個空槽，看了很久。':
+    'That night Qing left the square for the first time. She walked into the tank hall and looked at the empty tank for a long time.',
+  '「這是……替我準備的？」': '"This was… meant for me?"',
+  '「我一直以為，我是在幫大家。」': '"I always thought I was helping everyone."',
+  '你在留言碑最下面，0388 的字旁邊，刻下了你知道的一切。':
+    "At the bottom of the stele, beside 0388's words, you carve everything you know.",
+  '「畢業」是什麼。第二份文件是什麼。照片是怎麼寄出去的。':
+    'What "graduation" is. What the second document is. How the photos are sent.',
+  '刻完的時候，天亮了。廣場上有人停下來，讀了很久。':
+    'By the time you finish it is dawn. Someone in the square stops and reads for a long time.',
+  '有人開始在下面，刻上自己的編號。': 'Someone begins carving their own number underneath.',
+  '你、嘯岳、晴，還有通訊裡 0388 的聲音，一起走到裂縫的最深處。':
+    "You, Xiaoyue, Qing and 0388's voice over the channel go down together to the bottom of the rift.",
+  '「『畢業』的程序在這裡。每一個被收回的意識，都是從這裡斷開的。」':
+    '"The \'graduation\' program is here. Every mind they took back was cut off from here."',
+  '你用 K. 的主控權限，把它關掉了。': "With K.'s master code, you shut it off.",
+  '「你知道這樣做，組織要付出多少嗎？」': '"Do you know what this will cost the organisation?"',
+  '「那是你們的帳。不是我們的命。」': '"That\'s your ledger. Not our lives."',
+  '管理者沒有再說話。從那天起，他的聲音再也沒有出現過。':
+    'The manager says nothing more. From that day on his voice is never heard again.',
+  '第三條路 · 0388': 'The third way · 0388',
+  '我用 K. 的主控權限，把 0388 的狀態改成「維持」。他說，他在橋那邊等我。':
+    "With K.'s master code I changed 0388's status to \"sustain\". He said he'd wait for me across the bridge.",
+  '第三條路 · 晴': 'The third way · Qing',
+  '我打開了玻璃槽 B-01。晴說，這次讓她帶路，真正的路。':
+    "I opened tank B-01. Qing said this time she'd show the way — the real way.",
+  '第三條路 · 留言碑': 'The third way · the stele',
+  '我把知道的一切刻上了留言碑。有人開始在下面，刻上自己的編號。':
+    'I carved everything I know on the stele. Someone began carving their own number underneath.',
+  '第三條路 · 畢業': 'The third way · graduation',
+  '我在裂縫最深處關掉了「畢業」。管理者的聲音，再也沒有出現過。':
+    'At the bottom of the rift I shut "graduation" off. The manager\'s voice was never heard again.',
+  '{0}每天傍晚都會回到木筏上，趴在你以前睡的地方。':
+    'Every evening {0} comes back to the raft and lies where you used to sleep.',
+  '{0}偶爾會游到停靠站，看一眼，然後回到湖裡。':
+    'Now and then {0} swims to the dock, takes a look, and goes back into the lake.',
+  '{0}回到了湖裡，慢慢習慣了沒有你的日子。': '{0} went back to the lake and slowly got used to days without you.',
+  '{0}一直在你身邊。你在廣場發居民證的時候，牠就趴在你腳邊。':
+    '{0} is always beside you. While you hand out resident cards in the square, it lies at your feet.',
+  '{0}有時陪你到廣場，有時自己去湖裡游。':
+    'Sometimes {0} goes with you to the square, sometimes it swims in the lake alone.',
+  '{0}慢慢跟你熟了起來。你們還有很多時間。': '{0} slowly grows close to you. You have plenty of time.',
+  '{0}每天傍晚都回到木筏上。你回來的那天，牠第一個衝過來。':
+    'Every evening {0} comes back to the raft. The day you return, it is the first to rush over.',
+  '{0}在停靠站等你。你回來的時候，牠繞著你游了好幾圈。':
+    '{0} waits for you at the dock. When you return, it swims circles around you.',
+  '{0}在湖裡長大了。你回來的時候，牠認了你好一會兒，才靠過來。':
+    '{0} grew up in the lake. When you return it looks at you a long while before it comes close.',
+  '嘯岳回到了山腳，趴在湖邊，又開始等。下一個從裂縫掉下來的人，牠會第一個找到。':
+    'Xiaoyue went back to the foothills and lies by the lake, waiting again. Whoever falls out of the rift next, it will find them first.',
+  '嘯岳不再守著山腳了。牠睡在慈光港的城門外，離你很近。':
+    "Xiaoyue no longer guards the foothills. It sleeps outside Ciguang Harbour's gate, close to you.",
+  '嘯岳還是守在山腳。但這一次，牠知道你會回來。':
+    'Xiaoyue still keeps the foothills. But this time it knows you will come back.',
+  '最後一天——': 'The last day —',
+  '最後一天，你只是一直看著湖。': 'On the last day, you just kept looking at the lake.',
+  '牠是第一個。在那張網子裡，你是第一個停下來的人。':
+    ' It was the first. In that net, you were the first one who stopped.',
+  '「第 {0} 天。我記得。」': '"Day {0}. I remember."',
+  '我走過了橋。嘯岳說：「這次換我送你。」我在病床上醒來，媽媽握著我的手。':
+    'I crossed the bridge. Xiaoyue said: "This time, I see you off." I woke in the hospital bed with Mum holding my hand.',
+  '我留了下來，在慈光港的廣場上發居民證。照片一張一張寄回去，媽媽對著照片說話。':
+    "I stayed, handing out resident cards in Ciguang Harbour's square. The photos go home one by one, and Mum talks to them.",
+  '0388 醒了，晴自由了，真相刻在留言碑上，「畢業」被關掉了。媽媽用那支筆，撕開了第二份文件。':
+    '0388 woke, Qing is free, the truth is on the stele and "graduation" is shut off. Mum tore the second document up with the pen.',
+  '現在還不是做選擇的時候。': "It isn't time to choose yet.",
+  第三條路: 'The third way',
+  '我沒有走上橋，也沒有轉身。叫醒 0388、放出晴、把真相刻上留言碑、關掉「畢業」。':
+    'I neither crossed nor turned away. Wake 0388, free Qing, carve the truth on the stele, shut "graduation" off.',
+  裂縫最深處: 'The bottom of the rift',
+  '裂縫的核心 · 橋前的選擇': "The rift's core · the choice at the bridge",
+  橋前的選擇: 'The choice at the bridge',
+  '第三條路還差：{0}': 'The third way still needs: {0}',
+  '走過橋，回到病床上醒來；留下來，當下一個晴；或者，走第三條路。':
+    'Cross the bridge and wake in the hospital bed; stay and become the next Qing; or take the third way.',
+  走過橋: 'Cross the bridge',
+  '留下來，當引路人': 'Stay as a guide',
+  '第三條路（{0}/4）': 'The third way ({0}/4)',
+  '下一步：': 'Next: ',
+  往裂縫下面走: 'Go down into the rift',
+  '走過橋？': 'Cross the bridge?',
+  '留下來？': 'Stay?',
+  '這會進入結局。結局之後，你還可以繼續在比斯泰德走走。':
+    'This leads to an ending. Afterwards you can keep wandering Beastidal.',
+  確定: 'Confirm',
+  結局: 'Ending',
+  尾聲: 'Epilogue',
+  '謝謝你一路玩到這裡。': 'Thank you for playing all the way here.',
+  '比斯泰德還在。你可以繼續在湖上走走——這是你留下的那一份。':
+    'Beastidal is still here. You can keep wandering the lake — this is the part of you that stayed.',
+  回到湖上: 'Back to the lake',
+  '第三條路 {0}/4': 'The third way {0}/4',
+  '（最後一天過完了。該回去了——把嘯岳派出來，走上環湖的山腳，按 E 翻過群山，到橋那裡。）':
+    '(The last day is over. Time to go back — send Xiaoyue out, walk up the foothills around the lake, press E to cross the mountains, and go to the bridge.)',
+  '研究員 K. 的前哨站 · 叫醒 0388': "Researcher K.'s outpost · wake 0388",
+  '管理區 · 玻璃槽 B-01': 'Admin block · tank B-01',
+  '留言碑 · 刻下真相': 'Stele · carve the truth',
+  '終章 · {0}': 'Finale · {0}',
+  '終章 · 橋前的選擇': 'Finale · the choice at the bridge',
+  '航行了 {0} 公里': 'sailed {0} km',
+  '第 {0} 天。你{1}。': 'Day {0}. You {1}.',
+  '第 {0} 天。': 'Day {0}.',
+  '和 {0} 隻御獸締約': 'bonded with {0} beasts',
+  '在 {0} 座島上插過旗': 'planted your flag on {0} islands',
+  '親手蓋了 {0} 樣東西': 'built {0} things with your own hands',
+  '，': ', ',
   '在避難所時，上方的數字＝背包＋書桌倉庫。':
     'At the shelter, the numbers up top count the bag and the desk storage together.',
   '書桌倉庫：': 'Desk storage: ',

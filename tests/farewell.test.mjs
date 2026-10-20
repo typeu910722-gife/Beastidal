@@ -190,7 +190,7 @@ test('Chapter four, part two: talk with your beasts and walk the raft — the gu
   assert.equal(lastDayFish(s, '小牙', '鯉魚'), null, 'the day is over');
   assert.ok(s.log.some(l => l.title === '最後一天 · 過完了' && l.text.includes('夕陽')));
   const end = chapter4Objectives(s);
-  assert.deepEqual(end[end.length - 1], ['第四章（下）待續 · 橋前的選擇', true]);
+  assert.deepEqual(end[end.length - 1], ['回到橋前，做出選擇', false]);
 });
 
 test('A last day spent doing nothing is kept too', () => {

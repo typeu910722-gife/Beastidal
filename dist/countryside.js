@@ -1,9 +1,9 @@
 // 0.70: the country under the dome — places worth the walk between the pass, the town and the shell. Each has
 // something to read the first time (most of them one more crack in the illusion), and the orchard and the river bend
 // give a little every day. Pure: reads and changes the state, returns what to show.
-import { dayOf, isNight } from './clock.js?v=0.75.0';
-import { give } from './bag.js?v=0.75.0';
-import { toWorld, PASS, ORCHARD, OLD_TREE } from './dome.js?v=0.75.0';
+import { dayOf, isNight } from './clock.js?v=0.76.0';
+import { give } from './bag.js?v=0.76.0';
+import { toWorld, PASS, ORCHARD, OLD_TREE } from './dome.js?v=0.76.0';
 
 // local coordinates (see dome.js); `daily`: what it gives once a day; `once`: what it gives the first time
 export const SPOTS = [
