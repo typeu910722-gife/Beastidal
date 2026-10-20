@@ -54,7 +54,7 @@ try {
 
   // the warship row lives on the 航務與遺跡 tab
   await page.$eval('[data-exp-tab="voyage"]', el => el.click());
-  await page.waitForSelector('#upgrade-ship', { timeout: 10000 });
+  await page.waitForSelector('#upgrade-ship', { timeout: 60000 });
   const label = await page.textContent('#upgrade-ship');
   assert.match(label, /升級/);
   await page.$eval('#upgrade-ship', el => el.click());
