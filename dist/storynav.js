@@ -10,8 +10,8 @@ import {
   BOARD,
   XIAOYUE_WAITS,
   lettersReady
-} from './town.js?v=0.76.0';
-import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.76.0';
+} from './town.js?v=0.77.0';
+import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.77.0';
 import {
   chapter3Objectives,
   normalizeChapter3,
@@ -22,10 +22,10 @@ import {
   RIFT,
   TEAR_AT,
   layerOpen
-} from './chapter3.js?v=0.76.0';
-import { isNight } from './clock.js?v=0.76.0';
-import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.76.0';
-import { riftStatus } from './rift-fight.js?v=0.76.0';
+} from './chapter3.js?v=0.77.0';
+import { isNight } from './clock.js?v=0.77.0';
+import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.77.0';
+import { riftStatus } from './rift-fight.js?v=0.77.0';
 import {
   chapter4Objectives,
   normalizeChapter4,
@@ -35,7 +35,7 @@ import {
   inLastDay,
   choiceOpen,
   thirdNext
-} from './chapter4.js?v=0.76.0';
+} from './chapter4.js?v=0.77.0';
 // 0.75: part two's lake steps last until the last day is over
 const onLake4 = s => inPartTwo(s) && !normalizeChapter4(s).lastDone;
 
