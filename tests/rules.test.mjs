@@ -509,4 +509,35 @@ test('Salvage pays more with boat levels and quick runs; treasure chests are ric
   s.resources.wood = 4;
   assert.equal(unloadAtHome(s), 0, 'not away from home');
 });
+test('0.67: the skiff lands alongside any walkable shore, all the way round every island and on the basin shore', () => {
+  const tryAt = (x, z, label) => {
+    const s = normalizeTravel(createState(93));
+    Object.assign(s.player, { x, z, mode: 'boat' });
+    assert.ok(dockOption(s).near, label + ' offers landing');
+    assert.ok(switchVessel(s).ok, label + ' lands');
+    assert.ok(canWalk(s, s.player.x, s.player.z), label + ' on walkable ground');
+    assert.ok(Math.hypot(s.player.x - x, s.player.z - z) < 12, label + ' beside the boat');
+    assert.ok(dockOption(s).near, label + ' and you can board again right there');
+    assert.ok(switchVessel(s).ok);
+    assert.ok(!boatBlocked(s, s.player.x, s.player.z));
+  };
+  let tried = 0;
+  for (const i of ISLANDS)
+    for (let k = 0; k < 48; k++) {
+      const a = (k / 48) * Math.PI * 2,
+        dx = Math.sin(a),
+        dz = Math.cos(a),
+        s = normalizeTravel(createState(93));
+      let r = Math.max(i.rx, i.rz) * 1.8;
+      if (boatBlocked(s, i.x + dx * r, i.z + dz * r)) continue; // that bearing runs inland
+      while (r > 0 && !boatBlocked(s, i.x + dx * (r - 1), i.z + dz * (r - 1))) r -= 1;
+      if (r <= 0 || groundAt(i.x + dx * (r - 3), i.z + dz * (r - 3)) < 0.35) continue; // no beach this way
+      tryAt(i.x + dx * r, i.z + dz * r, `${i.id} bearing ${k}`);
+      tried++;
+    }
+  // the basin shore far from any listed landing (88 m and 49 m from the nearest before 0.67)
+  tryAt(211, -200.5, 'basin shore A');
+  tryAt(296.5, -200.5, 'basin shore B');
+  assert.ok(tried > 60, `${tried} island bearings tried`);
+});
 console.log(`\n${checks} meaningful checks passed.`);

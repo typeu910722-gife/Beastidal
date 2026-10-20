@@ -1,5 +1,5 @@
 // Beastidal warship: island claims, dock station, shelter + boat fusion, multi-deck interior.
-import { ISLANDS, onIsland, islandAt, islandDocks } from './islands.js?v=0.66.0';
+import { ISLANDS, onIsland, islandAt, islandDocks, landingNear } from './islands.js?v=0.66.0';
 import { waterNear, groundAt } from './lake.js?v=0.66.0';
 import { onWatcherDown } from './story.js?v=0.66.0';
 import { dayOf } from './clock.js?v=0.66.0';
@@ -298,6 +298,8 @@ export function nearShip(s, pad = 5) {
   const l = toLocal(s.ship, s.player.x, s.player.z);
   return Math.abs(l.lz) < SHIP_LEN / 2 + pad && Math.abs(l.lx) < hullHalfBeam(Math.max(-15, Math.min(15, l.lz))) + pad;
 }
+// How far from the warship's centre walkable shore still counts as alongside (bow-on, the bow keeps it ~14 m off).
+export const SHIP_LAND_REACH = 18;
 export function shoreSpot(s) {
   if (!s.ship) return null;
   const moor = dockMoor(s);
@@ -308,6 +310,13 @@ export function shoreSpot(s) {
       .sort((a, b) => Math.hypot(a.x - moor.dockX, a.z - moor.dockZ) - Math.hypot(b.x - moor.dockX, b.z - moor.dockZ));
     if (floors[0]) return { foot: floors[0], name: '避難所停靠站' };
   }
+  // 0.66.1: alongside any walkable shore, kept within boarding range of the hull (see nearShip) so you can come
+  // straight back aboard; the old landing list stays as a fallback
+  const land = landingNear(s.ship.x, s.ship.z, SHIP_LAND_REACH, (x, z) => {
+    const l = toLocal(s.ship, x, z);
+    return Math.abs(l.lz) < SHIP_LEN / 2 + 5 && Math.abs(l.lx) < hullHalfBeam(Math.max(-15, Math.min(15, l.lz))) + 5;
+  });
+  if (land) return { foot: land.foot, name: land.name, island: land.island };
   const near = islandDocks()
     .map(d => ({ ...d, d: dist(d.boat, s.ship) }))
     .sort((a, b) => a.d - b.d)[0];

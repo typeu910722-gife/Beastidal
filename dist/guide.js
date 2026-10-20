@@ -120,6 +120,12 @@ export function guideDone(s) {
 }
 // Later milestones skip earlier tutorial lines even if an old save never triggered them.
 export function monologue(s) {
+  // 0.67: the pact is sealed — the way over the mountains is chapter one's last step, say where it starts
+  if (s.story?.stage === 5 && !s.inTown)
+    return {
+      id: 'cross',
+      text: '（嘯岳答應帶我翻過群山了。把嘯岳派出來，走上環湖的山腳——不是島嶼——按 E 請牠帶我越過去。）'
+    };
   const start = s.ship
     ? 'helm'
     : s.shipFusion

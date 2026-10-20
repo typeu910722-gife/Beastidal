@@ -1654,8 +1654,7 @@ function showMenu() {
       { label: audio.on ? '關閉環境音' : '開啟環境音', action: () => ($('sound-btn').click(), showMenu()) },
       { label: '⚙ 設定', action: () => openSettings(showMenu) },
       { label: '操作說明', action: () => showHelp(showMenu) },
-      { label: '✦ 御獸遠航', action: () => (closeModal(), openPanel('adventure')) },
-      { label: '📊 統計', action: () => openStats(showMenu) },
+      { label: '▦ 選單 · 背包 · 御獸 · 地圖', action: () => (closeModal(), openDevice()) },
       { label: '🆘 脫困 · 回到船上', action: unstuck },
       {
         label: '保存進度',
@@ -1755,7 +1754,7 @@ const KEY_HELP = [
   [
     '畫面',
     [
-      ['I', '隨身裝置'],
+      ['I', '選單（背包、御獸、日誌、地圖…）'],
       ['B', '建造'],
       ['C', '御獸 · 共生研究'],
       ['J', '航海日誌'],
@@ -2219,6 +2218,24 @@ function getAllTargets() {
     if (lev.kind === 'treasure' && !lev.claimed && state.expedition.diving)
       arr.push({ id: 'lake-event', type: 'event', x: lev.x, z: lev.z, name: '湖心寶藏' });
   }
+  // 0.67: on the basin shore with 嘯岳 out, the way over the mountains is right here (it used to hide in a panel)
+  if (
+    state.player.mode === 'foot' &&
+    !state.inCave &&
+    (state.story?.stage || 0) >= 5 &&
+    canCross(
+      state,
+      activePet(state),
+      onLand(state.player.x, state.player.z) && !onIsland(state.player.x, state.player.z)
+    ).ok
+  )
+    arr.push({
+      id: 'cross-mountains',
+      type: 'cross',
+      x: state.player.x + 0.01,
+      z: state.player.z,
+      name: state.story.stage >= 6 ? '越過群山 · 前往慈光港' : '請嘯岳帶你越過群山'
+    });
   const pact = state.story;
   // 0.31: before the pact 嘯岳 lies in the garden's heart (asleep, in a frenzy, or awake and calm)
   if (
@@ -2261,6 +2278,8 @@ function updateNearest() {
         }
         if (t.type === 'wild' && (t.rescue === 'freed' || t.rescue === 'friend')) k *= 3;
         if (t.type === 'pet') k *= 3;
+        // the crossing stands where you stand: anything you are actually walking up to comes first
+        if (t.type === 'cross') k = 6;
         // 0.41: a treasure chest in reach always comes first
         if (t.type === 'loot' && t.kind === TREASURE_KIND) k *= 0.05;
         return dd * k;
@@ -2295,37 +2314,39 @@ function updateNearest() {
                 ? state.lakeEvent?.kind === 'merchant'
                   ? '湖上事件 · 開船靠近按 E 交易'
                   : '湖上事件 · 潛到光柱下按 E 打開'
-                : selected.type === 'pact'
-                  ? duelActive(state)
-                    ? '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開'
-                    : '遠古御獸 · 按 E 交談'
-                  : selected.type === 'site'
-                    ? '探索點 · 靠近按 E 調查'
-                    : selected.type === 'facility'
-                      ? '點擊建築或按 E 開啟設施'
-                      : selected.type === 'node'
-                        ? (state.harvested?.[selected.id] || 0) > state.elapsed
-                          ? '資源恢復中 · 兩分鐘再生'
-                          : '登島後走近 4 公尺內採集'
-                        : selected.type === 'loot'
-                          ? `${Math.round(d(selected))}m · 可打撈物資`
-                          : selected.type === 'buoy'
-                            ? '訊號微弱 · 有人留下了紀錄'
-                            : selected.rescue === 'tangled'
-                              ? '被漂流漁網纏住了 · 按 E 解開'
-                              : selected.rescue === 'freed'
-                                ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
-                                : selected.rescue === 'friend' && !state.secret
-                                  ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
-                                  : state.secret
-                                    ? frenzied(selected, state.elapsed)
-                                      ? '狂暴中！驅離不了，按 F 讓夥伴攻擊'
-                                      : selected.beast
-                                        ? beastText(selected)
-                                        : selected.follow
-                                          ? '信任 100% · 跟著你 · 拿出外出籠按 X 帶牠回船上'
-                                          : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
-                                    : '未知生命 · 調查浮標，或按空白鍵驅離'
+                : selected.type === 'cross'
+                  ? '嘯岳在身邊 · 按 E 翻過群山'
+                  : selected.type === 'pact'
+                    ? duelActive(state)
+                      ? '試煉進行中 · 按 F 讓夥伴攻擊，牠蓄力時退開'
+                      : '遠古御獸 · 按 E 交談'
+                    : selected.type === 'site'
+                      ? '探索點 · 靠近按 E 調查'
+                      : selected.type === 'facility'
+                        ? '點擊建築或按 E 開啟設施'
+                        : selected.type === 'node'
+                          ? (state.harvested?.[selected.id] || 0) > state.elapsed
+                            ? '資源恢復中 · 兩分鐘再生'
+                            : '登島後走近 4 公尺內採集'
+                          : selected.type === 'loot'
+                            ? `${Math.round(d(selected))}m · 可打撈物資`
+                            : selected.type === 'buoy'
+                              ? '訊號微弱 · 有人留下了紀錄'
+                              : selected.rescue === 'tangled'
+                                ? '被漂流漁網纏住了 · 按 E 解開'
+                                : selected.rescue === 'freed'
+                                  ? '牠還在發抖 · 分一點口糧給牠（口糧 1）'
+                                  : selected.rescue === 'friend' && !state.secret
+                                    ? `信任 ${selected.trust}% · 跟著你 · 等你學會締結契約`
+                                    : state.secret
+                                      ? frenzied(selected, state.elapsed)
+                                        ? '狂暴中！驅離不了，按 F 讓夥伴攻擊'
+                                        : selected.beast
+                                          ? beastText(selected)
+                                          : selected.follow
+                                            ? '信任 100% · 跟著你 · 拿出外出籠按 X 帶牠回船上'
+                                            : `${RARITY[rarityOf(selected.genome)]} · 信任 ${selected.trust}% · 下次投餌 ${baitCost(selected)} 份${selected.tame ? ' · 似乎特別親人' : ''}${selected.hostile ? ' · 危險個體' : ''}`
+                                      : '未知生命 · 調查浮標，或按空白鍵驅離'
     );
     $('context-verb').textContent =
       selected.type === 'town'
@@ -2414,6 +2435,10 @@ function interact() {
   }
   if (t.type === 'site') {
     handleExploration(t.id);
+    return;
+  }
+  if (t.type === 'cross') {
+    crossMountains();
     return;
   }
   if (t.type === 'pact') {
@@ -2976,8 +3001,13 @@ const DEVICE_PANEL = { bag: 'bag', beasts: 'beasts', journal: 'journal', codex: 
 function openDevice(app = null) {
   if (!running || paused || film) return;
   normalizeDevice(state);
-  if (!state.device.owned) {
-    toast('（那台隨身裝置還放在木筏的書桌上。）', true);
+  if (app && HUB_DEVICE_ONLY.has(app) && !state.device.owned) {
+    toast('（那台隨身裝置還放在木筏的書桌上——拿起來才能用。）', true);
+    return;
+  }
+  if (app && HUB_ACTIONS[app]) {
+    closePanel();
+    HUB_ACTIONS[app]();
     return;
   }
   if (deviceMode && !app) {
@@ -3005,9 +3035,71 @@ function deviceClock() {
   const m = Math.floor(hourOf(state) * 60 + 0.5);
   return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 }
+// 0.67: the hub — what used to be split between the device's app grid, the 功能 buttons and the ☰ menu, in one
+// place: cards in groups, each saying what it is for; what you cannot use yet says how to get it, what does not
+// apply here is left out.
+const HUB_DEVICE_ONLY = new Set(['beasts', 'creatures', 'codex']);
+const HUB_ACTIONS = {
+  lab: () => openPanel('creatures'),
+  voyage: () => openPanel('adventure'),
+  map: () => toggleBigMap(),
+  cross: () => crossMountains()
+};
+function hubCards() {
+  const owned = !!state.device?.owned,
+    stage = state.story?.stage || 0,
+    tamed = (state.tamed || []).length,
+    lock = '在木筏書桌上拿起隨身裝置後解鎖';
+  return [
+    [
+      '御獸',
+      [
+        ['beasts', '◎', '御獸倉庫', owned ? `契約的御獸 · ${tamed} 隻` : lock, !owned],
+        ['creatures', '❂', '生物倉庫', owned ? '外出籠帶回的生物' : lock, !owned],
+        ['lab', '⚘', '共生研究', '配種、孵化與契闊進化'],
+        !state.inTown && ['voyage', '✦', '御獸遠航', '跟隨 · 協採 · 協戰，派御獸去遠方']
+      ]
+    ],
+    [
+      '紀錄',
+      [
+        ['bag', '▤', '背包', '物資、道具與裝備'],
+        ['journal', '☷', '航海日誌', '任務、路線與發生過的事'],
+        ['codex', '◈', '圖鑑', owned ? '見過的生物與成就' : lock, !owned],
+        ['map', '◎', '地圖', state.inTown ? '慈光港與穹頂下的原野' : '湖域、島嶼與你的領地']
+      ]
+    ],
+    stage >= 5 &&
+      !state.inTown && [
+        '旅程',
+        [['cross', '⛰', stage >= 6 ? '前往慈光港' : '越過群山', '派出嘯岳，站在環湖的山腳（不是島嶼）']]
+      ],
+    [
+      '系統',
+      [
+        ['stats', '▥', '統計', '這一路的數字'],
+        ['settings', '⚙', '設定', '畫面、聲音、操作與按鍵']
+      ]
+    ]
+  ]
+    .filter(Boolean)
+    .map(([title, cards]) => [title, cards.filter(Boolean)]);
+}
 function deviceHome(body) {
-  body.innerHTML = `<section class="dv-widget"><div class="dv-widget-head"><strong>${deviceClock()}</strong><span>第 ${dayOf(state)} 日</span></div></section>
-  <div class="dv-apps">${DEVICE_APPS.map(a => `<button type="button" data-app="${a.id}"><span>${a.icon}</span><small>${a.name}</small></button>`).join('')}</div>`;
+  const goal = $('quest-hint')?.textContent;
+  body.innerHTML = `<section class="hub-head"><div><strong>${deviceClock()}</strong><span>第 ${dayOf(state)} 日</span></div>${
+    goal ? `<p><b>${P('下一步')}</b>${esc(goal)}</p>` : ''
+  }</section>${hubCards()
+    .map(
+      ([title, cards]) =>
+        `<h3 class="hub-group">${title}</h3><div class="hub-grid">${cards
+          .map(
+            ([id, icon, name, sub, locked]) =>
+              `<button type="button" class="hub-card${locked ? ' locked' : ''}" data-app="${id}"><span class="hub-icon">${icon}</span><span class="hub-text"><b>${name}</b><small>${sub}</small></span></button>`
+          )
+          .join('')}</div>`
+    )
+    .join('')}`;
   body.querySelectorAll('[data-app]').forEach(b => (b.onclick = () => openDevice(b.dataset.app)));
 }
 // 0.33: two storages — creatures and beasts apart — each a full-screen grid of them, alive and turning;
@@ -3313,7 +3405,7 @@ function decorateDevice(body) {
   const app = DEVICE_APPS.find(a => a.id === (panel === 'device' ? null : deviceAppFor()));
   $('drawer-eyebrow').innerHTML =
     `<span>${state.echoes?.repaired ? 'NWP-LAKE' : '無訊號'}</span><span>${deviceClock()}</span><span>▮ ${Math.round(state.device.battery ?? 64)}%</span>`;
-  $('drawer-title').textContent = panel === 'device' ? '隨身裝置' : app ? app.name : $('drawer-title').textContent;
+  $('drawer-title').textContent = panel === 'device' ? '選單' : app ? app.name : $('drawer-title').textContent;
   // (a beast's details bring their own way back to the grid)
   if (panel !== 'device' && !body.querySelector('.bx-back')) {
     body.insertAdjacentHTML('afterbegin', '<button type="button" class="dv-back">‹ 主畫面</button>');
@@ -5383,7 +5475,7 @@ function renderPanel() {
     adventure: ['BEASTKEEPER', '御獸與遠航'],
     cargo: ['CARGO HOLD', '物資艙'],
     lounge: ['BEAST LOUNGE', '御獸休息室'],
-    device: ['HANDHELD', '隨身裝置'],
+    device: ['MENU', '選單'],
     beasts: ['BEASTS', '御獸倉庫'],
     locker: ['STORAGE', '書桌儲物箱'],
     decor: ['INTERIOR', '船艙擺設'],
@@ -5801,6 +5893,8 @@ function renderHotbar() {
       n = h.count();
     b.querySelector('b').textContent = n === 0 ? '0' : String(n);
     b.classList.toggle('empty', !n);
+    // 0.67: a slot you have nothing for stays out of the way (the number keys keep their places)
+    b.hidden = !n;
   });
 }
 // throw bait to the nearest wild creature that is not hostile
@@ -6577,8 +6671,6 @@ function updateUI() {
   const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin';
   $('build-tool').hidden = !onFoot || !atHome(state);
   $('home-btn').firstChild.textContent = state.ship ? '⌂ 回到戰艦 ' : '⌂ 導航回避難所 ';
-  // 0.66: every main screen has its own labelled button again (they were only on keys and in the ☰ menu)
-  $('adventure-btn').hidden = !!state.inTown;
   renderHotbar();
   $('drink-count').textContent = state.resources.water || 0;
   $('eat-count').textContent = state.resources.food || 0;
@@ -7930,7 +8022,6 @@ function gamepad(dt) {
   return { x: ax, y: ay };
 }
 function setupEvents() {
-  $('adventure-btn').onclick = () => openPanel('adventure');
   $('contract-cards').onclick = e => {
     const c = e.target.closest('[data-card]');
     if (c) toggleCard(Number(c.dataset.card));
@@ -8079,19 +8170,6 @@ function setupEvents() {
   document
     .querySelectorAll('[data-panel]')
     .forEach(b => (b.onclick = () => (b.dataset.panel === 'device' ? openDevice() : openPanel(b.dataset.panel))));
-  $('map-tool').onclick = () => toggleBigMap();
-  // on a phone the five screen buttons fold behind one 功能 button: it opens them as a small grid
-  const bar = document.querySelector('.action-bar');
-  $('more-tool').onclick = () => {
-    const open = bar.classList.toggle('open');
-    $('more-tool').setAttribute('aria-expanded', open);
-  };
-  bar.querySelectorAll('.quick').forEach(b =>
-    b.addEventListener('click', () => {
-      bar.classList.remove('open');
-      $('more-tool').setAttribute('aria-expanded', false);
-    })
-  );
   const rotate = document.createElement('button');
   rotate.textContent = '旋轉';
   rotate.onclick = () => {

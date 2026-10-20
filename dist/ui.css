@@ -509,68 +509,6 @@ body:not(.touch-device) #touch-controls {
 
 /* 8. Phones held sideways: the screen buttons fold behind 功能 (a grid that opens above it), and the next step
       keeps to two lines */
-#hud .action-bar .more {
-  display: none;
-}
-.landscape-play #hud .bottom-hud .action-bar {
-  position: relative;
-  max-width: none;
-  width: auto;
-  overflow: visible;
-}
-.landscape-play #hud .action-bar .more {
-  display: flex;
-}
-.landscape-play #hud .action-bar button.quick {
-  display: none;
-}
-.landscape-play #hud .action-bar.open button.quick {
-  display: flex;
-}
-.landscape-play #hud .action-bar.open {
-  z-index: 5;
-}
-.landscape-play #hud .action-bar.open::before {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + 6px);
-  width: 176px;
-  height: 108px;
-  border-radius: 10px;
-  background: #06222df2;
-  border: 1px solid #9ce8d14d;
-  box-shadow: 0 10px 30px #0008;
-}
-/* the five open buttons sit in the panel above: two rows of three (the last cell empty) */
-.landscape-play #hud .action-bar.open button.quick {
-  position: absolute;
-  width: 52px;
-  height: 46px;
-  min-height: 46px;
-  bottom: calc(100% + 60px);
-}
-.landscape-play #hud .action-bar.open #bag-tool {
-  right: 120px;
-}
-.landscape-play #hud .action-bar.open #beasts-tool {
-  right: 62px;
-}
-.landscape-play #hud .action-bar.open #journal-tool {
-  right: 4px;
-}
-.landscape-play #hud .action-bar.open #adventure-btn {
-  right: 120px;
-  bottom: calc(100% + 10px);
-}
-.landscape-play #hud .action-bar.open #map-tool {
-  right: 62px;
-  bottom: calc(100% + 10px);
-}
-.landscape-play #hud .action-bar .more[aria-expanded='true'] {
-  border-color: var(--mint, #9ce8d1);
-  background: #1a4149;
-}
 .landscape-play #hud .mission .next-step {
   margin-top: 4px;
   padding: 4px 7px;
@@ -643,4 +581,261 @@ body:not(.touch-device) #touch-controls {
     min-height: 34px;
     padding: 4px;
   }
+}
+
+/* 9. (0.67) The 選單 hub: one sheet for everything that used to be split between the device's app grid, the 功能
+      buttons and the ☰ menu. A clean panel instead of the cracked phone frame. */
+body #drawer.device {
+  width: 440px;
+  border-radius: 20px;
+  border: 1px solid #9ce8d140;
+  outline: none;
+  background: radial-gradient(130% 70% at 20% 0%, #12343bf2 0%, #0a2229f5 55%, #071a20f8 100%), #071a20;
+  box-shadow:
+    0 24px 60px #000b,
+    inset 0 1px 0 #ffffff12;
+}
+body #drawer.device::after,
+body #drawer.device #drawer-body::after {
+  display: none;
+}
+body #drawer.device .eyebrow {
+  color: #7fa9a4;
+  font-size: 11px;
+}
+body #drawer.device h2 {
+  font-size: 22px;
+  letter-spacing: 0.04em;
+}
+.hub-head {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  margin-bottom: 6px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1b4a52cc, #0e2f37cc);
+  border: 1px solid #9ce8d126;
+}
+.hub-head > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.hub-head strong {
+  font:
+    600 30px/1 ui-monospace,
+    Menlo,
+    monospace;
+  color: #eaf6f1;
+}
+.hub-head span {
+  font-size: 13px;
+  color: #a9c9c2;
+}
+.hub-head p {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #dceee8;
+}
+.hub-head p b {
+  flex: none;
+  height: fit-content;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #062027;
+  background: var(--mint, #9ce8d1);
+}
+.hub-group {
+  margin: 14px 2px 8px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--mint, #9ce8d1);
+}
+.hub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.hub-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 62px;
+  padding: 10px 12px;
+  text-align: left;
+  border-radius: 12px;
+  border: 1px solid #9ce8d124;
+  background: #ffffff08;
+  color: #eaf6f1;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.hub-card:hover:not(:disabled) {
+  background: #9ce8d114;
+  border-color: #9ce8d166;
+}
+.hub-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 20px;
+  color: var(--gold, #e9c46a);
+  background: #00000033;
+  border: 1px solid #e9c46a33;
+}
+.hub-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.hub-text b {
+  font-size: 15px;
+  font-weight: 600;
+}
+.hub-text small {
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: #9dbdb6;
+}
+.hub-card.locked {
+  opacity: 0.55;
+}
+.hub-card.locked .hub-icon {
+  filter: grayscale(1);
+}
+.hub-card[data-app='cross'] {
+  grid-column: 1 / -1;
+  border-color: #e9c46a66;
+  background: linear-gradient(90deg, #e9c46a1f, #ffffff05);
+}
+@media (max-height: 560px) {
+  body #drawer.device {
+    width: min(760px, calc(100vw - 24px));
+    border-radius: 16px;
+    border-width: 1px;
+  }
+  .hub-head {
+    padding: 8px 12px;
+  }
+  .hub-head strong {
+    font-size: 20px;
+  }
+  .hub-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .hub-card {
+    min-height: 50px;
+    padding: 6px 8px;
+    gap: 7px;
+  }
+  .hub-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+  }
+  .hub-text b {
+    font-size: 13px;
+  }
+  .hub-text small {
+    display: none;
+  }
+  .hub-group {
+    margin: 8px 2px 5px;
+  }
+}
+
+/* the bottom bar now carries only what you can use here: build (at home) and the hub */
+#hud .bottom-hud .action-bar button.hub-button {
+  border-color: #9ce8d166;
+}
+.hot-slot[hidden] {
+  display: none !important;
+}
+/* the ☰ menu on a short screen: three columns of compact buttons, so it fits without scrolling */
+@media (max-height: 560px) {
+  #modal.menu-modal {
+    padding: 14px 16px;
+  }
+  #modal.menu-modal #modal-eyebrow,
+  #modal.menu-modal #modal-body {
+    display: none;
+  }
+  #modal.menu-modal #modal-title {
+    font-size: 16px;
+    margin: 0 0 8px;
+  }
+  #modal.menu-modal #modal-actions {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  #modal.menu-modal #modal-actions button {
+    min-height: 38px;
+    padding: 4px 6px;
+    font-size: 13px;
+  }
+  #modal.menu-modal #modal-actions button.primary,
+  #modal.menu-modal #modal-actions button:last-child {
+    grid-column: auto;
+  }
+}
+/* the hub on a short screen: no status line or clock card (the HUD has both), a small title, more room for cards */
+@media (max-height: 560px) {
+  body #drawer.device > header {
+    padding: 6px 14px;
+  }
+  body #drawer.device .eyebrow {
+    display: none;
+  }
+  body #drawer.device h2 {
+    font-size: 15px;
+  }
+  body #drawer.device #close-drawer {
+    top: 6px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+  }
+  body #drawer.device #drawer-body {
+    padding: 4px 12px 12px;
+    overflow-y: auto;
+  }
+  #drawer.device .hub-head {
+    display: none;
+  }
+}
+/* phones held sideways: the vitals sit above the joystick, so the bottom row (hotbar + build + 選單) stays clear of
+   the round action button on the right; the dock card shrinks to its title */
+.landscape-play #hud .bottom-hud .vitals {
+  /* the bottom row starts 158px in from the left edge: step back out to sit over the joystick */
+  position: absolute;
+  left: -150px;
+  bottom: 118px;
+  width: 128px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: #06222dcc;
+}
+.landscape-play #hud .bottom-hud .vitals #save-status {
+  display: none;
+}
+.landscape-play #hud #dock-btn {
+  min-width: 0;
+  max-width: 150px;
+  padding: 6px 10px;
+}
+.landscape-play #hud #dock-btn small,
+.landscape-play #hud #dock-btn span:not(:first-child) {
+  display: none;
+}
+body.landscape-play:has(#dock-btn:not([hidden])) #home-btn {
+  display: none;
 }
