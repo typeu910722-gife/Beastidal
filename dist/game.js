@@ -1645,12 +1645,14 @@ function showMenu() {
   closePanel();
   closeBigMap();
   modal(
-    'MENU · 選單',
+    'PAUSE · 暫停',
     '漂流者，休息一下。',
     cloudMenuHTML(),
     [
       { label: '繼續漂流', primary: true, action: closeModal },
-      { label: document.fullscreenElement ? '離開全螢幕' : '全螢幕', action: () => (closeModal(), fullscreen()) },
+      ...(document.fullscreenEnabled
+        ? [{ label: document.fullscreenElement ? '離開全螢幕' : '全螢幕', action: () => (closeModal(), fullscreen()) }]
+        : []),
       { label: audio.on ? '關閉環境音' : '開啟環境音', action: () => ($('sound-btn').click(), showMenu()) },
       { label: '⚙ 設定', action: () => openSettings(showMenu) },
       { label: '操作說明', action: () => showHelp(showMenu) },
@@ -2265,7 +2267,9 @@ function updateNearest() {
   const d = t => Math.hypot(t.x - state.player.x, t.z - state.player.z);
   if (selected && d(selected) > 130) selected = null;
   if (!selected) {
-    const R = t => (t.type === 'shippoint' ? 2.6 : t.type === 'claim' ? 6 : 10);
+    // 0.67: 嘯岳 at the gate takes you back to the lake: only when you walk right up to it, never as you arrive
+    const R = t =>
+      t.type === 'shippoint' ? 2.6 : t.type === 'claim' ? 6 : t.type === 'town' && t.id === 'xiaoyue' ? 3.5 : 10;
     // 0.35: in first person, what you look at comes first; a creature tagging along never crowds out the rest
     const fx = -Math.sin(world.yaw),
       fz = -Math.cos(world.yaw),
@@ -2367,25 +2371,27 @@ function updateNearest() {
                 ? state.lakeEvent?.kind === 'merchant'
                   ? '交易'
                   : '打開'
-                : selected.type === 'pact'
-                  ? '交談'
-                  : selected.type === 'site'
-                    ? '調查'
-                    : selected.type === 'facility'
-                      ? '操作'
-                      : selected.type === 'node'
-                        ? '採集'
-                        : selected.type === 'loot'
-                          ? '打撈'
-                          : selected.type === 'buoy'
-                            ? '調查'
-                            : selected.rescue === 'tangled'
-                              ? '解開'
-                              : selected.rescue === 'freed'
-                                ? '餵食'
-                                : state.secret
-                                  ? '投餌'
-                                  : '觀察';
+                : selected.type === 'cross'
+                  ? '翻山'
+                  : selected.type === 'pact'
+                    ? '交談'
+                    : selected.type === 'site'
+                      ? '調查'
+                      : selected.type === 'facility'
+                        ? '操作'
+                        : selected.type === 'node'
+                          ? '採集'
+                          : selected.type === 'loot'
+                            ? '打撈'
+                            : selected.type === 'buoy'
+                              ? '調查'
+                              : selected.rescue === 'tangled'
+                                ? '解開'
+                                : selected.rescue === 'freed'
+                                  ? '餵食'
+                                  : state.secret
+                                    ? '投餌'
+                                    : '觀察';
   }
   $('target-card').hidden = !selected || inRange || !!panel || !!buildType;
   if (selected && !inRange && !panel) {
@@ -3066,7 +3072,7 @@ function hubCards() {
         ['bag', '▤', '背包', '物資、道具與裝備'],
         ['journal', '☷', '航海日誌', '任務、路線與發生過的事'],
         ['codex', '◈', '圖鑑', owned ? '見過的生物與成就' : lock, !owned],
-        ['map', '◎', '地圖', state.inTown ? '慈光港與穹頂下的原野' : '湖域、島嶼與你的領地']
+        ['map', '⌖', '地圖', state.inTown ? '慈光港與穹頂下的原野' : '湖域、島嶼與你的領地']
       ]
     ],
     stage >= 5 &&
@@ -4343,7 +4349,8 @@ function updateBeastHUD() {
   const p = activePet(state),
     e = state.expedition;
   if (!$('beast-bar')) return;
-  $('beast-bar').hidden = !running || paused || !!panel || !!buildType || !p;
+  // (not in town: 嘯岳 waits outside the gate, and there is nothing to ride, dive into or fight there)
+  $('beast-bar').hidden = !running || paused || !!panel || !!buildType || !p || !!state.inTown;
   document.body.classList.toggle('beast-on', !$('beast-bar').hidden);
   if (p) {
     $('beast-status').textContent =
@@ -4710,6 +4717,15 @@ let monoCollapse = 0;
 const compactHud = () => document.body.classList.contains('landscape-play') || innerWidth < 760 || innerHeight < 520;
 function updateMonologue(force = false) {
   if (!running) return;
+  // 0.67: past the mountains the next step is the chapter's own goal (where, which way, how far), not a leftover
+  // chore from the lake
+  if (state.inTown) {
+    const sp = storyPanel(state),
+      text = sp.goalText ? sp.goalText.replace(/^下一步：/, '') : sp.title;
+    $('quest-hint').dataset.raw = text;
+    $('quest-hint').textContent = P(text);
+    return;
+  }
   const m = monologue(state);
   if (!m) return;
   $('quest-hint').dataset.raw = m.text;
@@ -6555,6 +6571,13 @@ function returnHome() {
   }
   selectedTarget = null;
 }
+// 0.67: big stocks read 2.4k / 12k, so the resource bar keeps its width on a phone
+const shortNum = n =>
+  n >= 10000
+    ? Math.floor(n / 1000) + 'k'
+    : n >= 1000
+      ? (Math.floor(n / 100) / 10).toFixed(1).replace(/\.0$/, '') + 'k'
+      : String(n);
 function updateUI() {
   syncActionButton();
   updateDock();
@@ -6565,7 +6588,7 @@ function updateUI() {
   $('resources').innerHTML = resourceKeys
     .map(
       k =>
-        `<div class="resource${home ? ' with-desk' : ''}" title="${home ? '背包＋書桌' : '背包'}"><span class="r-icon">${iconFor(k)}</span><b>${home ? funds(state, k) : state.resources[k]}</b><small>${RESOURCE_NAMES[k]}</small></div>`
+        `<div class="resource${home ? ' with-desk' : ''}" title="${home ? '背包＋書桌' : '背包'}"><span class="r-icon">${iconFor(k)}</span><b>${shortNum(home ? funds(state, k) : state.resources[k])}</b><small>${RESOURCE_NAMES[k]}</small></div>`
     )
     .join('')
     .concat(
@@ -6646,20 +6669,18 @@ function updateUI() {
     ];
   }
   // optimisation round 2: in the New World the panel follows chapters two and three, with where to go next
-  let goalLine = '';
   if (state.inTown) {
     const sp = storyPanel(state);
     chapter = sp.chapter;
     title = sp.title;
     quests = sp.quests;
-    goalLine = sp.goalText;
   }
   $('quest-chapter').textContent = chapter;
   $('quest-title').textContent = title;
   {
     let open = 0;
     $('quest-list').innerHTML =
-      (goalLine ? `<div class="quest-item goal">◆ ${esc(goalLine)}</div>` : '') +
+      // (where to go next is the 下一步 line below the list)
       quests
         .map(
           ([name, done, n]) =>
@@ -6671,6 +6692,7 @@ function updateUI() {
   const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin';
   $('build-tool').hidden = !onFoot || !atHome(state);
   $('home-btn').firstChild.textContent = state.ship ? '⌂ 回到戰艦 ' : '⌂ 導航回避難所 ';
+  $('home-btn').hidden = !!state.inTown;
   renderHotbar();
   $('drink-count').textContent = state.resources.water || 0;
   $('eat-count').textContent = state.resources.food || 0;

@@ -839,3 +839,74 @@ body #drawer.device h2 {
 body.landscape-play:has(#dock-btn:not([hidden])) #home-btn {
   display: none;
 }
+
+/* 10. (0.67 playtest) Phones with a beast out: the partner bar used to hide the whole quest block, next step
+       included. Now only the title and list step aside; the next step stays, and the bar sits below the supplies. */
+body.landscape-play.beast-on .mission {
+  display: block;
+}
+body.landscape-play.beast-on .mission > .eyebrow,
+body.landscape-play.beast-on #quest-title,
+body.landscape-play.beast-on #quest-list {
+  display: none;
+}
+body.landscape-play.beast-on .supply-row {
+  margin-top: 4px;
+}
+body.landscape-play.beast-on #beast-bar {
+  top: 116px;
+}
+
+/* 11. (0.67 playtest) things that sat on top of each other */
+/* the tutorial card and the build banner (its 旋轉 / 結束建造 buttons were under the card) */
+body:has(#tutorial:not([hidden])) #build-banner {
+  top: 210px;
+}
+/* a facility close-up: its 管理 / 離開 bar is at the bottom, so the bottom HUD steps aside */
+body.focus-on #hud .bottom-hud {
+  display: none;
+}
+/* a discovery ribbon and the inner voice no longer print over each other */
+body:has(#discovery:not([hidden])) #monologue {
+  top: 150px;
+}
+/* world labels (island names, buildings) stay under the HUD's panels and buttons */
+#world-labels {
+  z-index: 1;
+}
+#hud .hud-header,
+#hud .left-hud,
+#hud .right-hud,
+#hud .bottom-hud,
+#tutorial,
+#monologue,
+#beast-bar,
+#context-action {
+  z-index: 3;
+}
+/* the fixed corner key hint said 駕艇 on foot and in town, and covered the action bar: the keys tab in 設定 lists
+   every key instead */
+#hud .control-hint {
+  display: none;
+}
+/* the salvage line's bar only shows while a line is out */
+#salvage-progress[hidden],
+.salvage-progress[hidden] {
+  display: none !important;
+}
+/* phones: the tutorial card sits to the right of the quest column instead of over it */
+.landscape-play #tutorial {
+  left: calc(var(--edge-left, 16px) + 236px);
+  right: calc(var(--edge-right, 16px) + 110px);
+  width: auto;
+  max-width: none;
+  translate: none;
+  transform: none;
+}
+/* locked hub cards keep their unlock hint on a phone too (the others drop the subtitle for room) */
+@media (max-height: 560px) {
+  .hub-card.locked .hub-text small {
+    display: block;
+    font-size: 10px;
+  }
+}
