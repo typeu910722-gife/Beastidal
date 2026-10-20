@@ -300,7 +300,15 @@ export function chapter4Objectives(s) {
     list = [['到前哨站，把碎片接上 K. 的終端機', c.terminal]];
   if (c.terminal) {
     const left = daysLeft(s);
-    list.push([c.extended ? '文件上的日期過了 · 管理者讓他們延後' : `原體維持終止 · 還有 ${left} 天`, c.extended]);
+    // 0.77: once the manager has said he will have them wait, the countdown no longer leads the panel
+    list.push([
+      c.extended
+        ? '文件上的日期過了 · 管理者讓他們延後'
+        : c.manager
+          ? '原體維持終止 · 管理者讓他們等你'
+          : `原體維持終止 · 還有 ${left} 天`,
+      c.extended || c.manager
+    ]);
     list.push(['回慈光港，看留言碑最下面的字', c.stele]);
     list.push(['用 K. 的主控權限進管理區，到玻璃槽大廳', c.tank]);
     if (c.stele && c.tank) list.push(['回到裂縫的核心 · 橋', c.manager]);
