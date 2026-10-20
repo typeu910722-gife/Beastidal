@@ -1,7 +1,7 @@
 // 0.71: the rooms of 慈光港 drawn — room 0412, the empty diner and the admin block (rules: interiors.js). Walls are
 // built where a room's edge has no room beyond it, so the admin block's corridor opens into both halls.
 import * as T from './vendor/three.module.min.js';
-import { INTERIORS, INTERIOR_Y, interiorWorld } from './interiors.js?v=0.74.0';
+import { INTERIORS, INTERIOR_Y, interiorWorld } from './interiors.js?v=0.75.0';
 
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.85, ...extra });
 const TONES = {

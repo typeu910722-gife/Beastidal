@@ -141,6 +141,10 @@ export function monologue(s) {
     );
     if ((c.homeSeen || []).length < Math.min(3, kinds.size))
       return { id: 'home', text: '（回到木筏上走一走。這裡的每一樣東西，都是我親手蓋的。）' };
+    // 0.75: 嘯岳 has something to say, then the night, then the last day
+    if (!c.xiaoyue) return { id: 'xiaoyue', text: '（嘯岳一直趴在湖邊，看著遠方。去御獸倉庫，跟牠說說話吧。）' };
+    if (!c.lastDay) return { id: 'lastnight', text: '（天快黑了。回避難所睡一覺吧。）' };
+    if (!c.lastDone) return { id: 'lastday', text: '（今天是最後一天。我想把這裡的一切，都再看一次。）' };
   }
   if ((s.story?.stage || 0) >= 6 && !s.inTown && s.town?.visited && !s.chapter4?.manager)
     return {

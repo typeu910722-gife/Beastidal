@@ -9,7 +9,20 @@ import { DAY } from '../dist/clock.js';
 import { enterTown, leaveTown } from '../dist/town.js';
 import { remember, rememberFirst, keepsakes } from '../dist/memories.js';
 import { heartToHeart, homeMemories, homeLine, firstFriend, journey } from '../dist/farewell.js';
-import { normalizeChapter4, noteTalk, noteHome, chapter4Objectives, talksDone, homeDone } from '../dist/chapter4.js';
+import {
+  normalizeChapter4,
+  noteTalk,
+  noteHome,
+  chapter4Objectives,
+  talksDone,
+  homeDone,
+  xiaoyueReady,
+  hearXiaoyue,
+  beginLastDay,
+  inLastDay,
+  tickLastDay,
+  lastDayFish
+} from '../dist/chapter4.js';
 import { storyPanel, nextGoal } from '../dist/storynav.js';
 import { monologue } from '../dist/guide.js';
 
@@ -139,6 +152,56 @@ test('Chapter four, part two: talk with your beasts and walk the raft — the gu
   const list = chapter4Objectives(s);
   assert.ok(list.some(([t, d]) => t.startsWith('回到湖區，和夥伴們說說話（3/3）') && d));
   assert.ok(list.some(([t, d]) => t.startsWith('回到木筏上，走一圈你的家（3/3）') && d));
+
+  // 0.75 round two: 嘯岳 tells of 汐, the night brings the cost, then the last day
+  assert.ok(xiaoyueReady(s));
+  assert.match(storyPanel(s).goalText, /嘯岳/);
+  assert.equal(monologue(s).id, 'xiaoyue');
+  assert.equal(beginLastDay(s), null, 'not before 嘯岳 has spoken');
+  const x = hearXiaoyue(s);
+  assert.ok(x.lines.some(([, l]) => l.includes('汐')));
+  assert.equal(hearXiaoyue(s), null, 'once');
+  assert.ok(s.log.some(l => l.title === '嘯岳記得的人'));
+  assert.match(storyPanel(s).goalText, /睡一晚/);
+  assert.equal(monologue(s).id, 'lastnight');
+  s.elapsed += DAY;
+  const dream = beginLastDay(s);
+  assert.ok(dream.lines.some(([, l]) => l.includes('最後一天')));
+  assert.equal(beginLastDay(s), null);
+  assert.ok(inLastDay(s));
+  assert.equal(monologue(s).id, 'lastday');
+  assert.match(storyPanel(s).goalText, /最後一天/);
+  // the moments of the day, each once
+  assert.ok(tickLastDay(s, { home: true, hour: 18 }).memory.includes('夕陽'));
+  assert.equal(tickLastDay(s, { home: true, hour: 18 }), null);
+  assert.equal(tickLastDay(s, { home: true, hour: 10 }), null, 'not before sunset');
+  assert.ok(tickLastDay(s, { island: '小島' }).memory.includes('小島'));
+  assert.equal(tickLastDay(s, { mounted: true, mountedFor: 5, active: '小牙' }), null);
+  assert.ok(tickLastDay(s, { mounted: true, mountedFor: 25, active: '小牙' }).memory.includes('小牙'));
+  assert.ok(tickLastDay(s, { foothill: true, xiaoyueOut: true }).memory.includes('山腳'));
+  assert.ok(lastDayFish(s, '小牙', '鱸魚').includes('鱸魚'));
+  assert.equal(lastDayFish(s, '小牙', '鱸魚'), null);
+  assert.ok(chapter4Objectives(s).some(([t, d]) => t === '最後一天 · 留下了 5 段回憶' && !d));
+  // the day passes: it is kept
+  s.elapsed += DAY;
+  assert.deepEqual(tickLastDay(s, {}), { done: true, count: 5 });
+  assert.equal(tickLastDay(s, {}), null);
+  assert.ok(!inLastDay(s));
+  assert.equal(lastDayFish(s, '小牙', '鯉魚'), null, 'the day is over');
+  assert.ok(s.log.some(l => l.title === '最後一天 · 過完了' && l.text.includes('夕陽')));
+  const end = chapter4Objectives(s);
+  assert.deepEqual(end[end.length - 1], ['第四章（下）待續 · 橋前的選擇', true]);
+});
+
+test('A last day spent doing nothing is kept too', () => {
+  const s = createState(75);
+  const c = normalizeChapter4(s);
+  Object.assign(c, { manager: true, xiaoyue: true });
+  at(s, 10);
+  beginLastDay(s);
+  at(s, 11);
+  assert.deepEqual(tickLastDay(s, {}), { done: true, count: 0 });
+  assert.ok(s.log.some(l => l.title === '最後一天 · 過完了' && l.text.includes('什麼也沒做')));
 });
 
 console.log(`${n} farewell tests passed.`);
