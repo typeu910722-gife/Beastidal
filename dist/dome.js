@@ -2,8 +2,8 @@
 // It is a dome: 慈愛組織's laboratory on the continent of 比斯泰德, its sky projected on the inside of the shell.
 // This module is the land under it (in metres, local to the town's plaza; +z is south) and the cracks in the
 // illusion. town.js puts the town in it; town-models.js draws it. See docs/STORY.md.
-import { dayOf, hourOf } from './clock.js?v=0.71.0';
-import { domeCracked } from './chapter2.js?v=0.71.0';
+import { dayOf, hourOf } from './clock.js?v=0.72.0';
+import { domeCracked } from './chapter2.js?v=0.72.0';
 
 export const TOWN = { x: 3000, z: 3000 }; // the plaza's centre, in world coordinates
 export const DOME_R = 290; // the shell's radius: an invisible wall where the land seems to go on

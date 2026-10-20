@@ -9,16 +9,16 @@
 // lane for a charge, a lead line for a spit) fills up during the windup; whatever is still inside when it fills is
 // hit. After striking they are open for a moment (破綻) and take extra damage.
 // Pure logic over the save: game.js feeds input and movement checks in, world.js draws the events that come out.
-import { phenotype } from './genetics.js?v=0.71.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.71.0';
-import { WILD_BEASTS } from './beasts.js?v=0.71.0';
-import { rollDrops } from './species.js?v=0.71.0';
-import { give } from './bag.js?v=0.71.0';
-import { tally } from './stats.js?v=0.71.0';
-import { damageBonus } from './skills.js?v=0.71.0';
-import { remember } from './memories.js?v=0.71.0';
-import { perks, personality, normalizeTree } from './beast-tree.js?v=0.71.0';
-import { hullDamageFactor } from './warship.js?v=0.71.0';
+import { phenotype } from './genetics.js?v=0.72.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.72.0';
+import { WILD_BEASTS } from './beasts.js?v=0.72.0';
+import { rollDrops } from './species.js?v=0.72.0';
+import { give } from './bag.js?v=0.72.0';
+import { tally } from './stats.js?v=0.72.0';
+import { damageBonus } from './skills.js?v=0.72.0';
+import { remember } from './memories.js?v=0.72.0';
+import { perks, personality, normalizeTree } from './beast-tree.js?v=0.72.0';
+import { hullDamageFactor } from './warship.js?v=0.72.0';
 
 export const ENGAGE = 20; // foes this close to the player start a fight
 export const AI_RANGE = 34;
@@ -227,6 +227,8 @@ const MOVE = {
 export function foeStats(w) {
   const ph = phenotype(w.genome),
     g = geneStats(bsOf(w.genome));
+  // 0.72: the rift's things (rift-fight.js) carry their own health and bite
+  if (w.rift) return { bite: w.riftBite || 8, def: g.def, speed: 2.4 + ph.speed / 140, size: w.riftSize || ph.size };
   if (!w.maxHp) w.maxHp = w.beast ? WILD_BEASTS[w.beast]?.hp || 90 : Math.round(40 + ph.armor * 0.4);
   if (!Number.isFinite(w.hp)) w.hp = w.maxHp;
   return {
@@ -301,7 +303,14 @@ export function foesNear(s, r = ENGAGE, from = s.player) {
   return out;
 }
 export function combatActive(s) {
-  if ((s.inCave && !s.story?.duel) || s.inTown || s.player.mode === 'cabin' || s.player.mode === 'aboard') return false;
+  // 0.72: in the New World only at the rift, while its trial is on
+  if (
+    (s.inCave && !s.story?.duel) ||
+    (s.inTown && !s.rift?.active) ||
+    s.player.mode === 'cabin' ||
+    s.player.mode === 'aboard'
+  )
+    return false;
   return !!activeBeast(s) && foesNear(s).length > 0;
 }
 const isBoss = (s, t) => t === s.expedition?.boss;
@@ -366,7 +375,8 @@ function killFoe(s, t, ev) {
   }
   if (!s.wild.includes(t)) return;
   s.wild = s.wild.filter(w => w !== t);
-  const drops = t.released ? {} : rollDrops(phenotype(t.genome));
+  // the rift's things leave only a shard of crystal (the trial's reward comes at the end)
+  const drops = t.released ? {} : t.rift ? { crystal: 1 } : rollDrops(phenotype(t.genome));
   if (t.beast) drops.crystal = (drops.crystal || 0) + 3;
   if (p && personality(p)?.loot && Math.random() < 0.5) drops.food = (drops.food || 0) + 1;
   give(s, drops);
@@ -1199,6 +1209,8 @@ function hurt(s, who, dmg, from, ev) {
       if (riding) {
         s.expedition.mounted = false;
         s.expedition.diving = false;
+      }
+      if (riding && !s.inTown) {
         const home = s.ship && !s.skiff ? s.ship : s.boat;
         Object.assign(s.player, { x: home.x, z: home.z });
       }
