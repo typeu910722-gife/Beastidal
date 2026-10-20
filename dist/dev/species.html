@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Beastidal · Creature gallery (dev)</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #071a22;
+        color: #dfe9e3;
+        font:
+          13px system-ui,
+          sans-serif;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      #labels {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+      #labels span {
+        position: absolute;
+        font-size: 11px;
+        transform: translate(-50%, 0);
+        white-space: nowrap;
+        text-shadow: 0 1px 3px #000;
+      }
+      #hud {
+        position: fixed;
+        left: 12px;
+        top: 10px;
+        opacity: 0.75;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div id="labels"></div>
+    <div id="hud">
+      Developer gallery: all 64 species, each in its own frame (two rows per family; the four strains of a form share
+      every gene but the strain). ?seed=N re-rolls · ?spin=0 freezes.
+    </div>
+    <script type="module">
+      import * as T from '../vendor/three.module.min.js';
+      import { makeCreature, animateCreature } from '../creatures.js?v=0.64.0';
+      import { makeGenome, FAMILIES, SPECIES } from '../genetics.js?v=0.64.0';
+      import { makeSky } from '../realism.js?v=0.64.0';
+      const q = new URLSearchParams(location.search),
+        seed = Number(q.get('seed') || 7),
+        temper = q.get('temper'), // ?temper=255 shows every species at its most savage
+        spin = q.get('spin') !== '0',
+        top = q.get('top') === '1'; // ?top=1 looks down from above, as the game camera does
+      const canvas = document.getElementById('c'),
+        renderer = new T.WebGLRenderer({ canvas, antialias: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.toneMapping = T.ACESFilmicToneMapping;
+      renderer.shadowMap.enabled = true;
+      const scene = new T.Scene();
+      scene.background = new T.Color(0x0b2530);
+      const sky = makeSky();
+      sky.material.uniforms.uSunDir.value.set(0.4, 0.75, 0.5).normalize();
+      const envScene = new T.Scene();
+      sky.scale.setScalar(0.1);
+      envScene.add(sky);
+      scene.environment = new T.PMREMGenerator(renderer).fromScene(envScene, 0, 0.1, 100).texture;
+      scene.environmentIntensity = 0.8;
+      scene.add(new T.HemisphereLight(0xcfe8ef, 0x1d3a40, 0.6));
+      const sun = new T.DirectionalLight(0xfff0d8, 2.6);
+      sun.position.set(6, 14, 10);
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(2048, 2048);
+      Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20 });
+      scene.add(sun);
+      const rim = new T.DirectionalLight(0x8fdcff, 1.2);
+      rim.position.set(-8, 5, -10);
+      scene.add(rim);
+      const floor = new T.Mesh(
+        new T.PlaneGeometry(80, 80),
+        new T.MeshStandardMaterial({ color: 0x163640, roughness: 0.9 })
+      );
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.y = -1.3;
+      floor.receiveShadow = true;
+      scene.add(floor);
+      // One framed viewport per species (scissor test), camera fitted to each creature's bounds.
+      const camera = new T.PerspectiveCamera(30, 1, 0.1, 200);
+      const items = [],
+        labels = document.getElementById('labels');
+      FAMILIES.forEach((fam, row) =>
+        SPECIES[fam].forEach((name, i) => {
+          const form = Math.floor(i / 4),
+            strain = i % 4;
+          // the same seed for the four strains of a form: whatever differs between them is the strain's own doing
+          const g = makeGenome(seed * 97 + row * 13 + form, form, fam, strain);
+          if (temper) g.temper = [Number(temper), Number(temper)];
+          const m = makeCreature(g);
+          m.rotation.y = -0.75;
+          m.visible = false;
+          scene.add(m);
+          const box = new T.Box3().setFromObject(m),
+            centre = box.getCenter(new T.Vector3()),
+            size = box.getSize(new T.Vector3()).length();
+          const label = document.createElement('span');
+          label.textContent = name;
+          labels.append(label);
+          items.push({ m, label, row: row * 2 + Math.floor(i / 8), col: i % 8, centre, size });
+        })
+      );
+      function resize() {
+        renderer.setSize(innerWidth, innerHeight, false);
+      }
+      addEventListener('resize', resize);
+      resize();
+      renderer.setScissorTest(true);
+      let t = 0;
+      window.galleryReady = false;
+      function frame() {
+        t += 1 / 60;
+        const W = innerWidth / 8,
+          H = (innerHeight - 30) / 8;
+        for (const it of items) {
+          const { m, label, row, col, centre, size } = it;
+          if (spin) m.rotation.y = -0.75 + Math.sin(t * 0.3) * 0.5;
+          animateCreature(m, t);
+          items.forEach(o => (o.m.visible = o === it));
+          floor.position.y = m.userData.phenotype.habitat === 'land' ? -0.02 : -1.5;
+          camera.aspect = W / H;
+          if (top) camera.position.set(centre.x + size * 0.2, centre.y + size * 1.1, centre.z - size * 0.45);
+          else camera.position.set(centre.x + size * 0.55, centre.y + size * 0.42, centre.z + size * 1.05);
+          camera.lookAt(centre);
+          camera.updateProjectionMatrix();
+          const x = col * W,
+            y = (7 - row) * H;
+          renderer.setViewport(x, y, W, H);
+          renderer.setScissor(x, y, W, H);
+          renderer.render(scene, camera);
+          label.style.left = x + W / 2 + 'px';
+          label.style.top = 30 + row * H + H - 22 + 'px';
+        }
+        window.galleryReady = true;
+        requestAnimationFrame(frame);
+      }
+      frame();
+    </script>
+  </body>
+</html>

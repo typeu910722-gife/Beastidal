@@ -4,10 +4,10 @@
 // for a lone visitor; come carrying three 御獸 contracts and their scent tears it awake in a frenzy. Beat it down
 // and it comes back to itself and speaks → 合 a pact of ten contract scrolls → it carries you over the mountains (the
 // hook for chapter two). Nothing here is required to keep playing; every step is reached only by exploring.
-import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.63.0';
-import { dayOf } from './clock.js?v=0.63.0';
-import { makeGenome } from './genetics.js?v=0.63.0';
-import { CAVE } from './cave-maze.js?v=0.63.0';
+import { LANDMARKS, landNear, groundAt } from './lake.js?v=0.64.0';
+import { dayOf } from './clock.js?v=0.64.0';
+import { makeGenome } from './genetics.js?v=0.64.0';
+import { CAVE } from './cave-maze.js?v=0.64.0';
 
 export const PACT_ID = 'ancient-xiaoyue';
 export const PACT_NAME = '嘯岳';
