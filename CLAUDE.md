@@ -9,3 +9,4 @@
 
 - 每一輪做完：跑完整檢查（`npm test`、`npm run lint`、`npm run format:check`、`npm run check`、`npm run smoke`），更新版本號、`dist/sw.js` 和 modulepreload 清單（`node scripts/preload.mjs`），開 PR，CI 通過後合併到 main（使用者已授權自動合併），確認 Cloudflare 有部署，然後用中文回報。
 - 效能數據要實測，未部署不能給網址，未測試不能說通過。
+- 每做完一個階段（合併到 main 之後）就用中文回報，然後冷卻 1 小時，時間到才開始下一個階段。
