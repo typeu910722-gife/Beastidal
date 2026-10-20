@@ -1,15 +1,15 @@
-import { expansionModels } from './expansion-models.js?v=0.71.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.71.0';
-import { normalizeHousing, penId } from './housing.js?v=0.71.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.71.0';
-export { makeCreature } from './creatures.js?v=0.71.0';
-import { makeIslands } from './island-models.js?v=0.71.0';
-import { facilityId } from './facilities.js?v=0.71.0';
+import { expansionModels } from './expansion-models.js?v=0.72.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.72.0';
+import { normalizeHousing, penId } from './housing.js?v=0.72.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.72.0';
+export { makeCreature } from './creatures.js?v=0.72.0';
+import { makeIslands } from './island-models.js?v=0.72.0';
+import { facilityId } from './facilities.js?v=0.72.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.71.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.71.0';
-import { surface } from './surfaces.js?v=0.71.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.71.0';
+import { phenotype, seeded } from './genetics.js?v=0.72.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.72.0';
+import { surface } from './surfaces.js?v=0.72.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.72.0';
 
 // 0.69: three's bump mapping normalises the screen-space derivative of the surface position; where that derivative
 // comes out as zero (low-precision GPUs, far-from-origin coordinates such as 慈光港 at x 3000) the normal is NaN,
@@ -24,39 +24,39 @@ T.ShaderChunk.bumpmap_pars_fragment = T.ShaderChunk.bumpmap_pars_fragment
     'return normalize( abs( fDet ) * surf_norm - vGrad );',
     'vec3 bumped = abs( fDet ) * surf_norm - vGrad;\n\t\treturn dot( bumped, bumped ) > 1e-10 ? normalize( bumped ) : surf_norm;'
   );
-import { makeLake } from './lake-models.js?v=0.71.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.71.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.71.0';
-import { makeStatues } from './statues.js?v=0.71.0';
-import { animateGarden } from './garden-models.js?v=0.71.0';
-import { ViewModel } from './viewmodel.js?v=0.71.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.71.0';
-import { makeTown, animateTown, dressTown, GUIDE_WORLD } from './town-models.js?v=0.71.0';
-import { bakeStatic } from './bake.js?v=0.71.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.71.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.71.0';
-import { INTERIOR_Y, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.71.0';
-import { makeInteriors, animateInteriors } from './interior-models.js?v=0.71.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.71.0';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.71.0';
-import { PostFX } from './postfx.js?v=0.71.0';
-import { makeHuman, animateHuman } from './human.js?v=0.71.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.71.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.71.0';
-import { buildError } from './rules.js?v=0.71.0';
-import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.71.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.71.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.71.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.71.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.71.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.71.0';
-import { CombatFX } from './combat-fx.js?v=0.71.0';
-import { dressWithProp } from './props.js?v=0.71.0';
-import { syncPlots } from './land-models.js?v=0.71.0';
-import { plotTargets } from './reclaim.js?v=0.71.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.71.0';
-import { dayPhase } from './clock.js?v=0.71.0';
-import { weatherAt, season } from './weather.js?v=0.71.0';
+import { makeLake } from './lake-models.js?v=0.72.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.72.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.72.0';
+import { makeStatues } from './statues.js?v=0.72.0';
+import { animateGarden } from './garden-models.js?v=0.72.0';
+import { ViewModel } from './viewmodel.js?v=0.72.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.72.0';
+import { makeTown, animateTown, dressTown, GUIDE_WORLD } from './town-models.js?v=0.72.0';
+import { bakeStatic } from './bake.js?v=0.72.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.72.0';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.72.0';
+import { INTERIOR_Y, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.72.0';
+import { makeInteriors, animateInteriors } from './interior-models.js?v=0.72.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.72.0';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.72.0';
+import { PostFX } from './postfx.js?v=0.72.0';
+import { makeHuman, animateHuman } from './human.js?v=0.72.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.72.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.72.0';
+import { buildError } from './rules.js?v=0.72.0';
+import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.72.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.72.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.72.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.72.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.72.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.72.0';
+import { CombatFX } from './combat-fx.js?v=0.72.0';
+import { dressWithProp } from './props.js?v=0.72.0';
+import { syncPlots } from './land-models.js?v=0.72.0';
+import { plotTargets } from './reclaim.js?v=0.72.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.72.0';
+import { dayPhase } from './clock.js?v=0.72.0';
+import { weatherAt, season } from './weather.js?v=0.72.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -1179,6 +1179,26 @@ export class OceanWorld {
       const m = makeCreature(c.genome);
       applyGeneMarks(m, c.genome, beastish(c) ? 'beast' : 'creature');
       if (beastish(c)) beastHalo(m, true);
+      // 0.72: the rift's things are its crystal given a body — violet glass, glowing from inside
+      if (c.rift) {
+        const tint = new T.Color(c.rift === 'mirror' ? 0xcfd8ff : c.rift === 'khusk' ? 0xe8e2d6 : 0x8a5cff);
+        m.traverse(o => {
+          if (!o.isMesh || !o.material) return;
+          o.material = (Array.isArray(o.material) ? o.material : [o.material]).map(mt => {
+            const n = mt.clone();
+            if (n.color) n.color.lerp(tint, 0.75);
+            if ('emissive' in n) {
+              n.emissive = new T.Color(c.rift === 'mirror' ? 0x6070a0 : 0x5a2ab0);
+              n.emissiveIntensity = 0.55;
+            }
+            if ('metalness' in n) n.metalness = c.rift === 'mirror' ? 0.9 : 0.35;
+            if ('roughness' in n) n.roughness = c.rift === 'mirror' ? 0.1 : 0.3;
+            return n;
+          });
+          if (o.material.length === 1) o.material = o.material[0];
+        });
+        beastHalo(m, true);
+      }
       return m;
     });
     const kindOf = c => (c.kind === 'creature' ? 'creature' : 'beast');
@@ -1617,6 +1637,7 @@ export class OceanWorld {
           this.animateCreature(m, t);
           continue;
         }
+        if (c.riftSize) ud.phenotype.size = c.riftSize;
         if (m.scale.x !== ud.phenotype.size) m.scale.setScalar(ud.phenotype.size);
         if (c.under) {
           // 0.40: one of the creatures down below — seen only while you dive, swimming at its own depth (a hunter
@@ -1628,9 +1649,10 @@ export class OceanWorld {
           ud.uy += ((hunt ? this.diveY - 0.3 : (c.y ?? -4)) - ud.uy) * Math.min(1, dt * 1.5);
           m.position.set(c.x, Math.max(groundAt(c.x, c.z) + 1, ud.uy) + Math.sin(t * 0.8 + c.phase) * 0.25, c.z);
           m.rotation.x = 0;
-        } else if (ud.phenotype.habitat === 'land') {
-          // land beasts walk on the island surface (and on the raft when they follow you home)
-          m.position.set(c.x, groundAt(c.x, c.z), c.z);
+        } else if (ud.phenotype.habitat === 'land' || c.rift) {
+          // land beasts walk on the island surface (and on the raft when they follow you home); the rift's things
+          // on the wasteland (0.72)
+          m.position.set(c.x, s.inTown ? domeGround(c.x, c.z) : groundAt(c.x, c.z), c.z);
           m.rotation.x = 0;
         } else {
           m.position.set(c.x, 0.03 + waveHeight(c.x, c.z, t, storm, home) - ud.dip * 1.1, c.z);
@@ -2474,7 +2496,12 @@ export class OceanWorld {
     if (st.beast && (st.stage || 0) < 5 && !!st.beast.cave === !!s.inCave) at = { x: st.beast.x, z: st.beast.z };
     else if (pet && s.inTown) {
       // 0.47: it will not come into the town; it waits outside the gate
-      if (s.expedition?.activeId === PACT_ID) at = townPoint(XIAOYUE_WAITS);
+      // 0.72: …except to fight beside you at the rift
+      if (s.expedition?.activeId === PACT_ID)
+        at =
+          s.rift?.active && Number.isFinite(s.combat?.ax)
+            ? { x: s.combat.ax, z: s.combat.az }
+            : townPoint(XIAOYUE_WAITS);
     } else if (pet) {
       if (s.expedition?.activeId === PACT_ID && !s.inCave) {
         // pads along a few metres behind you, ashore or swimming beside the boat

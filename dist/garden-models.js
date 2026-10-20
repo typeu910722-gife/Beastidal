@@ -3,8 +3,8 @@
 // violet crystal pushing up through the soil, dead trees, drifting spores — and at the heart, a stone dais ringed
 // by broken pillars and roots, where 嘯岳 sleeps. Instanced wherever things repeat.
 import * as T from './vendor/three.module.min.js';
-import { CAVE, MAZE_N, MAZE_CELL, MAZE_HALF, MAZE_WALLS, HALL, HALL_COVER, ENTRANCE } from './cave-maze.js?v=0.71.0';
-import { grainTexture } from './realism.js?v=0.71.0';
+import { CAVE, MAZE_N, MAZE_CELL, MAZE_HALF, MAZE_WALLS, HALL, HALL_COVER, ENTRANCE } from './cave-maze.js?v=0.72.0';
+import { grainTexture } from './realism.js?v=0.72.0';
 
 let seed = 77;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;

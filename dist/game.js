@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.71.0';
-import { renderAdventure } from './expansion-ui.js?v=0.71.0';
+} from './expansion.js?v=0.72.0';
+import { renderAdventure } from './expansion-ui.js?v=0.72.0';
 import {
   normalizeShip,
   tickShip,
@@ -41,10 +41,10 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.71.0';
-import { cargoCapacity, shipStats } from './warship.js?v=0.71.0';
-import { monologue, markGuide, pride, markPride } from './guide.js?v=0.71.0';
-import { climb, demolish, relocate } from './construction.js?v=0.71.0';
+} from './ship.js?v=0.72.0';
+import { cargoCapacity, shipStats } from './warship.js?v=0.72.0';
+import { monologue, markGuide, pride, markPride } from './guide.js?v=0.72.0';
+import { climb, demolish, relocate } from './construction.js?v=0.72.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.71.0';
+} from './housing.js?v=0.72.0';
 import {
   ISLANDS,
   NODES,
@@ -67,11 +67,11 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.71.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.71.0';
-import { lakeMinimap } from './lake-map.js?v=0.71.0';
-import { domeChart } from './dome-map.js?v=0.71.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.71.0';
+} from './islands.js?v=0.72.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.72.0';
+import { lakeMinimap } from './lake-map.js?v=0.72.0';
+import { domeChart } from './dome-map.js?v=0.72.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.72.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -90,7 +90,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.71.0';
+} from './cabin.js?v=0.72.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -102,17 +102,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.71.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.71.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.71.0';
-import { QUALITY } from './realism.js?v=0.71.0';
-import { MusicPlayer, WaterRush, NewWorldAmbience, playSplash, playImpact, soundPref } from './sound.js?v=0.71.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.71.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.71.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.71.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.71.0';
-import { CONFIG } from './config.js?v=0.71.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.71.0';
+} from './story.js?v=0.72.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.72.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.72.0';
+import { QUALITY } from './realism.js?v=0.72.0';
+import { MusicPlayer, WaterRush, NewWorldAmbience, playSplash, playImpact, soundPref } from './sound.js?v=0.72.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.72.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.72.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.72.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.72.0';
+import { CONFIG } from './config.js?v=0.72.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.72.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -123,7 +123,7 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.71.0';
+} from './codex.js?v=0.72.0';
 import {
   ensureLandBeasts,
   normalizeWildlife,
@@ -131,13 +131,13 @@ import {
   spawnWild,
   spawnUnder,
   ashore
-} from './wildlife.js?v=0.71.0';
-import { CRAFTS, ITEMS, ITEM_NAMES, costLabel as itemCost } from './items.js?v=0.71.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.71.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.71.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.71.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.71.0';
-import { startFishing, tickFishing, reel, cancelFishing, BITE_WINDOW } from './fishing.js?v=0.71.0';
+} from './wildlife.js?v=0.72.0';
+import { CRAFTS, ITEMS, ITEM_NAMES, costLabel as itemCost } from './items.js?v=0.72.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.72.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.72.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.72.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.72.0';
+import { startFishing, tickFishing, reel, cancelFishing, BITE_WINDOW } from './fishing.js?v=0.72.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -147,10 +147,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.71.0';
-import { ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.71.0';
-import { setClimbing } from './lake.js?v=0.71.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.71.0';
+} from './reclaim.js?v=0.72.0';
+import { ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.72.0';
+import { setClimbing } from './lake.js?v=0.72.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.72.0';
 import {
   RARITY,
   FRENZY,
@@ -176,7 +176,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.71.0';
+} from './taming.js?v=0.72.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -195,8 +195,8 @@ import {
   AI_RANGE,
   onLayer,
   callAssist
-} from './combat.js?v=0.71.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.71.0';
+} from './combat.js?v=0.72.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.72.0';
 import {
   ECHOES,
   LAPTOP_PARTS,
@@ -206,7 +206,7 @@ import {
   missingParts,
   normalizeEchoes,
   repairLaptop
-} from './echoes.js?v=0.71.0';
+} from './echoes.js?v=0.72.0';
 import {
   TOWN_NAME,
   BUILDINGS as TOWN_BUILDINGS,
@@ -227,7 +227,7 @@ import {
   toWorld as townWorld,
   normalizeTown,
   XIAOYUE_WAITS
-} from './town.js?v=0.71.0';
+} from './town.js?v=0.72.0';
 import {
   TEMPLATES,
   WORDS,
@@ -245,30 +245,24 @@ import {
   guideWarning,
   noteTrace,
   normalizeComms
-} from './comms.js?v=0.71.0';
-import { Community } from './community.js?v=0.71.0';
-import { storyPanel } from './storynav.js?v=0.71.0';
+} from './comms.js?v=0.72.0';
+import { Community } from './community.js?v=0.72.0';
+import { storyPanel } from './storynav.js?v=0.72.0';
 import {
   outsidePoints,
   tearShell,
   noteOutside,
   readK,
-  startTrial,
-  trialRound,
-  finishTrial,
-  canSeal,
   seeCore,
   tornOpen,
   started as chapterThreeStarted,
-  TACTICS,
-  WAVE_COUNT,
   LAYERS,
   layerOpen,
   qingConfession,
   bridgeReady,
   crossBridge,
   RIFT
-} from './chapter3.js?v=0.71.0';
+} from './chapter3.js?v=0.72.0';
 import {
   readNotice,
   searchDiner,
@@ -281,9 +275,10 @@ import {
   AFTER_FORGET,
   GRADUATED_TEXT,
   domeCracked
-} from './chapter2.js?v=0.71.0';
-import { tickDome, nearShell, toLocal as domeLocal, countryWalkable, DOME_R, domeHeight } from './dome.js?v=0.71.0';
-import { countryPoints, visitSpot, SPOT_HINTS } from './countryside.js?v=0.71.0';
+} from './chapter2.js?v=0.72.0';
+import { tickDome, nearShell, toLocal as domeLocal, countryWalkable, DOME_R, domeHeight } from './dome.js?v=0.72.0';
+import { countryPoints, visitSpot, SPOT_HINTS } from './countryside.js?v=0.72.0';
+import { startRiftFight, tickRiftFight, endRiftFight, riftStatus } from './rift-fight.js?v=0.72.0';
 import {
   INTERIORS,
   INTERIOR_Y,
@@ -294,14 +289,14 @@ import {
   interiorHint,
   useInterior,
   adminOpen
-} from './interiors.js?v=0.71.0';
-import { BeastStage } from './beast-stage.js?v=0.71.0';
-import { loadArt, art, artImg } from './art.js?v=0.71.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.71.0';
-import { separateBodies } from './bodies.js?v=0.71.0';
-import { STATUES } from './statues.js?v=0.71.0';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.71.0';
-import { lookOf } from './beast-look.js?v=0.71.0';
+} from './interiors.js?v=0.72.0';
+import { BeastStage } from './beast-stage.js?v=0.72.0';
+import { loadArt, art, artImg } from './art.js?v=0.72.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.72.0';
+import { separateBodies } from './bodies.js?v=0.72.0';
+import { STATUES } from './statues.js?v=0.72.0';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.72.0';
+import { lookOf } from './beast-look.js?v=0.72.0';
 import {
   TREE,
   BRANCHES,
@@ -312,8 +307,8 @@ import {
   personality,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.71.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.71.0';
+} from './beast-tree.js?v=0.72.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.72.0';
 import {
   funds,
   normalizeBag,
@@ -334,12 +329,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.71.0';
-import { iconFor } from './icons.js?v=0.71.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.71.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.71.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.71.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.71.0';
+} from './bag.js?v=0.72.0';
+import { iconFor } from './icons.js?v=0.72.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.72.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.72.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.72.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.72.0';
 import {
   homePos,
   facilityPos,
@@ -351,10 +346,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.71.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.71.0';
-export const GAME_VERSION = '0.71.0';
-import { CloudSave } from './cloud-save.js?v=0.71.0';
+} from './fortress.js?v=0.72.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.72.0';
+export const GAME_VERSION = '0.72.0';
+import { CloudSave } from './cloud-save.js?v=0.72.0';
 import {
   readLocal,
   writeLocal,
@@ -371,9 +366,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.71.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.71.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, geneName } from './genetics.js?v=0.71.0';
+} from './save-store.js?v=0.72.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.72.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, geneName } from './genetics.js?v=0.72.0';
 import {
   RESOURCE_NAMES,
   RECIPES,
@@ -393,8 +388,8 @@ import {
   tickSystems,
   validateSave,
   log
-} from './rules.js?v=0.71.0';
-import { hourOf, isNight, nextMorning } from './clock.js?v=0.71.0';
+} from './rules.js?v=0.72.0';
+import { hourOf, isNight, nextMorning } from './clock.js?v=0.72.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -2020,6 +2015,8 @@ function beginGame(fresh = false) {
   normalizeEvents(state);
   normalizeTeam(state);
   resetCombat(state);
+  // 0.72: a rift fight cut short by closing the game is a retreat
+  if (state.rift) endRiftFight(state, 'left');
   for (const p of state.tamed) normalizeLevel(p);
   normalizeGear(state);
   normalizeSkills(state);
@@ -2205,7 +2202,7 @@ function getAllTargets() {
       ...countryPoints(state),
       ...outsidePoints(state).map(p => ({ ...p, ...townWorld(p) }))
     ]
-      .filter(p => !(p.id === 'guide' && guideGone(state)))
+      .filter(p => !(p.id === 'guide' && guideGone(state)) && !(p.id === 'rift' && state.rift?.active))
       .map(p => ({ ...p, type: 'town' }));
   if (state.player.mode === 'cabin') return [...cabinPointsWorld(state), ...loungeTargets()];
   if (state.player.mode === 'aboard') return shipPointsWorld(state);
@@ -2666,17 +2663,20 @@ function finishSalvage() {
 // ---------- 0.25: action combat — strikes, skills, dodges, what the foes do, and what it all looks like ----------
 const inFight = () => running && !paused && !panel && !focus && combatActive(state);
 const combatEnv = () => ({
-  canMove: (w, x, z) => (state.inCave ? canWalk(state, x, z) : ashore(w) ? walkable(x, z) : !islandAt(x, z, 2)),
+  canMove: (w, x, z) =>
+    state.inCave || state.inTown ? canWalk(state, x, z) : ashore(w) ? walkable(x, z) : !islandAt(x, z, 2),
   allyCan: (x, z) => !state.inCave || canWalk(state, x, z),
   cover: (a, b) => !!state.inCave && coverBetween(a.x - GARDEN.x, a.z - GARDEN.z, b.x - GARDEN.x, b.z - GARDEN.z),
   canReach: w =>
     // in the garden only 嘯岳 fights, and only on foot
     state.inCave
       ? !!w.duelBeast && state.player.mode === 'foot'
-      : state.player.mode === 'boat' ||
-        state.player.mode === 'ship' ||
-        !!state.expedition.mounted ||
-        (state.player.mode === 'foot' && ashore(w))
+      : state.inTown
+        ? !!w.rift && state.player.mode === 'foot'
+        : state.player.mode === 'boat' ||
+          state.player.mode === 'ship' ||
+          !!state.expedition.mounted ||
+          (state.player.mode === 'foot' && ashore(w))
 });
 // guard jobs and guardian beasts at home take the edge off what reaches you
 function playerGuard() {
@@ -4146,11 +4146,31 @@ function openRift() {
     { label: '離開', action: closeModal }
   ]);
 }
+// 0.72: the layer's waves come out of the rift and you fight them where you stand, in real time (rift-fight.js)
 function enterLayer(layer) {
-  const r = startTrial(state, undefined, layer);
+  const r = startRiftFight(state, layer);
   if (!r.ok) return toast(r.error, true);
-  trial = r.battle;
-  showTrial();
+  closeModal();
+  world.sync(state);
+  save(true);
+  updateUI();
+  const st = riftStatus(state);
+  discover(st.title, [st.text, P('按 F 攻擊、1–3 用技能、空白鍵閃避；離開裂縫太遠就算撤退。')].join(' · '));
+}
+// each frame of a rift fight: the next wave, or the end
+function tickRift() {
+  const e = tickRiftFight(state);
+  if (!e) return;
+  world.sync(state);
+  updateUI();
+  if (e.type === 'wave') {
+    const st = riftStatus(state);
+    discover(st.title, st.text);
+    return;
+  }
+  save(true);
+  if (e.type === 'left') return toast('你退出了裂縫。牠們退回光裡，等你下次再來。');
+  trialOutcome(e);
 }
 function askTear() {
   const r = tearShell(state);
@@ -4163,100 +4183,38 @@ function askTear() {
     discover('穹頂的裂口', '城門南邊，穹頂的盡頭');
   });
 }
-// 0.50: the rift trial — your beasts fight on their own; you choose the tactic each round
-let trial = null;
-const bar = (hp, max, cls = '') =>
-  `<span class="trial-bar ${cls}"><i style="width:${Math.max(0, Math.round((hp / max) * 100))}%"></i></span>`;
-function showTrial() {
-  const b = trial;
-  if (!b) return;
-  if (b.over) {
-    const r = finishTrial(state, b);
-    trial = null;
-    save(true);
-    updateUI();
-    world.sync(state);
-    const where = '裂縫 · ' + LAYERS[r.layer || 1].name;
-    if (!r.won) {
-      modal(where, '被裂縫吐了出來', '<p>御獸都受了傷，但都還活著。回去休息一下再來。</p>', [
-        { label: '離開', primary: true, action: closeModal }
-      ]);
-      return;
-    }
-    const loot = Object.entries(r.rewards || {})
-      .map(([k, v]) => `${ITEM_NAMES[k] || k} +${v}`)
-      .join(' · ');
-    const next = !r.first
-      ? ''
-      : r.layer === 1
-        ? '再靠近裂縫一次，觸碰它的核心。'
-        : r.layer === 3
-          ? '三塊碎片都到齊了。再靠近裂縫一次。'
-          : '';
-    const done = () =>
-      modal(
-        where,
-        r.first ? `核心碎片 ${state.chapter3.shards} / 3` : '又清了一次',
-        `<p>${loot}${r.ups.length ? ` · 升級：${esc(r.ups.join('、'))}` : ''}</p>${next ? `<p class="dv-note">${next}</p>` : ''}`,
-        [{ label: '離開', primary: true, action: closeModal }]
-      );
-    // the second layer holds 晴's card, the third what is left of K.
-    if (r.script) playLines(r.script, where, done);
-    else done();
+// the trial's end, however it was fought: rewards, the story it unlocks, or the way back out
+function trialOutcome(r) {
+  save(true);
+  updateUI();
+  world.sync(state);
+  const where = '裂縫 · ' + LAYERS[r.layer || 1].name;
+  if (!r.won) {
+    modal(where, '被裂縫吐了出來', '<p>御獸都受了傷，但都還活著。回去休息一下再來。</p>', [
+      { label: '離開', primary: true, action: closeModal }
+    ]);
     return;
   }
-  // optimisation round 2: each beast's portrait (its contract-card still), and what it just took or dealt
-  const fx = b.fx || {};
-  const pic = u => {
-    const p = state.tamed.find(t => t.id === u.id);
-    const src =
-      p && beastStage.thumb(`${p.id}:${p.kind || 'beast'}:${p.genome?.bs?.join(',') || ''}`, p.genome, 'beast');
-    return src ? `<img class="trial-pic" src="${src}" alt="">` : '';
-  };
-  const side = (list, foe) =>
-    list
-      .map(
-        (u, i) =>
-          `<div class="trial-unit${foe ? ' foe' : ''}${u.hp <= 0 ? ' down' : ''}${fx[(foe ? 'f' : 'm') + i] ? ' hit' : ''}">${foe ? '' : pic(u)}<div><b>${esc(u.name)}</b>${bar(u.hp, u.maxHp, foe ? 'foe' : '')}<small>${Math.max(0, Math.ceil(u.hp))} / ${u.maxHp}</small></div>${fx[(foe ? 'f' : 'm') + i] ? `<em class="trial-dmg">-${fx[(foe ? 'f' : 'm') + i]}</em>` : ''}</div>`
-      )
-      .join('');
-  const act = tactic => {
-    const before = [...b.members.map(m => m.hp), ...b.foes.map(f => f.hp)],
-      wave = b.wave;
-    trialRound(b, tactic);
-    // damage per unit this round (a new wave starts fresh)
-    b.fx = {};
-    let took = 0,
-      dealt = 0;
-    b.members.forEach((m, i) => {
-      const d = Math.round(before[i] - m.hp);
-      if (d > 0) ((b.fx['m' + i] = d), (took += d));
-    });
-    if (b.wave === wave)
-      b.foes.forEach((f, i) => {
-        const d = Math.round(before[b.members.length + i] - f.hp);
-        if (d > 0) ((b.fx['f' + i] = d), (dealt += d));
-      });
-    if (dealt) audio.note(tactic === 'seal' ? 980 : 720, tactic === 'seal' ? 0.35 : 0.12);
-    if (took) {
-      audio.note(170, 0.18);
-      haptic('hit');
-    }
-    if (b.over === 'won') audio.note(1180, 0.6);
-    showTrial();
-    if (took) $('modal-body').querySelector('.trial')?.classList.add('shake');
-  };
-  modal(
-    `裂縫 · ${LAYERS[b.layer || 1].name} · 第 ${b.wave + 1} / ${WAVE_COUNT} 波`,
-    '裂縫試煉',
-    `<div class="trial"><div class="trial-side">${side(b.members, false)}</div><div class="trial-vs">VS</div><div class="trial-side">${side(b.foes, true)}</div></div><p class="dv-note trial-log">${b.log.map(esc).join('<br>') || '御獸會自己戰鬥。每一回合，選一個戰術。'}</p>`,
-    [
-      { label: TACTICS.strike.name, primary: true, action: () => act('strike') },
-      { label: TACTICS.guard.name, action: () => act('guard') },
-      ...(canSeal(b) ? [{ label: TACTICS.seal.name + ' · 全體', action: () => act('seal') }] : []),
-      { label: '撤退', action: () => ((b.over = 'lost'), showTrial()) }
-    ]
-  );
+  const loot = Object.entries(r.rewards || {})
+    .map(([k, v]) => `${ITEM_NAMES[k] || k} +${v}`)
+    .join(' · ');
+  const next = !r.first
+    ? ''
+    : r.layer === 1
+      ? '再靠近裂縫一次，觸碰它的核心。'
+      : r.layer === 3
+        ? '三塊碎片都到齊了。再靠近裂縫一次。'
+        : '';
+  const done = () =>
+    modal(
+      where,
+      r.first ? `核心碎片 ${state.chapter3.shards} / 3` : '又清了一次',
+      `<p>${loot}${r.ups.length ? ` · 升級：${esc(r.ups.join('、'))}` : ''}</p>${next ? `<p class="dv-note">${next}</p>` : ''}`,
+      [{ label: '離開', primary: true, action: closeModal }]
+    );
+  // the second layer holds 晴's card, the third what is left of K.
+  if (r.script) playLines(r.script, where, done);
+  else done();
 }
 function storyEvents(dt) {
   for (const ev of tickStory(state, dt, {
@@ -4440,7 +4398,7 @@ function updateBeastHUD() {
     e = state.expedition;
   if (!$('beast-bar')) return;
   // (not in town: 嘯岳 waits outside the gate, and there is nothing to ride, dive into or fight there)
-  $('beast-bar').hidden = !running || paused || !!panel || !!buildType || !p || !!state.inTown;
+  $('beast-bar').hidden = !running || paused || !!panel || !!buildType || !p || (!!state.inTown && !state.rift?.active);
   document.body.classList.toggle('beast-on', !$('beast-bar').hidden);
   if (p) {
     $('beast-status').textContent =
@@ -8926,6 +8884,7 @@ function frame(now, manual = false) {
     if (!panel && !buildType) {
       normalizeCombat(state).playerMul = playerGuard();
       onCombat(tickCombat(state, dt, combatEnv()));
+      if (state.rift?.active) tickRift();
       // 0.32: bodies take up room — nothing moving passes through anything else
       separateBodies(state, combatEnv());
     }

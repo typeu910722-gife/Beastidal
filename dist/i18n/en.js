@@ -2117,6 +2117,14 @@ export default {
   門: 'Door',
   靠牆的桌子: 'The table by the wall',
   面對她: 'Face her',
+  '一個人進不去。先叫出一隻締結契約、還有體力的御獸（選單 › 御獸遠航）。':
+    "You can't go in alone. Call out a contracted beast that still has strength first (Menu › Beast Voyage).",
+  '你退出了裂縫。牠們退回光裡，等你下次再來。':
+    'You pull back from the rift. They sink back into the light, waiting for next time.',
+  '剩下 {0} 個：{1}': '{0} left: {1}',
+  '按 F 攻擊、1–3 用技能、空白鍵閃避；離開裂縫太遠就算撤退。':
+    'F to attack, 1–3 for skills, Space to dodge; stray too far from the rift and you retreat.',
+  '裂縫 · {0} · 第 {1}/{2} 波': 'The rift · {0} · wave {1}/{2}',
   '在避難所時，上方的數字＝背包＋書桌倉庫。':
     'At the shelter, the numbers up top count the bag and the desk storage together.',
   '書桌倉庫：': 'Desk storage: ',

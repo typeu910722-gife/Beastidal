@@ -10,8 +10,8 @@ import {
   BOARD,
   XIAOYUE_WAITS,
   lettersReady
-} from './town.js?v=0.71.0';
-import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.71.0';
+} from './town.js?v=0.72.0';
+import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.72.0';
 import {
   chapter3Objectives,
   normalizeChapter3,
@@ -22,9 +22,10 @@ import {
   RIFT,
   TEAR_AT,
   layerOpen
-} from './chapter3.js?v=0.71.0';
-import { isNight } from './clock.js?v=0.71.0';
-import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.71.0';
+} from './chapter3.js?v=0.72.0';
+import { isNight } from './clock.js?v=0.72.0';
+import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.72.0';
+import { riftStatus } from './rift-fight.js?v=0.72.0';
 
 const door = id => BUILDINGS.find(b => b.id === id).door;
 const at = (p, name, night = false) => ({ ...toWorld(p), name, night });
@@ -78,6 +79,10 @@ export function bearing(s, g) {
 }
 // What the HUD's quest panel shows in the New World.
 export function storyPanel(s) {
+  // 0.72: in a rift fight, the fight
+  const rs = riftStatus(s);
+  if (rs)
+    return { chapter: 'CHAPTER 03 · 裂縫之外', title: rs.title, quests: [[rs.text, false]], goal: null, goalText: '' };
   const three = chapter3Objectives(s),
     two = [...townObjectives(s), ...chapter2Objectives(s)];
   const inThree = three.length > 0;
