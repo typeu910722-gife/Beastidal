@@ -1,8 +1,8 @@
 // The backpack holds a limited number of things in all. What does not fit waits in the storage of the raft's
 // desk: deposit there when the bag is full, and enlarge the bag at the desk with materials. While you are home,
 // building and crafting can draw on the desk's storage as well as the bag.
-import { homePos, nearFacility } from './fortress.js?v=0.69.0';
-import { CARRYABLE } from './items.js?v=0.69.0';
+import { homePos, nearFacility } from './fortress.js?v=0.70.0';
+import { CARRYABLE } from './items.js?v=0.70.0';
 // everything the bag can hold (0.21: the drops and crafted things too)
 export const CARRY = CARRYABLE;
 // supplies you keep a few of when depositing (0.41: the rest goes into storage, so they can never clog the bag)

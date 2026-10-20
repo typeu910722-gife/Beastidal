@@ -2,8 +2,8 @@
 // It is a dome: 慈愛組織's laboratory on the continent of 比斯泰德, its sky projected on the inside of the shell.
 // This module is the land under it (in metres, local to the town's plaza; +z is south) and the cracks in the
 // illusion. town.js puts the town in it; town-models.js draws it. See docs/STORY.md.
-import { dayOf, hourOf } from './clock.js?v=0.69.0';
-import { domeCracked } from './chapter2.js?v=0.69.0';
+import { dayOf, hourOf } from './clock.js?v=0.70.0';
+import { domeCracked } from './chapter2.js?v=0.70.0';
 
 export const TOWN = { x: 3000, z: 3000 }; // the plaza's centre, in world coordinates
 export const DOME_R = 290; // the shell's radius: an invisible wall where the land seems to go on
@@ -42,6 +42,11 @@ export function domeHeight(lx, lz) {
     // past the shell the land flattens into the wasteland (0.50)
     edge = 1 - Math.min(1, Math.max(0, (d - DOME_R - 4) / 22));
   let h = (Math.max(0, hills) + rim) * flatness(lx, lz) * edge;
+  // 0.70: the pass stands on a knoll, high enough to look over the hills to the town
+  {
+    const pd = Math.hypot(lx - PASS.x, lz - PASS.z);
+    if (pd < 90) h += 13 * Math.exp(-((pd / 34) ** 2));
+  }
   // the river cuts a channel; the bridge's ends stay level with the banks
   const r = Math.abs(lx - riverX(lz));
   if (r < RIVER_HALF + 6)
@@ -62,6 +67,40 @@ export const WOODS = [
   { x: 35, z: -175, r: 46, n: 60 },
   { x: 200, z: 140, r: 36, n: 40 }
 ];
+// 0.70: the pass on the south-west rim where 嘯岳 first sets you down, and the trail from it down to the road outside
+// the gate (local coordinates, from the pass to the road's end). The woods keep off it.
+export const PASS = { x: -150, z: 228 };
+export const TRAIL = [
+  PASS,
+  { x: -128, z: 216 },
+  { x: -104, z: 206 },
+  { x: -78, z: 202 },
+  { x: -52, z: 196 },
+  { x: -30, z: 184 },
+  { x: -14, z: 170 },
+  { x: -4, z: 156 },
+  { x: 0, z: 138 }
+];
+// how far (m) a point is from the trail's centre line
+export function trailDistance(lx, lz) {
+  let best = Infinity;
+  for (let i = 1; i < TRAIL.length; i++) {
+    const a = TRAIL[i - 1],
+      b = TRAIL[i],
+      dx = b.x - a.x,
+      dz = b.z - a.z,
+      t = Math.max(0, Math.min(1, ((lx - a.x) * dx + (lz - a.z) * dz) / (dx * dx + dz * dz)));
+    best = Math.min(best, Math.hypot(lx - a.x - dx * t, lz - a.z - dz * t));
+  }
+  return best;
+}
+// 0.70: the orchard's rows, the old tree with the numbers, and what stands in the open (see countryside.js)
+export const ORCHARD = { x: -60, z: -136 };
+export const OLD_TREE = { x: -186, z: 15 };
+export const OBSTACLES = [
+  { x: 92, z: -70, hx: 3.2, hz: 2.6 }, // the herder's shed
+  { x: 60, z: 199.5, r: 2.4 } // the stargazing stone
+];
 export const TREES = (() => {
   let seed = 4120;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -72,9 +111,14 @@ export const TREES = (() => {
         r = Math.sqrt(rnd()) * w.r,
         x = w.x + Math.cos(a) * r,
         z = w.z + Math.sin(a) * r;
-      if (Math.abs(x - riverX(z)) < RIVER_HALF + 4 || Math.hypot(x, z) > DOME_R - 12) continue;
+      if (Math.abs(x - riverX(z)) < RIVER_HALF + 4 || Math.hypot(x, z) > DOME_R - 12 || trailDistance(x, z) < 4)
+        continue;
       out.push({ x, z, s: 0.75 + rnd() * 0.6, kind: rnd() < 0.6 ? 'pine' : 'broad' });
     }
+  for (let i = 0; i < 4; i++)
+    for (let k = 0; k < 3; k++)
+      out.push({ x: ORCHARD.x - 9 + k * 9, z: ORCHARD.z - 9 + i * 6, s: 0.62, kind: 'fruit' });
+  out.push({ ...OLD_TREE, s: 2.1, kind: 'old' });
   return out;
 })();
 export const TRUNK_R = 0.45;
@@ -92,6 +136,13 @@ export function countryWalkable(lx, lz, pad = 0.35, open = false) {
   if (d > (open ? OUTER_R : DOME_R) - pad) return false;
   if (open && Math.abs(d - DOME_R) < 0.6 + pad && !inTear(lx, lz)) return false;
   if (inRiver(lx, lz)) return false;
+  for (const o of OBSTACLES)
+    if (
+      o.r
+        ? Math.hypot(lx - o.x, lz - o.z) < o.r + pad
+        : Math.abs(lx - o.x) < o.hx + pad && Math.abs(lz - o.z) < o.hz + pad
+    )
+      return false;
   return d > DOME_R || !treeAt(lx, lz, pad);
 }
 export const nearShell = (lx, lz, by = 3.5, open = false) =>
@@ -169,7 +220,9 @@ export function tickDome(s, dt) {
   const outside = Math.abs(p.x) > 48 || Math.abs(p.z) > 48;
   if (outside) d.out += dt;
   const r = Math.hypot(p.x, p.z);
-  d.far = Math.max(d.far, r);
+  // 0.70: the walk counts from the town (you first arrive on the pass, already far out)
+  if (Math.abs(p.x) < 48 && Math.abs(p.z) < 48) d.been = true;
+  if (d.been) d.far = Math.max(d.far, r);
   if (d.far > 170) add('hills');
   if (d.out > 150 && hourOf(s) > 7 && hourOf(s) < 17.5) add('birds');
   if (d.out > 300) add('deer');

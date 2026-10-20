@@ -6,7 +6,7 @@
 // What does not fit waits in the pending list (`stowed`) until a slot frees up.
 // Everything that asks "where is home?" goes through homePos(), so it follows the ship.
 
-import { CABIN } from './cabin.js?v=0.69.0';
+import { CABIN } from './cabin.js?v=0.70.0';
 
 export const TILE = 3.6;
 export const RAFT_HOME = { x: 1.8, z: 1.8 };

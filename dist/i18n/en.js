@@ -1987,6 +1987,65 @@ export default {
   'MENU · 選單': 'MENU',
   'PAUSE · 暫停': 'PAUSE',
   '匯出失敗，請再試一次。': 'Export failed, please try again.',
+  '↖ 嘯岳的山口': "↖ Xiaoyue's Pass",
+  '一塊平整的大石頭，上面刻著「觀星」兩個字。白天什麼也看不到，晚上再來。':
+    'A wide flat stone with "Stargazing" carved into it. There is nothing to see by day. Come back at night.',
+  '今天已經採過了。剩下的蘆葦太嫩，明天再來。':
+    "You've already gathered here today. The reeds left are too young. Come back tomorrow.",
+  '今天的果子摘過了。枝頭空著，明天才會再長出來。': "Today's fruit is picked. The branches are bare until tomorrow.",
+  '你割了一束蘆葦，撿了幾根枯枝。': 'You cut a bundle of reeds and gathered some dead branches.',
+  '你又數了一次。樹上沒有 0412。還沒有。': 'You count again. There is no 0412 on the tree. Not yet.',
+  '你摘了幾顆果子。明天，枝頭又會掛滿一模一樣的果子。':
+    'You pick a few apples. Tomorrow the branches will hang full of exactly the same fruit again.',
+  '你躺在石頭上看星星。那三顆排成一列的星星……在東邊、正中、西邊各出現了一次，一模一樣，像是貼上去的。':
+    'You lie on the stone and watch the stars. Those three stars in a row… they appear once in the east, once overhead, once in the west, exactly the same, as if pasted on.',
+  刻滿編號的老樹: 'The Old Tree of Numbers',
+  '原野 · 走遍了': 'Countryside · every corner',
+  '原野 ·': 'Countryside ·',
+  '嘯岳 ·': 'Xiaoyue ·',
+  嘯岳的山口: "Xiaoyue's Pass",
+  回到湖區: 'Back to the lake',
+  '山下是一座港城，窗戶都亮著燈。沿著小路走下去，就到城門了。':
+    "Below lies a harbour town, every window lit. Follow the trail down and you'll reach the gate.",
+  山坡上的牧舍: "The Herder's Shed",
+  '平整的大石頭 · 按 E 躺下': 'A wide flat stone · press E to lie down',
+  '從這裡看得見整個穹頂：中間是港城，河從東邊繞過去，遠處的山……還是那麼遠。小路從腳下彎彎地通到城門外。':
+    'From here you can see the whole dome: the harbour town in the middle, the river curving round the east, the far mountains… still just as far. A trail winds from your feet down to the gate.',
+  '慈光港 ↘': 'Ciguang Harbour ↘',
+  摘: 'Pick',
+  '整個穹頂都在腳下 · 按 E 眺望': 'The whole dome lies below · press E to look out',
+  '新生之界 · 嘯岳的山口': "The New World · Xiaoyue's Pass",
+  '星星一格一格地排著。你不想再數了。': "The stars sit in their grid. You don't want to count them again.",
+  '樹上掛滿果子 · 按 E 摘果子': 'The trees hang heavy with fruit · press E to pick',
+  '樹皮上刻滿了字 · 按 E 細看': 'The bark is covered in carvings · press E to look closely',
+  '樹皮上密密麻麻刻滿了編號：No.0021、No.0098、No.0156……最新的一個，刻痕還是白的：No.0411。':
+    'The bark is crowded with numbers: No.0021, No.0098, No.0156… the newest cut is still pale: No.0411.',
+  '河灣堆著被沖上岸的枯枝。蘆葦長得很好，整整齊齊，好像每天都有人來修剪過。':
+    'Dead branches lie washed up in the river bend. The reeds grow well, neat and even, as if someone trimmed them every day.',
+  河灣的蘆葦叢: 'Reeds at the River Bend',
+  無人照料的果園: 'The Untended Orchard',
+  '牧舍空著。那張紙還釘在牆上，字跡被曬得有點淡了。':
+    'The shed is empty. The note is still pinned to the wall, its ink a little faded by the sun.',
+  '牧舍裡的工具擺得整整齊齊，像從來沒人用過。牆上釘著一張紙：「No.0098：羊群今天又少了一隻。管理區說這是正常的。我下週就畢業了。」':
+    'The shed\'s tools are laid out neatly, as if never used. A note is pinned to the wall: "No.0098: another sheep gone from the flock today. The admin block says that\'s normal. I graduate next week."',
+  獲得: 'Got',
+  眺望: 'Look out',
+  '穹頂下的每個角落都走過了。地方很美，可是每個地方，都像是照著同一張圖畫出來的。':
+    "You've walked every corner under the dome. It's beautiful, but every place looks drawn from the same picture.",
+  '穹頂下的每個角落都走過了。異晶 +3': "You've walked every corner under the dome. Crystal +3",
+  細看: 'Look closely',
+  '蘆葦和沖上岸的枯枝 · 按 E 採集': 'Reeds and washed-up branches · press E to gather',
+  '蘋果樹排得整整齊齊。每一顆果子都一樣大，連被蟲咬過的缺口，都在同一個位置。':
+    'The apple trees stand in neat rows. Every apple is the same size, and even the worm holes are in the same place.',
+  觀星石: 'The Stargazing Stone',
+  躺下: 'Lie down',
+  '這裡什麼也沒有。': "There's nothing here.",
+  '門沒有鎖 · 按 E 進去看看': 'The door is unlocked · press E to look inside',
+  '風從山口吹上來，聞起來像剛洗過的床單。這裡的風，連味道都是新的。':
+    'The wind comes up over the pass smelling of freshly washed sheets. Even the wind here smells new.',
+  新生之界地圖: 'New World Map',
+  '點地圖放置標記，小地圖會指出方向和距離。':
+    'Tap the map to drop a marker; the minimap shows the way and the distance.',
   '在避難所時，上方的數字＝背包＋書桌倉庫。':
     'At the shelter, the numbers up top count the bag and the desk storage together.',
   '書桌倉庫：': 'Desk storage: ',
