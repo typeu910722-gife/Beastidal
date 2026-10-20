@@ -3619,7 +3619,7 @@ function chapterTwoEnd(choice) {
       world.sync(state);
       save(true);
       updateUI();
-      discover(r.ending.title, '第三章——敬請期待');
+      discover(r.ending.title, choice === 'forget' ? '第三章：到城門外找嘯岳' : '第三章：往南穿過穹頂的裂縫');
     })
   );
 }
@@ -3806,7 +3806,7 @@ function townAction(id) {
     if (core?.script) {
       save(true);
       updateUI();
-      return playLines(core.script, '裂縫的核心', () => discover('第三章（上）完 · 橋', '第三章（下）——敬請期待'));
+      return playLines(core.script, '裂縫的核心', () => discover('第三章（上）完 · 橋', '裂縫更深處還有兩層'));
     }
     // 0.51: three shards make the bridge
     if (bridgeReady(state)) {

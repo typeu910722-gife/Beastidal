@@ -42,9 +42,18 @@ const PROPS = {
   // the desk with its crate stool in front (+z)
   desk: [[-0.88, 0.39, -0.52], [0.88, 1.5, 1.22], 2000, 80 * 1024, []],
   // the landing: piles down to -1.2 in the water, the derrick up to 3.5
-  dock: [[-1.7, -1.2, -1.75], [1.7, 3.5, 1.75], 3000, 120 * 1024, []]
+  dock: [[-1.7, -1.2, -1.75], [1.7, 3.5, 1.75], 3000, 120 * 1024, []],
+  // 0.65 慈光港 (town-local metres): the twelve buildings from the kiosk's wall to the houses by the wall, eaves
+  // included; ground to the apartment's chimneys
+  town: [[-42.55, -0.05, -43.55], [39.26, 18.0, 42.05], 40000, 2400 * 1024, []],
+  // the town wall (its coping out to ±46.9), ground to the sun over the gate's arch
+  'town-street': [[-46.9, -0.03, -46.9], [46.9, 14.54, 47.1], 14000, 800 * 1024, []]
 };
-const MATERIALS = ['wood-x', 'wood-y', 'wood-z', 'deck-x', 'deck-z', 'rope', 'cloth', 'metal', 'plain'];
+const MATERIALS = [
+  ...['wood-x', 'wood-y', 'wood-z', 'deck-x', 'deck-z', 'rope', 'cloth', 'metal', 'plain'],
+  // the town (0.65): the game swaps its own night-lit glass in for 'window' and 'frosted'
+  ...['plaster', 'stone', 'tile', 'gold', 'window', 'frosted', 'statue', 'carved', 'leaf']
+];
 const MAX_DRAWS = 12; // the procedural models these replace were 30 to 70 meshes each
 const TOL = 0.06;
 

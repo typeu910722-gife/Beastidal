@@ -3328,8 +3328,8 @@ export default {
     'Those who built the mountains wanted to keep the rift out. But these voices… they use the lake as the door of a cage.',
   '還不是時候。等你準備好了，我們再下去。': "Not yet. When you're ready, we'll go down.",
   '第一章 完 · 適應期結束': 'End of Chapter One · The Adaptation Period Ends',
-  '山外不是海，是一片大陸。天上的聲音叫它「新生之界」，還說我的家人一切安好——它怎麼會知道我有家人？第二章 · 新生之界——敬請期待。':
-    'Beyond the mountains is not a sea but a continent. The voice in the sky called it "the New World", and said my family is well — how would it know I have a family? Chapter Two · The New World — coming soon.',
+  '山外不是海，是一片大陸。天上的聲音叫它「新生之界」，還說我的家人一切安好——它怎麼會知道我有家人？第二章 · 新生之界。':
+    'Beyond the mountains is not a sea but a continent. The voice in the sky called it "the New World", and said my family is well — how would it know I have a family? Chapter Two · The New World.',
   // 0.47 抵達新生之界: 慈光港
   '第二章 · 新生之界': 'Chapter Two · The New World',
   '越過群山，前往新生之界': 'Cross the mountains to the New World',
@@ -3644,8 +3644,8 @@ export default {
     'A few pages of my journal are blank. On the last page, in my own handwriting: "Don\'t trust Qing. Find Xiaoyue outside the gate."',
   '你身上有那個盒子的味道。……你忘了什麼，對吧？': "You smell of that box. …You've forgotten something, haven't you?",
   '沒關係。我記得。': "It's all right. I remember.",
-  '我醒在 0412 號房，日誌少了幾頁。最後一頁是我自己的字：「別相信晴。去城門外找嘯岳。」嘯岳說，牠記得。第三章——敬請期待。':
-    'I woke in room 0412 with pages missing from my journal. The last page is in my own hand: "Don\'t trust Qing. Find Xiaoyue outside the gate." Xiaoyue says it remembers. Chapter Three — coming soon.',
+  '我醒在 0412 號房，日誌少了幾頁。最後一頁是我自己的字：「別相信晴。去城門外找嘯岳。」嘯岳說，牠記得。（第三章：到城門外請嘯岳撕開穹頂。）':
+    'I woke in room 0412 with pages missing from my journal. The last page is in my own hand: "Don\'t trust Qing. Find Xiaoyue outside the gate." Xiaoyue says it remembers. (Chapter Three: ask Xiaoyue outside the gate to tear the dome open.)',
   '第二章 完 · 穹頂之外': 'End of Chapter Two · Beyond the Dome',
   '我要知道真相。': 'I want to know the truth.',
   '「0412 號越權存取。啟動記憶調整程序。」': '"Unauthorised access by 0412. Starting memory adjustment."',
@@ -3657,8 +3657,8 @@ export default {
     'Xiaoyue leaps at the empty air outside the gate — and under its claws comes the sound of breaking glass.',
   '天空裂開一道縫。縫的另一邊，是那道紫色的裂縫，和真正的、比斯泰德的天空。':
     'The sky splits open. On the other side is the purple rift, and the real sky of Beastidal.',
-  '晴放走了我。嘯岳撕開了穹頂，縫的另一邊是紫色的裂縫和真正的天空。我不是轉生的——我是 0412 號載體。第三章——敬請期待。':
-    "Qing let me go. Xiaoyue tore the dome open; beyond the tear are the purple rift and the real sky. I wasn't reborn — I am carrier 0412. Chapter Three — coming soon.",
+  '晴放走了我。嘯岳撕開了穹頂，縫的另一邊是紫色的裂縫和真正的天空。我不是轉生的——我是 0412 號載體。（第三章：往南穿過穹頂的裂縫。）':
+    "Qing let me go. Xiaoyue tore the dome open; beyond the tear are the purple rift and the real sky. I wasn't reborn — I am carrier 0412. (Chapter Three: head south through the tear in the dome.)",
   '現在沒有要選擇的事。': "There's nothing to choose right now.",
   '你今天氣色很好，0412。昨晚睡得好嗎？': 'You look well today, 0412. Did you sleep well last night?',
   '{0} 不見了……公告板上有新的公告': "{0} is gone… there's a new notice on the board",
@@ -3671,6 +3671,9 @@ export default {
   讓我忘記: 'Let me forget',
   我要知道真相: 'I want the truth',
   '第三章——敬請期待': 'Chapter Three — coming soon',
+  '第三章：到城門外找嘯岳': 'Chapter Three: find Xiaoyue outside the gate',
+  '第三章：往南穿過穹頂的裂縫': 'Chapter Three: head south through the tear in the dome',
+  '裂縫更深處還有兩層': 'Two more layers lie deeper in the rift',
   '晴不在歡迎中心前。地上只留著她的太陽徽章。':
     "Qing isn't in front of the welcome centre. Only her sun badge lies on the ground.",
   管理區門禁卡: 'Admin block key card',
@@ -3741,8 +3744,8 @@ export default {
   '碎片只有一塊。要走過去，還不夠。裂縫還有更深的地方。': 'One shard is not enough to cross. The rift goes deeper.',
   '我握緊碎片。還來得及。': 'I grip the shard. There is still time.',
   '第三章（上）完 · 橋': 'End of Chapter Three, Part One · The Bridge',
-  '裂縫的核心讓我看見了病房：瘦下去的我，握著我的手睡著的媽媽。原體還活著。碎片只有一塊，裂縫還有更深的層。第三章（下）——敬請期待。':
-    "The rift's core showed me the hospital room: my wasted body, and Mom asleep holding my hand. My original body is alive. One shard isn't enough; the rift has deeper layers. Chapter Three, Part Two — coming soon.",
+  '裂縫的核心讓我看見了病房：瘦下去的我，握著我的手睡著的媽媽。原體還活著。碎片只有一塊，裂縫還有更深的層。':
+    "The rift's core showed me the hospital room: my wasted body, and Mom asleep holding my hand. My original body is alive. One shard isn't enough; the rift has deeper layers.",
   '研究員 K. 的前哨站': "Researcher K.'s outpost",
   '裂縫 · 第一層（核心）': 'The rift · first layer (core)',
   穹頂的裂口: 'The tear in the dome',
