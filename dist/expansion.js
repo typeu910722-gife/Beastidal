@@ -1,26 +1,26 @@
-import { phenotype, clamp } from './genetics.js?v=0.73.0';
-import { NODES, harvest } from './islands.js?v=0.73.0';
-import { restPlace } from './ship.js?v=0.73.0';
-import { dayOf } from './clock.js?v=0.73.0';
-import { remember, rememberFirst } from './memories.js?v=0.73.0';
-import { spend, give, stow } from './bag.js?v=0.73.0';
-import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.73.0';
-import { islandAt } from './islands.js?v=0.73.0';
-import { hasPerk } from './codex.js?v=0.73.0';
-import { tally } from './stats.js?v=0.73.0';
-import { rollDrops } from './species.js?v=0.73.0';
-import { bsOf, geneStats } from './bsgenes.js?v=0.73.0';
-import { WILD_BEASTS } from './beasts.js?v=0.73.0';
-import { hasGear, MASK_OXYGEN } from './gear.js?v=0.73.0';
-import { damageBonus } from './skills.js?v=0.73.0';
-import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.73.0';
-import { ITEM_NAMES } from './items.js?v=0.73.0';
-import { personality } from './beast-tree.js?v=0.73.0';
-import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT } from './story.js?v=0.73.0';
-import { findPart, partForSite } from './echoes.js?v=0.73.0';
+import { phenotype, clamp } from './genetics.js?v=0.74.0';
+import { NODES, harvest } from './islands.js?v=0.74.0';
+import { restPlace } from './ship.js?v=0.74.0';
+import { dayOf } from './clock.js?v=0.74.0';
+import { remember, rememberFirst } from './memories.js?v=0.74.0';
+import { spend, give, stow } from './bag.js?v=0.74.0';
+import { LANDMARKS, BOSS_HOME, landNear, mapPoint } from './lake.js?v=0.74.0';
+import { islandAt } from './islands.js?v=0.74.0';
+import { hasPerk } from './codex.js?v=0.74.0';
+import { tally } from './stats.js?v=0.74.0';
+import { rollDrops } from './species.js?v=0.74.0';
+import { bsOf, geneStats } from './bsgenes.js?v=0.74.0';
+import { WILD_BEASTS } from './beasts.js?v=0.74.0';
+import { hasGear, MASK_OXYGEN } from './gear.js?v=0.74.0';
+import { damageBonus } from './skills.js?v=0.74.0';
+import { oxygenShift, stormAt as skyStorm } from './weather.js?v=0.74.0';
+import { ITEM_NAMES } from './items.js?v=0.74.0';
+import { personality } from './beast-tree.js?v=0.74.0';
+import { storyExplore, onWatcherDown, SEAL_AT, TIDE_AT } from './story.js?v=0.74.0';
+import { findPart, partForSite } from './echoes.js?v=0.74.0';
 // The crystal cave is its own pocket of the world, far outside the basin — since 0.31 a corrupted garden maze
 // (cave-maze.js), with 嘯岳 asleep at its heart.
-import { CAVE, ENTRANCE, DEAD_ENDS, mazeWalkable } from './cave-maze.js?v=0.73.0';
+import { CAVE, ENTRANCE, DEAD_ENDS, mazeWalkable } from './cave-maze.js?v=0.74.0';
 export { CAVE };
 const inMaze = (x, z) => ({ x: CAVE.x + x, z: CAVE.z + z });
 const KEY_WALL = inMaze(DEAD_ENDS[0].x, DEAD_ENDS[0].z),
@@ -355,7 +355,7 @@ export function onBossDown(s, p) {
   b.defeated = true;
   e.boneNote = onWatcherDown(s);
   if (p) {
-    remember(s, p, '並肩擊退了深海守望者。');
+    remember(s, p, '並肩擊退了深海守望者。', true);
     p.bond = Math.min(100, p.bond + 6);
   }
   reward(s, { crystal: 12, metal: 15, food: 5 });
@@ -376,7 +376,7 @@ export function awaken(s, id) {
     return fail('先完成御獸石碑、晶窟封印、深海記憶與守望者挑戰。');
   if (!pay(s, { crystal: 12 })) return fail('契印覺醒需要 12 異晶。');
   p.awakened = true;
-  remember(s, p, '契印覺醒，身上亮起了環形靈光。');
+  remember(s, p, '契印覺醒，身上亮起了環形靈光。', true);
   return { ok: true, message: '契印覺醒：戰鬥傷害 +12，夥伴獲得環形靈光。幻獸之路的第一步。' };
 }
 export function tickExpansion(s, dt, safe = false) {

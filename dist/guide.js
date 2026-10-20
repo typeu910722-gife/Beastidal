@@ -128,6 +128,20 @@ export function monologue(s) {
       text: '（嘯岳答應帶我翻過群山了。把嘯岳派出來，走上環湖的山腳——不是島嶼——按 E 請牠帶我越過去。）'
     };
   // 0.73: the story goes on in the New World — on the lake, say how to get back to it
+  // 0.74: chapter four, part two — what you would leave is here, on the lake
+  if (s.chapter4?.manager && !s.inTown) {
+    const c = s.chapter4,
+      beasts = (s.tamed || []).filter(p => p.kind !== 'creature').length;
+    if ((c.talked || []).length < Math.min(3, beasts))
+      return { id: 'talk', text: '（牠們好像察覺到什麼了。打開選單 › 御獸倉庫，跟牠們好好說說話。）' };
+    const kinds = new Set(
+      (s.buildings || [])
+        .filter(b => !b.stowed && !b.ship && ['shelter', 'collector', 'beacon', 'pen', 'dock', 'desk'].includes(b.type))
+        .map(b => b.type)
+    );
+    if ((c.homeSeen || []).length < Math.min(3, kinds.size))
+      return { id: 'home', text: '（回到木筏上走一走。這裡的每一樣東西，都是我親手蓋的。）' };
+  }
   if ((s.story?.stage || 0) >= 6 && !s.inTown && s.town?.visited && !s.chapter4?.manager)
     return {
       id: 'newworld',

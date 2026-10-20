@@ -2227,6 +2227,65 @@ export default {
   '騎嘯岳翻過群山，回到新生之界': 'Ride Xiaoyue over the mountains back to the New World',
   '（新生之界那邊，還有事情沒做完。把嘯岳派出來，走上環湖的山腳，按 E 請牠帶我翻過群山。）':
     "(There's still unfinished business in the New World. Send out Xiaoyue, walk onto the lake's mountain foothills, and press E to ask it to carry me over.)",
+  'CHAPTER 04 · 牽絆': 'CHAPTER 04 · Ties',
+  '{0}靠了過來，把頭抵在你的手心。契約的另一頭，傳來牠的聲音。':
+    '{0} comes close and presses its head into your palm. From the other end of the contract comes its voice.',
+  '「……你要走的話，我就在這裡睡一下，等你。睡很久也沒關係。」':
+    '"…If you go, I\'ll just sleep here a while and wait for you. Even if it\'s a long time."',
+  '「……你還會帶我出去嗎？」': '"…Will you still take me out?"',
+  '「你今天看起來好累。……不管你決定什麼，都不是你的錯。」':
+    '"You look so tired today. …Whatever you decide, it isn\'t your fault."',
+  '「你去哪裡，我就去哪裡。……我去不了的話，我就在這裡等。」':
+    '"Wherever you go, I go. …And if I can\'t, I\'ll wait right here."',
+  '「你要去的地方，有我可以打的東西嗎？……沒有的話，你一個人，要小心。」':
+    '"Is there anything for me to fight where you\'re going? …If not, be careful on your own."',
+  '「外面很危險。你走的時候，我會一直看著那個方向。」':
+    '"It\'s dangerous out there. When you go, I\'ll keep watching that way."',
+  '「我們一起過了 {0} 天。」': '"We\'ve spent {0} days together."',
+  '「我們才剛認識一天。」': '"We only met a day ago."',
+  '「我把今天的魚留一條給你。……明天也會留。你會回來吃的，對吧？」':
+    '"I saved you a fish from today. …I\'ll save one tomorrow too. You\'ll come back to eat it, right?"',
+  '「我是第一個。在那張網子裡，你是第一個停下來的人。」':
+    '"I was the first. In that net, you were the first one who stopped."',
+  '「橋的另一邊，有什麼？……你回來的時候，要告訴我。」':
+    '"What\'s on the other side of the bridge? …Tell me when you come back."',
+  '「第 {0} 天。你還記得嗎？」': '"Day {0}. Do you remember?"',
+  '「誰要把你帶走？……告訴我，我去咬他。」': '"Who\'s taking you away? …Tell me, and I\'ll bite them."',
+  '「還有第 {0} 天。」': '"And day {0}."',
+  '下一步：回到木筏上，走一圈你的家。': 'Next: back on the raft, walk around your home.',
+  '下一步：回到木筏上，走近你親手蓋的設施': 'Next: back on the raft, walk up to the things you built',
+  '下一步：打開選單 › 御獸倉庫，選一隻夥伴，按「說說話」':
+    'Next: open Menu › Beast Storage, pick a companion and press "Talk"',
+  '你在這張書桌上拿起了隨身裝置。那時候，你還以為一切只是一場夢。':
+    'At this desk you picked up the handheld. Back then you still thought it was all a dream.',
+  '你在這裡蓋好了避難所。那天晚上，第一次睡得著。':
+    'Here you finished the shelter. That night, for the first time, you could sleep.',
+  你的家: 'Your home',
+  '你蓋好了停靠站。從這裡出發，回到這裡。': 'You built the dock. Set out from here, come back here.',
+  '你蓋好了第一座展示池。牠在池子裡轉了好幾圈，像是在說：這是我家。':
+    'You built the first display pool. It swam round and round, as if to say: this is my home.',
+  '你蓋好了集水器。第一口乾淨的水，比什麼都好喝。':
+    'You built the water collector. That first sip of clean water tasted better than anything.',
+  '你點亮了訊號塔。湖的另一邊，第一次有光回應你。':
+    'You lit the signal tower. For the first time, a light answered from across the lake.',
+  '回到木筏上，走一圈你的家（{0}/{1}）': 'Back on the raft, walk around your home ({0}/{1})',
+  '回到湖區，和夥伴們說說話（{0}/{1}）': 'Back at the lake, talk with your companions ({0}/{1})',
+  夥伴的話: 'What they said',
+  漂流漁網: 'drifting fishing net',
+  '牠一直看著你的臉。牠聽得懂——你可能要走了。': 'It keeps looking at your face. It understands: you might be leaving.',
+  '牠們都知道了。': 'They all know now.',
+  '牠現在是 Lv{0} 了。當初那麼小的一隻。': "It's Lv{0} now. It used to be so small.",
+  '牠蹭了蹭你，好像在問：你要去哪裡？': 'It nuzzles you, as if asking: where are you going?',
+  '牠還不太懂，你為什麼看起來這麼難過。牠把一片葉子推到你腳邊。':
+    "It doesn't quite understand why you look so sad. It nudges a leaf to your feet.",
+  '牽絆 · 第四章（下）待續': 'Ties · Chapter Four (Part Two) continues',
+  '第 {0} 天。{1}': 'Day {0}. {1}',
+  說說話: 'Talk',
+  '（這裡，是你親手蓋起來的家。）': '(This is the home you built with your own hands.)',
+  '（回到木筏上走一走。這裡的每一樣東西，都是我親手蓋的。）':
+    '(Walk around the raft. Everything here, I built myself.)',
+  '（牠們好像察覺到什麼了。打開選單 › 御獸倉庫，跟牠們好好說說話。）':
+    '(They seem to sense something. Open Menu › Beast Storage and have a proper talk with them.)',
   '在避難所時，上方的數字＝背包＋書桌倉庫。':
     'At the shelter, the numbers up top count the bag and the desk storage together.',
   '書桌倉庫：': 'Desk storage: ',

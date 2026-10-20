@@ -85,13 +85,16 @@ test('The terminal shows the second document and starts the seven days; the step
   const m = managerSpeaks(s);
   assert.ok(m.lines.some(([, l]) => l.includes('是誰的解脫')));
   assert.ok(managerSpeaks(s).again);
-  assert.equal(nextGoal(s), null);
-  const list = chapter4Objectives(s);
+  // 0.74: part two follows — back to the lake, to what you would leave
+  assert.ok(nextGoal(s) === null || nextGoal(s).name === '嘯岳 · 回到湖區');
+  const list = chapter4Objectives(s),
+    part1 = list.slice(0, list.findIndex(([t]) => t === '第四章（上）完 · 第二份文件') + 1);
+  // all of part one but the countdown done (part two's steps follow it)
   assert.ok(
-    list.every(([, done], i) => done || i === 1),
-    JSON.stringify(list)
-  ); // all but the countdown done
-  assert.equal(list[list.length - 1][0], '第四章（上）完 · 第二份文件');
+    part1.every(([, done], i) => done || i === 1),
+    JSON.stringify(part1)
+  );
+  assert.equal(part1[part1.length - 1][0], '第四章（上）完 · 第二份文件');
 });
 
 test('In the forget branch B-01 stands empty, waiting for 晴', () => {

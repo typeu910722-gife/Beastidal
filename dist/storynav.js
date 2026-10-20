@@ -10,8 +10,8 @@ import {
   BOARD,
   XIAOYUE_WAITS,
   lettersReady
-} from './town.js?v=0.73.0';
-import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.73.0';
+} from './town.js?v=0.74.0';
+import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.74.0';
 import {
   chapter3Objectives,
   normalizeChapter3,
@@ -22,11 +22,11 @@ import {
   RIFT,
   TEAR_AT,
   layerOpen
-} from './chapter3.js?v=0.73.0';
-import { isNight } from './clock.js?v=0.73.0';
-import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.73.0';
-import { riftStatus } from './rift-fight.js?v=0.73.0';
-import { chapter4Objectives, normalizeChapter4 } from './chapter4.js?v=0.73.0';
+} from './chapter3.js?v=0.74.0';
+import { isNight } from './clock.js?v=0.74.0';
+import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.74.0';
+import { riftStatus } from './rift-fight.js?v=0.74.0';
+import { chapter4Objectives, normalizeChapter4, inPartTwo, talksDone, homeDone } from './chapter4.js?v=0.74.0';
 
 const door = id => BUILDINGS.find(b => b.id === id).door;
 const at = (p, name, night = false) => ({ ...toWorld(p), name, night });
@@ -75,6 +75,9 @@ export function nextGoal(s) {
     if (!c4.stele) return at({ x: STELE.x, z: STELE.z + 1.8 }, '留言碑');
     if (!c4.tank) return at(door('admin'), '管理區 · 玻璃槽大廳');
     if (!c4.manager) return at(RIFT, '裂縫的核心 · 橋');
+    // 0.74 part two: what you would leave is on the lake — 嘯岳 takes you back
+    if (!talksDone(s) || !homeDone(s))
+      return at({ x: XIAOYUE_WAITS.x - 2.5, z: XIAOYUE_WAITS.z - 1 }, '嘯岳 · 回到湖區');
     return null;
   }
   if (!c3.cleared.includes(1) || !c3.vision || layerOpen(s, 2) || layerOpen(s, 3) || c3.cleared.includes(3))
@@ -100,19 +103,38 @@ export function storyPanel(s) {
     inThree = !inFour && three.length > 0;
   let list = inFour ? four : inThree ? three : two;
   // 0.73: back on the lake, the New World's chapter goes on — with the way back over the mountains first
-  const away = !s.inTown;
+  // (0.74: except in part two of chapter four, whose steps are on the lake)
+  const two4 = inFour && inPartTwo(s),
+    away = !s.inTown && !two4;
   if (away) list = [['騎嘯岳翻過群山，回到新生之界', false], ...list];
+  if (two4 && s.inTown && !(talksDone(s) && homeDone(s))) list = [['騎嘯岳回到湖區', false], ...list];
   const open = list.filter(([, d]) => !d);
-  const goal = away ? null : nextGoal(s);
+  const goal = away || (two4 && !s.inTown) ? null : nextGoal(s);
+  const lakeStep =
+    !two4 || s.inTown
+      ? ''
+      : !talksDone(s)
+        ? '下一步：打開選單 › 御獸倉庫，選一隻夥伴，按「說說話」'
+        : !homeDone(s)
+          ? '下一步：回到木筏上，走近你親手蓋的設施'
+          : '';
   return {
-    chapter: inFour ? 'CHAPTER 04 · 第二份文件' : inThree ? 'CHAPTER 03 · 裂縫之外' : 'CHAPTER 02 · 新生之界',
+    chapter: two4
+      ? 'CHAPTER 04 · 牽絆'
+      : inFour
+        ? 'CHAPTER 04 · 第二份文件'
+        : inThree
+          ? 'CHAPTER 03 · 裂縫之外'
+          : 'CHAPTER 02 · 新生之界',
     title: open.length ? open[0][0] : list.length ? list[list.length - 1][0] : '慈光港',
     quests: [...list.filter(([, d]) => d).slice(-1), ...open.slice(0, 2)],
     goal,
-    goalText: away
-      ? '下一步：派出嘯岳，走上環湖的山腳，按 E 翻山'
-      : goal
-        ? `下一步：${goal.name} · ${bearing(s, goal)} ${Math.round(Math.hypot(goal.x - s.player.x, goal.z - s.player.z))} m${goal.night && !isNight(s) ? '（夜裡）' : ''}`
-        : ''
+    goalText: lakeStep
+      ? lakeStep
+      : away
+        ? '下一步：派出嘯岳，走上環湖的山腳，按 E 翻山'
+        : goal
+          ? `下一步：${goal.name} · ${bearing(s, goal)} ${Math.round(Math.hypot(goal.x - s.player.x, goal.z - s.player.z))} m${goal.night && !isNight(s) ? '（夜裡）' : ''}`
+          : ''
   };
 }

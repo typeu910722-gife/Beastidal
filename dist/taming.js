@@ -6,16 +6,16 @@
 //     bound by trust; hostile ones must be worn down in a fight — the weaker, the better the odds — and stay
 //     modest even bound. A failed contract can send anything into a frenzy: 1.2× speed and bite, hunting you for
 //     10–20 seconds, and nothing frenzied can be repelled.
-import { phenotype, geneName, makeGenome } from './genetics.js?v=0.73.0';
-import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.73.0';
-import { spend, give } from './bag.js?v=0.73.0';
-import { remember } from './memories.js?v=0.73.0';
-import { nearFacility } from './fortress.js?v=0.73.0';
-import { hasPerk } from './codex.js?v=0.73.0';
-import { tally } from './stats.js?v=0.73.0';
-import { bsOf, canEvolve, EVOLVE_GENES, addRandomGene } from './bsgenes.js?v=0.73.0';
-import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.73.0';
-import { trustBonus } from './skills.js?v=0.73.0';
+import { phenotype, geneName, makeGenome } from './genetics.js?v=0.74.0';
+import { freePen, normalizeHousing, beastRoom, BEAST_CAPACITY } from './housing.js?v=0.74.0';
+import { spend, give } from './bag.js?v=0.74.0';
+import { remember } from './memories.js?v=0.74.0';
+import { nearFacility } from './fortress.js?v=0.74.0';
+import { hasPerk } from './codex.js?v=0.74.0';
+import { tally } from './stats.js?v=0.74.0';
+import { bsOf, canEvolve, EVOLVE_GENES, addRandomGene } from './bsgenes.js?v=0.74.0';
+import { WILD_BEASTS, beastChance, isWildBeast } from './beasts.js?v=0.74.0';
+import { trustBonus } from './skills.js?v=0.74.0';
 
 export const RARITY = ['常見', '少見', '稀有', '罕見', '傳說'];
 export const FRENZY = { power: 1.2, min: 10, max: 20, below: 60 };
@@ -172,7 +172,7 @@ export function bondFirstBeast(s, w, rng = Math.random, callOut = true) {
     level: 1,
     xp: 0
   });
-  remember(s, pet, '從漂流漁網裡被救出來，吃了你分的口糧，成了你的第一隻御獸。');
+  remember(s, pet, '從漂流漁網裡被救出來，吃了你分的口糧，成了你的第一隻御獸。', true);
   s.tamed.push(pet);
   s.wild = s.wild.filter(c => c !== w);
   s.expedition ??= {};
@@ -205,7 +205,7 @@ export function grantFirstBeast(s, rng = Math.random) {
       home.level ??= 1;
       home.xp ??= 0;
       home.team = teamOf(s).length < TEAM_SIZE;
-      remember(s, home, '當年從漁網裡救起的小傢伙，終於成了御獸。');
+      remember(s, home, '當年從漁網裡救起的小傢伙，終於成了御獸。', true);
     }
     return home;
   }
@@ -233,7 +233,7 @@ export function cageCreature(s, id) {
   if (!beastRoom(s)) return { ok: false, error: `御獸倉庫已滿（${BEAST_CAPACITY} 隻）。` };
   s.resources.cage--;
   const pet = makePet(s, w, 'creature');
-  remember(s, pet, `進了外出籠，跟你回到船上。信任度 ${Math.round(w.trust)}%。`);
+  remember(s, pet, `進了外出籠，跟你回到船上。信任度 ${Math.round(w.trust)}%。`, true);
   s.tamed.push(pet);
   s.wild = s.wild.filter(c => c !== w);
   tally(s, 'cage');
@@ -313,7 +313,7 @@ export function evolve(s, petId, rng = Math.random) {
     p.evolved = true;
     p.team = teamOf(s).length < TEAM_SIZE;
     p.penId = null; // beasts live on the 御獸艙 / in the contract, not in a display pen
-    remember(s, p, '契闊進化：契約書的光流進牠身上的每一道突變。牠不再只是生物了。');
+    remember(s, p, '契闊進化：契約書的光流進牠身上的每一道突變。牠不再只是生物了。', true);
     tally(s, 'evolve');
     return { ok: true, chance, message: `${p.name} 契闊進化成御獸了！` };
   }
