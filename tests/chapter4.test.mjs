@@ -85,6 +85,9 @@ test('The terminal shows the second document and starts the seven days; the step
   const m = managerSpeaks(s);
   assert.ok(m.lines.some(([, l]) => l.includes('是誰的解脫')));
   assert.ok(managerSpeaks(s).again);
+  // 0.77: the manager has them wait — the countdown is settled and no longer leads the panel
+  assert.deepEqual(chapter4Objectives(s)[1], ['原體維持終止 · 管理者讓他們等你', true]);
+  assert.ok(!/還有 \d+ 天/.test(storyPanel(s).title), storyPanel(s).title);
   // 0.74: part two follows — back to the lake, to what you would leave
   assert.ok(nextGoal(s) === null || nextGoal(s).name === '嘯岳 · 回到湖區');
   const list = chapter4Objectives(s),

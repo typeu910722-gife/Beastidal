@@ -109,10 +109,13 @@ test('Walking across: the ending, and an epilogue from the save — each beast a
   assert.ok(!choiceOpen(s));
   assert.equal(choose(s, 'stay').ok, false, 'chosen once');
   assert.equal(nextGoal(s), null);
-  assert.equal(storyPanel(s).chapter, '終章 · 橋的另一頭');
+  assert.equal(storyPanel(s).chapter, '終章 · 結局之後');
+  assert.equal(storyPanel(s).title, '結局 · 橋的另一頭');
+  assert.match(storyPanel(s).goalText, /想去哪裡/);
   assert.ok(s.log.some(l => l.title === '結局 · 橋的另一頭'));
   leaveTown(s);
   assert.notEqual(storyPanel(s).title, '騎嘯岳翻過群山，回到新生之界', 'no more way back once it has ended');
+  assert.equal(monologue(s).id, 'after');
 });
 
 test('Staying: Mum talks to the photo; the beasts stay by you', () => {
