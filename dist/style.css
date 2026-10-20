@@ -39,8 +39,10 @@ button:hover:not(:disabled) {
   background: #245360;
   border-color: #8cb8b4;
 }
+/* 0.66: the press is its own property, so it adds to a button's transform (centred buttons keep their
+   translateX(-50%) instead of jumping half their width out from under the finger) */
 button:active:not(:disabled) {
-  transform: translateY(1px);
+  translate: 0 1px;
 }
 button:disabled {
   opacity: 0.4;
@@ -2050,7 +2052,7 @@ kbd {
   pointer-events: auto;
 }
 #hud .map-expand:active:not(:disabled) {
-  transform: translateX(-50%) translateY(1px);
+  transform: translateX(-50%);
 }
 .landscape-play #hud .map-expand {
   width: 24px;

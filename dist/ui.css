@@ -1,0 +1,646 @@
+/* 0.66 UI pass. Loaded last, so it wins over the older sheets it corrects.
+   1. One stacking order for everything that floats over the game: earlier sheets each picked their own numbers, and
+      dialogs could open underneath the device or the beast storage (the game paused behind a screen you could not
+      see). From the bottom up: HUD < panels < map < discovery ribbons < dialogs < toasts < fades and films < loading
+      < splash < rotate-the-phone. */
+:root {
+  --z-hud: 10;
+  --z-panel: 30;
+  --z-device: 32;
+  --z-map: 34;
+  --z-ribbon: 70;
+  --z-modal: 80;
+  --z-toast: 90;
+  --z-fade: 110;
+  --z-film: 120;
+  --z-loading: 150;
+  --z-splash: 200;
+  --z-top: 300;
+}
+#drawer,
+.landscape-play #drawer,
+.focus-ui {
+  z-index: var(--z-panel);
+}
+body #drawer.device {
+  z-index: var(--z-device);
+}
+#bigmap,
+.landscape-play #bigmap {
+  z-index: var(--z-map);
+}
+#discovery,
+#app #discovery {
+  z-index: var(--z-ribbon);
+}
+#modal-shade,
+.landscape-play #modal-shade,
+body.talk-cam #modal-shade {
+  z-index: var(--z-modal);
+}
+#toasts {
+  z-index: var(--z-toast);
+}
+#achievement-pop {
+  z-index: var(--z-toast);
+  /* it sat exactly on the dock button (Q); now it rises from the right edge below the minimap */
+  bottom: auto;
+  top: 340px;
+}
+#focus-fade {
+  z-index: var(--z-fade);
+}
+#sleep-overlay {
+  z-index: calc(var(--z-fade) + 1);
+}
+#film-flash {
+  z-index: calc(var(--z-film) - 2);
+}
+#film-fade {
+  z-index: calc(var(--z-film) - 1);
+}
+#intro-overlay {
+  z-index: var(--z-film);
+}
+#load-screen {
+  z-index: var(--z-loading);
+}
+#splash {
+  z-index: var(--z-splash);
+}
+#rotate-screen {
+  z-index: var(--z-top);
+}
+
+/* 2. What to do next, always on screen: the current instruction sits under the quest list as a button (tap it to
+      hear the full line again). It used to vanish 11 seconds after the inner voice spoke it. */
+#hud .mission .next-step {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #eef4ea;
+  background: #0a2a33d9;
+  border: 1px solid #9ce8d14d;
+  border-left: 3px solid var(--mint, #9ce8d1);
+  border-radius: 8px;
+  cursor: pointer;
+}
+#hud .mission .next-step:hover {
+  background: #123d48e6;
+}
+#hud .mission .next-step b {
+  flex: none;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #062027;
+  background: var(--mint, #9ce8d1);
+}
+#hud .mission .next-step span {
+  font-style: normal;
+}
+#hud .mission .next-step:has(span:empty) {
+  display: none;
+}
+
+/* 3. While the mouse turns the camera (pointer lock) no HUD button can be clicked: say how to get the cursor back */
+#cursor-chip {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: 118px;
+  translate: -50% 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: #dfeee6;
+  background: #041a25b3;
+  border: 1px solid #9ce8d133;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#cursor-chip kbd {
+  padding: 0 5px;
+  border-radius: 4px;
+  border: 1px solid #9ce8d166;
+  font: 11px monospace;
+}
+.mouse-look #cursor-chip {
+  display: block;
+  animation: chip-fade 6s ease forwards;
+}
+@keyframes chip-fade {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.35;
+  }
+}
+
+/* 4. The main screens each have a labelled button in the bottom bar again: bag, beasts, journal, voyage, map
+      (beside build and the device). Narrower than the old two so the row still fits beside the hotbar. */
+#hud .bottom-hud .action-bar {
+  gap: 4px;
+}
+#hud .bottom-hud .action-bar button.quick {
+  width: 58px;
+}
+#hud .action-bar button {
+  position: relative;
+}
+#hud .action-bar button kbd {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  font-size: 9px;
+  opacity: 0.7;
+}
+@media (max-width: 1180px) {
+  #hud .bottom-hud .action-bar button.quick {
+    width: 48px;
+  }
+  #hud .bottom-hud .action-bar button.quick span:not(.tool-icon) {
+    font-size: 10px;
+  }
+}
+
+/* 5. Loading: a dark screen that is still working says so — a turning ring and what it is waiting for */
+#focus-fade.busy::before,
+#focus-fade.busy::after {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+}
+#focus-fade.busy::before {
+  content: '';
+  top: calc(50% - 34px);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid #9ce8d133;
+  border-top-color: #9ce8d1;
+  animation: ui-spin 0.9s linear infinite;
+}
+#focus-fade.busy::after {
+  content: attr(data-label);
+  top: calc(50% + 14px);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: #cfe6e0;
+  white-space: nowrap;
+}
+@keyframes ui-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+#load-screen .load-progress {
+  width: min(320px, 70vw);
+  height: 4px;
+  border-radius: 2px;
+  background: #264d54;
+  overflow: hidden;
+}
+#load-screen .load-progress i {
+  display: block;
+  width: 3%;
+  height: 100%;
+  background: linear-gradient(90deg, #6fcfb6, #9ce8d1);
+  box-shadow: 0 0 10px #9ce8d199;
+  transition: width 0.35s ease;
+}
+#load-screen #load-step {
+  margin-top: -14px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: #7fa9a4;
+}
+.ui-busy {
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  min-height: 240px;
+  color: #cfe6e0;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+}
+.ui-busy i {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid #9ce8d133;
+  border-top-color: #9ce8d1;
+  animation: ui-spin 0.9s linear infinite;
+}
+
+/* 6. Dialogs: a close button where one makes sense; the settings as a tabbed sheet */
+#modal {
+  position: relative;
+}
+#modal .modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  color: #cfe6e0;
+  background: #ffffff0d;
+  border: 1px solid #9ce8d133;
+}
+#modal .modal-close:hover {
+  background: #9ce8d122;
+}
+#modal.settings-modal {
+  width: 640px;
+  padding: 28px 30px 24px;
+}
+#modal.settings-modal #modal-title {
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+.settings.sheet .set-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  background: #0000002e;
+}
+.settings.sheet .set-tabs button {
+  flex: 1;
+  min-height: 36px;
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: #a9c9c2;
+  font-size: 14px;
+}
+.settings.sheet .set-tabs button.active {
+  color: #062027;
+  background: var(--mint, #9ce8d1);
+  font-weight: 700;
+}
+.settings.sheet .set-page {
+  min-height: 260px;
+}
+.settings.sheet .set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 2px;
+  border-bottom: 1px solid #9ce8d114;
+}
+.settings.sheet .set-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.settings.sheet .set-label span {
+  font-size: 15px;
+  color: #eef4ea;
+}
+.settings.sheet .set-label small {
+  font-size: 12px;
+  color: #8fb3ad;
+}
+.settings.sheet .set-control {
+  flex: none;
+  display: flex;
+  justify-content: flex-end;
+  max-width: 62%;
+}
+.settings.sheet .seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.settings.sheet .seg button {
+  min-height: 32px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.settings.sheet .seg button.active {
+  color: #062027;
+  background: var(--mint, #9ce8d1);
+  border-color: var(--mint, #9ce8d1);
+}
+/* sliders: a filled track and a round thumb */
+.settings.sheet .range {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.settings.sheet .range output {
+  width: 44px;
+  text-align: right;
+  font-size: 13px;
+  color: #cfe6e0;
+}
+.settings.sheet input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 200px;
+  height: 6px;
+  border-radius: 3px;
+  background: #264d54;
+  outline: none;
+}
+.settings.sheet input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--mint, #9ce8d1);
+  box-shadow: 0 0 0 4px #9ce8d133;
+  cursor: pointer;
+}
+.settings.sheet input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--mint, #9ce8d1);
+  cursor: pointer;
+}
+/* on/off switches */
+.settings.sheet .switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 26px;
+  cursor: pointer;
+}
+.settings.sheet .switch input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.settings.sheet .switch i {
+  position: absolute;
+  inset: 0;
+  border-radius: 13px;
+  background: #264d54;
+  transition: background 0.2s;
+  pointer-events: none;
+}
+.settings.sheet .switch i::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #cfe6e0;
+  transition: translate 0.2s;
+}
+.settings.sheet .switch input:checked + i {
+  background: var(--mint, #9ce8d1);
+}
+.settings.sheet .switch input:checked + i::after {
+  translate: 20px 0;
+  background: #062027;
+}
+.settings.sheet .switch input:focus-visible + i {
+  outline: 2px solid #f5efd4;
+  outline-offset: 2px;
+}
+/* the key list */
+.settings.sheet h3 {
+  margin: 14px 0 6px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--mint, #9ce8d1);
+}
+.settings.sheet dl.keys {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 14px;
+  margin: 0;
+}
+.settings.sheet dl.keys dt {
+  text-align: right;
+}
+.settings.sheet dl.keys kbd {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 5px;
+  border: 1px solid #9ce8d14d;
+  background: #00000033;
+  font: 12px monospace;
+  color: #eef4ea;
+}
+.settings.sheet dl.keys dd {
+  margin: 0;
+  font-size: 13px;
+  color: #cfe6e0;
+}
+.settings.sheet .about-row {
+  margin-bottom: 8px;
+}
+@media (max-width: 640px), (max-height: 520px) {
+  #modal.settings-modal {
+    padding: 18px 16px 14px;
+  }
+  .settings.sheet .set-page {
+    min-height: 0;
+  }
+  .settings.sheet .set-row {
+    padding: 8px 2px;
+  }
+  .settings.sheet input[type='range'] {
+    width: 130px;
+  }
+}
+
+/* the ☰ menu: an even grid of equal buttons instead of a ragged wrapped row; 繼續 spans the top */
+#modal.menu-modal #modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+#modal.menu-modal #modal-actions button {
+  width: 100%;
+  min-height: 44px;
+  white-space: normal;
+  flex: none;
+}
+#modal.menu-modal #modal-actions button.primary {
+  grid-column: 1 / -1;
+}
+#modal.menu-modal #modal-actions button:last-child {
+  grid-column: 1 / -1;
+  color: #f0b8a8;
+}
+
+/* 7. Choosing 電腦 or 手把 in the settings really takes the touch pad away (the media queries showed it on any
+      touch screen whatever the setting said) */
+body:not(.touch-device) #touch-controls {
+  display: none !important;
+}
+/* the discovery ribbon no longer lands on the header's resource bar */
+#discovery,
+#app #discovery {
+  top: 66px;
+}
+
+/* 8. Phones held sideways: the screen buttons fold behind 功能 (a grid that opens above it), and the next step
+      keeps to two lines */
+#hud .action-bar .more {
+  display: none;
+}
+.landscape-play #hud .bottom-hud .action-bar {
+  position: relative;
+  max-width: none;
+  width: auto;
+  overflow: visible;
+}
+.landscape-play #hud .action-bar .more {
+  display: flex;
+}
+.landscape-play #hud .action-bar button.quick {
+  display: none;
+}
+.landscape-play #hud .action-bar.open button.quick {
+  display: flex;
+}
+.landscape-play #hud .action-bar.open {
+  z-index: 5;
+}
+.landscape-play #hud .action-bar.open::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  width: 176px;
+  height: 108px;
+  border-radius: 10px;
+  background: #06222df2;
+  border: 1px solid #9ce8d14d;
+  box-shadow: 0 10px 30px #0008;
+}
+/* the five open buttons sit in the panel above: two rows of three (the last cell empty) */
+.landscape-play #hud .action-bar.open button.quick {
+  position: absolute;
+  width: 52px;
+  height: 46px;
+  min-height: 46px;
+  bottom: calc(100% + 60px);
+}
+.landscape-play #hud .action-bar.open #bag-tool {
+  right: 120px;
+}
+.landscape-play #hud .action-bar.open #beasts-tool {
+  right: 62px;
+}
+.landscape-play #hud .action-bar.open #journal-tool {
+  right: 4px;
+}
+.landscape-play #hud .action-bar.open #adventure-btn {
+  right: 120px;
+  bottom: calc(100% + 10px);
+}
+.landscape-play #hud .action-bar.open #map-tool {
+  right: 62px;
+  bottom: calc(100% + 10px);
+}
+.landscape-play #hud .action-bar .more[aria-expanded='true'] {
+  border-color: var(--mint, #9ce8d1);
+  background: #1a4149;
+}
+.landscape-play #hud .mission .next-step {
+  margin-top: 4px;
+  padding: 4px 7px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.landscape-play #hud .mission .next-step span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* the bottom row was capped to a width that cut the action buttons off the end */
+.landscape-play #hud .bottom-hud {
+  max-width: none;
+  overflow: visible;
+}
+/* the settings on a short screen: a compact head, tabs and 完成 always in view, only the page scrolls */
+@media (max-height: 520px) {
+  #modal.settings-modal {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 16px);
+    overflow: hidden;
+    padding: 10px 14px;
+  }
+  #modal.settings-modal #modal-eyebrow {
+    display: none;
+  }
+  #modal.settings-modal #modal-title {
+    font-size: 16px;
+    margin: 0 0 6px;
+  }
+  #modal.settings-modal .modal-close {
+    top: 6px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    min-height: 30px;
+  }
+  #modal.settings-modal #modal-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .settings.sheet {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+  }
+  .settings.sheet .set-tabs {
+    margin-bottom: 4px;
+  }
+  .settings.sheet .set-tabs button {
+    min-height: 28px;
+    padding: 3px;
+    font-size: 12px;
+  }
+  .settings.sheet .set-page {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  #modal.settings-modal #modal-actions {
+    margin-top: 6px;
+  }
+  #modal.settings-modal #modal-actions button {
+    min-height: 34px;
+    padding: 4px;
+  }
+}

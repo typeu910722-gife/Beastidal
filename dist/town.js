@@ -1,9 +1,9 @@
 // 0.47 抵達新生之界: 慈光港, the first town past the mountains. Chapter two, part one.
 // Everything here is free and gentle, and the town is full of signs of life — but the only person you ever see is
 // the guide. The rules of the town live here; town-models.js draws it, game.js wires it up. See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.65.0';
-import { give } from './bag.js?v=0.65.0';
-import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.65.0';
+import { dayOf, isNight } from './clock.js?v=0.66.0';
+import { give } from './bag.js?v=0.66.0';
+import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.66.0';
 export { TOWN, toWorld };
 
 // The town sits in its own corner of the world, like the garden maze and the cabin, in the open country under the
