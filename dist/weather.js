@@ -3,8 +3,8 @@
 // fixed by the save's seed, so a reload never changes the sky. Thunderstorms are the storms the lake has always
 // had: dangerous at sea, with a warning before they break. Seasons and weather tint the world and lean on
 // fishing, spawns, harvests, gardens and dives.
-import { dayOf, DAY } from './clock.js?v=0.67.0';
-import { seeded } from './genetics.js?v=0.67.0';
+import { dayOf, DAY } from './clock.js?v=0.68.0';
+import { seeded } from './genetics.js?v=0.68.0';
 
 export const SEASON_DAYS = 4;
 export const SEASONS = {
