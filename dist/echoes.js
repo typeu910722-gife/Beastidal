@@ -4,7 +4,7 @@
 // Two kinds of clue leak through:
 //   · echoes — voices from the hospital room where his original body is kept alive, heard in sleep;
 //   · the laptop — once its three parts are found, it recovers data that should not exist on a dead man's laptop.
-import { dayOf } from './clock.js?v=0.68.0';
+import { dayOf } from './clock.js?v=0.69.0';
 
 // Each echo unlocks with progress and is heard the next time you sleep: one per night, the earliest unlocked one.
 export const ECHOES = [

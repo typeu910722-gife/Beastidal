@@ -14,9 +14,10 @@ import {
   DEER,
   birdAt,
   deerAt
-} from './dome.js?v=0.68.0';
-import { grainTexture } from './realism.js?v=0.68.0';
-import { OUTPOST, RIFT, TEAR_AT } from './chapter3.js?v=0.68.0';
+} from './dome.js?v=0.69.0';
+import { grainTexture } from './realism.js?v=0.69.0';
+import { OUTPOST, RIFT, TEAR_AT } from './chapter3.js?v=0.69.0';
+import { WALL } from './town.js?v=0.69.0';
 import { mergeGeometries } from './vendor/addons/utils/BufferGeometryUtils.js';
 
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.9, ...extra });
@@ -37,7 +38,10 @@ function terrain() {
     const x = pos.getX(i),
       z = pos.getZ(i),
       h = domeHeight(x, z);
-    pos.setY(i, h);
+    // 0.69: under the town's paving and the road out of the gate the meadow drops 0.9 m out of sight. Level with the
+    // paving it showed through it near the camera (a green or black band across the bottom of the screen).
+    const under = (Math.abs(x) <= WALL && Math.abs(z) <= WALL) || (Math.abs(x) < 7.5 && z > 0 && z <= WALL + 89);
+    pos.setY(i, under ? Math.min(h, -0.9) : h);
     const n = 0.5 + 0.5 * Math.sin(x * 0.11 + Math.sin(z * 0.07) * 2) * Math.cos(z * 0.09);
     c.copy(grass)
       .lerp(dry, Math.max(0, Math.min(1, (h - 3) / 6)) * 0.6)

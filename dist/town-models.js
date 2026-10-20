@@ -2,11 +2,11 @@
 // meal still steaming — and nobody. At the plaza's heart 慈愛組織's statue: two open hands holding up a sun.
 // Layout and rules: town.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT, LAMPS } from './town.js?v=0.68.0';
-import { grainTexture } from './realism.js?v=0.68.0';
-import { tr } from './i18n.js?v=0.68.0';
-import { dressWithProp } from './props.js?v=0.68.0';
-import { surface } from './surfaces.js?v=0.68.0';
+import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT, LAMPS } from './town.js?v=0.69.0';
+import { grainTexture } from './realism.js?v=0.69.0';
+import { tr } from './i18n.js?v=0.69.0';
+import { dressWithProp } from './props.js?v=0.69.0';
+import { surface } from './surfaces.js?v=0.69.0';
 
 let seed = 412;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -61,11 +61,13 @@ export function makeTown() {
   // paving inside the walls, and the road out of the gate
   // 0.65: laid in stone setts (surfaces.js), the plane turned in its geometry so the pattern lies flat
   const paving = surface(mat(0xc4bdae, { roughness: 0.95 }), 'stone', { blocks: true, clean: true });
-  const floor = new T.Mesh(new T.PlaneGeometry(WALL * 2, WALL * 2).rotateX(-Math.PI / 2), paving);
+  // 0.69: in tiles of a few metres, not two huge triangles. Triangles reaching far behind the camera clip badly
+  // (the road under your feet vanished, leaving a band of meadow or black across the bottom of the screen).
+  const floor = new T.Mesh(new T.PlaneGeometry(WALL * 2, WALL * 2, 23, 23).rotateX(-Math.PI / 2), paving);
   floor.position.y = 0.02;
   floor.receiveShadow = true;
   g.add(floor);
-  const road = new T.Mesh(new T.PlaneGeometry(14, 90), mat(0x9c8f74, { roughness: 1, bumpMap: grain }));
+  const road = new T.Mesh(new T.PlaneGeometry(14, 90, 4, 24), mat(0x9c8f74, { roughness: 1, bumpMap: grain }));
   road.rotation.x = -Math.PI / 2;
   road.position.set(0, 0.03, WALL + 44);
   road.receiveShadow = true;

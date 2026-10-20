@@ -1,46 +1,60 @@
-import { expansionModels } from './expansion-models.js?v=0.68.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.68.0';
-import { normalizeHousing, penId } from './housing.js?v=0.68.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.68.0';
-export { makeCreature } from './creatures.js?v=0.68.0';
-import { makeIslands } from './island-models.js?v=0.68.0';
-import { facilityId } from './facilities.js?v=0.68.0';
+import { expansionModels } from './expansion-models.js?v=0.69.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.69.0';
+import { normalizeHousing, penId } from './housing.js?v=0.69.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.69.0';
+export { makeCreature } from './creatures.js?v=0.69.0';
+import { makeIslands } from './island-models.js?v=0.69.0';
+import { facilityId } from './facilities.js?v=0.69.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.68.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.68.0';
-import { surface } from './surfaces.js?v=0.68.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.68.0';
-import { makeLake } from './lake-models.js?v=0.68.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.68.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.68.0';
-import { makeStatues } from './statues.js?v=0.68.0';
-import { animateGarden } from './garden-models.js?v=0.68.0';
-import { ViewModel } from './viewmodel.js?v=0.68.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.68.0';
-import { makeTown, animateTown, dressTown, GUIDE_WORLD } from './town-models.js?v=0.68.0';
-import { bakeStatic } from './bake.js?v=0.68.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.68.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.68.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.68.0';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.68.0';
-import { PostFX } from './postfx.js?v=0.68.0';
-import { makeHuman, animateHuman } from './human.js?v=0.68.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.68.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.68.0';
-import { buildError } from './rules.js?v=0.68.0';
-import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.68.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.68.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.68.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.68.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.68.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.68.0';
-import { CombatFX } from './combat-fx.js?v=0.68.0';
-import { dressWithProp } from './props.js?v=0.68.0';
-import { syncPlots } from './land-models.js?v=0.68.0';
-import { plotTargets } from './reclaim.js?v=0.68.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.68.0';
-import { dayPhase } from './clock.js?v=0.68.0';
-import { weatherAt, season } from './weather.js?v=0.68.0';
+import { phenotype, seeded } from './genetics.js?v=0.69.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.69.0';
+import { surface } from './surfaces.js?v=0.69.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.69.0';
+
+// 0.69: three's bump mapping normalises the screen-space derivative of the surface position; where that derivative
+// comes out as zero (low-precision GPUs, far-from-origin coordinates such as 慈光港 at x 3000) the normal is NaN,
+// the pixel renders black, and the bloom and depth-of-field passes smear it over half the screen. Fall back to the
+// unperturbed normal instead.
+T.ShaderChunk.bumpmap_pars_fragment = T.ShaderChunk.bumpmap_pars_fragment
+  .replace(
+    'vec3 vSigmaX = normalize( dFdx( surf_pos.xyz ) );\n\t\tvec3 vSigmaY = normalize( dFdy( surf_pos.xyz ) );',
+    'vec3 dPx = dFdx( surf_pos.xyz ), dPy = dFdy( surf_pos.xyz );\n\t\tif ( dot( dPx, dPx ) < 1e-14 || dot( dPy, dPy ) < 1e-14 ) return surf_norm;\n\t\tvec3 vSigmaX = normalize( dPx );\n\t\tvec3 vSigmaY = normalize( dPy );'
+  )
+  .replace(
+    'return normalize( abs( fDet ) * surf_norm - vGrad );',
+    'vec3 bumped = abs( fDet ) * surf_norm - vGrad;\n\t\treturn dot( bumped, bumped ) > 1e-10 ? normalize( bumped ) : surf_norm;'
+  );
+import { makeLake } from './lake-models.js?v=0.69.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.69.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.69.0';
+import { makeStatues } from './statues.js?v=0.69.0';
+import { animateGarden } from './garden-models.js?v=0.69.0';
+import { ViewModel } from './viewmodel.js?v=0.69.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.69.0';
+import { makeTown, animateTown, dressTown, GUIDE_WORLD } from './town-models.js?v=0.69.0';
+import { bakeStatic } from './bake.js?v=0.69.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.69.0';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.69.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.69.0';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.69.0';
+import { PostFX } from './postfx.js?v=0.69.0';
+import { makeHuman, animateHuman } from './human.js?v=0.69.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.69.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.69.0';
+import { buildError } from './rules.js?v=0.69.0';
+import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.69.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.69.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.69.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.69.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.69.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.69.0';
+import { CombatFX } from './combat-fx.js?v=0.69.0';
+import { dressWithProp } from './props.js?v=0.69.0';
+import { syncPlots } from './land-models.js?v=0.69.0';
+import { plotTargets } from './reclaim.js?v=0.69.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.69.0';
+import { dayPhase } from './clock.js?v=0.69.0';
+import { weatherAt, season } from './weather.js?v=0.69.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -2496,6 +2510,36 @@ export class OceanWorld {
       }
     }
     for (const e of this.eyeBoxes) e.o.visible = !e.bb.containsPoint(eye);
+    // 0.69: a creature the camera has pushed into (drifting up to a stranded beast, one walking through you) is
+    // hidden while the eye is inside it, instead of filling the screen with its insides; the one you ride is not
+    const st = this.lastState,
+      ridden = st?.expedition?.mounted ? st.expedition.activeId : null;
+    for (const [map, pets] of [
+      [this.wildMeshes, false],
+      [this.petMeshes, true]
+    ])
+      for (const [id, m] of map) {
+        if (m.userData.eyeHid) {
+          m.visible = true;
+          m.userData.eyeHid = false;
+        }
+        if (!m.visible || (pets && id === ridden)) continue;
+        if (m.userData.eyeR == null) {
+          const b = new T.Box3().setFromObject(m);
+          if (b.isEmpty()) continue;
+          const k = m.scale.x || 1;
+          m.userData.eyeR = b.getSize(new V()).length() / 2 / k;
+          m.userData.eyeCy = ((b.min.y + b.max.y) / 2 - m.position.y) / k;
+        }
+        const k = m.scale.x || 1;
+        if (
+          Math.hypot(eye.x - m.position.x, eye.y - (m.position.y + m.userData.eyeCy * k), eye.z - m.position.z) <
+          m.userData.eyeR * k * 0.8
+        ) {
+          m.visible = false;
+          m.userData.eyeHid = true;
+        }
+      }
   }
   facilityGroups() {
     return [...this.home.children, ...this.fortress.children];
