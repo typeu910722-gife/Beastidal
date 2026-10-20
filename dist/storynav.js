@@ -10,8 +10,8 @@ import {
   BOARD,
   XIAOYUE_WAITS,
   lettersReady
-} from './town.js?v=0.70.0';
-import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.70.0';
+} from './town.js?v=0.71.0';
+import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.71.0';
 import {
   chapter3Objectives,
   normalizeChapter3,
@@ -22,14 +22,33 @@ import {
   RIFT,
   TEAR_AT,
   layerOpen
-} from './chapter3.js?v=0.70.0';
-import { isNight } from './clock.js?v=0.70.0';
+} from './chapter3.js?v=0.71.0';
+import { isNight } from './clock.js?v=0.71.0';
+import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.71.0';
 
 const door = id => BUILDINGS.find(b => b.id === id).door;
 const at = (p, name, night = false) => ({ ...toWorld(p), name, night });
 // The one place the story wants you at now (world coordinates), or null.
+// 0.71: inside a room, the next thing in it the story wants you at
+function insideGoal(s) {
+  const room = s.town.inside,
+    stage = normalizeChapter2(s).stage,
+    pt = id => {
+      const q = INTERIORS[room].points.find(p => p.id === id);
+      return { ...interiorWorld(room, q), name: q.name, night: false };
+    };
+  if (room === 'admin' && stage === 4) {
+    if (adminReady(s)) return { ...interiorWorld('admin', QING_AT), name: '晴', night: false };
+    const seen = s.town.insideSeen?.admin || [];
+    const next = ['screens', 'terminal-a', 'terminal-b', 'tanks', 'terminal-c'].find(id => !seen.includes(id));
+    return next ? pt(next) : null;
+  }
+  if (room === 'diner' && stage === 2) return { ...pt('table'), night: true };
+  return pt('door');
+}
 export function nextGoal(s) {
   const t = s.town || {};
+  if (t.inside && INTERIORS[t.inside]) return insideGoal(s);
   if (!t.met && !guideGone(s)) return at(GUIDE_AT, '引路人 · 晴');
   if (!t.room) return at(door('apartment'), '居民公寓');
   if (!t.rations) return at(door('ration'), '配給站');
