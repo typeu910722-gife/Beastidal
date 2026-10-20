@@ -2,12 +2,13 @@
 // a pocket of its own, built 30 m under its building (the town's buildings are solid from outside), entered and left
 // through the building's door. While you are inside, `s.town.inside` names the room: walking, the ground, the camera,
 // the light and what you can use all follow it. Pure: reads and changes the state; interior-models.js draws it.
-import { isNight, dayOf } from './clock.js?v=0.75.0';
-import { give } from './bag.js?v=0.75.0';
-import { toWorld, toLocal } from './dome.js?v=0.75.0';
-import { BUILDINGS } from './town.js?v=0.75.0';
-import { normalizeChapter2, ADMIN_SCENES } from './chapter2.js?v=0.75.0';
-import { seeTankB01 } from './chapter4.js?v=0.75.0';
+import { isNight, dayOf } from './clock.js?v=0.76.0';
+import { give } from './bag.js?v=0.76.0';
+import { toWorld, toLocal } from './dome.js?v=0.76.0';
+import { BUILDINGS } from './town.js?v=0.76.0';
+import { normalizeChapter2, ADMIN_SCENES } from './chapter2.js?v=0.76.0';
+import { seeTankB01 } from './chapter4.js?v=0.76.0';
+import { doThird } from './endings.js?v=0.76.0';
 
 export const INTERIOR_Y = -30;
 // Rooms in coordinates local to the building's centre: walkable rectangles (`rects`), the ceiling height, where you
@@ -293,6 +294,9 @@ export function useInterior(s, pointId) {
   if (first) seen.push(id);
   if (room === 'admin') {
     if (id === 'tank-b01') {
+      // 0.76: on the third way, K.'s master code opens B-01
+      const t = doThird(s, 'qing');
+      if (t) return { ok: true, lines: t.lines, third: t.step };
       const r = seeTankB01(s);
       return r ? { ok: true, lines: r.lines, chapter4: r.first } : { ok: false, error: '這裡什麼也沒有。' };
     }

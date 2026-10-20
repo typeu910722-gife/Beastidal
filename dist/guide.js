@@ -145,6 +145,12 @@ export function monologue(s) {
     if (!c.xiaoyue) return { id: 'xiaoyue', text: '（嘯岳一直趴在湖邊，看著遠方。去御獸倉庫，跟牠說說話吧。）' };
     if (!c.lastDay) return { id: 'lastnight', text: '（天快黑了。回避難所睡一覺吧。）' };
     if (!c.lastDone) return { id: 'lastday', text: '（今天是最後一天。我想把這裡的一切，都再看一次。）' };
+    // 0.76: then back over the mountains, to the bridge
+    if (!c.ending)
+      return {
+        id: 'choose',
+        text: '（最後一天過完了。該回去了——把嘯岳派出來，走上環湖的山腳，按 E 翻過群山，到橋那裡。）'
+      };
   }
   if ((s.story?.stage || 0) >= 6 && !s.inTown && s.town?.visited && !s.chapter4?.manager)
     return {
