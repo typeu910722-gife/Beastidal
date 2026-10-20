@@ -10,8 +10,8 @@ import {
   BOARD,
   XIAOYUE_WAITS,
   lettersReady
-} from './town.js?v=0.72.0';
-import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.72.0';
+} from './town.js?v=0.73.0';
+import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.73.0';
 import {
   chapter3Objectives,
   normalizeChapter3,
@@ -22,10 +22,11 @@ import {
   RIFT,
   TEAR_AT,
   layerOpen
-} from './chapter3.js?v=0.72.0';
-import { isNight } from './clock.js?v=0.72.0';
-import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.72.0';
-import { riftStatus } from './rift-fight.js?v=0.72.0';
+} from './chapter3.js?v=0.73.0';
+import { isNight } from './clock.js?v=0.73.0';
+import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.73.0';
+import { riftStatus } from './rift-fight.js?v=0.73.0';
+import { chapter4Objectives, normalizeChapter4 } from './chapter4.js?v=0.73.0';
 
 const door = id => BUILDINGS.find(b => b.id === id).door;
 const at = (p, name, night = false) => ({ ...toWorld(p), name, night });
@@ -38,6 +39,7 @@ function insideGoal(s) {
       const q = INTERIORS[room].points.find(p => p.id === id);
       return { ...interiorWorld(room, q), name: q.name, night: false };
     };
+  if (room === 'admin' && s.chapter4?.terminal && !s.chapter4.tank) return pt('tank-b01');
   if (room === 'admin' && stage === 4) {
     if (adminReady(s)) return { ...interiorWorld('admin', QING_AT), name: '晴', night: false };
     const seen = s.town.insideSeen?.admin || [];
@@ -66,7 +68,15 @@ export function nextGoal(s) {
   if (!c3.outside) return at(TEAR_AT, '穹頂的裂口');
   if (c3.logs < K_LOGS.length) return at(OUTPOST, '研究員 K. 的前哨站');
   if (c3.qing && s.chapter2?.choice === 'forget' && !c3.qingTalk) return at(GUIDE_AT, '引路人 · 晴');
-  if (c3.bridge) return null;
+  if (c3.bridge) {
+    // 0.73: chapter four — K.'s terminal, the stele, the tanks, back to the bridge
+    const c4 = normalizeChapter4(s);
+    if (!c4.terminal) return at(OUTPOST, '研究員 K. 的前哨站 · 終端機');
+    if (!c4.stele) return at({ x: STELE.x, z: STELE.z + 1.8 }, '留言碑');
+    if (!c4.tank) return at(door('admin'), '管理區 · 玻璃槽大廳');
+    if (!c4.manager) return at(RIFT, '裂縫的核心 · 橋');
+    return null;
+  }
   if (!c3.cleared.includes(1) || !c3.vision || layerOpen(s, 2) || layerOpen(s, 3) || c3.cleared.includes(3))
     return at(RIFT, '裂縫');
   return null;
@@ -83,19 +93,26 @@ export function storyPanel(s) {
   const rs = riftStatus(s);
   if (rs)
     return { chapter: 'CHAPTER 03 · 裂縫之外', title: rs.title, quests: [[rs.text, false]], goal: null, goalText: '' };
-  const three = chapter3Objectives(s),
+  const four = chapter4Objectives(s),
+    three = chapter3Objectives(s),
     two = [...townObjectives(s), ...chapter2Objectives(s)];
-  const inThree = three.length > 0;
-  const list = inThree ? three : two;
+  const inFour = four.length > 0,
+    inThree = !inFour && three.length > 0;
+  let list = inFour ? four : inThree ? three : two;
+  // 0.73: back on the lake, the New World's chapter goes on — with the way back over the mountains first
+  const away = !s.inTown;
+  if (away) list = [['騎嘯岳翻過群山，回到新生之界', false], ...list];
   const open = list.filter(([, d]) => !d);
-  const goal = nextGoal(s);
+  const goal = away ? null : nextGoal(s);
   return {
-    chapter: inThree ? 'CHAPTER 03 · 裂縫之外' : 'CHAPTER 02 · 新生之界',
+    chapter: inFour ? 'CHAPTER 04 · 第二份文件' : inThree ? 'CHAPTER 03 · 裂縫之外' : 'CHAPTER 02 · 新生之界',
     title: open.length ? open[0][0] : list.length ? list[list.length - 1][0] : '慈光港',
     quests: [...list.filter(([, d]) => d).slice(-1), ...open.slice(0, 2)],
     goal,
-    goalText: goal
-      ? `下一步：${goal.name} · ${bearing(s, goal)} ${Math.round(Math.hypot(goal.x - s.player.x, goal.z - s.player.z))} m${goal.night && !isNight(s) ? '（夜裡）' : ''}`
-      : ''
+    goalText: away
+      ? '下一步：派出嘯岳，走上環湖的山腳，按 E 翻山'
+      : goal
+        ? `下一步：${goal.name} · ${bearing(s, goal)} ${Math.round(Math.hypot(goal.x - s.player.x, goal.z - s.player.z))} m${goal.night && !isNight(s) ? '（夜裡）' : ''}`
+        : ''
   };
 }

@@ -2,10 +2,10 @@
 // foes on the wasteland around it, and you and your beast fight them with the lake's combat (combat.js): your beast's
 // strikes and skills, dodging, its health. Clear the three waves and the trial is won (chapter3.js finishTrial gives
 // the same rewards and story as before); your beast falling, or walking away from the rift, ends it. Pure.
-import { makeGenome } from './genetics.js?v=0.72.0';
-import { LAYERS, layerOpen, normalizeChapter3, finishTrial, K_LOGS, RIFT } from './chapter3.js?v=0.72.0';
-import { activeBeast, allyPower, normalizeLevel } from './combat.js?v=0.72.0';
-import { toWorld } from './dome.js?v=0.72.0';
+import { makeGenome } from './genetics.js?v=0.73.0';
+import { LAYERS, layerOpen, normalizeChapter3, finishTrial, K_LOGS, RIFT } from './chapter3.js?v=0.73.0';
+import { activeBeast, allyPower, normalizeLevel } from './combat.js?v=0.73.0';
+import { toWorld } from './dome.js?v=0.73.0';
 
 export const ARENA_R = 30; // walk farther than this from the rift and you have left the fight
 // how each of the rift's things looks and moves (a land body, tinted to crystal) and how tough it is

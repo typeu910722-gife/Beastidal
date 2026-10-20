@@ -127,6 +127,12 @@ export function monologue(s) {
       id: 'cross',
       text: '（嘯岳答應帶我翻過群山了。把嘯岳派出來，走上環湖的山腳——不是島嶼——按 E 請牠帶我越過去。）'
     };
+  // 0.73: the story goes on in the New World — on the lake, say how to get back to it
+  if ((s.story?.stage || 0) >= 6 && !s.inTown && s.town?.visited && !s.chapter4?.manager)
+    return {
+      id: 'newworld',
+      text: '（新生之界那邊，還有事情沒做完。把嘯岳派出來，走上環湖的山腳，按 E 請牠帶我翻過群山。）'
+    };
   const start = s.ship
     ? 'helm'
     : s.shipFusion

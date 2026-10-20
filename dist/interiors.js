@@ -2,11 +2,12 @@
 // a pocket of its own, built 30 m under its building (the town's buildings are solid from outside), entered and left
 // through the building's door. While you are inside, `s.town.inside` names the room: walking, the ground, the camera,
 // the light and what you can use all follow it. Pure: reads and changes the state; interior-models.js draws it.
-import { isNight, dayOf } from './clock.js?v=0.72.0';
-import { give } from './bag.js?v=0.72.0';
-import { toWorld, toLocal } from './dome.js?v=0.72.0';
-import { BUILDINGS } from './town.js?v=0.72.0';
-import { normalizeChapter2, ADMIN_SCENES } from './chapter2.js?v=0.72.0';
+import { isNight, dayOf } from './clock.js?v=0.73.0';
+import { give } from './bag.js?v=0.73.0';
+import { toWorld, toLocal } from './dome.js?v=0.73.0';
+import { BUILDINGS } from './town.js?v=0.73.0';
+import { normalizeChapter2, ADMIN_SCENES } from './chapter2.js?v=0.73.0';
+import { seeTankB01 } from './chapter4.js?v=0.73.0';
 
 export const INTERIOR_Y = -30;
 // Rooms in coordinates local to the building's centre: walkable rectangles (`rects`), the ceiling height, where you
@@ -134,6 +135,8 @@ export const INTERIORS = {
         hint: ['走廊邊的終端機 · 按 E 讀', '讀']
       },
       { id: 'tanks', name: '玻璃槽', x: 0, z: -19, hint: ['淡綠色的液體 · 按 E 走近', '走近'] },
+      // 0.73: chapter four — the tank at the far left, once K.'s master code has opened the door again
+      { id: 'tank-b01', name: '玻璃槽 B-01', x: -6, z: -17, needs: 'master', hint: ['最左邊的槽 · 按 E 走近', '走近'] },
       {
         id: 'terminal-c',
         name: '終端機 · 伴生體計畫',
@@ -254,12 +257,16 @@ export function leaveInterior(s) {
 export function interiorPoints(s) {
   const def = interiorOf(s);
   if (!def) return [];
-  const pts = def.points.map(q => ({ id: 'i:' + q.id, name: q.name, ...interiorWorld(s.town.inside, q) }));
-  if (s.town.inside === 'admin' && adminReady(s))
+  const pts = def.points
+    .filter(q => q.needs !== 'master' || !!s.chapter4?.terminal)
+    .map(q => ({ id: 'i:' + q.id, name: q.name, ...interiorWorld(s.town.inside, q) }));
+  if (s.town.inside === 'admin' && qingWaits(s))
     pts.push({ id: 'i:qing', name: '晴', ...interiorWorld('admin', QING_AT) });
   return pts;
 }
 export const QING_AT = { x: 0, z: -6 };
+// she waits only on the night of chapter two's choice
+export const qingWaits = s => (s.chapter2?.stage || 0) === 4 && adminReady(s);
 export const interiorHint = (s, id) => {
   if (id === 'i:qing') return ['她站在走廊上 · 按 E', '面對她'];
   return interiorOf(s)?.points.find(q => 'i:' + q.id === id)?.hint;
@@ -285,8 +292,12 @@ export function useInterior(s, pointId) {
     first = !seen.includes(id);
   if (first) seen.push(id);
   if (room === 'admin') {
+    if (id === 'tank-b01') {
+      const r = seeTankB01(s);
+      return r ? { ok: true, lines: r.lines, chapter4: r.first } : { ok: false, error: '這裡什麼也沒有。' };
+    }
     if (id === 'qing') {
-      if (!adminReady(s)) return { ok: false, error: '走廊上沒有人。' };
+      if (!qingWaits(s)) return { ok: false, error: '走廊上沒有人。' };
       return { ok: true, lines: ADMIN_PARTS.qing.map(i => ADMIN_SCENES[i]), then: 'choice' };
     }
     const part = ADMIN_PARTS[id];
@@ -320,3 +331,5 @@ export function adminOpen(s) {
   const c = normalizeChapter2(s);
   return c.stage >= 3 && c.stage < 5 && isNight(s);
 }
+// 0.73: K.'s master code opens it at any hour (chapter four)
+export const masterOpen = s => !!s.chapter4?.terminal;
