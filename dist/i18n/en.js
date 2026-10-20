@@ -3673,7 +3673,7 @@ export default {
   '第三章——敬請期待': 'Chapter Three — coming soon',
   '第三章：到城門外找嘯岳': 'Chapter Three: find Xiaoyue outside the gate',
   '第三章：往南穿過穹頂的裂縫': 'Chapter Three: head south through the tear in the dome',
-  '裂縫更深處還有兩層': 'Two more layers lie deeper in the rift',
+  裂縫更深處還有兩層: 'Two more layers lie deeper in the rift',
   '晴不在歡迎中心前。地上只留著她的太陽徽章。':
     "Qing isn't in front of the welcome centre. Only her sun badge lies on the ground.",
   管理區門禁卡: 'Admin block key card',
