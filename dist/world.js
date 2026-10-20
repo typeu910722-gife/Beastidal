@@ -1,15 +1,15 @@
-import { expansionModels } from './expansion-models.js?v=0.70.0';
-import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.70.0';
-import { normalizeHousing, penId } from './housing.js?v=0.70.0';
-import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.70.0';
-export { makeCreature } from './creatures.js?v=0.70.0';
-import { makeIslands } from './island-models.js?v=0.70.0';
-import { facilityId } from './facilities.js?v=0.70.0';
+import { expansionModels } from './expansion-models.js?v=0.71.0';
+import { normalizeExpansion, EXPLORE } from './expansion.js?v=0.71.0';
+import { normalizeHousing, penId } from './housing.js?v=0.71.0';
+import { makeCreature, animateCreature, setCreatureDetail } from './creatures.js?v=0.71.0';
+export { makeCreature } from './creatures.js?v=0.71.0';
+import { makeIslands } from './island-models.js?v=0.71.0';
+import { facilityId } from './facilities.js?v=0.71.0';
 import * as T from './vendor/three.module.min.js';
-import { phenotype, seeded } from './genetics.js?v=0.70.0';
-import { dressTerrain, GrassField } from './terrain-look.js?v=0.70.0';
-import { surface } from './surfaces.js?v=0.70.0';
-import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.70.0';
+import { phenotype, seeded } from './genetics.js?v=0.71.0';
+import { dressTerrain, GrassField } from './terrain-look.js?v=0.71.0';
+import { surface } from './surfaces.js?v=0.71.0';
+import { QUALITY, loadSettings, saveSettings, makeSky, makeWater, Atmosphere, SPLASHES } from './realism.js?v=0.71.0';
 
 // 0.69: three's bump mapping normalises the screen-space derivative of the surface position; where that derivative
 // comes out as zero (low-precision GPUs, far-from-origin coordinates such as 慈光港 at x 3000) the normal is NaN,
@@ -24,37 +24,39 @@ T.ShaderChunk.bumpmap_pars_fragment = T.ShaderChunk.bumpmap_pars_fragment
     'return normalize( abs( fDet ) * surf_norm - vGrad );',
     'vec3 bumped = abs( fDet ) * surf_norm - vGrad;\n\t\treturn dot( bumped, bumped ) > 1e-10 ? normalize( bumped ) : surf_norm;'
   );
-import { makeLake } from './lake-models.js?v=0.70.0';
-import { groundAt, LANDMARKS } from './lake.js?v=0.70.0';
-import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.70.0';
-import { makeStatues } from './statues.js?v=0.70.0';
-import { animateGarden } from './garden-models.js?v=0.70.0';
-import { ViewModel } from './viewmodel.js?v=0.70.0';
-import { BEAST_HOME, PACT_ID } from './story.js?v=0.70.0';
-import { makeTown, animateTown, dressTown, GUIDE_WORLD } from './town-models.js?v=0.70.0';
-import { bakeStatic } from './bake.js?v=0.70.0';
-import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.70.0';
-import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.70.0';
-import { guideGone, domeCracked } from './chapter2.js?v=0.70.0';
-import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.70.0';
-import { PostFX } from './postfx.js?v=0.70.0';
-import { makeHuman, animateHuman } from './human.js?v=0.70.0';
-import { loadProtagonist, dressHuman } from './protagonist.js?v=0.70.0';
-import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.70.0';
-import { buildError } from './rules.js?v=0.70.0';
-import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.70.0';
-import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.70.0';
-import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.70.0';
-import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.70.0';
-import { makeCabin, tankMesh } from './cabin-models.js?v=0.70.0';
-import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.70.0';
-import { CombatFX } from './combat-fx.js?v=0.70.0';
-import { dressWithProp } from './props.js?v=0.70.0';
-import { syncPlots } from './land-models.js?v=0.70.0';
-import { plotTargets } from './reclaim.js?v=0.70.0';
-import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.70.0';
-import { dayPhase } from './clock.js?v=0.70.0';
-import { weatherAt, season } from './weather.js?v=0.70.0';
+import { makeLake } from './lake-models.js?v=0.71.0';
+import { groundAt, LANDMARKS } from './lake.js?v=0.71.0';
+import { makeSabertooth, animateSabertooth } from './story-models.js?v=0.71.0';
+import { makeStatues } from './statues.js?v=0.71.0';
+import { animateGarden } from './garden-models.js?v=0.71.0';
+import { ViewModel } from './viewmodel.js?v=0.71.0';
+import { BEAST_HOME, PACT_ID } from './story.js?v=0.71.0';
+import { makeTown, animateTown, dressTown, GUIDE_WORLD } from './town-models.js?v=0.71.0';
+import { bakeStatic } from './bake.js?v=0.71.0';
+import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.71.0';
+import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.71.0';
+import { INTERIOR_Y, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.71.0';
+import { makeInteriors, animateInteriors } from './interior-models.js?v=0.71.0';
+import { guideGone, domeCracked } from './chapter2.js?v=0.71.0';
+import { townWalkable, townCameraBlocked, toWorld as townPoint, XIAOYUE_WAITS } from './town.js?v=0.71.0';
+import { PostFX } from './postfx.js?v=0.71.0';
+import { makeHuman, animateHuman } from './human.js?v=0.71.0';
+import { loadProtagonist, dressHuman } from './protagonist.js?v=0.71.0';
+import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.71.0';
+import { buildError } from './rules.js?v=0.71.0';
+import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.71.0';
+import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.71.0';
+import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.71.0';
+import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.71.0';
+import { makeCabin, tankMesh } from './cabin-models.js?v=0.71.0';
+import { applyGeneMarks, beastHalo, animateMarks, dissolveLook } from './bs-models.js?v=0.71.0';
+import { CombatFX } from './combat-fx.js?v=0.71.0';
+import { dressWithProp } from './props.js?v=0.71.0';
+import { syncPlots } from './land-models.js?v=0.71.0';
+import { plotTargets } from './reclaim.js?v=0.71.0';
+import { SHIP_SLOTS, FORTRESS_DECK_Y, FORTRESS_SCALE, facilityPos } from './fortress.js?v=0.71.0';
+import { dayPhase } from './clock.js?v=0.71.0';
+import { weatherAt, season } from './weather.js?v=0.71.0';
 const V = T.Vector3;
 const TIDE_TINT = new T.Color(0x9a6ad8);
 // Quiet idle life for resting beasts: every 7–11 s a short eased beat — a look around, a stretch, a small hop
@@ -958,6 +960,9 @@ export class OceanWorld {
     this.scene.add(this.town);
     // 0.48: the open country under the dome, and the far hills that travel with you
     this.dome = makeDome();
+    // 0.71: the rooms of 慈光港, each under its building
+    this.interiors = makeInteriors();
+    for (const g of Object.values(this.interiors.groups)) this.scene.add(g);
     this.dome.group.visible = this.dome.hills.visible = false;
     this.scene.add(this.dome.group, this.dome.hills);
     // (晴 herself is made the first time you reach the town: her model is a 2.7 MB download nobody on the lake needs)
@@ -1226,7 +1231,16 @@ export class OceanWorld {
   }
   groundFn(s) {
     const diving = !!s.expedition?.diving;
-    return (x, z) => (diving ? this.diveY : s.inCave ? 0 : s.inTown ? domeGround(x, z) : Math.max(0, groundAt(x, z)));
+    return (x, z) =>
+      diving
+        ? this.diveY
+        : s.inCave
+          ? 0
+          : s.inTown
+            ? s.town?.inside
+              ? INTERIOR_Y
+              : domeGround(x, z)
+            : Math.max(0, groundAt(x, z));
   }
   // 0.25: what combat.js reported this frame — effects, the swing animation, recoil and shake
   combatEvents(s, events) {
@@ -1463,7 +1477,13 @@ export class OceanWorld {
     if (!diving && this.pitch < 0.06) this.pitch += (0.06 - this.pitch) * Math.min(1, dt * 5);
     // a dive follows the lakebed down into the sunken city; ashore you stand on the terrain itself
     const ground =
-        s.inCave || cabin ? 0 : s.inTown ? domeGround(s.player.x, s.player.z) : groundAt(s.player.x, s.player.z),
+        s.inCave || cabin
+          ? 0
+          : s.inTown
+            ? s.town?.inside
+              ? INTERIOR_Y
+              : domeGround(s.player.x, s.player.z)
+            : groundAt(s.player.x, s.player.z),
       onTerrain = foot && !s.player.level && !s.inCave && (s.inTown || ground > 0.05);
     // the dive follows the depth the player swims to (game.js clamps it between the lakebed and the surface)
     this.diveY = diving
@@ -2068,7 +2088,7 @@ export class OceanWorld {
     // never let the orbit camera sink into a hillside, the lakebed or (above water) the surface: when the player
     // looks up, the camera slides in closer along its line of sight instead of being pushed off that line
     if (!s.inCave && !cabin) {
-      const gAt = s.inTown ? domeGround : groundAt;
+      const gAt = s.inTown ? (s.town?.inside ? () => INTERIOR_Y : domeGround) : groundAt;
       const floorAt = () =>
         Math.max(gAt(this.camera.position.x, this.camera.position.z) + 1.4, diving || aboard || helm ? -Infinity : 0.9);
       let floor = floorAt();
@@ -2119,8 +2139,11 @@ export class OceanWorld {
     this.extra.cave.visible = !!s.inCave;
     if (s.inCave) animateGarden(this.extra.cave, t);
     // 0.47: in town the lake and everything on it is out of sight, the sky stays
-    const town = !!s.inTown && !cabin;
-    this.town.visible = town;
+    const town = !!s.inTown && !cabin,
+      inside = town ? s.town?.inside || null : null;
+    // 0.71: indoors only the room is drawn (the town, the country and the sky are out of sight)
+    animateInteriors(this.interiors, inside, t);
+    this.town.visible = town && !inside;
     if (town) dressTown(this.town);
     if (town && !this.guide) {
       this.guide = character(false);
@@ -2149,9 +2172,15 @@ export class OceanWorld {
       this.guide.position.set(GUIDE_WORLD.x, 0, GUIDE_WORLD.z);
       this.scene.add(this.guide);
     }
-    if (this.guide) this.guide.visible = town && !guideGone(s);
+    // 0.71: 晴 waits in the admin block's corridor once you have seen everything in there
+    const qingInside = inside === 'admin' && adminReady(s);
+    if (this.guide) {
+      this.guide.visible = town && !guideGone(s) && (!inside || qingInside);
+      const at = qingInside ? interiorWorld('admin', QING_AT) : GUIDE_WORLD;
+      this.guide.position.set(at.x, qingInside ? INTERIOR_Y : 0, at.z);
+    }
     if (!town) this.outsideDome = false;
-    this.dome.group.visible = this.dome.hills.visible = town;
+    this.dome.group.visible = this.dome.hills.visible = town && !inside;
     // the projected sky under the dome has no rift (0.48)
     this.sky.material.uniforms.uRift.value = this.water.material.uniforms.uRift.value = town && !domeCracked(s) ? 0 : 1;
     if (town) {
@@ -2177,7 +2206,7 @@ export class OceanWorld {
     for (const l of this.cabin.lights) l.visible = cabin;
     if (cabin) this.cabin.update(t, s.player.floor | 0);
     this.extra.seabed.visible = diving;
-    this.sky.visible = !diving && !s.inCave && !cabin;
+    this.sky.visible = !diving && !s.inCave && !cabin && !inside;
     this.water.visible = !diving && !s.inCave && !town && !cabin;
     this.islandModels.group.visible = !s.inCave && !town && !cabin;
     this.lake.group.visible = !s.inCave && !town && !cabin;
@@ -2224,7 +2253,17 @@ export class OceanWorld {
       ease = Math.min(1, dt * 4);
     this.torch.intensity += ((dark ? (diving ? 260 : 130) : nightDark ? 110 : 0) - this.torch.intensity) * ease;
     this.torchGlow.intensity += ((dark ? (diving ? 22 : 12) : nightDark ? 8 : 0) - this.torchGlow.intensity) * ease;
-    if (cabin) {
+    if (inside) {
+      // 0.71: the town's rooms — lamplight in the room and the diner, the admin block's cold white
+      const cold = inside === 'admin';
+      this.scene.background.set(cold ? 0x101418 : 0x1a140e);
+      this.scene.fog.color.copy(this.scene.background);
+      this.scene.fog.density = 0.01;
+      this.ambient.color.set(cold ? 0xdfeaf0 : 0xffe6c8);
+      this.ambient.intensity = cold ? 1.1 : 1.3;
+      this.sun.intensity = 0;
+      this.scene.environmentIntensity = 0.3;
+    } else if (cabin) {
       // warm lamplight indoors
       this.scene.background.set(0x1a120c);
       this.scene.fog.color.copy(this.scene.background);
