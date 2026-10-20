@@ -1,8 +1,8 @@
-import { stow, bagRoom, bagFullError } from './bag.js?v=0.66.0';
-import { gatherBonus } from './skills.js?v=0.66.0';
-import { harvestBonus } from './weather.js?v=0.66.0';
-import { hasPerk } from './codex.js?v=0.66.0';
-import { tally } from './stats.js?v=0.66.0';
+import { stow, bagRoom, bagFullError } from './bag.js?v=0.67.0';
+import { gatherBonus } from './skills.js?v=0.67.0';
+import { harvestBonus } from './weather.js?v=0.67.0';
+import { hasPerk } from './codex.js?v=0.67.0';
+import { tally } from './stats.js?v=0.67.0';
 import {
   groundAt,
   slopeAt,
@@ -12,7 +12,7 @@ import {
   islandOf,
   landNear,
   waterNear
-} from './lake.js?v=0.66.0';
+} from './lake.js?v=0.67.0';
 // 0.15: the world is the inland sea of 沉湖遺城. Islands are real terrain now; the old ids stay so saves carry over.
 export const ISLANDS = LAKE_ISLANDS;
 export const MAINLAND = { id: 'mainland', name: '環湖山麓', x: LAKE_CENTER.x, z: LAKE_CENTER.z, rx: 400, rz: 260 };
@@ -74,6 +74,35 @@ export function islandDocks() {
     }
   }
   return docks;
+}
+// 0.66.1: going ashore is not tied to the landing list. Search outward from the hull ring by ring for walkable
+// ground within reach (ok() may narrow it); on the first ring that has some, take the highest point (the most
+// inland), then a step or two further up the beach so you never stand on the waterline. You face inland; the
+// boat stays moored where it floats, bow out.
+export function landingNear(x, z, reach, ok = () => true) {
+  for (let r = 1; r <= reach; r += 1) {
+    const n = Math.max(12, Math.round(r * 6));
+    let best = null;
+    for (let k = 0; k < n; k++) {
+      const a = (k / n) * Math.PI * 2,
+        px = x + Math.sin(a) * r,
+        pz = z + Math.cos(a) * r;
+      if (!walkable(px, pz) || !ok(px, pz)) continue;
+      const h = groundAt(px, pz);
+      if (!best || h > best.h) best = { x: px, z: pz, h, a };
+    }
+    if (!best) continue;
+    let foot = { x: best.x, z: best.z };
+    for (let t = 0.5; t <= 1.5; t += 0.5) {
+      const px = best.x + Math.sin(best.a) * t,
+        pz = best.z + Math.cos(best.a) * t;
+      if (!walkable(px, pz) || !ok(px, pz)) break;
+      foot = { x: px, z: pz };
+    }
+    const i = islandOf(foot.x, foot.z) || MAINLAND;
+    return { island: i.id, name: i.name, foot, boat: { x, z, heading: best.a + Math.PI }, heading: best.a };
+  }
+  return null;
 }
 const OFFSETS = [
   ['wood', -3, 2],

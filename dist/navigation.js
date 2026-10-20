@@ -1,12 +1,14 @@
-import { CAVE } from './expansion.js?v=0.66.0';
-import { mazeWalkable } from './cave-maze.js?v=0.66.0';
-import { townWalkable } from './town.js?v=0.66.0';
-import { domeCracked } from './chapter2.js?v=0.66.0';
-import { moveAboard, moveShip } from './ship.js?v=0.66.0';
-import { islandAt, onLand, islandDocks, clearLand } from './islands.js?v=0.66.0';
-import { groundAt, waterNear } from './lake.js?v=0.66.0';
+import { CAVE } from './expansion.js?v=0.67.0';
+import { mazeWalkable } from './cave-maze.js?v=0.67.0';
+import { townWalkable } from './town.js?v=0.67.0';
+import { domeCracked } from './chapter2.js?v=0.67.0';
+import { moveAboard, moveShip } from './ship.js?v=0.67.0';
+import { islandAt, onLand, islandDocks, clearLand, landingNear } from './islands.js?v=0.67.0';
+import { groundAt, waterNear } from './lake.js?v=0.67.0';
 // All travel modes share world coordinates. The boat stays moored while walking.
 export const TILE_SIZE = 3.6;
+// How far from the skiff's centre walkable shore still counts as alongside (the hull stops ~2-4 m off the dry line).
+export const BOAT_LAND_REACH = 7;
 const SIDES = [
   [1, 0],
   [-1, 0],
@@ -101,7 +103,7 @@ export function normalizeTravel(s) {
   }
   if ((!s.ship || s.skiff) && s.player.mode === 'foot' && boatBlocked(s, s.boat.x, s.boat.z)) {
     const spot = dockingSpots(s).sort((a, b) => distance(a.boat, s.boat) - distance(b.boat, s.boat))[0];
-    if (spot) Object.assign(s.boat, spot.boat);
+    if (spot) Object.assign(s.boat, spot.boat, { dockX: spot.foot.x, dockZ: spot.foot.z });
   }
   if (s.player.mode === 'boat' && islandAt(s.player.x, s.player.z, 1)) {
     const d = islandDocks().sort((a, b) => distance(a.boat, s.player) - distance(b.boat, s.player))[0];
@@ -161,9 +163,15 @@ export function dockOption(s) {
     // 0.36: on the raft the boat comes round to whichever edge is nearest you — board from anywhere on it;
     // ashore, the boat's mooring within a few steps
     const raft = !s.player.level && deckAt(s, s.player.x, s.player.z) && !onLand(s.player.x, s.player.z);
+    // ashore, the boat is moored where you stepped off it (any shore, not only a listed landing)
+    const moored = Number.isFinite(s.boat.dockX)
+      ? [{ foot: { x: s.boat.dockX, z: s.boat.dockZ }, boat: { x: s.boat.x, z: s.boat.z, heading: s.boat.heading } }]
+      : [];
     const spots = raft
       ? dockingSpots(s).sort((a, b) => distance(a.foot, s.player) - distance(b.foot, s.player))
-      : [...dockingSpots(s), ...islandDocks()].sort((a, b) => distance(a.boat, s.boat) - distance(b.boat, s.boat));
+      : [...moored, ...dockingSpots(s), ...islandDocks()].sort(
+          (a, b) => distance(a.boat, s.boat) - distance(b.boat, s.boat)
+        );
     const spot = spots[0];
     if (!spot) return null;
     return {
@@ -176,10 +184,12 @@ export function dockOption(s) {
   const spots = [...dockingSpots(s), ...islandDocks()].sort(
     (a, b) => distance(a.boat, s.player) - distance(b.boat, s.player)
   );
-  const spot = spots[0];
-  if (!spot) return null;
-  const d = distance(spot.boat, s.player);
-  return { ...spot, mode: 'land', near: d < 5.8, distance: d };
+  const spot = spots[0],
+    d = spot ? distance(spot.boat, s.player) : Infinity;
+  // 0.66.1: the raft first; otherwise alongside any walkable shore, not only a listed landing
+  const shore = !(d < 5.8 && !spot.island) && landingNear(s.player.x, s.player.z, BOAT_LAND_REACH);
+  if (shore) return { ...shore, mode: 'land', near: true, distance: distance(shore.foot, s.player) };
+  return spot ? { ...spot, mode: 'land', near: d < 5.8, distance: d } : null;
 }
 export function switchVessel(s) {
   if (s.player.level) return { ok: false, error: '請先從樓梯回到一樓。' };
@@ -194,7 +204,7 @@ export function switchVessel(s) {
     return { ok: true, mode: 'boat' };
   }
   Object.assign(s.boat, spot.boat, { dockX: spot.foot.x, dockZ: spot.foot.z });
-  Object.assign(s.player, spot.foot, { mode: 'foot', heading: spot.boat.heading + Math.PI });
+  Object.assign(s.player, spot.foot, { mode: 'foot', heading: spot.heading ?? spot.boat.heading + Math.PI });
   return { ok: true, mode: 'foot' };
 }
 export function moveTravel(s, dx, dz) {

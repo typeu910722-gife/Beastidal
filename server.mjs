@@ -15,6 +15,7 @@ const mime = {
   '.m4a': 'audio/mp4',
   '.ogg': 'audio/ogg',
   '.webmanifest': 'application/manifest+json',
+  '.mobileconfig': 'application/x-apple-aspen-config',
   '.json': 'application/json'
 };
 http

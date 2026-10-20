@@ -17,7 +17,8 @@ const STEPS = [
   [
     'device',
     s => s.device && !s.device.owned,
-    () => '（木筏的書桌上……那台破舊的隨身裝置還亮著。登上木筏，走到書桌旁按 E 拿起來。）'
+    () =>
+      '（木筏的書桌上……那台破舊的隨身裝置還亮著。登上木筏走到書桌旁按 E，點畫面上「隨身裝置」的光圈，再按「拿起隨身裝置」。）'
   ],
   ['floor', s => s.expanded < 2, () => '（木筏小得連轉身都難。按 B 打開建造，在綠色格子接上浮動地基，先擴建 2 格。）'],
   [
@@ -120,6 +121,12 @@ export function guideDone(s) {
 }
 // Later milestones skip earlier tutorial lines even if an old save never triggered them.
 export function monologue(s) {
+  // 0.67: the pact is sealed — the way over the mountains is chapter one's last step, say where it starts
+  if (s.story?.stage === 5 && !s.inTown)
+    return {
+      id: 'cross',
+      text: '（嘯岳答應帶我翻過群山了。把嘯岳派出來，走上環湖的山腳——不是島嶼——按 E 請牠帶我越過去。）'
+    };
   const start = s.ship
     ? 'helm'
     : s.shipFusion

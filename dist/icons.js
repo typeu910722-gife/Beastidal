@@ -1,6 +1,6 @@
 // Item icons for the grid inventories: small, readable SVG pictograms (a log, an ingot, a gem …) instead of
 // typographic glyphs, so a slot reads at a glance like a Minecraft-style inventory.
-import { MORE_ICONS } from './icons-more.js?v=0.66.0';
+import { MORE_ICONS } from './icons-more.js?v=0.67.0';
 
 const svg = body =>
   `<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false" shape-rendering="geometricPrecision">${body}</svg>`;
