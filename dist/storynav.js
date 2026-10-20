@@ -10,8 +10,8 @@ import {
   BOARD,
   XIAOYUE_WAITS,
   lettersReady
-} from './town.js?v=0.76.0';
-import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.76.0';
+} from './town.js?v=0.77.0';
+import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.77.0';
 import {
   chapter3Objectives,
   normalizeChapter3,
@@ -22,10 +22,10 @@ import {
   RIFT,
   TEAR_AT,
   layerOpen
-} from './chapter3.js?v=0.76.0';
-import { isNight } from './clock.js?v=0.76.0';
-import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.76.0';
-import { riftStatus } from './rift-fight.js?v=0.76.0';
+} from './chapter3.js?v=0.77.0';
+import { isNight } from './clock.js?v=0.77.0';
+import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.77.0';
+import { riftStatus } from './rift-fight.js?v=0.77.0';
 import {
   chapter4Objectives,
   normalizeChapter4,
@@ -34,9 +34,8 @@ import {
   homeDone,
   inLastDay,
   choiceOpen,
-  thirdNext,
-  ENDING_NAMES
-} from './chapter4.js?v=0.76.0';
+  thirdNext
+} from './chapter4.js?v=0.77.0';
 // 0.75: part two's lake steps last until the last day is over
 const onLake4 = s => inPartTwo(s) && !normalizeChapter4(s).lastDone;
 
@@ -147,7 +146,7 @@ export function storyPanel(s) {
                 : '';
   return {
     chapter: c4?.ending
-      ? `終章 · ${ENDING_NAMES[c4.ending]}`
+      ? '終章 · 結局之後'
       : final
         ? '終章 · 橋前的選擇'
         : two4
@@ -160,12 +159,15 @@ export function storyPanel(s) {
     title: open.length ? open[0][0] : list.length ? list[list.length - 1][0] : '慈光港',
     quests: [...list.filter(([, d]) => d).slice(-1), ...open.slice(0, 2)],
     goal,
-    goalText: lakeStep
-      ? lakeStep
-      : away
-        ? '下一步：派出嘯岳，走上環湖的山腳，按 E 翻山'
-        : goal
-          ? `下一步：${goal.name} · ${bearing(s, goal)} ${Math.round(Math.hypot(goal.x - s.player.x, goal.z - s.player.z))} m${goal.night && !isNight(s) ? '（夜裡）' : ''}`
-          : ''
+    // 0.77: after an ending there is no next step, only the lake
+    goalText: c4?.ending
+      ? '比斯泰德還在：想去哪裡，就去哪裡'
+      : lakeStep
+        ? lakeStep
+        : away
+          ? '下一步：派出嘯岳，走上環湖的山腳，按 E 翻山'
+          : goal
+            ? `下一步：${goal.name} · ${bearing(s, goal)} ${Math.round(Math.hypot(goal.x - s.player.x, goal.z - s.player.z))} m${goal.night && !isNight(s) ? '（夜裡）' : ''}`
+            : ''
   };
 }

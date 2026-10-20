@@ -2526,6 +2526,10 @@ export default {
   '在 {0} 座島上插過旗': 'planted your flag on {0} islands',
   '親手蓋了 {0} 樣東西': 'built {0} things with your own hands',
   '，': ', ',
+  '原體維持終止 · 管理者讓他們等你': 'Life support termination · the manager has them wait for you',
+  '（比斯泰德還在。想去哪裡，就去哪裡。）': '(Beastidal is still here. Go wherever you like.)',
+  '終章 · 結局之後': 'Finale · after the ending',
+  '比斯泰德還在：想去哪裡，就去哪裡': 'Beastidal is still here: go wherever you like',
   '在避難所時，上方的數字＝背包＋書桌倉庫。':
     'At the shelter, the numbers up top count the bag and the desk storage together.',
   '書桌倉庫：': 'Desk storage: ',

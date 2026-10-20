@@ -1,6 +1,6 @@
 // Shared memories: short lines for the moments a beast lived through with you (newest first, a few are kept).
 // They are shown on the beast's page in the device's beast storage.
-import { dayOf } from './clock.js?v=0.76.0';
+import { dayOf } from './clock.js?v=0.77.0';
 
 const KEEP = 6,
   KEEPSAKES = 12;

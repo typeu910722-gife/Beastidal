@@ -3,11 +3,11 @@
 // shut 「畢業」 off at the bottom of the rift — after which Mum tears the second document up with the pen. Each ending
 // closes on an epilogue written from your own save: what each beast does after, by its bond; what you did with the
 // last day; the numbers of the whole journey. Pure: reads and changes the state, returns the lines to play.
-import { dayOf } from './clock.js?v=0.76.0';
-import { keepsakes } from './memories.js?v=0.76.0';
-import { journey, firstFriend } from './farewell.js?v=0.76.0';
-import { PACT_ID } from './story.js?v=0.76.0';
-import { normalizeChapter4, choiceOpen, thirdNext, THIRD_STEPS, ENDING_NAMES } from './chapter4.js?v=0.76.0';
+import { dayOf } from './clock.js?v=0.77.0';
+import { keepsakes } from './memories.js?v=0.77.0';
+import { journey, firstFriend } from './farewell.js?v=0.77.0';
+import { PACT_ID } from './story.js?v=0.77.0';
+import { normalizeChapter4, choiceOpen, thirdNext, THIRD_STEPS, ENDING_NAMES } from './chapter4.js?v=0.77.0';
 
 const log = (s, title, text) => {
   s.log.unshift({ day: dayOf(s), title, text });

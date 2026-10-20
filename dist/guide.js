@@ -145,6 +145,8 @@ export function monologue(s) {
     if (!c.xiaoyue) return { id: 'xiaoyue', text: '（嘯岳一直趴在湖邊，看著遠方。去御獸倉庫，跟牠說說話吧。）' };
     if (!c.lastDay) return { id: 'lastnight', text: '（天快黑了。回避難所睡一覺吧。）' };
     if (!c.lastDone) return { id: 'lastday', text: '（今天是最後一天。我想把這裡的一切，都再看一次。）' };
+    // 0.77: after an ending, the lake is yours
+    if (c.ending) return { id: 'after', text: '（比斯泰德還在。想去哪裡，就去哪裡。）' };
     // 0.76: then back over the mountains, to the bridge
     if (!c.ending)
       return {
