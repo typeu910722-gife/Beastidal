@@ -8,3 +8,4 @@ docs/
 dist/lake-data.js
 shots/
 build/
+tests/.pt/

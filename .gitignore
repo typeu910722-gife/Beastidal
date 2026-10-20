@@ -7,3 +7,4 @@ shots/
 smoke-*.png
 build/
 __pycache__/
+tests/.pt/

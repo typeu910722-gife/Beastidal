@@ -1,10 +1,10 @@
-import { CAVE } from './expansion.js?v=0.68.0';
-import { mazeWalkable } from './cave-maze.js?v=0.68.0';
-import { townWalkable } from './town.js?v=0.68.0';
-import { domeCracked } from './chapter2.js?v=0.68.0';
-import { moveAboard, moveShip } from './ship.js?v=0.68.0';
-import { islandAt, onLand, islandDocks, clearLand, landingNear } from './islands.js?v=0.68.0';
-import { groundAt, waterNear } from './lake.js?v=0.68.0';
+import { CAVE } from './expansion.js?v=0.69.0';
+import { mazeWalkable } from './cave-maze.js?v=0.69.0';
+import { townWalkable } from './town.js?v=0.69.0';
+import { domeCracked } from './chapter2.js?v=0.69.0';
+import { moveAboard, moveShip } from './ship.js?v=0.69.0';
+import { islandAt, onLand, islandDocks, clearLand, landingNear } from './islands.js?v=0.69.0';
+import { groundAt, waterNear } from './lake.js?v=0.69.0';
 // All travel modes share world coordinates. The boat stays moored while walking.
 export const TILE_SIZE = 3.6;
 // How far from the skiff's centre walkable shore still counts as alongside (the hull stops ~2-4 m off the dry line).
@@ -158,6 +158,9 @@ export function dockingSpots(s) {
       }
   return spots;
 }
+// 0.69: how close the skiff must be to its berth beside the raft before 「登上避難所」 is offered (was 5.8, which
+// showed the prompt about 8 m off the raft's edge; a new game still starts within reach)
+const RAFT_DOCK_REACH = 4.6;
 export function dockOption(s) {
   if (s.player.mode === 'foot') {
     // 0.36: on the raft the boat comes round to whichever edge is nearest you — board from anywhere on it;
@@ -187,9 +190,9 @@ export function dockOption(s) {
   const spot = spots[0],
     d = spot ? distance(spot.boat, s.player) : Infinity;
   // 0.66.1: the raft first; otherwise alongside any walkable shore, not only a listed landing
-  const shore = !(d < 5.8 && !spot.island) && landingNear(s.player.x, s.player.z, BOAT_LAND_REACH);
+  const shore = !(d < RAFT_DOCK_REACH && !spot.island) && landingNear(s.player.x, s.player.z, BOAT_LAND_REACH);
   if (shore) return { ...shore, mode: 'land', near: true, distance: distance(shore.foot, s.player) };
-  return spot ? { ...spot, mode: 'land', near: d < 5.8, distance: d } : null;
+  return spot ? { ...spot, mode: 'land', near: d < RAFT_DOCK_REACH, distance: d } : null;
 }
 export function switchVessel(s) {
   if (s.player.level) return { ok: false, error: '請先從樓梯回到一樓。' };

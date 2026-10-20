@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist/vendor/**', 'node_modules/**', 'dist/lake-data.js', 'shots/**', 'build/**'] },
+  { ignores: ['dist/vendor/**', 'node_modules/**', 'dist/lake-data.js', 'shots/**', 'build/**', 'tests/.pt/**'] },
   js.configs.recommended,
   {
     files: ['dist/**/*.js'],
