@@ -3716,6 +3716,7 @@ export default {
   '顯示滑鼠 · 點按鈕': 'shows the cursor · click buttons',
   遠航: 'Voyage',
   再說一次: 'Say it again',
+  功能: 'More',
   '第三章——敬請期待': 'Chapter Three — coming soon',
   '第三章：到城門外找嘯岳': 'Chapter Three: find Xiaoyue outside the gate',
   '第三章：往南穿過穹頂的裂縫': 'Chapter Three: head south through the tear in the dome',

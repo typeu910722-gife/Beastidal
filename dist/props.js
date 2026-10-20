@@ -3,7 +3,7 @@
 // dozens. The material names say what each group is made of, and get the same surfaces the procedural models use
 // (surfaces.js). Props load in the background; until one arrives, or if it cannot, the procedural model stays.
 import { GLTFLoader } from './vendor/addons/loaders/GLTFLoader.js';
-import { surface } from './surfaces.js?v=0.65.0';
+import { surface } from './surfaces.js?v=0.66.0';
 
 // material name -> [surface kind, options]: wood-x/y/z have their grain along that axis
 const SURFACES = {

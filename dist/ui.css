@@ -506,3 +506,141 @@ body:not(.touch-device) #touch-controls {
 #app #discovery {
   top: 66px;
 }
+
+/* 8. Phones held sideways: the screen buttons fold behind 功能 (a grid that opens above it), and the next step
+      keeps to two lines */
+#hud .action-bar .more {
+  display: none;
+}
+.landscape-play #hud .bottom-hud .action-bar {
+  position: relative;
+  max-width: none;
+  width: auto;
+  overflow: visible;
+}
+.landscape-play #hud .action-bar .more {
+  display: flex;
+}
+.landscape-play #hud .action-bar button.quick {
+  display: none;
+}
+.landscape-play #hud .action-bar.open button.quick {
+  display: flex;
+}
+.landscape-play #hud .action-bar.open {
+  z-index: 5;
+}
+.landscape-play #hud .action-bar.open::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  width: 176px;
+  height: 108px;
+  border-radius: 10px;
+  background: #06222df2;
+  border: 1px solid #9ce8d14d;
+  box-shadow: 0 10px 30px #0008;
+}
+/* the five open buttons sit in the panel above: two rows of three (the last cell empty) */
+.landscape-play #hud .action-bar.open button.quick {
+  position: absolute;
+  width: 52px;
+  height: 46px;
+  min-height: 46px;
+  bottom: calc(100% + 60px);
+}
+.landscape-play #hud .action-bar.open #bag-tool {
+  right: 120px;
+}
+.landscape-play #hud .action-bar.open #beasts-tool {
+  right: 62px;
+}
+.landscape-play #hud .action-bar.open #journal-tool {
+  right: 4px;
+}
+.landscape-play #hud .action-bar.open #adventure-btn {
+  right: 120px;
+  bottom: calc(100% + 10px);
+}
+.landscape-play #hud .action-bar.open #map-tool {
+  right: 62px;
+  bottom: calc(100% + 10px);
+}
+.landscape-play #hud .action-bar .more[aria-expanded='true'] {
+  border-color: var(--mint, #9ce8d1);
+  background: #1a4149;
+}
+.landscape-play #hud .mission .next-step {
+  margin-top: 4px;
+  padding: 4px 7px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.landscape-play #hud .mission .next-step span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* the bottom row was capped to a width that cut the action buttons off the end */
+.landscape-play #hud .bottom-hud {
+  max-width: none;
+  overflow: visible;
+}
+/* the settings on a short screen: a compact head, tabs and 完成 always in view, only the page scrolls */
+@media (max-height: 520px) {
+  #modal.settings-modal {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 16px);
+    overflow: hidden;
+    padding: 10px 14px;
+  }
+  #modal.settings-modal #modal-eyebrow {
+    display: none;
+  }
+  #modal.settings-modal #modal-title {
+    font-size: 16px;
+    margin: 0 0 6px;
+  }
+  #modal.settings-modal .modal-close {
+    top: 6px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    min-height: 30px;
+  }
+  #modal.settings-modal #modal-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .settings.sheet {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+  }
+  .settings.sheet .set-tabs {
+    margin-bottom: 4px;
+  }
+  .settings.sheet .set-tabs button {
+    min-height: 28px;
+    padding: 3px;
+    font-size: 12px;
+  }
+  .settings.sheet .set-page {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  #modal.settings-modal #modal-actions {
+    margin-top: 6px;
+  }
+  #modal.settings-modal #modal-actions button {
+    min-height: 34px;
+    padding: 4px;
+  }
+}
