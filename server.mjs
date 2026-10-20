@@ -16,6 +16,7 @@ const mime = {
   '.ogg': 'audio/ogg',
   '.webmanifest': 'application/manifest+json',
   '.mobileconfig': 'application/x-apple-aspen-config',
+  '.apk': 'application/vnd.android.package-archive',
   '.json': 'application/json'
 };
 http

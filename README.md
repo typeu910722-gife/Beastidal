@@ -991,3 +991,15 @@ B 建造：新增二樓地板、樓梯、椅子、工作餐桌、晶光燈。施
 - **Windows 執行檔**：
   - `npm run exe` 會產生 `build/Beastidal-<版本>.exe`（Node SEA，約 114 MB）。
   - 執行後會在本機開伺服器並打開瀏覽器，存檔跟著 `localhost:8765`。
+
+## 0.68 測試版下載頁：Android APK 與 iPhone 描述檔
+
+- **下載頁 `/test/`**：同一頁有 Android APK 和 iPhone 描述檔。
+  - 手機打開會自動跳到自己的那一段並標亮；`/ios/` 會轉到這一頁。
+- **Android App**（`android/`，`npm run apk` → `dist/download/beastidal.apk`，約 200 KB）：
+  - 用 SDK 的 aapt2、javac、d8、zipalign、apksigner 直接建置，不需要 Gradle。
+  - 全螢幕橫向的 WebView，直接執行網站上的最新版，網站更新後不必重裝。
+  - 支援存檔匯入（檔案選擇器）和匯出（存到「下載/Beastidal」）；返回鍵會先關閉遊戲裡的視窗。
+  - 繪圖程序當掉時會自動重建，不會整個 App 閃退。
+  - 使用放在 repo 的測試簽章，每次建置都能直接覆蓋安裝。
+- **Service worker 修正**：以前打開 `/ios/` 這類頁面時，會把它存成離線用的首頁；現在只快取遊戲本身。

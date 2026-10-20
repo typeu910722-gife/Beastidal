@@ -1,6 +1,6 @@
 {
   "name": "beastidal",
-  "version": "0.67.0",
+  "version": "0.68.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,7 +17,8 @@
     "package": "node scripts/package.mjs",
     "exe": "node scripts/build-exe.mjs",
     "models": "python3 scripts/blender/props.py",
-    "ios": "node scripts/ios-profile.mjs"
+    "ios": "node scripts/ios-profile.mjs",
+    "apk": "node scripts/build-apk.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

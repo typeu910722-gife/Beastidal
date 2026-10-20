@@ -1986,6 +1986,7 @@ export default {
     'M chart & marker · while diving you swim where you look, Space rises, Z sinks',
   'MENU · 選單': 'MENU',
   'PAUSE · 暫停': 'PAUSE',
+  '匯出失敗，請再試一次。': 'Export failed, please try again.',
   翻山: 'Cross',
   '（木筏的書桌上……那台破舊的隨身裝置還亮著。登上木筏走到書桌旁按 E，點畫面上「隨身裝置」的光圈，再按「拿起隨身裝置」。）':
     "(On the raft's desk… the battered handheld is still glowing. Board the raft, walk to the desk and press E, tap the 「Handheld」 ring on screen, then 「Pick up the handheld」.)",

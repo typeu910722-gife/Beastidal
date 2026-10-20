@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>比斯泰德 · 測試版下載</title>
+    <meta name="description" content="《御獸與遠航》測試版：Android APK 與 iPhone 描述檔下載。" />
+    <link rel="icon" href="../brand/icon-192.png" />
+    <link rel="apple-touch-icon" href="../brand/apple-touch-icon.png" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #071a20;
+        --card: #0a2229;
+        --line: #9ce8d133;
+        --ink: #e6f2ed;
+        --dim: #9dbdb6;
+        --accent: #9ce8d1;
+        --accent-ink: #062027;
+        --warn: #f2c879;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg) radial-gradient(120% 900px at 30% 0%, #12343b 0%, var(--bg) 70%) no-repeat;
+        color: var(--ink);
+        font:
+          16px/1.7 system-ui,
+          -apple-system,
+          'PingFang TC',
+          'Noto Sans TC',
+          sans-serif;
+      }
+      main {
+        width: min(560px, 100%);
+        margin: 0 auto;
+        padding: 28px 16px 48px;
+      }
+      header {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+      header img {
+        width: 64px;
+        height: 64px;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px #0008;
+      }
+      h1 {
+        margin: 0;
+        font-size: 22px;
+      }
+      header p {
+        margin: 0;
+        color: var(--dim);
+        font-size: 14px;
+      }
+      .hint {
+        margin: 0 0 18px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: #9ce8d114;
+        border: 1px solid var(--line);
+        font-size: 15px;
+      }
+      section {
+        margin: 0 0 16px;
+        padding: 20px 18px;
+        border-radius: 18px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        box-shadow: 0 18px 44px #0007;
+        scroll-margin-top: 16px;
+        transition:
+          border-color 0.3s,
+          box-shadow 0.3s;
+      }
+      section.mine {
+        border-color: var(--accent);
+        box-shadow:
+          0 0 0 2px #9ce8d155,
+          0 18px 44px #0007;
+      }
+      h2 {
+        margin: 0 0 4px;
+        font-size: 19px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      h2 .tag {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 1px 8px;
+        border-radius: 99px;
+        color: var(--accent-ink);
+        background: var(--accent);
+      }
+      .meta {
+        margin: 0;
+        color: var(--dim);
+        font-size: 14px;
+      }
+      a.btn {
+        display: block;
+        margin: 16px 0 14px;
+        padding: 14px;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 700;
+        color: var(--accent-ink);
+        background: var(--accent);
+        text-decoration: none;
+      }
+      a.btn:active {
+        transform: translateY(1px);
+      }
+      ol {
+        margin: 0;
+        padding-left: 1.3em;
+      }
+      li {
+        margin: 5px 0;
+      }
+      b {
+        color: var(--accent);
+      }
+      small {
+        display: block;
+        margin-top: 12px;
+        color: #8fb3ad;
+        font-size: 13px;
+      }
+      .warn {
+        color: var(--warn);
+      }
+      footer {
+        text-align: center;
+        color: var(--dim);
+        font-size: 14px;
+      }
+      footer a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../brand/apple-touch-icon.png" alt="" />
+        <div>
+          <h1>比斯泰德 Beastidal</h1>
+          <p>《御獸與遠航》測試版 · v0.68.0</p>
+        </div>
+      </header>
+      <p class="hint" id="hint">Android 下載 APK、iPhone / iPad 安裝描述檔；電腦直接用瀏覽器開網站就能玩。</p>
+
+      <section id="android">
+        <h2>Android 測試版 <span class="tag">APK</span></h2>
+        <p class="meta">約 200 KB · Android 7.0 以上 · 套件名稱 com.yzprojecttw.beastidal</p>
+        <a class="btn" href="../download/beastidal.apk" download>下載 APK</a>
+        <ol>
+          <li>點上面的「下載 APK」，下載完成後點通知或在「檔案 › 下載」開啟它。</li>
+          <li>第一次會提示「<b>允許安裝不明應用程式</b>」：點「設定」，打開瀏覽器（例如 Chrome）的允許開關，返回。</li>
+          <li>按「<b>安裝</b>」。若跳出 Play 安全防護的掃描提示，選「仍要安裝」。</li>
+          <li>打開「<b>比斯泰德</b>」，會自動橫向全螢幕。返回鍵會先關閉遊戲裡的視窗。</li>
+        </ol>
+        <small
+          >App 直接執行網站上的最新版，所以之後網站更新，App
+          打開就是新版本，不必重裝。第一次開啟需要網路，玩過一次後離線也能進入。存檔匯出會放到「下載/Beastidal」。
+          <span class="warn">這是測試簽章的 App，不是從 Play 商店安裝的。</span></small
+        >
+      </section>
+
+      <section id="ios">
+        <h2>iPhone / iPad <span class="tag">描述檔</span></h2>
+        <p class="meta">約 40 KB · iOS / iPadOS · 一定要用 Safari 開這一頁</p>
+        <a class="btn" href="../ios/beastidal.mobileconfig">下載描述檔</a>
+        <ol>
+          <li>用 <b>Safari</b> 點上面的「下載描述檔」，選「允許」。</li>
+          <li>打開「<b>設定</b>」，最上方會出現「已下載描述檔」，點進去。</li>
+          <li>按「<b>安裝</b>」，輸入手機密碼，再按一次「安裝」。</li>
+          <li>回到主畫面，點「<b>比斯泰德</b>」圖示，就會全螢幕開始遊玩。</li>
+        </ol>
+        <small
+          >描述檔只會在主畫面加一個遊戲圖示，不會讀取或變更手機的其他設定；它沒有經過 Apple
+          簽署，所以會顯示「未簽署」，這是正常的。不想要時，到「設定 › 一般 › VPN
+          與裝置管理」移除即可。進度保存在這支手機上。</small
+        >
+      </section>
+
+      <footer>電腦或其他裝置：<a href="../">直接在瀏覽器開始遊玩</a></footer>
+    </main>
+    <script>
+      // Jump straight to the section for this phone, and say so.
+      const ua = navigator.userAgent;
+      const ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+      const mine = /Android/.test(ua) ? 'android' : ios ? 'ios' : location.hash === '#ios' ? 'ios' : '';
+      if (mine) {
+        const el = document.getElementById(mine);
+        el.classList.add('mine');
+        if (mine === 'ios') el.parentNode.insertBefore(el, document.getElementById('android'));
+        document.getElementById('hint').textContent =
+          mine === 'ios'
+            ? (ios ? '偵測到 iPhone / iPad：' : '') + '用 Safari 下載描述檔，安裝後主畫面會出現遊戲圖示。'
+            : '偵測到 Android：下載 APK 安裝，或往下看 iPhone 的安裝方式。';
+      }
+    </script>
+  </body>
+</html>
