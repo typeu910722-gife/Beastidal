@@ -5,6 +5,8 @@
 //  · metal — brushed lines, patches of rust that are rough and dull where brushed steel is smooth and bright
 //  · cloth — a fine weave and grime, matte
 //  · stone — weathered, with cracks and moss on what faces the sky; with `blocks`, laid in staggered courses
+//  · plaster — a fine stucco, faint blotches, rain streaks running down the walls (0.65)
+//  · tile — roof tiles in staggered courses, each course shading the one below it (0.65)
 // The colour of the material stays as it was — the surface only modulates it. Detail finer than a pixel fades to
 // its mean, so nothing shimmers in the distance. No image files.
 const NOISE = `
@@ -55,6 +57,24 @@ const BODY = {
   float moss=smoothstep(.5,.78,sf_fbm(q*1.6+7.))*(.35+.65*max(n0.y,0.))+smoothstep(.6,0.,p.y)*.25*(1.-abs(n0.y));
   sfAlb=mix(sfAlb,vec3(.09,.13,.05)*(.8+weather*.5),clamp(moss,0.,1.)*.65);
   sfRough=.94;`,
+  plaster: `
+  vec3 n0=sfNrm;float u=abs(n0.x)>abs(n0.z)?p.z:p.x;
+  float stucco=mix(.5,sf_fbm(vec2(u,p.y)*7.+sfC),lod);
+  float blot=sf_fbm(vec2(u,p.y)*.4+sfC*.3);
+  float streak=abs(n0.y)<.5?sf_fbm(vec2(u*2.6,p.y*.18)):.5;
+  sfAlb*=(.91+stucco*.12)*(.95+blot*.08)*(.95+streak*.08)*mix(1.,.86,smoothstep(.9,0.,p.y)*(1.-abs(n0.y)));
+  sfRough=.9;`,
+  tile: `
+  vec3 n0=sfNrm;float u=abs(n0.x)>abs(n0.z)?p.z:p.x;
+  float row=floor(p.y/.18);float cx=u/.26+row*.5;
+  float fy=fract(p.y/.18),fx=fract(cx);
+  float tone=sf_h(vec2(floor(cx),row));
+  float shade=mix(.6,1.,smoothstep(0.,.4,fy));
+  float gap=smoothstep(0.,.07+fw*4.,min(fx,1.-fx));
+  sfAlb*=mix(1.,(.8+tone*.32)*shade*mix(.6,1.,gap),lod);
+  float moss=smoothstep(.62,.82,sf_fbm(vec2(u,p.y)*1.2+3.))*.3*lod;
+  sfAlb=mix(sfAlb,vec3(.17,.18,.11),moss);
+  sfRough=.72;`,
   cloth: `
   float weave=.5+.25*(sin(sfA*420.)+sin(sfB*420.));
   float grime=sf_fbm(vec2(sfA,sfB)*1.8+sfC);

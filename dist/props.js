@@ -15,7 +15,11 @@ const SURFACES = {
   'deck-z': ['wood', { axis: 2, planks: true }],
   rope: ['cloth'],
   cloth: ['cloth'],
-  metal: ['metal']
+  metal: ['metal'],
+  // 慈光港 (0.65)
+  plaster: ['plaster'],
+  stone: ['stone', { blocks: true }],
+  tile: ['tile']
 };
 
 // the same ?v= this module was loaded with, so a rebuilt prop is not served from an old cache

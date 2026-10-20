@@ -17,7 +17,7 @@ import { makeStatues } from './statues.js?v=0.64.0';
 import { animateGarden } from './garden-models.js?v=0.64.0';
 import { ViewModel } from './viewmodel.js?v=0.64.0';
 import { BEAST_HOME, PACT_ID } from './story.js?v=0.64.0';
-import { makeTown, animateTown, GUIDE_WORLD } from './town-models.js?v=0.64.0';
+import { makeTown, animateTown, dressTown, GUIDE_WORLD } from './town-models.js?v=0.64.0';
 import { bakeStatic } from './bake.js?v=0.64.0';
 import { makeDome, animateDome, showTrace, domeRipple } from './dome-models.js?v=0.64.0';
 import { domeGround, duskSeams, toLocal as domeLocal, DOME_R } from './dome.js?v=0.64.0';
@@ -930,7 +930,17 @@ export class OceanWorld {
     this.town = makeTown();
     this.town.visible = false;
     // the town stands still: merge it (the soup's steam and the statue's turning halo keep moving)
-    bakeStatic(this.town, { skip: new Set([...this.town.userData.steam, this.town.userData.halo]) });
+    bakeStatic(this.town, {
+      skip: new Set([
+        ...this.town.userData.steam,
+        this.town.userData.halo,
+        this.town.userData.blocks,
+        this.town.userData.street
+      ])
+    });
+    // the buildings and the street pieces merge on their own: the Blender town replaces them whole when you arrive
+    bakeStatic(this.town.userData.blocks);
+    bakeStatic(this.town.userData.street);
     this.scene.add(this.town);
     // 0.48: the open country under the dome, and the far hills that travel with you
     this.dome = makeDome();
@@ -2097,6 +2107,7 @@ export class OceanWorld {
     // 0.47: in town the lake and everything on it is out of sight, the sky stays
     const town = !!s.inTown && !cabin;
     this.town.visible = town;
+    if (town) dressTown(this.town);
     if (town && !this.guide) {
       this.guide = character(false);
       // her sun badge rides on the chest bone, left of the placket, once the body has loaded
