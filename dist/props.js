@@ -3,7 +3,7 @@
 // dozens. The material names say what each group is made of, and get the same surfaces the procedural models use
 // (surfaces.js). Props load in the background; until one arrives, or if it cannot, the procedural model stays.
 import { GLTFLoader } from './vendor/addons/loaders/GLTFLoader.js';
-import { surface } from './surfaces.js?v=0.64.0';
+import { surface } from './surfaces.js?v=0.65.0';
 
 // material name -> [surface kind, options]: wood-x/y/z have their grain along that axis
 const SURFACES = {
@@ -15,7 +15,12 @@ const SURFACES = {
   'deck-z': ['wood', { axis: 2, planks: true }],
   rope: ['cloth'],
   cloth: ['cloth'],
-  metal: ['metal']
+  metal: ['metal'],
+  // 慈光港 (0.65)
+  plaster: ['plaster'],
+  stone: ['stone', { blocks: true, clean: true }],
+  tile: ['tile'],
+  carved: ['stone', { clean: true }]
 };
 
 // the same ?v= this module was loaded with, so a rebuilt prop is not served from an old cache

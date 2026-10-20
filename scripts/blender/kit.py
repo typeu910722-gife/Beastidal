@@ -26,6 +26,16 @@ KINDS = {
     'cloth': (0.9, 0.0, True),
     'metal': (0.45, 0.55, False),
     'plain': (0.6, 0.0, False),
+    # 慈光港 (town.py): plaster walls, dressed stone, roof tiles, gilding; the panes the game lights at night
+    'plaster': (0.9, 0.0, False),
+    'stone': (0.85, 0.0, False),
+    'tile': (0.7, 0.0, False),
+    'gold': (0.35, 0.6, True),
+    'window': (0.25, 0.1, False),
+    'frosted': (0.4, 0.0, False),
+    'statue': (0.45, 0.0, False),
+    'carved': (0.7, 0.0, False),
+    'leaf': (0.85, 0.0, False),
 }
 
 

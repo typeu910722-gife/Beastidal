@@ -4,7 +4,7 @@
 // family reports, the graduation list ("recycled"), a tank holding a body with your face, the truth about contracts
 // → 晴 finds you and offers to help you forget. Forget, or demand the truth: either way chapter two ends.
 // See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.64.0';
+import { dayOf, isNight } from './clock.js?v=0.65.0';
 
 export function normalizeChapter2(s) {
   s.chapter2 ??= {};
@@ -112,7 +112,7 @@ export const ENDINGS = {
       ['嘯岳', '你身上有那個盒子的味道。……你忘了什麼，對吧？'],
       ['嘯岳', '沒關係。我記得。']
     ],
-    log: '我醒在 0412 號房，日誌少了幾頁。最後一頁是我自己的字：「別相信晴。去城門外找嘯岳。」嘯岳說，牠記得。第三章——敬請期待。'
+    log: '我醒在 0412 號房，日誌少了幾頁。最後一頁是我自己的字：「別相信晴。去城門外找嘯岳。」嘯岳說，牠記得。（第三章：到城門外請嘯岳撕開穹頂。）'
   },
   truth: {
     title: '第二章 完 · 穹頂之外',
@@ -125,7 +125,7 @@ export const ENDINGS = {
       ['', '嘯岳撲向城門外的空氣——爪子底下，傳來玻璃碎裂的聲音。'],
       ['', '天空裂開一道縫。縫的另一邊，是那道紫色的裂縫，和真正的、比斯泰德的天空。']
     ],
-    log: '晴放走了我。嘯岳撕開了穹頂，縫的另一邊是紫色的裂縫和真正的天空。我不是轉生的——我是 0412 號載體。第三章——敬請期待。'
+    log: '晴放走了我。嘯岳撕開了穹頂，縫的另一邊是紫色的裂縫和真正的天空。我不是轉生的——我是 0412 號載體。（第三章：往南穿過穹頂的裂縫。）'
   }
 };
 export function choose(s, choice) {

@@ -1,9 +1,9 @@
 // 0.47 抵達新生之界: 慈光港, the first town past the mountains. Chapter two, part one.
 // Everything here is free and gentle, and the town is full of signs of life — but the only person you ever see is
 // the guide. The rules of the town live here; town-models.js draws it, game.js wires it up. See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.64.0';
-import { give } from './bag.js?v=0.64.0';
-import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.64.0';
+import { dayOf, isNight } from './clock.js?v=0.65.0';
+import { give } from './bag.js?v=0.65.0';
+import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.65.0';
 export { TOWN, toWorld };
 
 // The town sits in its own corner of the world, like the garden maze and the cabin, in the open country under the
@@ -48,6 +48,24 @@ export const LAMPS = [
   ])
 ];
 export const LAMP_R = 0.18;
+// 0.65: benches round the plaza between the lamps, facing the statue, and planted stone tubs along the streets
+// (solid, like the lamps). ry: the way a bench faces.
+export const FURNITURE = [
+  ...Array.from({ length: 8 }, (_, i) => {
+    const a = ((i + 0.5) / 8) * Math.PI * 2;
+    return { kind: 'bench', x: Math.sin(a) * 17, z: Math.cos(a) * 17, r: 0.9, ry: a + Math.PI };
+  }),
+  ...[
+    [-9, 26],
+    [9, 26],
+    [-40, 12],
+    [40, 26],
+    [-40, -20],
+    [20, -20],
+    [-20, 6],
+    [-3, -42]
+  ].map(([x, z]) => ({ kind: 'planter', x, z, r: 1.0, ry: 0 }))
+];
 // Would the orbit camera be inside something solid here? (world coordinates; y is height)
 export function townCameraBlocked(x, y, z) {
   const p = toLocal(x, z),
@@ -62,6 +80,7 @@ export function townCameraBlocked(x, y, z) {
   for (const b of BUILDINGS)
     if (y < b.h + 2 && Math.abs(p.x - b.x) < b.w / 2 + 0.6 && Math.abs(p.z - b.z) < b.d / 2 + 0.6) return true;
   for (const l of LAMPS) if (y < 4.6 && Math.hypot(p.x - l.x, p.z - l.z) < 0.5) return true;
+  for (const f of FURNITURE) if (y < 1.6 && Math.hypot(p.x - f.x, p.z - f.z) < f.r + 0.3) return true;
   return y < 5 && Math.hypot(p.x - STATUE.x, p.z - STATUE.z) < STATUE.r + 0.4;
 }
 
@@ -86,6 +105,7 @@ export function townWalkable(x, z, pad = 0.35, open = false) {
     if (Math.abs(p.x - b.x) < b.w / 2 + pad && Math.abs(p.z - b.z) < b.d / 2 + pad) return false;
   for (const c of [STATUE, STELE, BOARD]) if (Math.hypot(p.x - c.x, p.z - c.z) < c.r + pad) return false;
   for (const l of LAMPS) if (Math.hypot(p.x - l.x, p.z - l.z) < LAMP_R + pad * 0.5) return false;
+  for (const f of FURNITURE) if (Math.hypot(p.x - f.x, p.z - f.z) < f.r + pad * 0.5) return false;
   return true;
 }
 export const insideWalls = s => {

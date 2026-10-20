@@ -2,9 +2,11 @@
 // meal still steaming — and nobody. At the plaza's heart 慈愛組織's statue: two open hands holding up a sun.
 // Layout and rules: town.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT, LAMPS } from './town.js?v=0.64.0';
-import { grainTexture } from './realism.js?v=0.64.0';
-import { tr } from './i18n.js?v=0.64.0';
+import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT, LAMPS } from './town.js?v=0.65.0';
+import { grainTexture } from './realism.js?v=0.65.0';
+import { tr } from './i18n.js?v=0.65.0';
+import { dressWithProp } from './props.js?v=0.65.0';
+import { surface } from './surfaces.js?v=0.65.0';
 
 let seed = 412;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -57,9 +59,9 @@ export function makeTown() {
   grain.needsUpdate = true;
   // 0.48: the land around the town is dome-models.js's (rolling country under the dome)
   // paving inside the walls, and the road out of the gate
-  const paving = mat(0xb9b2a4, { roughness: 0.95, bumpMap: grain, bumpScale: 0.3 });
-  const floor = new T.Mesh(new T.PlaneGeometry(WALL * 2, WALL * 2), paving);
-  floor.rotation.x = -Math.PI / 2;
+  // 0.65: laid in stone setts (surfaces.js), the plane turned in its geometry so the pattern lies flat
+  const paving = surface(mat(0xc4bdae, { roughness: 0.95 }), 'stone', { blocks: true, clean: true });
+  const floor = new T.Mesh(new T.PlaneGeometry(WALL * 2, WALL * 2).rotateX(-Math.PI / 2), paving);
   floor.position.y = 0.02;
   floor.receiveShadow = true;
   g.add(floor);
@@ -73,23 +75,27 @@ export function makeTown() {
   ring.rotation.x = -Math.PI / 2;
   ring.position.y = 0.015;
   g.add(ring);
+  // 0.65: the street pieces (wall, gate, statue, stele, board, lamp posts): models/props/town-street.glb replaces them
+  const street = new T.Group();
+  street.name = 'street';
+  g.add(street);
   // the wall, with its gate on the south side
   const wallMat = mat(0xe8e2d4, { roughness: 0.9, bumpMap: grain, bumpScale: 0.4 });
   const W = WALL,
     H = 4.2;
-  box(g, wallMat, 0, H / 2, -W, W * 2 + 1, H, 1);
-  box(g, wallMat, -W, H / 2, 0, 1, H, W * 2 + 1);
-  box(g, wallMat, W, H / 2, 0, 1, H, W * 2 + 1);
+  box(street, wallMat, 0, H / 2, -W, W * 2 + 1, H, 1);
+  box(street, wallMat, -W, H / 2, 0, 1, H, W * 2 + 1);
+  box(street, wallMat, W, H / 2, 0, 1, H, W * 2 + 1);
   const side = (W - GATE_HALF) / 2 + GATE_HALF;
-  box(g, wallMat, -side, H / 2, W, W - GATE_HALF, H, 1);
-  box(g, wallMat, side, H / 2, W, W - GATE_HALF, H, 1);
+  box(street, wallMat, -side, H / 2, W, W - GATE_HALF, H, 1);
+  box(street, wallMat, side, H / 2, W, W - GATE_HALF, H, 1);
   // the gate: two pillars and a lintel carrying the sun
   const gold = mat(0xe9c46a, { metalness: 0.6, roughness: 0.35, emissive: 0x6b4a10, emissiveIntensity: 0.4 });
-  for (const x of [-GATE_HALF - 0.4, GATE_HALF + 0.4]) box(g, wallMat, x, 3.6, W, 1.6, 7.2, 1.8);
-  box(g, wallMat, 0, 7.6, W, GATE_HALF * 2 + 4, 1.2, 1.9);
-  const gateSun = add(g, new T.CircleGeometry(1.4, 32), gold, 0, 9.4, W + 0.96);
+  for (const x of [-GATE_HALF - 0.4, GATE_HALF + 0.4]) box(street, wallMat, x, 3.6, W, 1.6, 7.2, 1.8);
+  box(street, wallMat, 0, 7.6, W, GATE_HALF * 2 + 4, 1.2, 1.9);
+  const gateSun = add(street, new T.CircleGeometry(1.4, 32), gold, 0, 9.4, W + 0.96);
   gateSun.castShadow = false;
-  add(g, new T.TorusGeometry(1.75, 0.12, 8, 36), gold, 0, 9.4, W + 0.9);
+  add(street, new T.TorusGeometry(1.75, 0.12, 8, 36), gold, 0, 9.4, W + 0.9);
 
   // buildings: plaster walls, a cornice, a roof, doors, and windows that glow at night
   const plaster = [0xf1ece0, 0xe9e3d3, 0xf4efe6, 0xe2dccb].map(c =>
@@ -110,13 +116,18 @@ export function makeTown() {
   const frosted = new T.MeshStandardMaterial({ color: 0xdfe6ea, emissive: 0xf2f6ff, emissiveIntensity: 0.05 });
   const windows = [],
     frost = [];
+  // 0.65: the buildings' own parts, kept apart: the Blender model of the town (models/props/town.glb) replaces them
+  // all when you first get there (dressTown); the signs, shoes, lights and cameras stay as they are
+  const blocks = new T.Group();
+  blocks.name = 'blocks';
+  g.add(blocks);
   for (const b of BUILDINGS) {
     const p = plaster[Math.floor(rnd() * plaster.length)];
-    box(g, p, b.x, b.h / 2, b.z, b.w, b.h, b.d);
-    box(g, trim, b.x, b.h + 0.15, b.z, b.w + 0.5, 0.3, b.d + 0.5);
+    box(blocks, p, b.x, b.h / 2, b.z, b.w, b.h, b.d);
+    box(blocks, trim, b.x, b.h + 0.15, b.z, b.w + 0.5, 0.3, b.d + 0.5);
     // 0.54: a stone plinth, and a band of trim between the floors
-    box(g, plinth, b.x, 0.3, b.z, b.w + 0.16, 0.6, b.d + 0.16);
-    for (let f = 1; f * 3.2 < b.h - 1; f++) box(g, trim, b.x, f * 3.2 + 0.2, b.z, b.w + 0.14, 0.14, b.d + 0.14);
+    box(blocks, plinth, b.x, 0.3, b.z, b.w + 0.16, 0.6, b.d + 0.16);
+    for (let f = 1; f * 3.2 < b.h - 1; f++) box(blocks, trim, b.x, f * 3.2 + 0.2, b.z, b.w + 0.14, 0.14, b.d + 0.14);
     if (b.id !== 'welcome' && b.id !== 'admin' && b.id !== 'kiosk') {
       // a pitched roof along the longer side
       const along = b.w >= b.d,
@@ -126,7 +137,7 @@ export function makeTown() {
       roof.rotateZ(Math.PI / 2);
       if (!along) roof.rotateY(Math.PI / 2);
       roof.scale(1, 0.55, 1);
-      add(g, roof, roofMat, b.x, b.h + 0.3 + span * 0.14, b.z);
+      add(blocks, roof, roofMat, b.x, b.h + 0.3 + span * 0.14, b.z);
     }
     // windows on every face, floor by floor
     const floors = Math.max(1, Math.floor((b.h - 1) / 3.2));
@@ -161,14 +172,14 @@ export function makeTown() {
       z: onX ? b.z + Math.max(-b.d / 2 + 1, Math.min(b.d / 2 - 1, dz)) : b.z + Math.sign(dz) * (b.d / 2 + 0.04),
       ry: onX ? Math.PI / 2 : 0
     };
-    box(g, doorMat, door.x, 1.15, door.z, onX ? 0.08 : 1.4, 2.3, onX ? 1.4 : 0.08);
+    box(blocks, doorMat, door.x, 1.15, door.z, onX ? 0.08 : 1.4, 2.3, onX ? 1.4 : 0.08);
     // 0.54: a door frame, a step, and a little canopy over the door
     {
       const nx = onX ? Math.sign(dx) : 0,
         nz = onX ? 0 : Math.sign(dz),
         along = (a, b) => (onX ? b : a);
-      box(g, trim, door.x - nx * 0.02, 1.25, door.z - nz * 0.02, along(1.8, 0.1), 2.6, along(0.1, 1.8));
-      box(g, plinth, door.x + nx * 0.35, 0.08, door.z + nz * 0.35, along(2, 0.7), 0.16, along(0.7, 2));
+      box(blocks, trim, door.x - nx * 0.02, 1.25, door.z - nz * 0.02, along(1.8, 0.1), 2.6, along(0.1, 1.8));
+      box(blocks, plinth, door.x + nx * 0.35, 0.08, door.z + nz * 0.35, along(2, 0.7), 0.16, along(0.7, 2));
       if (b.id !== 'welcome') {
         const canopy = box(
           g,
@@ -183,7 +194,16 @@ export function makeTown() {
         if (onX) canopy.rotation.z = -nx * 0.2;
         else canopy.rotation.x = nz * 0.2;
         for (const k of [-0.9, 0.9])
-          box(g, doorMat, door.x + nx * 0.4 + (onX ? 0 : k), 2.6, door.z + nz * 0.4 + (onX ? k : 0), 0.06, 0.4, 0.06);
+          box(
+            blocks,
+            doorMat,
+            door.x + nx * 0.4 + (onX ? 0 : k),
+            2.6,
+            door.z + nz * 0.4 + (onX ? k : 0),
+            0.06,
+            0.4,
+            0.06
+          );
       }
       if (b.name && b.id !== 'welcome') {
         const admin = b.id === 'admin';
@@ -208,9 +228,9 @@ export function makeTown() {
           const z = b.z + ((i + 0.5) / count - 0.5) * b.d,
             x = b.x - b.w / 2 - 0.6,
             y = f * 3.2 + 0.3;
-          box(g, trim, x, y, z, 1.2, 0.16, 2.6);
-          box(g, rail, x - 0.58, y + 0.5, z, 0.04, 0.9, 2.6);
-          box(g, poleMat0, x - 0.58, y + 0.97, z, 0.08, 0.06, 2.65);
+          box(blocks, trim, x, y, z, 1.2, 0.16, 2.6);
+          box(blocks, rail, x - 0.58, y + 0.5, z, 0.04, 0.9, 2.6);
+          box(blocks, poleMat0, x - 0.58, y + 0.97, z, 0.08, 0.06, 2.65);
         }
     }
     // shoes left at the door, as if someone just went in
@@ -233,10 +253,10 @@ export function makeTown() {
       // a portico of columns and the sun over the doors
       for (let i = -2; i <= 2; i++) {
         if (!i) continue;
-        add(g, new T.CylinderGeometry(0.35, 0.4, 6, 14), wallMat, i * 3.2, 3, b.z + b.d / 2 + 2.2);
+        add(blocks, new T.CylinderGeometry(0.35, 0.4, 6, 14), wallMat, i * 3.2, 3, b.z + b.d / 2 + 2.2);
       }
-      box(g, wallMat, 0, 6.3, b.z + b.d / 2 + 2.2, 15, 0.6, 3.2);
-      add(g, new T.CircleGeometry(1.1, 32), gold, 0, 7.6, b.z + b.d / 2 + 0.06);
+      box(blocks, wallMat, 0, 6.3, b.z + b.d / 2 + 2.2, 15, 0.6, 3.2);
+      add(blocks, new T.CircleGeometry(1.1, 32), gold, 0, 7.6, b.z + b.d / 2 + 0.06);
     }
   }
   // 0.54: frames and sills round every window, shutters on the houses, and instanced so they cost four draws
@@ -252,7 +272,7 @@ export function makeTown() {
       m.setMatrixAt(i, o.matrix);
     });
     m.castShadow = m.receiveShadow = true;
-    g.add(m);
+    blocks.add(m);
     return m;
   };
   const allWindows = [...windows, ...frost];
@@ -288,7 +308,7 @@ export function makeTown() {
       o.updateMatrix();
       m.setMatrixAt(i, o.matrix);
     });
-    g.add(m);
+    blocks.add(m);
   }
   // the admin block's door light, only at night
   const doorLight = new T.Mesh(
@@ -300,8 +320,16 @@ export function makeTown() {
   doorLight.rotation.y = Math.PI / 2;
   g.add(doorLight);
   // 0.54: the admin block wears the sun over its door, and watches the plaza
-  add(g, new T.CircleGeometry(0.9, 32), gold, admin.x - admin.w / 2 - 0.05, admin.h - 2, admin.z, -Math.PI / 2);
-  add(g, new T.TorusGeometry(1.1, 0.08, 8, 32), gold, admin.x - admin.w / 2 - 0.06, admin.h - 2, admin.z, -Math.PI / 2);
+  add(blocks, new T.CircleGeometry(0.9, 32), gold, admin.x - admin.w / 2 - 0.05, admin.h - 2, admin.z, -Math.PI / 2);
+  add(
+    blocks,
+    new T.TorusGeometry(1.1, 0.08, 8, 32),
+    gold,
+    admin.x - admin.w / 2 - 0.06,
+    admin.h - 2,
+    admin.z,
+    -Math.PI / 2
+  );
   const camBody = mat(0x2a2d31, { metalness: 0.5, roughness: 0.4 }),
     camEye = new T.MeshStandardMaterial({ color: 0x300000, emissive: 0xff3030, emissiveIntensity: 1.5 });
   for (const [x, z, ry] of [
@@ -322,16 +350,16 @@ export function makeTown() {
 
   // the statue: a pedestal, two open hands, and the sun they hold up
   const stone = mat(0xf2eee6, { roughness: 0.6, bumpMap: grain, bumpScale: 0.15 });
-  add(g, new T.CylinderGeometry(STATUE.r, STATUE.r + 0.3, 1.2, 32), stone, STATUE.x, 0.6, STATUE.z);
-  add(g, new T.CylinderGeometry(1.2, 1.5, 1.6, 24), stone, STATUE.x, 2, STATUE.z);
+  add(street, new T.CylinderGeometry(STATUE.r, STATUE.r + 0.3, 1.2, 32), stone, STATUE.x, 0.6, STATUE.z);
+  add(street, new T.CylinderGeometry(1.2, 1.5, 1.6, 24), stone, STATUE.x, 2, STATUE.z);
   for (const s of [-1, 1]) {
     const palm = new T.SphereGeometry(1, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2);
     palm.scale(1.1, 0.5, 1.7);
-    const hand = add(g, palm, stone, STATUE.x + s * 0.9, 3.15, STATUE.z);
+    const hand = add(street, palm, stone, STATUE.x + s * 0.9, 3.15, STATUE.z);
     hand.rotation.set(Math.PI, 0, s * 0.55);
     for (let f = 0; f < 4; f++) {
       const finger = add(
-        g,
+        street,
         new T.CapsuleGeometry(0.17, 0.9, 4, 8),
         stone,
         STATUE.x + s * 1.75,
@@ -352,16 +380,23 @@ export function makeTown() {
   sun.castShadow = false;
   const halo = add(g, new T.TorusGeometry(1.5, 0.07, 8, 48), gold, STATUE.x, 4.4, STATUE.z);
   // the message stele, the bulletin board
-  add(g, new T.BoxGeometry(1.5, 3.2, 0.5), mat(0x55575c, { roughness: 0.7, bumpMap: grain }), STELE.x, 1.6, STELE.z);
-  box(g, doorMat, BOARD.x - 0.6, 0.9, BOARD.z, 0.12, 1.8, 0.12);
-  box(g, doorMat, BOARD.x + 0.6, 0.9, BOARD.z, 0.12, 1.8, 0.12);
-  box(g, mat(0xf3eedf), BOARD.x, 1.6, BOARD.z, 1.6, 1, 0.08);
-  add(g, new T.CircleGeometry(0.18, 20), gold, BOARD.x + 0.55, 1.95, BOARD.z + 0.05);
+  add(
+    street,
+    new T.BoxGeometry(1.5, 3.2, 0.5),
+    mat(0x55575c, { roughness: 0.7, bumpMap: grain }),
+    STELE.x,
+    1.6,
+    STELE.z
+  );
+  box(street, doorMat, BOARD.x - 0.6, 0.9, BOARD.z, 0.12, 1.8, 0.12);
+  box(street, doorMat, BOARD.x + 0.6, 0.9, BOARD.z, 0.12, 1.8, 0.12);
+  box(street, mat(0xf3eedf), BOARD.x, 1.6, BOARD.z, 1.6, 1, 0.08);
+  add(street, new T.CircleGeometry(0.18, 20), gold, BOARD.x + 0.55, 1.95, BOARD.z + 0.05);
   // the letter kiosk's wall of numbered mailboxes
   const kiosk = BUILDINGS.find(b => b.id === 'kiosk');
   for (let r = 0; r < 3; r++)
     for (let c = 0; c < 4; c++)
-      box(g, gold, kiosk.x + kiosk.w / 2 + 0.06, 1 + r * 0.55, kiosk.z - 1.2 + c * 0.8, 0.06, 0.45, 0.65);
+      box(blocks, gold, kiosk.x + kiosk.w / 2 + 0.06, 1 + r * 0.55, kiosk.z - 1.2 + c * 0.8, 0.06, 0.45, 0.65);
   // the diner: a table out front with a bowl that still steams
   const diner = BUILDINGS.find(b => b.id === 'diner');
   const tz = diner.z - diner.d / 2 - 1.8;
@@ -419,15 +454,31 @@ export function makeTown() {
   const lampMat = new T.MeshStandardMaterial({ color: 0xfff1cf, emissive: 0xffd990, emissiveIntensity: 0.1 });
   const poleMat = mat(0x3b3d40, { metalness: 0.6, roughness: 0.4 });
   for (const { x, z } of LAMPS) {
-    add(g, new T.CylinderGeometry(0.07, 0.09, 4, 8), poleMat, x, 2, z);
+    add(street, new T.CylinderGeometry(0.07, 0.09, 4, 8), poleMat, x, 2, z);
     lamps.push(add(g, new T.SphereGeometry(0.28, 14, 10), lampMat, x, 4.15, z));
   }
   const glow = new T.PointLight(0xffd9a0, 0, 60, 1.6);
   glow.position.set(0, 7, 0);
   g.add(glow);
   // the guide: 晴, in white, waiting in front of the welcome centre
-  g.userData = { windowMat, frosted, lampMat, glow, doorLight, sun, halo, steam };
+  g.userData = { windowMat, frosted, lampMat, glow, doorLight, sun, halo, steam, blocks, street };
   return g;
+}
+
+// 0.65: the Blender town (scripts/blender/town.py): loaded the first time you get here, then it takes the place of
+// the box buildings. Its window panes take the town's own glass, which lights up at night (animateTown).
+export function dressTown(g) {
+  const u = g.userData;
+  if (u.dressed) return u.dressed;
+  dressWithProp(u.street, 'town-street');
+  return (u.dressed = dressWithProp(u.blocks, 'town').then(ok => {
+    if (ok)
+      u.blocks.traverse(o => {
+        if (o.isMesh && o.material.name === 'window') o.material = u.windowMat;
+        else if (o.isMesh && o.material.name === 'frosted') o.material = u.frosted;
+      });
+    return ok;
+  }));
 }
 
 // Night lights, the sun's slow turn, the soup's steam.

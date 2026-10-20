@@ -3,10 +3,10 @@
 // between 比斯泰德 and our world, 慈愛組織 sends minds across it, and K. was looking for the way back. Then the first
 // layer of the rift — a trial for your beasts (a short auto-battle: you choose the tactic each round) — and at its
 // core, a glimpse of the hospital room on the other side. See docs/STORY.md.
-import { dayOf } from './clock.js?v=0.64.0';
-import { give } from './bag.js?v=0.64.0';
-import { allyPower, grantXp, normalizeLevel } from './combat.js?v=0.64.0';
-import { toLocal, outsideDome } from './dome.js?v=0.64.0';
+import { dayOf } from './clock.js?v=0.65.0';
+import { give } from './bag.js?v=0.65.0';
+import { allyPower, grantXp, normalizeLevel } from './combat.js?v=0.65.0';
+import { toLocal, outsideDome } from './dome.js?v=0.65.0';
 
 // Places outside the shell (local to the town's plaza; the tear is due south at the shell).
 export const OUTPOST = { x: 42, z: 352 };
@@ -379,7 +379,7 @@ export function seeCore(s) {
   log(
     s,
     '第三章（上）完 · 橋',
-    '裂縫的核心讓我看見了病房：瘦下去的我，握著我的手睡著的媽媽。原體還活著。碎片只有一塊，裂縫還有更深的層。第三章（下）——敬請期待。'
+    '裂縫的核心讓我看見了病房：瘦下去的我，握著我的手睡著的媽媽。原體還活著。碎片只有一塊，裂縫還有更深的層。'
   );
   return { ok: true, script: CORE_VISION };
 }
