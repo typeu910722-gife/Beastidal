@@ -3,9 +3,10 @@
 // the second document — a consent to end the original body's life support, seven days out. Back in 慈光港, No.0388
 // answers on the stele; K.'s master code opens the admin block again, and tank B-01 holds what became of 晴. At the
 // bridge the manager speaks a second time: whose release it really is. Pure: reads and changes the state.
-import { dayOf } from './clock.js?v=0.73.0';
-import { give } from './bag.js?v=0.73.0';
-import { normalizeChapter3 } from './chapter3.js?v=0.73.0';
+import { dayOf } from './clock.js?v=0.74.0';
+import { give } from './bag.js?v=0.74.0';
+import { normalizeChapter3 } from './chapter3.js?v=0.74.0';
+import { homeMemories } from './farewell.js?v=0.74.0';
 
 const log = (s, title, text) => {
   s.log.unshift({ day: dayOf(s), title, text });
@@ -21,6 +22,9 @@ export function normalizeChapter4(s) {
   c.tank ??= false; // tank B-01 in the admin block
   c.manager ??= false; // the manager's second word at the bridge: part one's end
   c.extended ??= false; // the date passed, and the manager had them wait
+  // 0.74 part two · 牽絆
+  c.talked ??= []; // beasts you sat down with
+  c.homeSeen ??= []; // things on the raft that brought a day back
   return c;
 }
 export const started4 = s => !!s.chapter3?.bridge;
@@ -146,6 +150,28 @@ export function managerSpeaks(s) {
   return { ok: true, lines: MANAGER_2 };
 }
 
+// ---------- 0.74 part two · 牽絆: what you would leave ----------
+export const inPartTwo = s => !!normalizeChapter4(s).manager;
+const beastsOf = s => (s.tamed || []).filter(p => p.kind !== 'creature');
+// how many beasts to talk to, and how many places on the raft to walk past
+export const talksNeeded = s => Math.min(3, beastsOf(s).length);
+export const homeNeeded = s => Math.min(3, homeMemories(s).length);
+export function noteTalk(s, id) {
+  const c = normalizeChapter4(s);
+  if (!c.manager || c.talked.includes(id)) return false;
+  c.talked.push(id);
+  return true;
+}
+export function noteHome(s, type) {
+  const c = normalizeChapter4(s);
+  if (!c.manager || c.homeSeen.includes(type)) return false;
+  c.homeSeen.push(type);
+  return true;
+}
+export const talksDone = s => normalizeChapter4(s).talked.length >= talksNeeded(s);
+export const homeDone = s => normalizeChapter4(s).homeSeen.length >= homeNeeded(s);
+export const partTwoRoundOne = s => inPartTwo(s) && talksDone(s) && homeDone(s);
+
 // ---------- the HUD ----------
 export function chapter4Objectives(s) {
   if (!started4(s)) return [];
@@ -159,6 +185,13 @@ export function chapter4Objectives(s) {
     if (c.stele && c.tank) list.push(['回到裂縫的核心 · 橋', c.manager]);
   }
   if (c.manager) list.push(['第四章（上）完 · 第二份文件', true]);
+  if (c.manager) {
+    const t = Math.min(c.talked.length, talksNeeded(s)),
+      h = Math.min(c.homeSeen.length, homeNeeded(s));
+    if (talksNeeded(s)) list.push([`回到湖區，和夥伴們說說話（${t}/${talksNeeded(s)}）`, talksDone(s)]);
+    if (homeNeeded(s)) list.push([`回到木筏上，走一圈你的家（${h}/${homeNeeded(s)}）`, homeDone(s)]);
+    if (talksDone(s) && homeDone(s)) list.push(['牽絆 · 第四章（下）待續', true]);
+  }
   return list;
 }
 // expose the chapter-3 state for the goal (the bridge stands in the rift's core)
