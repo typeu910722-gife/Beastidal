@@ -2286,6 +2286,71 @@ export default {
     '(Walk around the raft. Everything here, I built myself.)',
   '（牠們好像察覺到什麼了。打開選單 › 御獸倉庫，跟牠們好好說說話。）':
     '(They seem to sense something. Open Menu › Beast Storage and have a proper talk with them.)',
+  '嘯岳沒有像平常那樣站起來。牠趴著，看著湖，很久都沒有說話。':
+    "Xiaoyue doesn't get up as it usually does. It lies there, looking at the lake, silent for a long time.",
+  '你問過我，為什麼一直說「我記得」。': 'You asked me once why I keep saying "I remember."',
+  '很久以前，在那個盒子還沒有出現的時候，裂縫就已經在了。偶爾，會有人從裡面掉下來。':
+    'Long ago, before that box ever appeared, the rift was already here. Now and then, someone fell out of it.',
+  '有一個女孩，叫汐。她聽得懂我。你是第二個。':
+    'There was a girl called Xi. She could understand me. You are the second.',
+  '她和那些築山的人一起，一塊石頭一塊石頭，把群山堆起來，想把裂縫擋住。我幫她搬過最大的那一塊。':
+    'With the mountain builders she piled up the mountains stone by stone, to wall the rift in. I carried the biggest stone for her.',
+  '後來她找到了橋。她說，另一邊有人在等她。':
+    'Then she found the bridge. She said someone was waiting for her on the other side.',
+  '她走的那天，摸著我的頭說：「你要記得我。」': 'The day she left, she stroked my head and said: "Remember me."',
+  '所以我記得。我在湖邊等了好幾百年。她沒有回來。':
+    'So I remember. I waited by the lake for hundreds of years. She never came back.',
+  '嘯岳終於轉過頭來看你。牠的眼睛，在夕陽裡是金色的。':
+    'At last Xiaoyue turns to look at you. Its eyes are gold in the setting sun.',
+  '我不是要你留下來。……我只是想讓你知道：被留下來的那一邊，是什麼感覺。':
+    "I'm not asking you to stay. …I just want you to know what it feels like to be the one left behind.",
+  嘯岳記得的人: 'The one Xiaoyue remembers',
+  '很久以前，有一個叫汐的女孩聽得懂嘯岳。她和築山的人一起堆起群山，後來走過了橋，再也沒有回來。嘯岳在湖邊等了好幾百年。「你要記得我。」所以牠記得。':
+    'Long ago a girl called Xi could understand Xiaoyue. She raised the mountains with the builders, then crossed the bridge and never came back. Xiaoyue waited by the lake for hundreds of years. "Remember me." So it remembers.',
+  '你夢見了那間病房。這一次，聲音很清楚。': 'You dream of the hospital room. This time the voices are clear.',
+  醫生: 'Doctor',
+  '「就算醒過來，躺了這麼久，肌肉萎縮得很嚴重。能再走路的機會……不大。」':
+    '"Even if he wakes, after lying here this long the muscle wasting is severe. The chance he walks again… isn\'t good."',
+  '「沒關係。只要他醒過來，我推他。」': '"That\'s all right. As long as he wakes up, I\'ll push him."',
+  '「還有一件事。組織停止支付之後，之前的費用……」':
+    '"One more thing. Once the organisation stops paying, the costs so far…"',
+  '「房子我已經在問了。……沒關係的。」': '"I\'m already asking about the house. …It\'s all right."',
+  '她說「沒關係」的時候，手一直在抖。': 'Her hands kept shaking as she said "it\'s all right."',
+  '你醒了。湖面很亮。': 'You wake. The lake is bright.',
+  '今天，是最後一天。想做什麼都可以。': 'Today is the last day. You can do whatever you like.',
+  最後一天: 'The last day',
+  '我夢見了病房：就算醒過來，也許再也走不了路；媽媽說，房子她已經在問了。今天，是最後一天。':
+    'I dreamed of the hospital room: even if I wake, I may never walk again; Mum said she is already asking about the house. Today is the last day.',
+  '最後一天 · 過完了': 'The last day · over',
+  '那一天，我什麼也沒做。只是一直看著湖，好像這樣就能把它記住。':
+    'That day I did nothing. I just kept looking at the lake, as if that would let me remember it.',
+  '最後一天的夕陽，你坐在木筏的邊上看完了。湖面一點一點變成金色。':
+    "You sat at the edge of the raft and watched the last day's sunset to the end. Bit by bit the lake turned gold.",
+  '你回到了{0}。你插下的旗子，還在風裡飄。': 'You went back to {0}. The flag you planted is still flying in the wind.',
+  '{0}載著你在湖上跑了一大圈。風很大，你笑出聲來。':
+    '{0} carried you all the way round the lake. The wind was strong and you laughed out loud.',
+  '你和嘯岳坐在山腳，看著湖。牠什麼也沒說，尾巴輕輕掃著你的腳邊。':
+    'You and Xiaoyue sat at the foot of the mountains, looking at the lake. It said nothing, its tail softly brushing your feet.',
+  '你和{0}一起釣到了{1}。牠比你還開心。': 'You and {0} caught a {1} together. It was happier than you were.',
+  '你一個人釣到了{0}。': 'You caught a {0} on your own.',
+  '和嘯岳說說話（御獸倉庫 › 嘯岳）': 'Talk with Xiaoyue (Beast storage › Xiaoyue)',
+  '睡一晚，迎接最後一天': 'Sleep a night and wake to the last day',
+  '最後一天 · 留下了 {0} 段回憶': 'The last day · {0} memories kept',
+  '第四章（下）待續 · 橋前的選擇': 'Chapter 4 (part 2) to be continued · The choice at the bridge',
+  '睡一晚吧。明天，是最後一天。': 'Sleep tonight. Tomorrow is the last day.',
+  '留下了 {0} 段回憶。': '{0} memories kept.',
+  '那一天，只是看著湖。': 'That day, you just looked at the lake.',
+  魚: 'fish',
+  '（嘯岳一直趴在湖邊，看著遠方。去御獸倉庫，跟牠說說話吧。）':
+    '(Xiaoyue has been lying by the lake, looking far away. Go to beast storage and talk with it.)',
+  '（天快黑了。回避難所睡一覺吧。）': "(It's getting dark. Go back to the shelter and sleep.)",
+  '（今天是最後一天。我想把這裡的一切，都再看一次。）':
+    '(Today is the last day. I want to see everything here one more time.)',
+  '下一步：打開選單 › 御獸倉庫，選嘯岳，按「說說話」':
+    'Next: open the menu › Beast storage, pick Xiaoyue, press "Talk"',
+  '下一步：回避難所睡一晚': 'Next: go back to the shelter and sleep a night',
+  '今天是最後一天：看夕陽、回到你的島、騎著夥伴跑一圈、一起釣魚、陪嘯岳坐在山腳':
+    'Today is the last day: watch the sunset, visit your island, ride a partner round the lake, fish together, sit with Xiaoyue at the foothills',
   '在避難所時，上方的數字＝背包＋書桌倉庫。':
     'At the shelter, the numbers up top count the bag and the desk storage together.',
   '書桌倉庫：': 'Desk storage: ',

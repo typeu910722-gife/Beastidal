@@ -10,8 +10,8 @@ import {
   BOARD,
   XIAOYUE_WAITS,
   lettersReady
-} from './town.js?v=0.74.0';
-import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.74.0';
+} from './town.js?v=0.75.0';
+import { chapter2Objectives, normalizeChapter2, graduated, guideGone } from './chapter2.js?v=0.75.0';
 import {
   chapter3Objectives,
   normalizeChapter3,
@@ -22,11 +22,20 @@ import {
   RIFT,
   TEAR_AT,
   layerOpen
-} from './chapter3.js?v=0.74.0';
-import { isNight } from './clock.js?v=0.74.0';
-import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.74.0';
-import { riftStatus } from './rift-fight.js?v=0.74.0';
-import { chapter4Objectives, normalizeChapter4, inPartTwo, talksDone, homeDone } from './chapter4.js?v=0.74.0';
+} from './chapter3.js?v=0.75.0';
+import { isNight } from './clock.js?v=0.75.0';
+import { INTERIORS, interiorWorld, adminReady, QING_AT } from './interiors.js?v=0.75.0';
+import { riftStatus } from './rift-fight.js?v=0.75.0';
+import {
+  chapter4Objectives,
+  normalizeChapter4,
+  inPartTwo,
+  talksDone,
+  homeDone,
+  inLastDay
+} from './chapter4.js?v=0.75.0';
+// 0.75: part two's lake steps last until the last day is over
+const onLake4 = s => inPartTwo(s) && !normalizeChapter4(s).lastDone;
 
 const door = id => BUILDINGS.find(b => b.id === id).door;
 const at = (p, name, night = false) => ({ ...toWorld(p), name, night });
@@ -76,8 +85,7 @@ export function nextGoal(s) {
     if (!c4.tank) return at(door('admin'), '管理區 · 玻璃槽大廳');
     if (!c4.manager) return at(RIFT, '裂縫的核心 · 橋');
     // 0.74 part two: what you would leave is on the lake — 嘯岳 takes you back
-    if (!talksDone(s) || !homeDone(s))
-      return at({ x: XIAOYUE_WAITS.x - 2.5, z: XIAOYUE_WAITS.z - 1 }, '嘯岳 · 回到湖區');
+    if (onLake4(s)) return at({ x: XIAOYUE_WAITS.x - 2.5, z: XIAOYUE_WAITS.z - 1 }, '嘯岳 · 回到湖區');
     return null;
   }
   if (!c3.cleared.includes(1) || !c3.vision || layerOpen(s, 2) || layerOpen(s, 3) || c3.cleared.includes(3))
@@ -107,7 +115,7 @@ export function storyPanel(s) {
   const two4 = inFour && inPartTwo(s),
     away = !s.inTown && !two4;
   if (away) list = [['騎嘯岳翻過群山，回到新生之界', false], ...list];
-  if (two4 && s.inTown && !(talksDone(s) && homeDone(s))) list = [['騎嘯岳回到湖區', false], ...list];
+  if (two4 && s.inTown && onLake4(s)) list = [['騎嘯岳回到湖區', false], ...list];
   const open = list.filter(([, d]) => !d);
   const goal = away || (two4 && !s.inTown) ? null : nextGoal(s);
   const lakeStep =
@@ -117,7 +125,13 @@ export function storyPanel(s) {
         ? '下一步：打開選單 › 御獸倉庫，選一隻夥伴，按「說說話」'
         : !homeDone(s)
           ? '下一步：回到木筏上，走近你親手蓋的設施'
-          : '';
+          : !normalizeChapter4(s).xiaoyue
+            ? '下一步：打開選單 › 御獸倉庫，選嘯岳，按「說說話」'
+            : !normalizeChapter4(s).lastDay
+              ? '下一步：回避難所睡一晚'
+              : inLastDay(s)
+                ? '今天是最後一天：看夕陽、回到你的島、騎著夥伴跑一圈、一起釣魚、陪嘯岳坐在山腳'
+                : '';
   return {
     chapter: two4
       ? 'CHAPTER 04 · 牽絆'
