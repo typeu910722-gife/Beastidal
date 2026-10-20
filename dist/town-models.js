@@ -2,11 +2,11 @@
 // meal still steaming — and nobody. At the plaza's heart 慈愛組織's statue: two open hands holding up a sun.
 // Layout and rules: town.js.
 import * as T from './vendor/three.module.min.js';
-import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT, LAMPS } from './town.js?v=0.64.0';
-import { grainTexture } from './realism.js?v=0.64.0';
-import { tr } from './i18n.js?v=0.64.0';
-import { dressWithProp } from './props.js?v=0.64.0';
-import { surface } from './surfaces.js?v=0.64.0';
+import { TOWN, WALL, GATE_HALF, BUILDINGS, STATUE, STELE, BOARD, GUIDE_AT, LAMPS } from './town.js?v=0.65.0';
+import { grainTexture } from './realism.js?v=0.65.0';
+import { tr } from './i18n.js?v=0.65.0';
+import { dressWithProp } from './props.js?v=0.65.0';
+import { surface } from './surfaces.js?v=0.65.0';
 
 let seed = 412;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -60,7 +60,7 @@ export function makeTown() {
   // 0.48: the land around the town is dome-models.js's (rolling country under the dome)
   // paving inside the walls, and the road out of the gate
   // 0.65: laid in stone setts (surfaces.js), the plane turned in its geometry so the pattern lies flat
-  const paving = surface(mat(0xc4bdae, { roughness: 0.95 }), 'stone', { blocks: true });
+  const paving = surface(mat(0xc4bdae, { roughness: 0.95 }), 'stone', { blocks: true, clean: true });
   const floor = new T.Mesh(new T.PlaneGeometry(WALL * 2, WALL * 2).rotateX(-Math.PI / 2), paving);
   floor.position.y = 0.02;
   floor.receiveShadow = true;
@@ -194,7 +194,16 @@ export function makeTown() {
         if (onX) canopy.rotation.z = -nx * 0.2;
         else canopy.rotation.x = nz * 0.2;
         for (const k of [-0.9, 0.9])
-          box(blocks, doorMat, door.x + nx * 0.4 + (onX ? 0 : k), 2.6, door.z + nz * 0.4 + (onX ? k : 0), 0.06, 0.4, 0.06);
+          box(
+            blocks,
+            doorMat,
+            door.x + nx * 0.4 + (onX ? 0 : k),
+            2.6,
+            door.z + nz * 0.4 + (onX ? k : 0),
+            0.06,
+            0.4,
+            0.06
+          );
       }
       if (b.name && b.id !== 'welcome') {
         const admin = b.id === 'admin';
@@ -312,7 +321,15 @@ export function makeTown() {
   g.add(doorLight);
   // 0.54: the admin block wears the sun over its door, and watches the plaza
   add(blocks, new T.CircleGeometry(0.9, 32), gold, admin.x - admin.w / 2 - 0.05, admin.h - 2, admin.z, -Math.PI / 2);
-  add(blocks, new T.TorusGeometry(1.1, 0.08, 8, 32), gold, admin.x - admin.w / 2 - 0.06, admin.h - 2, admin.z, -Math.PI / 2);
+  add(
+    blocks,
+    new T.TorusGeometry(1.1, 0.08, 8, 32),
+    gold,
+    admin.x - admin.w / 2 - 0.06,
+    admin.h - 2,
+    admin.z,
+    -Math.PI / 2
+  );
   const camBody = mat(0x2a2d31, { metalness: 0.5, roughness: 0.4 }),
     camEye = new T.MeshStandardMaterial({ color: 0x300000, emissive: 0xff3030, emissiveIntensity: 1.5 });
   for (const [x, z, ry] of [
@@ -363,7 +380,14 @@ export function makeTown() {
   sun.castShadow = false;
   const halo = add(g, new T.TorusGeometry(1.5, 0.07, 8, 48), gold, STATUE.x, 4.4, STATUE.z);
   // the message stele, the bulletin board
-  add(street, new T.BoxGeometry(1.5, 3.2, 0.5), mat(0x55575c, { roughness: 0.7, bumpMap: grain }), STELE.x, 1.6, STELE.z);
+  add(
+    street,
+    new T.BoxGeometry(1.5, 3.2, 0.5),
+    mat(0x55575c, { roughness: 0.7, bumpMap: grain }),
+    STELE.x,
+    1.6,
+    STELE.z
+  );
   box(street, doorMat, BOARD.x - 0.6, 0.9, BOARD.z, 0.12, 1.8, 0.12);
   box(street, doorMat, BOARD.x + 0.6, 0.9, BOARD.z, 0.12, 1.8, 0.12);
   box(street, mat(0xf3eedf), BOARD.x, 1.6, BOARD.z, 1.6, 1, 0.08);

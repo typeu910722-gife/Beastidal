@@ -4,7 +4,8 @@
 //    tone; with `planks`, the dark seams between deck boards
 //  · metal — brushed lines, patches of rust that are rough and dull where brushed steel is smooth and bright
 //  · cloth — a fine weave and grime, matte
-//  · stone — weathered, with cracks and moss on what faces the sky; with `blocks`, laid in staggered courses
+//  · stone — weathered, with cracks and moss on what faces the sky; with `blocks`, laid in staggered courses;
+//    `clean` keeps the moss off (慈光港's swept streets)
 //  · plaster — a fine stucco, faint blotches, rain streaks running down the walls (0.65)
 //  · tile — roof tiles in staggered courses, each course shading the one below it (0.65)
 // The colour of the material stays as it was — the surface only modulates it. Detail finer than a pixel fades to
@@ -55,6 +56,9 @@ const BODY = {
   sfAlb*=(.8+tone*.28)*(.78+weather*.38)*(.88+grit*.24)*mix(.42,1.,joint)*mix(.45,1.,crack);
   // moss and lichen where rain and light fall on it, and at the foot of a wall
   float moss=smoothstep(.5,.78,sf_fbm(q*1.6+7.))*(.35+.65*max(n0.y,0.))+smoothstep(.6,0.,p.y)*.25*(1.-abs(n0.y));
+  #ifdef SF_CLEAN
+  moss=0.;
+  #endif
   sfAlb=mix(sfAlb,vec3(.09,.13,.05)*(.8+weather*.5),clamp(moss,0.,1.)*.65);
   sfRough=.94;`,
   plaster: `
@@ -86,7 +90,7 @@ const BODY = {
 export function surface(material, kind, opts = {}) {
   if (!BODY[kind] || material.userData.surface) return material;
   material.userData.surface = kind;
-  const key = `sf-${kind}-${opts.planks ? 1 : 0}${opts.blocks ? 1 : 0}-${opts.axis ?? 'a'}`;
+  const key = `sf-${kind}-${opts.planks ? 1 : 0}${opts.blocks ? 1 : 0}${opts.clean ? 1 : 0}-${opts.axis ?? 'a'}`;
   const prev = material.onBeforeCompile;
   material.onBeforeCompile = (sh, r) => {
     prev?.(sh, r);
@@ -138,6 +142,7 @@ export function surface(material, kind, opts = {}) {
       );
     if (opts.planks) sh.fragmentShader = '#define SF_PLANKS\n' + sh.fragmentShader;
     if (opts.blocks) sh.fragmentShader = '#define SF_BLOCKS\n' + sh.fragmentShader;
+    if (opts.clean) sh.fragmentShader = '#define SF_CLEAN\n' + sh.fragmentShader;
   };
   const prevKey = material.customProgramCacheKey?.bind(material);
   material.customProgramCacheKey = () => key + (prevKey ? prevKey() : '');
