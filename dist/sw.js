@@ -12,6 +12,7 @@ const FILES = [
   './expansion.css?v=0.65.0',
   './beastidal.css?v=0.65.0',
   './inventory.css?v=0.65.0',
+  './ui.css?v=0.65.0',
   './icons.js?v=0.65.0',
   './inv.js?v=0.65.0',
   './jobs.js?v=0.65.0',

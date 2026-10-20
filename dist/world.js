@@ -2720,6 +2720,10 @@ export class OceanWorld {
     saveSettings(this.settings);
     return true;
   }
+  // 0.66: resolves once the town's Blender models have loaded (or failed: the procedural town stands in)
+  townReady() {
+    return dressTown(this.town);
+  }
   thumbnail(genome, key) {
     if (this.previewCache.has(key)) return this.previewCache.get(key);
     const scene = new T.Scene();

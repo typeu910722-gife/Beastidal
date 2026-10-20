@@ -338,7 +338,7 @@
 #hud button.pressed,
 #touch-controls button.pressed {
   filter: brightness(1.35);
-  transform: scale(0.95);
+  scale: 0.95;
 }
 /* Phones in landscape: keep the left column short so vitals never sit on the quest list */
 .landscape-play .quest-item.minor {
@@ -3256,19 +3256,19 @@ body #drawer.device.bx-full {
 
 /* 0.35: the top of the screen stacks instead of piling up — tutorial / build banner, then the inner voice,
    then toasts below whatever is showing */
-body:has(#monologue.show) #tutorial {
+body:has(#monologue.show:not([hidden])) #tutorial {
   opacity: 0;
   pointer-events: none;
 }
 body:has(#build-banner:not([hidden])) #monologue {
   top: 190px;
 }
-body:has(#monologue.show) #toasts,
+body:has(#monologue.show:not([hidden])) #toasts,
 body:has(#tutorial:not([hidden])) #toasts,
 body:has(#build-banner:not([hidden])) #toasts {
   top: 200px;
 }
-body:has(#build-banner:not([hidden])):has(#monologue.show) #toasts {
+body:has(#build-banner:not([hidden])):has(#monologue.show:not([hidden])) #toasts {
   top: 290px;
 }
 

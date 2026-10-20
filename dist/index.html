@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="./expansion.css?v=0.65.0" />
     <link rel="stylesheet" href="./beastidal.css?v=0.65.0" />
     <link rel="stylesheet" href="./inventory.css?v=0.65.0" />
+    <link rel="stylesheet" href="./ui.css?v=0.65.0" />
     <!-- modulepreload:start -->
     <link rel="modulepreload" href="./achievements.js?v=0.65.0" />
     <link rel="modulepreload" href="./art.js?v=0.65.0" />
@@ -229,7 +230,8 @@
       <div id="load-screen">
         <span class="eyebrow">BEASTIDAL</span>
         <p id="load-text">正在越過世界的邊界…</p>
-        <div class="loading-line"></div>
+        <div class="load-progress" aria-hidden="true"><i id="load-bar"></i></div>
+        <small id="load-step">載入遊戲程式</small>
       </div>
       <section id="title-screen" hidden>
         <div class="title-top">
@@ -315,7 +317,9 @@
             <p class="eyebrow" id="quest-chapter">CHAPTER 01 · 重新呼吸</p>
             <h2 id="quest-title">先在這片海活下來</h2>
             <div id="quest-list"></div>
-            <p id="quest-hint" class="quiet"></p>
+            <button id="next-step" type="button" class="next-step" title="再說一次">
+              <b>下一步</b><span id="quest-hint"></span>
+            </button>
           </section>
           <div class="supply-row">
             <button id="drink-btn" type="button" title="喝水 · 水分 +35">
@@ -342,6 +346,7 @@
           <button id="home-btn" class="small-button">⌂ 導航回避難所 <kbd>H</kbd></button>
         </aside>
         <div id="world-labels" aria-hidden="true"></div>
+        <div id="cursor-chip" aria-hidden="true">按 <kbd>Alt</kbd> 顯示滑鼠 · 點按鈕</div>
         <section id="bigmap" hidden aria-label="湖域地圖">
           <header>
             <div>
@@ -421,8 +426,16 @@
               <span class="tool-icon">⌂</span><span>建造</span><kbd>B</kbd></button
             ><button data-panel="device" id="device-tool">
               <span class="tool-icon">▯</span><span>裝置</span><kbd>I</kbd></button
-            ><button id="adventure-btn" data-panel="adventure" hidden>
-              <kbd>K</kbd><span class="tool-icon">✦</span><span>御獸遠航</span>
+            ><button data-panel="bag" id="bag-tool" class="quick">
+              <span class="tool-icon">▣</span><span>背包</span></button
+            ><button data-panel="creatures" id="beasts-tool" class="quick">
+              <span class="tool-icon">❦</span><span>御獸</span><kbd>C</kbd></button
+            ><button data-panel="journal" id="journal-tool" class="quick">
+              <span class="tool-icon">✎</span><span>日誌</span><kbd>J</kbd></button
+            ><button id="adventure-btn" data-panel="adventure" class="quick">
+              <span class="tool-icon">✦</span><span>遠航</span><kbd>K</kbd></button
+            ><button id="map-tool" data-action="map" class="quick">
+              <span class="tool-icon">◎</span><span>地圖</span><kbd>M</kbd>
             </button>
           </nav>
         </div>
@@ -475,6 +488,7 @@
       </aside>
       <div id="modal-shade" hidden>
         <section id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <button id="modal-close" type="button" class="modal-close" hidden aria-label="關閉">✕</button>
           <p class="eyebrow" id="modal-eyebrow"></p>
           <h2 id="modal-title"></h2>
           <div id="modal-body"></div>
@@ -504,6 +518,28 @@
         addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
     </script>
     <script>
+      // 0.66: real progress while booting — the game's modules as they arrive, then the steps game.js reports
+      (() => {
+        const total = document.querySelectorAll('link[rel="modulepreload"]').length + 1;
+        let seen = 0,
+          floor = 0;
+        const bar = () => document.getElementById('load-bar');
+        window.bootProgress = (pct, step) => {
+          floor = Math.max(floor, pct);
+          const b = bar();
+          if (b) b.style.width = floor + '%';
+          if (step) {
+            const e = document.getElementById('load-step');
+            if (e) e.textContent = step;
+          }
+        };
+        try {
+          new PerformanceObserver(list => {
+            for (const e of list.getEntries()) if (/\.js(\?|$)/.test(e.name)) seen++;
+            window.bootProgress(Math.min(70, (seen / total) * 70));
+          }).observe({ type: 'resource', buffered: true });
+        } catch {}
+      })();
       setTimeout(() => {
         if (!window.tidalReady) {
           const e = document.getElementById('load-text');

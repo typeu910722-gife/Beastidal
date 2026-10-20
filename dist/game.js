@@ -1410,8 +1410,13 @@ function cloudMenuHTML() {
     : '<strong>此裝置</strong>（免登入單機模式）';
   return `<p>進度保存在${where}。${a ? '每次存檔後最多 ' + CONFIG.cloudSyncInterval + ' 秒內同步到雲端。' : cloud.configured ? '登入 Google 後可備份到 Google Drive，換裝置也能接續。' : ''}關閉畫面時世界會暫停。</p>`;
 }
-function modal(eyebrow, title, body, buttons) {
+// opts.kind: a class for the dialog (its width and look); opts.onClose: shows a close button (and Esc) doing that
+let modalOnClose = null;
+function modal(eyebrow, title, body, buttons, opts = {}) {
   releaseMouse();
+  $('modal').className = opts.kind || '';
+  modalOnClose = opts.onClose || null;
+  $('modal-close').hidden = !modalOnClose;
   paused = true;
   keys.clear();
   joystick = { x: 0, y: 0 };
@@ -1431,6 +1436,7 @@ function modal(eyebrow, title, body, buttons) {
   $('modal-actions').querySelector('button')?.focus();
 }
 function closeModal() {
+  modalOnClose = null;
   paused = false;
   $('modal-shade').hidden = true;
   modalRestore?.focus?.();
@@ -1638,53 +1644,59 @@ function unstuck() {
 function showMenu() {
   closePanel();
   closeBigMap();
-  modal('MENU · 選單', '漂流者，休息一下。', cloudMenuHTML(), [
-    { label: '繼續漂流', primary: true, action: closeModal },
-    { label: document.fullscreenElement ? '離開全螢幕' : '全螢幕', action: () => (closeModal(), fullscreen()) },
-    { label: audio.on ? '關閉環境音' : '開啟環境音', action: () => ($('sound-btn').click(), showMenu()) },
-    { label: '⚙ 設定', action: () => openSettings(showMenu) },
-    { label: '操作說明', action: () => showHelp(showMenu) },
-    { label: '✦ 御獸遠航', action: () => (closeModal(), openPanel('adventure')) },
-    { label: '📊 統計', action: () => openStats(showMenu) },
-    { label: '🆘 脫困 · 回到船上', action: unstuck },
-    {
-      label: '保存進度',
-      action: () => {
-        save(false);
-        scheduleCloud(true);
-      }
-    },
-    ...(cloud.configured
-      ? [
-          cloud.signedIn
-            ? {
-                label: cloud.connected ? '立即同步雲端' : '連線 Google Drive',
-                action: () => {
-                  if (cloud.connected) {
-                    save(true);
-                    scheduleCloud(true);
-                    toast('正在同步到 Google Drive…');
-                  } else connectCloud(true);
+  modal(
+    'MENU · 選單',
+    '漂流者，休息一下。',
+    cloudMenuHTML(),
+    [
+      { label: '繼續漂流', primary: true, action: closeModal },
+      { label: document.fullscreenElement ? '離開全螢幕' : '全螢幕', action: () => (closeModal(), fullscreen()) },
+      { label: audio.on ? '關閉環境音' : '開啟環境音', action: () => ($('sound-btn').click(), showMenu()) },
+      { label: '⚙ 設定', action: () => openSettings(showMenu) },
+      { label: '操作說明', action: () => showHelp(showMenu) },
+      { label: '✦ 御獸遠航', action: () => (closeModal(), openPanel('adventure')) },
+      { label: '📊 統計', action: () => openStats(showMenu) },
+      { label: '🆘 脫困 · 回到船上', action: unstuck },
+      {
+        label: '保存進度',
+        action: () => {
+          save(false);
+          scheduleCloud(true);
+        }
+      },
+      ...(cloud.configured
+        ? [
+            cloud.signedIn
+              ? {
+                  label: cloud.connected ? '立即同步雲端' : '連線 Google Drive',
+                  action: () => {
+                    if (cloud.connected) {
+                      save(true);
+                      scheduleCloud(true);
+                      toast('正在同步到 Google Drive…');
+                    } else connectCloud(true);
+                  }
                 }
-              }
-            : { label: 'Google 登入', action: () => connectCloud(true) }
-        ]
-      : []),
-    {
-      label: '回到主畫面',
-      action: () => {
-        save(true);
-        closeModal();
-        running = false;
-        updateViewport();
-        $('hud').hidden = true;
-        $('title-screen').hidden = false;
-        updateTitleButtons();
-        scheduleCloud(true);
-        updateAccountUI();
+              : { label: 'Google 登入', action: () => connectCloud(true) }
+          ]
+        : []),
+      {
+        label: '回到主畫面',
+        action: () => {
+          save(true);
+          closeModal();
+          running = false;
+          updateViewport();
+          $('hud').hidden = true;
+          $('title-screen').hidden = false;
+          updateTitleButtons();
+          scheduleCloud(true);
+          updateAccountUI();
+        }
       }
-    }
-  ]);
+    ],
+    { kind: 'menu-modal', onClose: closeModal }
+  );
 }
 // Settings page (stored per device with the graphics settings).
 const UI_DEFAULTS = {
@@ -1714,64 +1726,165 @@ function applyUiSettings() {
   updateViewport();
   refreshPrompts(true);
 }
+// 0.66: the settings, rebuilt as a tabbed sheet — 畫面 / 聲音 / 操作 / 按鍵 / 關於 — with switches for the on/off
+// settings, a close button, Esc going back to where you came from, a list of every key, and a reset
+let settingsTab = 'screen';
+const KEY_HELP = [
+  [
+    '移動',
+    [
+      ['W A S D / 方向鍵', '走路、駕艇'],
+      ['Shift', '奔跑'],
+      ['空白鍵', '跳躍 · 驅離 · 閃避'],
+      ['滑鼠', '轉頭（Alt 或 Esc 顯示游標）']
+    ]
+  ],
+  [
+    '互動',
+    [
+      ['E', '互動 · 拾取 · 對話'],
+      ['Q', '登船 / 靠岸'],
+      ['X', '結契（靠近可結契的御獸）'],
+      ['F', '攻擊（按住重擊）'],
+      ['1 – 6', '快捷物品；戰鬥中為技能'],
+      ['Shift + 1 – 6', '召喚契約卡上的御獸'],
+      ['T', '騎乘'],
+      ['G / Z', '潛水 · 下潛']
+    ]
+  ],
+  [
+    '畫面',
+    [
+      ['I', '隨身裝置'],
+      ['B', '建造'],
+      ['C', '御獸 · 共生研究'],
+      ['J', '航海日誌'],
+      ['K', '御獸遠航'],
+      ['M', '地圖'],
+      ['H', '回家'],
+      ['R', '建造時旋轉'],
+      ['Esc', '返回 · 選單']
+    ]
+  ]
+];
 function openSettings(back = closeModal) {
   const seg = (key, opts) =>
       `<span class="seg" data-key="${key}">${opts.map(([v, l]) => `<button type="button" data-val="${v}" class="${String(setting(key)) === String(v) ? 'active' : ''}">${l}</button>`).join('')}</span>`,
     range = (key, min, max, fmt) =>
-      `<input type="range" data-key="${key}" min="${min}" max="${max}" value="${Math.round(setting(key) * 100)}"><output>${fmt(setting(key))}</output>`,
-    check = (key, label) =>
-      `<label class="check"><input type="checkbox" data-key="${key}" ${setting(key) ? 'checked' : ''}> ${label}</label>`,
+      `<span class="range"><input type="range" data-key="${key}" min="${min}" max="${max}" value="${Math.round(setting(key) * 100)}"><output>${fmt(setting(key))}</output></span>`,
+    toggle = key =>
+      `<label class="switch"><input type="checkbox" data-key="${key}" ${setting(key) ? 'checked' : ''}><i></i></label>`,
+    row = (label, control, note = '') =>
+      `<div class="set-row"><div class="set-label"><span>${label}</span>${note ? `<small>${note}</small>` : ''}</div><div class="set-control">${control}</div></div>`,
     pct = v => Math.round(v * 100) + '%';
-  modal(
-    'SETTINGS · 設定',
-    '讓這片海更順手',
-    `<div class="settings">
-  <div class="about-row"><img src="./brand/emblem.svg" alt=""><div><strong>比斯泰德 Beastidal</strong><small>版本 ${GAME_VERSION}${running ? ' · ' + saveLabel() : ''}</small></div></div>
-  <div class="row"><span>語言 · Language</span><span class="seg" data-key="lang">${Object.entries(LANGS)
-    .map(
-      ([v, l]) =>
-        `<button type="button" data-val="${v}" class="${LANG === v ? 'active' : ''}" data-no-i18n>${l}</button>`
-    )
-    .join('')}</span></div>
-  ${running ? `<h3>主角</h3><div class="row"><span>外觀</span><span class="seg" data-key="hero">${HEROES.map(([v, l]) => `<button type="button" data-val="${v}" class="${state.hero === v ? 'active' : ''}">${l.split(' · ')[0]}</button>`).join('')}</span></div>` : ''}
-  <h3>畫面</h3><div class="row"><span>畫質</span>${seg(
-    'quality',
-    Object.entries(QUALITY).map(([k, q]) => [k, q.label])
-  )}</div><p class="note">畫質變更會重新載入遊戲（進度會先保存）。</p>
-  <div class="row"><span>字體大小</span>${seg('fontSize', [
-    ['normal', '標準'],
-    ['large', '大'],
-    ['xlarge', '特大']
-  ])}</div>
-  <h3>聲音</h3><div class="row"><span>音樂</span>${range('musicVol', 0, 100, pct)}</div><div class="row"><span>音效</span>${range('sfxVol', 0, 100, pct)}</div><div class="row"><span>環境聲</span>${range('ambVol', 0, 100, pct)}</div>
-  <h3>操作</h3><div class="row"><span>遊玩方式</span>${seg('controls', [
-    ['auto', '自動'],
-    ['keyboard', '電腦'],
-    ['touch', '手機觸控'],
-    ['gamepad', '手把']
-  ])}</div><p class="note">決定畫面上的按鍵提示與虛擬搖桿：選「電腦」就不會出現觸控搖桿。</p>
-  <div class="row"><span>鏡頭靈敏度</span>${range('camSens', 40, 250, pct)}</div>${check('invertY', '鏡頭上下反轉')}${check('autoPickup', '自動拾取（駛過漂流物、走過採集點自動收集）')}${check('haptics', '震動回饋（手機、手把）')}
-  ${
-    touchUI()
-      ? `<h3>觸控</h3><div class="row"><span>按鈕大小</span>${seg('buttonSize', [
-          ['small', '小'],
+  const tabs = [
+    ['screen', '畫面'],
+    ['sound', '聲音'],
+    ['controls', '操作'],
+    ['keys', '按鍵'],
+    ['about', '關於']
+  ];
+  const pages = {
+    screen:
+      row(
+        '語言 · Language',
+        `<span class="seg" data-key="lang">${Object.entries(LANGS)
+          .map(
+            ([v, l]) =>
+              `<button type="button" data-val="${v}" class="${LANG === v ? 'active' : ''}" data-no-i18n>${l}</button>`
+          )
+          .join('')}</span>`
+      ) +
+      row(
+        '畫質',
+        seg(
+          'quality',
+          Object.entries(QUALITY).map(([k, q]) => [k, q.label])
+        ),
+        '變更後會重新載入（進度會先保存）'
+      ) +
+      row(
+        '字體大小',
+        seg('fontSize', [
           ['normal', '標準'],
-          ['large', '大']
-        ])}</div>${check('lefty', '左右手對調（搖桿在右、動作鈕在左）')}`
-      : ''
-  }
-  <div class="row"><span>新手教學</span><button type="button" class="small-button" id="replay-tutorial">${running ? '重新播放教學' : '下次開始時播放'}</button></div></div>`,
-    [
-      {
-        label: '完成',
-        primary: true,
-        action: () => {
-          closeModal();
-          back === closeModal || back();
-        }
-      }
-    ]
+          ['large', '大'],
+          ['xlarge', '特大']
+        ])
+      ) +
+      (running
+        ? row(
+            '主角外觀',
+            `<span class="seg" data-key="hero">${HEROES.map(([v, l]) => `<button type="button" data-val="${v}" class="${state.hero === v ? 'active' : ''}">${l.split(' · ')[0]}</button>`).join('')}</span>`
+          )
+        : ''),
+    sound:
+      row('音樂', range('musicVol', 0, 100, pct)) +
+      row('音效', range('sfxVol', 0, 100, pct)) +
+      row('環境聲', range('ambVol', 0, 100, pct)),
+    controls:
+      row(
+        '遊玩方式',
+        seg('controls', [
+          ['auto', '自動'],
+          ['keyboard', '電腦'],
+          ['touch', '手機觸控'],
+          ['gamepad', '手把']
+        ]),
+        '決定按鍵提示與虛擬搖桿'
+      ) +
+      row('鏡頭靈敏度', range('camSens', 40, 250, pct)) +
+      row('鏡頭上下反轉', toggle('invertY')) +
+      row('自動拾取', toggle('autoPickup'), '駛過漂流物、走過採集點自動收集') +
+      row('震動回饋', toggle('haptics'), '手機與手把') +
+      (touchUI()
+        ? row(
+            '按鈕大小',
+            seg('buttonSize', [
+              ['small', '小'],
+              ['normal', '標準'],
+              ['large', '大']
+            ])
+          ) + row('左右手對調', toggle('lefty'), '搖桿在右、動作鈕在左')
+        : '') +
+      row(
+        '新手教學',
+        `<button type="button" class="small-button" id="replay-tutorial">${running ? '重新播放' : '下次開始時播放'}</button>`
+      ),
+    keys: KEY_HELP.map(
+      ([group, list]) =>
+        `<h3>${group}</h3><dl class="keys">${list.map(([k, v]) => `<dt><kbd>${k}</kbd></dt><dd>${v}</dd>`).join('')}</dl>`
+    ).join(''),
+    about:
+      `<div class="about-row"><img src="./brand/emblem.svg" alt=""><div><strong>比斯泰德 Beastidal</strong><small>版本 ${GAME_VERSION}${running ? ' · ' + saveLabel() : ''}</small></div></div>` +
+      row(
+        '恢復預設設定',
+        `<button type="button" class="small-button" id="reset-settings">恢復預設</button>`,
+        '畫質與語言保持不變'
+      )
+  };
+  const done = () => {
+    closeModal();
+    back === closeModal || back();
+  };
+  modal(
+    'SETTINGS',
+    '設定',
+    `<div class="settings sheet"><nav class="set-tabs">${tabs.map(([k, l]) => `<button type="button" data-tab="${k}" class="${settingsTab === k ? 'active' : ''}">${l}</button>`).join('')}</nav><div class="set-page">${pages[settingsTab]}</div></div>`,
+    [{ label: '完成', primary: true, action: done }],
+    { kind: 'settings-modal', onClose: done }
   );
+  $('modal-body')
+    .querySelectorAll('.set-tabs button')
+    .forEach(b => (b.onclick = () => ((settingsTab = b.dataset.tab), openSettings(back))));
+  $('reset-settings') &&
+    ($('reset-settings').onclick = () => {
+      for (const k of Object.keys(world.settings))
+        if (!['quality', 'autoQuality', 'lang', 'tutorialReplay'].includes(k)) delete world.settings[k];
+      world.saveSettings();
+      applyUiSettings();
+      toast('已恢復預設設定');
+      openSettings(back);
+    });
   const body = $('modal-body'),
     store = () => {
       world.saveSettings();
@@ -1829,14 +1942,15 @@ function openSettings(back = closeModal) {
         if (c.dataset.key === 'haptics' && c.checked) haptic('pickup');
       })
   );
-  $('replay-tutorial').onclick = () => {
-    world.settings.tutorialReplay = true;
-    world.saveSettings();
-    if (running) {
-      startTutorial();
-      closeModal();
-    } else toast('下次開始遊戲時會先播放新手教學。');
-  };
+  if ($('replay-tutorial'))
+    $('replay-tutorial').onclick = () => {
+      world.settings.tutorialReplay = true;
+      world.saveSettings();
+      if (running) {
+        startTutorial();
+        closeModal();
+      } else toast('下次開始遊戲時會先播放新手教學。');
+    };
 }
 // 0.32: the whole game is played in first person (build placement keeps its overhead view)
 function toggleView() {
@@ -3624,15 +3738,23 @@ function chapterTwoEnd(choice) {
   );
 }
 // 0.47: over the mountains on 嘯岳's back, down to 慈光港 — and back to the lake
-function townFade(then) {
+// 0.66: `then` may return a promise (models still downloading): the screen stays dark, with a spinner and what is
+// loading, until it settles (at most 20 s), so the town no longer pops in box by box after the fade lifts
+function townFade(then, label = '正在前往…') {
   const fade = $('focus-fade');
   if (!fade) return then();
   fade.hidden = false;
+  fade.dataset.label = P(label);
   requestAnimationFrame(() => fade.classList.add('on'));
   setTimeout(() => {
-    then();
-    fade.classList.remove('on');
-    setTimeout(() => (fade.hidden = true), 700);
+    const busy = setTimeout(() => fade.classList.add('busy'), 350);
+    Promise.race([Promise.resolve(then()), new Promise(r => setTimeout(r, 20000))])
+      .catch(() => {})
+      .then(() => {
+        clearTimeout(busy);
+        fade.classList.remove('on', 'busy');
+        setTimeout(() => (fade.hidden = true), 700);
+      });
   }, 900);
 }
 function goToTown() {
@@ -3644,11 +3766,15 @@ function goToTown() {
     world.sync(state);
     save(true);
     updateUI();
-    if (r.first) {
-      discover('新生之界 · ' + TOWN_NAME, '街道乾淨，窗戶都亮著燈——可是一個人都沒有。');
-      setTimeout(() => playLines(GUIDE_SCRIPT.xiaoyue, '新生之界'), 1600);
-    } else toast(`回到了${TOWN_NAME}。`);
-  });
+    const arrive = () => {
+      if (r.first) {
+        discover('新生之界 · ' + TOWN_NAME, '街道乾淨，窗戶都亮著燈——可是一個人都沒有。');
+        setTimeout(() => playLines(GUIDE_SCRIPT.xiaoyue, '新生之界'), 1600);
+      } else toast(`回到了${TOWN_NAME}。`);
+    };
+    // the town's models load the first time you get here: wait for them behind the fade
+    return world.townReady().then(arrive, arrive);
+  }, `正在前往${TOWN_NAME}…`);
 }
 function backToLake() {
   townFade(() => {
@@ -3659,7 +3785,7 @@ function backToLake() {
     save(true);
     updateUI();
     toast(r.ok ? r.message : r.error, !r.ok);
-  });
+  }, '正在越過群山…');
 }
 function townAction(id) {
   normalizeTown(state);
@@ -5239,6 +5365,11 @@ function costLabel(cost) {
     .map(([k, v]) => `${RESOURCE_NAMES[k]} ${v}`)
     .join(' · ');
 }
+const SLOW_PANELS = new Map([
+    ['beasts', '正在整理御獸倉庫…'],
+    ['creatures', '正在整理共生研究…']
+  ]),
+  warmPanels = new Set();
 function renderPanel() {
   if (!panel) return;
   normalizeHousing(state);
@@ -5262,6 +5393,15 @@ function renderPanel() {
   $('drawer-title').textContent = panel === 'beasts' ? STORE_NAME[storeKind] : settings[panel][1];
   $('drawer').classList.toggle('bx-full', panel === 'beasts');
   const body = $('drawer-body');
+  // 0.66: the beast storage and 共生研究 build a 3D preview of every beast the first time they open, which holds
+  // the page for a moment: show that something is happening first, then build them on the next frames
+  if (SLOW_PANELS.has(panel) && !warmPanels.has(panel)) {
+    warmPanels.add(panel);
+    const which = panel;
+    body.innerHTML = `<div class="ui-busy"><i></i><span>${P(SLOW_PANELS.get(panel))}</span></div>`;
+    requestAnimationFrame(() => setTimeout(() => panel === which && renderPanel(), 30));
+    return;
+  }
   if (panel === 'beasts') {
     renderBeastStorage(body);
     decorateDevice(body);
@@ -6437,7 +6577,8 @@ function updateUI() {
   const onFoot = state.player.mode === 'foot' || state.player.mode === 'aboard' || state.player.mode === 'cabin';
   $('build-tool').hidden = !onFoot || !atHome(state);
   $('home-btn').firstChild.textContent = state.ship ? '⌂ 回到戰艦 ' : '⌂ 導航回避難所 ';
-  $('adventure-btn').hidden = true; // 0.32: in the ☰ menu now (K still opens it)
+  // 0.66: every main screen has its own labelled button again (they were only on keys and in the ☰ menu)
+  $('adventure-btn').hidden = !!state.inTown;
   renderHotbar();
   $('drink-count').textContent = state.resources.water || 0;
   $('eat-count').textContent = state.resources.food || 0;
@@ -7649,7 +7790,9 @@ function back() {
     return;
   }
   if (!$('modal-shade').hidden) {
-    closeModal();
+    // a dialog with a close button goes back where it came from (the settings return to the menu)
+    if (modalOnClose) modalOnClose();
+    else closeModal();
     return;
   }
   if (cabinPlace) {
@@ -7809,7 +7952,7 @@ function setupEvents() {
     el.hidden = true;
     monoTimer = 0;
   };
-  $('quest-hint').onclick = () => updateMonologue(true);
+  $('next-step').onclick = () => updateMonologue(true);
   $('ride-btn').onclick = () => beastAction('ride');
   $('dive-btn').onclick = () => beastAction('dive');
   $('beast-attack').onpointerdown = () => (attackHold = performance.now());
@@ -7932,9 +8075,11 @@ function setupEvents() {
   $('cancel-build').onclick = cancelBuild;
   $('contract-btn').onclick = contractNearest;
   $('close-drawer').onclick = closePanel;
+  $('modal-close').onclick = () => modalOnClose?.();
   document
     .querySelectorAll('[data-panel]')
     .forEach(b => (b.onclick = () => (b.dataset.panel === 'device' ? openDevice() : openPanel(b.dataset.panel))));
+  $('map-tool').onclick = () => toggleBigMap();
   const rotate = document.createElement('button');
   rotate.textContent = '旋轉';
   rotate.onclick = () => {
@@ -7947,6 +8092,12 @@ function setupEvents() {
     const k = e.key.toLowerCase();
     if ([' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) e.preventDefault();
     if (e.repeat) return;
+    // 0.66: Alt frees the cursor (to click the HUD) without opening the menu, as Esc does
+    if (k === 'alt') {
+      e.preventDefault();
+      if (document.pointerLockElement) releaseMouse();
+      return;
+    }
     if (sleeping) return;
     keys.add(k);
     lastInput = 'keyboard';
@@ -8647,4 +8798,9 @@ function frame(now, manual = false) {
 }
 // 0.30: the standing beasts' sculpted bodies load first (a few hundred KB); if they are slow or missing the world
 // starts anyway and those beasts use their composite bodies
-Promise.race([loadSculpts(GAME_VERSION), new Promise(r => setTimeout(r, 4000))]).then(initialize);
+window.bootProgress?.(72, tr('載入御獸身形'));
+Promise.race([loadSculpts(GAME_VERSION), new Promise(r => setTimeout(r, 4000))]).then(() => {
+  window.bootProgress?.(88, tr('建構世界'));
+  // one frame for the bar to show the step before the world is built (it blocks the page for a moment)
+  requestAnimationFrame(() => setTimeout(() => (window.bootProgress?.(100), initialize()), 0));
+});
