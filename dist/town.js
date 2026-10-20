@@ -1,9 +1,9 @@
 // 0.47 抵達新生之界: 慈光港, the first town past the mountains. Chapter two, part one.
 // Everything here is free and gentle, and the town is full of signs of life — but the only person you ever see is
 // the guide. The rules of the town live here; town-models.js draws it, game.js wires it up. See docs/STORY.md.
-import { dayOf, isNight } from './clock.js?v=0.69.0';
-import { give } from './bag.js?v=0.69.0';
-import { TOWN, toWorld, toLocal, countryWalkable } from './dome.js?v=0.69.0';
+import { dayOf, isNight } from './clock.js?v=0.70.0';
+import { give } from './bag.js?v=0.70.0';
+import { TOWN, toWorld, toLocal, countryWalkable, PASS } from './dome.js?v=0.70.0';
 export { TOWN, toWorld };
 
 // The town sits in its own corner of the world, like the garden maze and the cabin, in the open country under the
@@ -141,9 +141,13 @@ export function enterTown(s) {
   s.townReturn ??= { x: s.player.x, z: s.player.z };
   s.inTown = true;
   s.inCave = false;
-  Object.assign(s.player, { ...toWorld(ARRIVE_AT), heading: Math.PI, level: 0, mode: 'foot' });
-  if (s.expedition) Object.assign(s.expedition, { mounted: false, diving: false, depth: 0 });
   const first = !t.visited;
+  // 0.70: the first time, 嘯岳 sets you down on the pass with the whole dome below, and you walk the trail down to
+  // the gate; after that it brings you straight to the gate. `yaw`: where the camera looks (0 is north)
+  const at = first ? PASS : ARRIVE_AT,
+    yaw = first ? Math.atan2(at.x, at.z) : 0;
+  Object.assign(s.player, { ...toWorld(at), heading: yaw + Math.PI, level: 0, mode: 'foot' });
+  if (s.expedition) Object.assign(s.expedition, { mounted: false, diving: false, depth: 0 });
   if (first) {
     t.visited = true;
     log(
@@ -152,7 +156,7 @@ export function enterTown(s) {
       '山下是一座港城。街道乾淨，窗戶都亮著燈，門口擺著鞋子——可是一個人都沒有。城門上刻著：「歡迎回家。」'
     );
   }
-  return { ok: true, first };
+  return { ok: true, first, yaw };
 }
 export function leaveTown(s) {
   if (!s.inTown) return fail('你不在新生之界。');

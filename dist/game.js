@@ -12,8 +12,8 @@ import {
   commandPet,
   onBossDown,
   dropText
-} from './expansion.js?v=0.69.0';
-import { renderAdventure } from './expansion-ui.js?v=0.69.0';
+} from './expansion.js?v=0.70.0';
+import { renderAdventure } from './expansion-ui.js?v=0.70.0';
 import {
   normalizeShip,
   tickShip,
@@ -41,10 +41,10 @@ import {
   cargoTotal,
   nearBeastHome,
   restIsland
-} from './ship.js?v=0.69.0';
-import { cargoCapacity, shipStats } from './warship.js?v=0.69.0';
-import { monologue, markGuide, pride, markPride } from './guide.js?v=0.69.0';
-import { climb, demolish, relocate } from './construction.js?v=0.69.0';
+} from './ship.js?v=0.70.0';
+import { cargoCapacity, shipStats } from './warship.js?v=0.70.0';
+import { monologue, markGuide, pride, markPride } from './guide.js?v=0.70.0';
+import { climb, demolish, relocate } from './construction.js?v=0.70.0';
 import {
   normalizeHousing,
   penId,
@@ -56,7 +56,7 @@ import {
   renamePet,
   penLabel,
   renamePen
-} from './housing.js?v=0.69.0';
+} from './housing.js?v=0.70.0';
 import {
   ISLANDS,
   NODES,
@@ -67,10 +67,11 @@ import {
   islandDocks,
   harvest,
   clearLand
-} from './islands.js?v=0.69.0';
-import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.69.0';
-import { lakeMinimap } from './lake-map.js?v=0.69.0';
-import { findRoute, routeLength, DRAFT } from './route.js?v=0.69.0';
+} from './islands.js?v=0.70.0';
+import { BOSS_HOME, LANDMARKS, groundAt, walkable, waterNear } from './lake.js?v=0.70.0';
+import { lakeMinimap } from './lake-map.js?v=0.70.0';
+import { domeChart } from './dome-map.js?v=0.70.0';
+import { findRoute, routeLength, DRAFT } from './route.js?v=0.70.0';
 import {
   CABIN_ITEMS,
   CABIN_POINTS,
@@ -89,7 +90,7 @@ import {
   moveCabin,
   syncCabin,
   costText
-} from './cabin.js?v=0.69.0';
+} from './cabin.js?v=0.70.0';
 import {
   normalizeStory,
   SCRIPT,
@@ -101,17 +102,17 @@ import {
   tickStory,
   duelActive,
   winDuel
-} from './story.js?v=0.69.0';
-import { facilityId, findFacility, useFacility } from './facilities.js?v=0.69.0';
-import { OceanWorld, IntroFilm } from './world.js?v=0.69.0';
-import { QUALITY } from './realism.js?v=0.69.0';
-import { MusicPlayer, WaterRush, NewWorldAmbience, playSplash, playImpact, soundPref } from './sound.js?v=0.69.0';
-import { promptText, promptDom, PAD } from './prompts.js?v=0.69.0';
-import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.69.0';
-import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.69.0';
-import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.69.0';
-import { CONFIG } from './config.js?v=0.69.0';
-import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.69.0';
+} from './story.js?v=0.70.0';
+import { facilityId, findFacility, useFacility } from './facilities.js?v=0.70.0';
+import { OceanWorld, IntroFilm } from './world.js?v=0.70.0';
+import { QUALITY } from './realism.js?v=0.70.0';
+import { MusicPlayer, WaterRush, NewWorldAmbience, playSplash, playImpact, soundPref } from './sound.js?v=0.70.0';
+import { promptText, promptDom, PAD } from './prompts.js?v=0.70.0';
+import { LANG, LANGS, setLang, tr, watch, localize, setPostProcess } from './i18n.js?v=0.70.0';
+import { TUTORIAL, startTutorialState, advanceTutorial, tutorialActive } from './tutorial.js?v=0.70.0';
+import { stepVessel, HULLS, bump, startFlee, stepFlee, turnToward } from './physics.js?v=0.70.0';
+import { CONFIG } from './config.js?v=0.70.0';
+import { ACHIEVEMENTS, checkUnlocks, achievementCount } from './achievements.js?v=0.70.0';
 import {
   normalizeCodex,
   recordCreature,
@@ -122,7 +123,7 @@ import {
   recordBeast,
   geneEntries,
   beastEntries
-} from './codex.js?v=0.69.0';
+} from './codex.js?v=0.70.0';
 import {
   ensureLandBeasts,
   normalizeWildlife,
@@ -130,13 +131,13 @@ import {
   spawnWild,
   spawnUnder,
   ashore
-} from './wildlife.js?v=0.69.0';
-import { CRAFTS, ITEMS, ITEM_NAMES, costLabel as itemCost } from './items.js?v=0.69.0';
-import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.69.0';
-import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.69.0';
-import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.69.0';
-import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.69.0';
-import { startFishing, tickFishing, reel, cancelFishing, BITE_WINDOW } from './fishing.js?v=0.69.0';
+} from './wildlife.js?v=0.70.0';
+import { CRAFTS, ITEMS, ITEM_NAMES, costLabel as itemCost } from './items.js?v=0.70.0';
+import { BS_GENES, bsOf, canEvolve, EVOLVE_GENES, FIRST_GENE_LINE } from './bsgenes.js?v=0.70.0';
+import { WILD_BEASTS, BEAST_IDS, beastChance, FIRST_BEAST_LINE, COMPUTER_LINE } from './beasts.js?v=0.70.0';
+import { GEAR, hasGear, normalizeGear, SADDLE_SPEED } from './gear.js?v=0.70.0';
+import { SKILLS, normalizeSkills, skillRows, sailBonus } from './skills.js?v=0.70.0';
+import { startFishing, tickFishing, reel, cancelFishing, BITE_WINDOW } from './fishing.js?v=0.70.0';
 import {
   LAND_BUILDS,
   normalizePlots,
@@ -146,10 +147,10 @@ import {
   buildOnPlot,
   removeLandBuild,
   clearDuration
-} from './reclaim.js?v=0.69.0';
-import { ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.69.0';
-import { setClimbing } from './lake.js?v=0.69.0';
-import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.69.0';
+} from './reclaim.js?v=0.70.0';
+import { ratingParts, ratingScore, ratingTier, ratingStars, tickRating, nextTier } from './rating.js?v=0.70.0';
+import { setClimbing } from './lake.js?v=0.70.0';
+import { describeSky, weatherAt, season, stormClock as skyClock } from './weather.js?v=0.70.0';
 import {
   RARITY,
   FRENZY,
@@ -175,7 +176,7 @@ import {
   teamOf,
   MAX_CONTRACTS,
   TEAM_SIZE
-} from './taming.js?v=0.69.0';
+} from './taming.js?v=0.70.0';
 import {
   resetCombat,
   normalizeCombat,
@@ -194,8 +195,8 @@ import {
   AI_RANGE,
   onLayer,
   callAssist
-} from './combat.js?v=0.69.0';
-import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.69.0';
+} from './combat.js?v=0.70.0';
+import { DEVICE_APPS, normalizeDevice, takeDevice, readLaptop, tickDevice } from './device.js?v=0.70.0';
 import {
   ECHOES,
   LAPTOP_PARTS,
@@ -205,7 +206,7 @@ import {
   missingParts,
   normalizeEchoes,
   repairLaptop
-} from './echoes.js?v=0.69.0';
+} from './echoes.js?v=0.70.0';
 import {
   TOWN_NAME,
   BUILDINGS as TOWN_BUILDINGS,
@@ -224,8 +225,9 @@ import {
   townPoints,
   TOWN_HINTS,
   toWorld as townWorld,
-  normalizeTown
-} from './town.js?v=0.69.0';
+  normalizeTown,
+  XIAOYUE_WAITS
+} from './town.js?v=0.70.0';
 import {
   TEMPLATES,
   WORDS,
@@ -243,9 +245,9 @@ import {
   guideWarning,
   noteTrace,
   normalizeComms
-} from './comms.js?v=0.69.0';
-import { Community } from './community.js?v=0.69.0';
-import { storyPanel } from './storynav.js?v=0.69.0';
+} from './comms.js?v=0.70.0';
+import { Community } from './community.js?v=0.70.0';
+import { storyPanel } from './storynav.js?v=0.70.0';
 import {
   outsidePoints,
   tearShell,
@@ -266,7 +268,7 @@ import {
   bridgeReady,
   crossBridge,
   RIFT
-} from './chapter3.js?v=0.69.0';
+} from './chapter3.js?v=0.70.0';
 import {
   readNotice,
   searchDiner,
@@ -278,15 +280,16 @@ import {
   AFTER_FORGET,
   GRADUATED_TEXT,
   domeCracked
-} from './chapter2.js?v=0.69.0';
-import { tickDome, nearShell, toLocal as domeLocal, countryWalkable, DOME_R } from './dome.js?v=0.69.0';
-import { BeastStage } from './beast-stage.js?v=0.69.0';
-import { loadArt, art, artImg } from './art.js?v=0.69.0';
-import { loadSculpts } from './sculpt-assets.js?v=0.69.0';
-import { separateBodies } from './bodies.js?v=0.69.0';
-import { STATUES } from './statues.js?v=0.69.0';
-import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.69.0';
-import { lookOf } from './beast-look.js?v=0.69.0';
+} from './chapter2.js?v=0.70.0';
+import { tickDome, nearShell, toLocal as domeLocal, countryWalkable, DOME_R, domeHeight } from './dome.js?v=0.70.0';
+import { countryPoints, visitSpot, SPOT_HINTS } from './countryside.js?v=0.70.0';
+import { BeastStage } from './beast-stage.js?v=0.70.0';
+import { loadArt, art, artImg } from './art.js?v=0.70.0';
+import { loadSculpts } from './sculpt-assets.js?v=0.70.0';
+import { separateBodies } from './bodies.js?v=0.70.0';
+import { STATUES } from './statues.js?v=0.70.0';
+import { CAVE as GARDEN, coverBetween } from './cave-maze.js?v=0.70.0';
+import { lookOf } from './beast-look.js?v=0.70.0';
 import {
   TREE,
   BRANCHES,
@@ -297,8 +300,8 @@ import {
   personality,
   normalizeTree,
   tickPersona
-} from './beast-tree.js?v=0.69.0';
-import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.69.0';
+} from './beast-tree.js?v=0.70.0';
+import { spawnRescue, freeRescue, shareFood, tickRescue } from './rescue.js?v=0.70.0';
 import {
   funds,
   normalizeBag,
@@ -319,12 +322,12 @@ import {
   unstash,
   discard,
   CARRY
-} from './bag.js?v=0.69.0';
-import { iconFor } from './icons.js?v=0.69.0';
-import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.69.0';
-import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.69.0';
-import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.69.0';
-import { codexRewards, claimCodex } from './codex.js?v=0.69.0';
+} from './bag.js?v=0.70.0';
+import { iconFor } from './icons.js?v=0.70.0';
+import { invBox, amountBar, bindInv, moveAmount } from './inv.js?v=0.70.0';
+import { JOBS, normalizeJobs, setJob, tickJobs, guardFactor } from './jobs.js?v=0.70.0';
+import { EVENTS, normalizeEvents, tickEvents, trade, claimTreasure, TREASURE } from './lake-events.js?v=0.70.0';
+import { codexRewards, claimCodex } from './codex.js?v=0.70.0';
 import {
   homePos,
   facilityPos,
@@ -336,10 +339,10 @@ import {
   SHIP_SLOTS,
   FORTRESS_DECK,
   isStructure
-} from './fortress.js?v=0.69.0';
-import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.69.0';
-export const GAME_VERSION = '0.69.0';
-import { CloudSave } from './cloud-save.js?v=0.69.0';
+} from './fortress.js?v=0.70.0';
+import { normalizeStats, tickStats, formatDuration, milestoneRows, statsReport } from './stats.js?v=0.70.0';
+export const GAME_VERSION = '0.70.0';
+import { CloudSave } from './cloud-save.js?v=0.70.0';
 import {
   readLocal,
   writeLocal,
@@ -356,9 +359,9 @@ import {
   reconcile,
   describeSave,
   formatTime
-} from './save-store.js?v=0.69.0';
-import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.69.0';
-import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, geneName } from './genetics.js?v=0.69.0';
+} from './save-store.js?v=0.70.0';
+import { normalizeTravel, canWalk, dockOption, switchVessel, moveTravel, dockingSpots } from './navigation.js?v=0.70.0';
+import { phenotype, describeGenes, dnaCode, ABILITIES, clamp, geneName } from './genetics.js?v=0.70.0';
 import {
   RESOURCE_NAMES,
   RECIPES,
@@ -378,8 +381,8 @@ import {
   tickSystems,
   validateSave,
   log
-} from './rules.js?v=0.69.0';
-import { hourOf, isNight, nextMorning } from './clock.js?v=0.69.0';
+} from './rules.js?v=0.70.0';
+import { hourOf, isNight, nextMorning } from './clock.js?v=0.70.0';
 const $ = id => document.getElementById(id),
   esc = s =>
     String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -2183,7 +2186,11 @@ const nearWild = () => (state.wild || []).filter(w => onLayer(state, w));
 function getAllTargets() {
   // 0.47: in 慈光港 only the town's own places
   if (state.inTown)
-    return [...townPoints(state), ...outsidePoints(state).map(p => ({ ...p, ...townWorld(p) }))]
+    return [
+      ...townPoints(state),
+      ...countryPoints(state),
+      ...outsidePoints(state).map(p => ({ ...p, ...townWorld(p) }))
+    ]
       .filter(p => !(p.id === 'guide' && guideGone(state)))
       .map(p => ({ ...p, type: 'town' }));
   if (state.player.mode === 'cabin') return [...cabinPointsWorld(state), ...loungeTargets()];
@@ -2309,7 +2316,7 @@ function updateNearest() {
     $('context-title').textContent = selected.name;
     $('context-subtitle').textContent = P(
       selected.type === 'town'
-        ? TOWN_HINTS[selected.id][0]
+        ? (TOWN_HINTS[selected.id] || SPOT_HINTS[selected.id])[0]
         : selected.type === 'shippoint'
           ? (state.player.mode === 'cabin' ? FLOORS[state.player.floor | 0] : DECKS[state.player.deck] || DECKS[3])
               .name +
@@ -2361,7 +2368,7 @@ function updateNearest() {
     );
     $('context-verb').textContent =
       selected.type === 'town'
-        ? TOWN_HINTS[selected.id][1]
+        ? (TOWN_HINTS[selected.id] || SPOT_HINTS[selected.id])[1]
         : selected.type === 'shippoint'
           ? selected.verb
           : selected.type === 'plot'
@@ -3870,13 +3877,13 @@ function goToTown() {
     // 0.69: a salvage line still out is let go quietly (it used to snap with 「纜繩拉得太遠」 on arrival)
     salvaging = null;
     $('salvage-progress').hidden = true;
-    world.yaw = 0;
+    world.yaw = r.yaw || 0;
     world.sync(state);
     save(true);
     updateUI();
     const arrive = () => {
       if (r.first) {
-        discover('新生之界 · ' + TOWN_NAME, '街道乾淨，窗戶都亮著燈——可是一個人都沒有。');
+        discover('新生之界 · 嘯岳的山口', '山下是一座港城，窗戶都亮著燈。沿著小路走下去，就到城門了。');
         setTimeout(() => playLines(GUIDE_SCRIPT.xiaoyue, '新生之界'), 1600);
       } else toast(`回到了${TOWN_NAME}。`);
     };
@@ -3895,7 +3902,22 @@ function backToLake() {
     toast(r.ok ? r.message : r.error, !r.ok);
   }, '正在越過群山…');
 }
+// 0.70: the country's places (countryside.js)
+function countryAction(id) {
+  const r = visitSpot(state, id);
+  if (!r.ok) return toast(r.error, true);
+  const got = Object.entries(r.got || {})
+    .map(([k, v]) => `${RESOURCE_NAMES[k] || k} +${v}`)
+    .join('、');
+  save(true);
+  updateUI();
+  playLines([r.text], r.title, () => {
+    if (got) toast(P('獲得') + ' ' + got);
+    if (r.all) discover('原野 · 走遍了', '穹頂下的每個角落都走過了。異晶 +3');
+  });
+}
 function townAction(id) {
+  if (id.startsWith('c:')) return countryAction(id);
   normalizeTown(state);
   const done = r => {
     if (r.message || r.error) toast(r.ok ? r.message : r.error, !r.ok);
@@ -6393,6 +6415,10 @@ function openBigMap() {
   joystick = { x: 0, y: 0 };
   bigMapOpen = true;
   $('bigmap').hidden = false;
+  // 0.70: the New World has its own chart
+  $('bigmap').querySelector('.eyebrow').textContent = state.inTown ? 'NEW WORLD' : 'LAKE CHART';
+  $('bigmap').querySelector('h2').textContent = P(state.inTown ? '新生之界地圖' : '湖域地圖');
+  $('bigmap-sail').hidden = !!state.inTown;
   drawBigMap();
 }
 function closeBigMap() {
@@ -6403,8 +6429,10 @@ function toggleBigMap() {
   bigMapOpen ? closeBigMap() : openBigMap();
 }
 // chart pixel ↔ game metres
+// 0.70: in the New World the chart is the dome's (dome-map.js), not the lake's
+const mapChart = () => (state.inTown ? domeChart(tornOpen(state)) : lakeMinimap());
 function chartFrame() {
-  const lm = lakeMinimap(),
+  const lm = mapChart(),
     c = $('bigmap-canvas'),
     box = c.parentElement.getBoundingClientRect(),
     W = Math.max(200, Math.floor(box.width - 20)),
@@ -6453,31 +6481,65 @@ function drawBigMap() {
     ctx.fill();
   };
   const diving = !!state.expedition?.diving;
-  for (const i of ISLANDS)
-    label(i.x, i.z, ((state.occupied || []).includes(i.id) ? '⚑ ' : '△ ') + tr(i.name), '#ecc78e', 13);
-  for (const lmk of Object.values(LANDMARKS)) {
-    dot(lmk.x, lmk.z, lmk.under ? '#9ce8d1' : '#f1e5bb', 3);
-    label(lmk.x, lmk.z, (lmk.under ? '◈ ' : '◇ ') + tr(lmk.name), lmk.under ? '#9ce8d1' : '#dfe9e4', 11);
-  }
-  if (!state.buoyFound) {
-    dot(17, -13, '#bcbfe9', 4);
-    label(17, -13, tr('研究浮標'), '#bcbfe9', 11);
-  }
-  if (state.ship) {
-    dot(state.ship.x, state.ship.z, '#d6b15c', 5);
-    label(state.ship.x, state.ship.z, '⌂ ' + tr('比斯泰德號'), '#ecc78e', 12);
+  // 0.70: the New World's chart carries its own names
+  if (state.inTown) {
+    for (const b of TOWN_BUILDINGS.filter(b => b.name)) {
+      const w = townWorld(b);
+      label(w.x, w.z + 4, (b.id === 'admin' ? '▣ ' : '⌂ ') + tr(b.name), '#f1e5bb', 11);
+    }
+    {
+      const w = townWorld({ x: XIAOYUE_WAITS.x, z: XIAOYUE_WAITS.z });
+      dot(w.x, w.z, '#d6b15c', 4);
+      label(w.x, w.z + 10, '嘯岳 · ' + tr('回到湖區'), '#ecc78e', 11);
+    }
+    for (const p of countryPoints(state)) {
+      const seen = state.country?.seen?.includes(p.id.slice(2));
+      dot(p.x, p.z, seen ? '#9ce8d1' : '#f1e5bb', 4);
+      label(p.x, p.z, (seen ? '✿ ' : '？ ') + tr(p.name), seen ? '#9ce8d1' : '#dfe9e4', 11);
+    }
+    for (const p of outsidePoints(state)) {
+      const w = townWorld(p);
+      dot(w.x, w.z, '#c39cf0', 5);
+      label(w.x, w.z, '◈ ' + tr(p.name), '#d9c2ff', 12);
+    }
+    const g = storyPanel(state).goal;
+    if (g) {
+      const q = pt(g.x, g.z);
+      ctx.strokeStyle = '#f0c674';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(q.x, q.y, 9, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+      label(g.x, g.z - 14 / f.k, '▼ ' + tr('下一步') + ' · ' + tr(g.name), '#ffd88a', 12);
+    }
   } else {
-    dot(1.8, 1.8, '#d6b15c', 4);
-    label(1.8, 1.8, '⌂ ' + tr('你的木筏'), '#ecc78e', 12);
-  }
-  if (state.lakeEvent) {
-    const p = pt(state.lakeEvent.x, state.lakeEvent.z);
-    ctx.strokeStyle = '#ecc78e';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
-    ctx.stroke();
-    label(state.lakeEvent.x, state.lakeEvent.z, '◎ ' + tr(EVENTS[state.lakeEvent.kind].name), '#ecc78e', 12);
+    for (const i of ISLANDS)
+      label(i.x, i.z, ((state.occupied || []).includes(i.id) ? '⚑ ' : '△ ') + tr(i.name), '#ecc78e', 13);
+    for (const lmk of Object.values(LANDMARKS)) {
+      dot(lmk.x, lmk.z, lmk.under ? '#9ce8d1' : '#f1e5bb', 3);
+      label(lmk.x, lmk.z, (lmk.under ? '◈ ' : '◇ ') + tr(lmk.name), lmk.under ? '#9ce8d1' : '#dfe9e4', 11);
+    }
+    if (!state.buoyFound) {
+      dot(17, -13, '#bcbfe9', 4);
+      label(17, -13, tr('研究浮標'), '#bcbfe9', 11);
+    }
+    if (state.ship) {
+      dot(state.ship.x, state.ship.z, '#d6b15c', 5);
+      label(state.ship.x, state.ship.z, '⌂ ' + tr('比斯泰德號'), '#ecc78e', 12);
+    } else {
+      dot(1.8, 1.8, '#d6b15c', 4);
+      label(1.8, 1.8, '⌂ ' + tr('你的木筏'), '#ecc78e', 12);
+    }
+    if (state.lakeEvent) {
+      const p = pt(state.lakeEvent.x, state.lakeEvent.z);
+      ctx.strokeStyle = '#ecc78e';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+      ctx.stroke();
+      label(state.lakeEvent.x, state.lakeEvent.z, '◎ ' + tr(EVENTS[state.lakeEvent.kind].name), '#ecc78e', 12);
+    }
   }
   if (route) {
     ctx.strokeStyle = '#ecc78ecc';
@@ -6538,7 +6600,9 @@ function drawBigMap() {
       : vesselDraft() === null
         ? tr('步行時只顯示直線方向；上船後會規劃水路。')
         : tr('這裡沒有可通行的水路，換一個地點試試。')
-    : tr('點地圖放置標記，航線會自動繞開陸地與淺灘。');
+    : state.inTown
+      ? tr('點地圖放置標記，小地圖會指出方向和距離。')
+      : tr('點地圖放置標記，航線會自動繞開陸地與淺灘。');
   $('bigmap-sail').disabled = !route;
   $('bigmap-clear').disabled = !state.marker;
 }
@@ -7352,7 +7416,7 @@ function drawMap() {
     ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
     ctx.fill();
   };
-  const lm = lakeMinimap();
+  const lm = mapChart();
   if (lm) {
     const o = pt(lm.x0, lm.z0);
     ctx.drawImage(lm.canvas, o.x, o.y, lm.w * scale, lm.h * scale);
@@ -7474,6 +7538,28 @@ function drawMap() {
     ctx.fillText(tr('避'), p.x, p.y + 4);
     ctx.lineWidth = 1;
   }
+  // 0.70: in the New World, its places and where the story wants you
+  if (state.inTown) {
+    for (const p of countryPoints(state)) {
+      const seen = state.country?.seen?.includes(p.id.slice(2));
+      dot(p.x, p.z, seen ? '#9ce8d1' : '#f1e5bb', 3);
+    }
+    for (const p of outsidePoints(state)) dot(townWorld(p).x, townWorld(p).z, '#c39cf0', 3.5);
+    const g = storyPanel(state).goal;
+    if (g) {
+      let q = pt(g.x, g.z);
+      const dx = q.x - c,
+        dy = q.y - c,
+        r = Math.hypot(dx, dy);
+      if (r > 80) q = { x: c + (dx / r) * 80, y: c + (dy / r) * 80 };
+      ctx.strokeStyle = '#f0c674';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(q.x, q.y, 5 + Math.sin(performance.now() / 200) * 1.5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+    }
+  }
   ctx.save();
   ctx.translate(c, c);
   ctx.rotate(-state.player.heading);
@@ -7559,6 +7645,14 @@ function worldLabels() {
         outsidePoints(state)
           .map(p => ({ ...townWorld(p), y: 6, text: '◈ ' + p.name, className: 'mint' }))
           .filter(l => near(l, 150))
+      )
+      .concat(
+        countryPoints(state)
+          .filter(p => near(p, 150))
+          .map(p => {
+            const l = domeLocal(p.x, p.z);
+            return { ...p, y: domeHeight(l.x, l.z) + 5, text: '✿ ' + p.name, className: 'mint' };
+          })
       )
       // the next place the story wants you at
       .concat(

@@ -81,6 +81,9 @@ await test("The dome's tells are noted once each: no rift, the far hills, the wa
     ['norift']
   );
   assert.equal(tickDome(s, 0.2).length, 0);
+  // 0.70: you arrive on the pass; the far hills count once you have walked out from the town
+  Object.assign(s.player, toWorld({ x: 0, z: 0 }));
+  assert.equal(tickDome(s, 0.2).length, 0);
   Object.assign(s.player, toWorld({ x: 0, z: 180 }));
   assert.ok(tickDome(s, 0.2).some(e => e.id === 'hills'));
   Object.assign(s.player, toWorld({ x: 0, z: DOME_R - 1 }));

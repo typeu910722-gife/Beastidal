@@ -11,19 +11,43 @@ import {
   RIVER_HALF,
   BRIDGE,
   TREES,
+  TRAIL,
+  PASS,
+  ORCHARD,
+  OLD_TREE,
+  OBSTACLES,
   DEER,
   birdAt,
   deerAt
-} from './dome.js?v=0.69.0';
-import { grainTexture } from './realism.js?v=0.69.0';
-import { OUTPOST, RIFT, TEAR_AT } from './chapter3.js?v=0.69.0';
-import { WALL } from './town.js?v=0.69.0';
+} from './dome.js?v=0.70.0';
+import { grainTexture } from './realism.js?v=0.70.0';
+import { OUTPOST, RIFT, TEAR_AT } from './chapter3.js?v=0.70.0';
+import { WALL } from './town.js?v=0.70.0';
 import { mergeGeometries } from './vendor/addons/utils/BufferGeometryUtils.js';
 
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.9, ...extra });
 const SIZE = 640,
   SEGS = 160;
 
+// the height the terrain mesh has at one of its vertices (the meadow sinks out of sight under the town, 0.69)
+function vertexHeight(x, z) {
+  const h = domeHeight(x, z),
+    under = (Math.abs(x) <= WALL && Math.abs(z) <= WALL) || (Math.abs(x) < 7.5 && z > 0 && z <= WALL + 89);
+  return under ? Math.min(h, -0.9) : h;
+}
+// the height of the drawn mesh anywhere (interpolated between its vertices), for things laid on the ground
+function meshHeight(x, z) {
+  const q = SIZE / SEGS,
+    gx = Math.floor(x / q) * q,
+    gz = Math.floor(z / q) * q,
+    tx = (x - gx) / q,
+    tz = (z - gz) / q;
+  const a = vertexHeight(gx, gz),
+    b = vertexHeight(gx + q, gz),
+    c = vertexHeight(gx, gz + q),
+    d = vertexHeight(gx + q, gz + q);
+  return (a * (1 - tx) + b * tx) * (1 - tz) + (c * (1 - tx) + d * tx) * tz;
+}
 function terrain() {
   const geo = new T.PlaneGeometry(SIZE, SIZE, SEGS, SEGS);
   geo.rotateX(-Math.PI / 2);
@@ -40,8 +64,7 @@ function terrain() {
       h = domeHeight(x, z);
     // 0.69: under the town's paving and the road out of the gate the meadow drops 0.9 m out of sight. Level with the
     // paving it showed through it near the camera (a green or black band across the bottom of the screen).
-    const under = (Math.abs(x) <= WALL && Math.abs(z) <= WALL) || (Math.abs(x) < 7.5 && z > 0 && z <= WALL + 89);
-    pos.setY(i, under ? Math.min(h, -0.9) : h);
+    pos.setY(i, vertexHeight(x, z));
     const n = 0.5 + 0.5 * Math.sin(x * 0.11 + Math.sin(z * 0.07) * 2) * Math.cos(z * 0.09);
     c.copy(grass)
       .lerp(dry, Math.max(0, Math.min(1, (h - 3) / 6)) * 0.6)
@@ -605,6 +628,182 @@ function wasteland(g) {
   }
   g.userData.mist = mist;
 }
+// 0.70: a wooden sign with painted words, facing +z before it is turned
+function signpost(lines, color = '#f3ead2') {
+  const g = new T.Group(),
+    wood = mat(0x6b4f35, { roughness: 0.85 });
+  const post = new T.Mesh(new T.CylinderGeometry(0.07, 0.09, 2.2, 6), wood);
+  post.position.y = 1.1;
+  g.add(post);
+  const c = document.createElement('canvas');
+  c.width = 256;
+  c.height = 96;
+  const x = c.getContext('2d');
+  x.fillStyle = '#5a412b';
+  x.fillRect(0, 0, 256, 96);
+  x.fillStyle = color;
+  x.textAlign = 'center';
+  x.font = 'bold 34px "Noto Sans TC", "PingFang TC", sans-serif';
+  lines.forEach((l, i) => x.fillText(l, 128, 42 + i * 38 - (lines.length - 1) * 12));
+  const tex = new T.CanvasTexture(c);
+  tex.colorSpace = T.SRGBColorSpace;
+  const board = new T.Mesh(new T.BoxGeometry(1.3, 0.5, 0.06), [
+    wood,
+    wood,
+    wood,
+    wood,
+    mat(0xffffff, { map: tex }),
+    wood
+  ]);
+  board.position.y = 1.85;
+  g.add(board);
+  g.traverse(o => o.isMesh && (o.castShadow = true));
+  return g;
+}
+// 0.70: the trail from the pass down to the road, and what stands in the country (countryside.js)
+function countryside() {
+  const g = new T.Group();
+  // the trail: a strip of trodden earth laid on the ground mesh
+  {
+    const curve = new T.CatmullRomCurve3(TRAIL.map(p => new T.Vector3(p.x, 0, p.z))),
+      pts = curve.getSpacedPoints(260),
+      v = [],
+      idx = [];
+    pts.forEach((p, i) => {
+      const t = curve.getTangentAt(i / (pts.length - 1)),
+        nx = -t.z,
+        nz = t.x,
+        w = 1.25;
+      for (const k of [-1, 1]) {
+        const x = p.x + nx * w * k,
+          z = p.z + nz * w * k;
+        v.push(x, meshHeight(x, z) + 0.16, z);
+      }
+      if (i) idx.push(i * 2 - 2, i * 2 - 1, i * 2, i * 2 - 1, i * 2 + 1, i * 2); // wound to face up
+    });
+    const geo = new T.BufferGeometry();
+    geo.setAttribute('position', new T.Float32BufferAttribute(v, 3));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    const trail = new T.Mesh(
+      geo,
+      mat(0x9a7f58, { roughness: 1, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })
+    );
+    trail.receiveShadow = true;
+    g.add(trail);
+  }
+  // signs at the pass and where the trail meets the road
+  const sign = (lines, x, z, yaw) => {
+    const m = signpost(lines);
+    m.position.set(x, domeHeight(x, z), z);
+    m.rotation.y = yaw;
+    g.add(m);
+  };
+  sign(['慈光港 ↘', '嘯岳的山口'], PASS.x + 4.5, PASS.z - 1.5, Math.atan2(150, -228) + Math.PI);
+  sign(['↖ 嘯岳的山口'], 4.2, 140, Math.PI);
+  // the orchard's fruit: every tree hung the same
+  {
+    const fruit = TREES.filter(t => t.kind === 'fruit'),
+      per = 14,
+      ball = new T.InstancedMesh(
+        new T.SphereGeometry(0.16, 8, 6),
+        mat(0xc0392b, { roughness: 0.5 }),
+        fruit.length * per
+      ),
+      o = new T.Object3D();
+    let n = 0;
+    for (const t of fruit)
+      for (let i = 0; i < per; i++) {
+        const a = (i / per) * Math.PI * 2 * 3.7,
+          r = 1.2 + (i % 3) * 0.35;
+        o.position.set(
+          t.x + Math.cos(a) * r,
+          domeHeight(t.x, t.z) + 3.2 * t.s + 1.2 + (i % 4) * 0.35,
+          t.z + Math.sin(a) * r
+        );
+        o.updateMatrix();
+        ball.setMatrixAt(n++, o.matrix);
+      }
+    g.add(ball);
+    const fence = mat(0x7a5a3c);
+    for (const k of [-1, 1]) {
+      const rail = new T.Mesh(new T.BoxGeometry(0.08, 0.08, 24), fence);
+      rail.position.set(ORCHARD.x + k * 13, domeHeight(ORCHARD.x, ORCHARD.z) + 0.8, ORCHARD.z);
+      g.add(rail);
+    }
+  }
+  // the river bend: reeds and washed-up driftwood
+  {
+    const reeds = new T.InstancedMesh(new T.ConeGeometry(0.05, 1.6, 4), mat(0xa5a25a, { roughness: 1 }), 90),
+      o = new T.Object3D();
+    let seed = 77;
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+    for (let i = 0; i < 90; i++) {
+      const z = 40 + (rnd() - 0.5) * 16,
+        x = riverX(z) - RIVER_HALF - 0.5 - rnd() * 2.5;
+      o.position.set(x, domeHeight(x, z) + 0.7, z);
+      o.rotation.set((rnd() - 0.5) * 0.3, 0, (rnd() - 0.5) * 0.3);
+      o.scale.setScalar(0.7 + rnd() * 0.6);
+      o.updateMatrix();
+      reeds.setMatrixAt(i, o.matrix);
+    }
+    g.add(reeds);
+    const drift = mat(0x8a7a66, { roughness: 1 });
+    for (let i = 0; i < 4; i++) {
+      const log = new T.Mesh(new T.CylinderGeometry(0.12, 0.16, 2.2 + i * 0.4, 6), drift);
+      const z = 36 + i * 2.6,
+        x = riverX(z) - RIVER_HALF - 2.8;
+      log.position.set(x, domeHeight(x, z) + 0.15, z);
+      log.rotation.set(Math.PI / 2, 0, i * 0.8);
+      g.add(log);
+    }
+  }
+  // the herder's shed: plank walls, a pitched roof, its door to the south
+  {
+    const box = OBSTACLES[0],
+      y = domeHeight(box.x, box.z),
+      plank = mat(0x8d6a47, { roughness: 0.9 }),
+      roof = mat(0x5b3a2a, { roughness: 0.8 });
+    const body = new T.Mesh(new T.BoxGeometry(box.hx * 2, 2.6, box.hz * 2), plank);
+    body.position.set(box.x, y + 1.3, box.z);
+    g.add(body);
+    for (const k of [-1, 1]) {
+      const half = new T.Mesh(new T.BoxGeometry(box.hx * 2 + 0.6, 0.12, box.hz * 1.25), roof);
+      half.position.set(box.x, y + 3.15, box.z + k * box.hz * 0.5);
+      half.rotation.x = k * 0.62;
+      g.add(half);
+    }
+    const door = new T.Mesh(new T.BoxGeometry(1, 1.9, 0.08), mat(0x3d2a1d));
+    door.position.set(box.x, y + 0.95, box.z + box.hz + 0.02);
+    g.add(door);
+    const note = new T.Mesh(new T.PlaneGeometry(0.35, 0.45), mat(0xf1ead6, { roughness: 1 }));
+    note.position.set(box.x + 1.1, y + 1.5, box.z + box.hz + 0.05);
+    g.add(note);
+  }
+  // the stargazing stone: flat, wide, warm from the day
+  {
+    const st = OBSTACLES[1],
+      stone = new T.Mesh(new T.IcosahedronGeometry(1, 1), mat(0x8b8577, { roughness: 0.95, flatShading: true }));
+    stone.scale.set(st.r, 0.55, st.r * 0.8);
+    stone.position.set(st.x, domeHeight(st.x, st.z) + 0.2, st.z);
+    g.add(stone);
+  }
+  // the old tree's numbers: pale cuts in the bark, facing where you stand
+  {
+    const cuts = mat(0xe9dcc0, { roughness: 1 });
+    for (let i = 0; i < 9; i++) {
+      const m = new T.Mesh(new T.PlaneGeometry(0.34, 0.07), cuts);
+      m.position.set(
+        OLD_TREE.x - 0.3 + (i % 3) * 0.3,
+        domeHeight(OLD_TREE.x, OLD_TREE.z) + 1.2 + Math.floor(i / 3) * 0.28,
+        OLD_TREE.z + 0.99
+      );
+      g.add(m);
+    }
+  }
+  g.traverse(o => o.isMesh && (o.castShadow = o.receiveShadow = true));
+  return g;
+}
 export function makeDome() {
   const group = new T.Group();
   group.position.set(TOWN.x, 0, TOWN.z);
@@ -613,7 +812,7 @@ export function makeDome() {
   outside.rotation.x = -Math.PI / 2;
   outside.position.y = -0.4;
   group.add(outside);
-  group.add(terrain(), river(), bridge(), woods());
+  group.add(terrain(), river(), bridge(), woods(), countryside());
   const deer = DEER.map(() => {
     const d = deerModel();
     group.add(d);

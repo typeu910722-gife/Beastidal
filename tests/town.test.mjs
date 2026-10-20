@@ -5,6 +5,7 @@ import { normalizeExpansion } from '../dist/expansion.js';
 import { normalizeTravel, canWalk } from '../dist/navigation.js';
 import { spawnWild } from '../dist/wildlife.js';
 import { DAY } from '../dist/clock.js';
+import { PASS } from '../dist/dome.js';
 import {
   TOWN,
   BUILDINGS,
@@ -58,12 +59,18 @@ test('Walls, gate and buildings: the plaza is open, buildings and walls are soli
   for (const p of townPoints({ town: {} })) assert.ok(townWalkable(p.x, p.z), p.id);
 });
 
-test('Into town and back: you arrive at the gate on foot, and return where you left', () => {
+test('Into town and back: first on the pass above it, then at the gate; you return where you left', () => {
   const s = fresh();
   s.expedition.mounted = true;
   const r = enterTown(s);
   assert.ok(r.ok && r.first);
   assert.ok(s.inTown && s.player.mode === 'foot' && !s.expedition.mounted);
+  // 0.70: the first time 嘯岳 sets you down on the pass, looking at the town
+  assert.deepEqual([s.player.x - TOWN.x, s.player.z - TOWN.z], [PASS.x, PASS.z]);
+  assert.ok(Math.abs(r.yaw - Math.atan2(PASS.x, PASS.z)) < 1e-9);
+  assert.ok(canWalk(s, s.player.x, s.player.z));
+  leaveTown(s);
+  enterTown(s);
   assert.equal(Math.round(s.player.x - TOWN.x), ARRIVE_AT.x);
   assert.ok(canWalk(s, s.player.x, s.player.z - 10)); // navigation walks the town's streets
   assert.equal(
