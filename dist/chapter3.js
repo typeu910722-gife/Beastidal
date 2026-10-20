@@ -3,10 +3,10 @@
 // between 比斯泰德 and our world, 慈愛組織 sends minds across it, and K. was looking for the way back. Then the first
 // layer of the rift — a trial for your beasts (a short auto-battle: you choose the tactic each round) — and at its
 // core, a glimpse of the hospital room on the other side. See docs/STORY.md.
-import { dayOf } from './clock.js?v=0.72.0';
-import { give } from './bag.js?v=0.72.0';
-import { allyPower, grantXp, normalizeLevel } from './combat.js?v=0.72.0';
-import { toLocal, outsideDome } from './dome.js?v=0.72.0';
+import { dayOf } from './clock.js?v=0.73.0';
+import { give } from './bag.js?v=0.73.0';
+import { allyPower, grantXp, normalizeLevel } from './combat.js?v=0.73.0';
+import { toLocal, outsideDome } from './dome.js?v=0.73.0';
 
 // Places outside the shell (local to the town's plaza; the tear is due south at the shell).
 export const OUTPOST = { x: 42, z: 352 };
@@ -355,7 +355,7 @@ export function crossBridge(s) {
   log(
     s,
     '第三章 完 · 橋的兩端',
-    '三塊碎片在核心拼成了一座橋，另一頭是病房。管理者第一次開口：回去的是意識，這具身體、御獸和嘯岳都會留下。媽媽前天簽了第二份文件。第四章——敬請期待。'
+    '三塊碎片在核心拼成了一座橋，另一頭是病房。管理者第一次開口：回去的是意識，這具身體、御獸和嘯岳都會留下。媽媽前天簽了第二份文件。（第四章：到前哨站，把碎片接上 K. 的終端機。）'
   );
   return { ok: true, script: BRIDGE_SCENE };
 }

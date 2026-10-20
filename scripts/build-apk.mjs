@@ -10,7 +10,7 @@ const BT = join(SDK, 'build-tools/35.0.0');
 const JAR = join(SDK, 'platforms/android-35/android.jar');
 const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
 const [maj, min, pat] = version.split('.').map(Number);
-const code = maj * 1000000 + min * 1000 + pat; // 0.72.0 → 68000
+const code = maj * 1000000 + min * 1000 + pat; // 0.73.0 → 68000
 const OUT = 'build/apk';
 // Test signing key, kept in the repo so every build can update the installed app in place. It only identifies this
 // test build; a store release would use a private key instead.

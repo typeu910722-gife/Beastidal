@@ -1,7 +1,7 @@
 // 0.71: the rooms of 慈光港 drawn — room 0412, the empty diner and the admin block (rules: interiors.js). Walls are
 // built where a room's edge has no room beyond it, so the admin block's corridor opens into both halls.
 import * as T from './vendor/three.module.min.js';
-import { INTERIORS, INTERIOR_Y, interiorWorld } from './interiors.js?v=0.72.0';
+import { INTERIORS, INTERIOR_Y, interiorWorld } from './interiors.js?v=0.73.0';
 
 const mat = (color, extra = {}) => new T.MeshStandardMaterial({ color, roughness: 0.85, ...extra });
 const TONES = {
@@ -297,6 +297,36 @@ function admin(g, def) {
       g.add(tag);
     }
   }
+  // 0.73: B-01, at the far left — shown in chapter four (with 晴 in it, or empty and waiting)
+  {
+    const q = P('tank-b01'),
+      b01 = new T.Group();
+    b01.position.set(q.x, 0, q.z);
+    const tank = new T.Mesh(new T.CylinderGeometry(0.7, 0.7, 2.6, 20, 1, true), glass);
+    tank.position.y = 1.4;
+    b01.add(tank);
+    box(b01, 1.6, 0.2, 1.6, 0x7e888d, 0, 0.1, 0, { metalness: 0.5 });
+    box(b01, 1.6, 0.2, 1.6, 0x7e888d, 0, 2.8, 0, { metalness: 0.5 });
+    const body = new T.Mesh(new T.CapsuleGeometry(0.2, 1, 4, 10), mat(0xe2cdb6, { roughness: 0.6 }));
+    body.position.y = 1.4;
+    body.userData.phase = 9;
+    b01.add(body);
+    const label = canvasTex(128, 48, (x2, w, h) => {
+      x2.fillStyle = '#f1f4f2';
+      x2.fillRect(0, 0, w, h);
+      x2.fillStyle = '#222';
+      x2.font = 'bold 18px sans-serif';
+      x2.textAlign = 'center';
+      x2.fillText('B-01 · 0001', w / 2, 30);
+    });
+    const tag = new T.Mesh(new T.PlaneGeometry(0.5, 0.19), new T.MeshBasicMaterial({ map: label }));
+    tag.position.set(0.82, 0.55, 0);
+    tag.rotation.y = Math.PI / 2;
+    b01.add(tag);
+    b01.visible = false;
+    g.add(b01);
+    g.userData.b01 = { group: b01, body };
+  }
   const tl = new T.PointLight(0x7dffc8, 10, 12, 1.6);
   tl.position.set(0, 1.4, -20);
   g.add(tl);
@@ -315,10 +345,15 @@ export function makeInteriors() {
   }
   return { groups };
 }
-export function animateInteriors(it, inside, t) {
+export function animateInteriors(it, inside, t, flags = {}) {
   for (const [id, g] of Object.entries(it.groups)) g.visible = id === inside;
   const g = it.groups[inside];
   if (!g) return;
+  if (g.userData.b01) {
+    g.userData.b01.group.visible = !!flags.b01;
+    g.userData.b01.body.visible = !!flags.b01Body;
+    g.userData.b01.body.position.y = 1.4 + Math.sin(t * 0.5) * 0.04;
+  }
   for (const sp of g.userData.steam || []) {
     const k = (t * 0.25 + sp.userData.phase) % 1;
     sp.position.set(sp.userData.x + Math.sin(t + k * 6) * 0.04, sp.userData.y + k * 0.6, sp.userData.z);

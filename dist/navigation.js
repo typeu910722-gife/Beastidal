@@ -1,11 +1,11 @@
-import { CAVE } from './expansion.js?v=0.72.0';
-import { mazeWalkable } from './cave-maze.js?v=0.72.0';
-import { townWalkable } from './town.js?v=0.72.0';
-import { domeCracked } from './chapter2.js?v=0.72.0';
-import { moveAboard, moveShip } from './ship.js?v=0.72.0';
-import { islandAt, onLand, islandDocks, clearLand, landingNear } from './islands.js?v=0.72.0';
-import { groundAt, waterNear } from './lake.js?v=0.72.0';
-import { interiorWalkable } from './interiors.js?v=0.72.0';
+import { CAVE } from './expansion.js?v=0.73.0';
+import { mazeWalkable } from './cave-maze.js?v=0.73.0';
+import { townWalkable } from './town.js?v=0.73.0';
+import { domeCracked } from './chapter2.js?v=0.73.0';
+import { moveAboard, moveShip } from './ship.js?v=0.73.0';
+import { islandAt, onLand, islandDocks, clearLand, landingNear } from './islands.js?v=0.73.0';
+import { groundAt, waterNear } from './lake.js?v=0.73.0';
+import { interiorWalkable } from './interiors.js?v=0.73.0';
 // All travel modes share world coordinates. The boat stays moored while walking.
 export const TILE_SIZE = 3.6;
 // How far from the skiff's centre walkable shore still counts as alongside (the hull stops ~2-4 m off the dry line).

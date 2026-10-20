@@ -2125,6 +2125,108 @@ export default {
   '按 F 攻擊、1–3 用技能、空白鍵閃避；離開裂縫太遠就算撤退。':
     'F to attack, 1–3 for skills, Space to dodge; stray too far from the rift and you retreat.',
   '裂縫 · {0} · 第 {1}/{2} 波': 'The rift · {0} · wave {1}/{2}',
+  'B-01 號槽空著，標籤寫著「0001 · 備用」。等晴不再有用的那一天，它就會被裝滿。':
+    'Tank B-01 stands empty, labelled "0001 · spare". The day Qing stops being useful, it will be filled.',
+  'CHAPTER 04 · 第二份文件': 'CHAPTER 04 · The Second Document',
+  'K. 的終端機 · 按 E 接上碎片': "K.'s terminal · press E to connect the shards",
+  '……他說話的時候，沒有味道。像那個盒子。': "…When he talks, there's no scent. Like that box.",
+  '……所以「解脫」，是誰的解脫？': '…So whose release is it, really?',
+  '「你媽媽是個好人。她每個禮拜都來，握著那隻手。她累了，0412。她也需要解脫。」':
+    '"Your mother is a good woman. She comes every week and holds that hand. She\'s tired, 0412. She needs release too."',
+  '「你慢慢想。我讓他們等你。」': '"Take your time. I\'ll have them wait for you."',
+  '「你看到第二份文件了。」': '"You\'ve seen the second document."',
+  '「你知道『畢業』省下了多少錢嗎？每一個原體，每天的維持費用。董事會很滿意。」':
+    '"Do you know how much \'graduation\' saves? Every original body, every day of upkeep. The board is very pleased."',
+  '「如果你真的找到了回去的路——幫我跟我女兒說，我一點都不痛。這是我唯一能替她做的事。」':
+    '"If you really find the way back, tell my daughter I\'m not in any pain. It\'s the only thing I can still do for her."',
+  '「我動不了很久了。可是我聽得到。他們說我下禮拜畢業。」':
+    '"I haven\'t been able to move for a long time. But I can hear. They say I graduate next week."',
+  '「我給你另一條路：留下來。當下一個晴。只要你替我們工作，你的原體就會一直被維持著，你媽媽就會一直收到你在湖邊笑的照片。」':
+    '"I\'ll give you another way: stay. Be the next Qing. As long as you work for us, your original body stays on support, and your mother keeps getting photos of you smiling by the lake."',
+  '「有人看得到這行字嗎？我是 0388。我的房間在你的樓下。」':
+    '"Can anyone see this? I\'m 0388. My room is below yours."',
+  '「解脫」，是誰的解脫？第四章（下）——敬請期待。':
+    'Whose release is it, really? Chapter Four (Part Two): coming soon.',
+  '七天。……那個在床上一動也不動的人，0388，也在名單上。':
+    'Seven days. …The one lying still on the bed, 0388, is on the list too.',
+  '三塊碎片在核心拼成了一座橋，另一頭是病房。管理者第一次開口：回去的是意識，這具身體、御獸和嘯岳都會留下。媽媽前天簽了第二份文件。（第四章：到前哨站，把碎片接上 K. 的終端機。）':
+    "The three shards joined into a bridge at the core, with the hospital room at the far end. The manager spoke for the first time: only the mind goes back; this body, my beasts and Xiaoyue stay here. Mum signed a second document two days ago. (Chapter Four: at the outpost, connect the shards to K.'s terminal.)",
+  '三塊碎片貼上前哨站的終端機。螢幕閃了一下，接上了某個很遠的地方。':
+    "You press the three shards to the outpost's terminal. The screen flickers and connects to somewhere very far away.",
+  '下一步：回到裂縫的核心 · 橋。': "Next: back to the rift's core · the bridge.",
+  '下一步：派出嘯岳，走上環湖的山腳，按 E 翻山':
+    "Next: send out Xiaoyue, walk onto the lake's mountain foothills, press E to cross",
+  '主控權限通過。門無聲地滑開了。': 'Master access accepted. The door slides open without a sound.',
+  '到前哨站，把碎片接上 K. 的終端機': "At the outpost, connect the shards to K.'s terminal",
+  '刻痕的最後，是一個很小的愛心。': 'At the end of the carving, a very small heart.',
+  '原體維持終止 · 執行日期：第 {0} 天上午九點。畢業排程：0388 · 0412。':
+    'Life support ends · scheduled: day {0}, 9 a.m. Graduation queue: 0388 · 0412.',
+  '原體維持終止 · 還有 {0} 天': 'Life support ends · {0} days left',
+  '回到裂縫的核心 · 橋': "Back to the rift's core · the bridge",
+  '回慈光港，看留言碑最下面的字': 'Back in Ciguang Harbour, read the bottom of the stele',
+  '回慈光港，看留言碑最下面的字；用 K. 的主控權限進管理區。':
+    "Back in Ciguang Harbour, read the bottom of the stele; use K.'s master access to enter the admin block.",
+  '她放我走，然後被收回了這裡。可是她的原體，還在療養院裡被「維持」著——好讓報告繼續寄出去。':
+    "She let me go, and then she was brought back here. But her original body is still being 'maintained' in a care home, so the reports keep going out.",
+  '媽媽不是放棄我。她是被告訴：我已經在別的地方，好好地活著了。':
+    "Mum didn't give up on me. She was told I was already alive and well somewhere else.",
+  '媽媽簽了第二份文件：原體維持終止同意書，執行日期是第 {0} 天。組織告訴她，我在新世界過得很好。名單上還有 0388。K. 的主控權限還有效。':
+    "Mum signed a second document: consent to end my original body's life support, scheduled for day {0}. The organisation told her I'm doing well in the new world. 0388 is on the list too. K.'s master access still works.",
+  '慈愛組織 · 家屬文件 · 參與者 0412': 'Compassion Foundation · family documents · participant 0412',
+  '按 E': 'Press E',
+  接上: 'Connect',
+  '文件上的日期過了 · 管理者讓他們延後': "The document's date has passed · the manager had them postpone",
+  '文件上的日期過了……執行延後了。核准人：管理者。':
+    "The document's date has passed… execution postponed. Approved by: the manager.",
+  '文件上的日期過了。監測器還在響。終端機上多了一行字：「執行延後 · 核准人：管理者。」他在等我。':
+    'The document\'s date has passed. The monitor is still beeping. A new line on the terminal: "Execution postponed · approved by: the manager." He\'s waiting for me.',
+  日期過了: 'The date has passed',
+  '晴被收回了 B-01 號槽：意識封存，載體回收。她的原體還被維持著，只為了讓家屬報告繼續寄出去。':
+    'Qing was taken back into tank B-01: mind sealed, vessel recovered. Her original body is still kept alive, only so the family reports keep going out.',
+  '晴還在廣場上笑著發居民證。這個空槽，是替她準備的。等她不再有用的那一天。':
+    'Qing is still in the plaza, smiling and handing out resident cards. This empty tank is ready for her, for the day she stops being useful.',
+  '最左邊的槽 · 按 E 走近': 'The leftmost tank · press E to go closer',
+  '槽裡漂著的人，是晴。她的眼睛閉著，嘴角好像還帶著那個笑。':
+    'The person floating in the tank is Qing. Her eyes are closed, and the corners of her mouth still seem to hold that smile.',
+  '橋的另一頭，媽媽在病床邊睡著了。這一次，我看見她手邊有一支筆。':
+    'At the far end of the bridge, Mum has fallen asleep by the bed. This time I can see a pen by her hand.',
+  '橋還在 · 按 E 走近': 'The bridge is still here · press E to go closer',
+  '橋還在。病房的聲音，比上一次更清楚了。':
+    'The bridge is still here. The sounds of the hospital room are clearer than last time.',
+  '玻璃槽 B-01': 'Tank B-01',
+  '玻璃槽大廳的最左邊，多了一個槽。標籤：B-01 · 0001 · 回收中。':
+    "At the far left of the tank hall there's a new tank. Label: B-01 · 0001 · recovery in progress.",
+  '玻璃槽大廳的最左邊，有一個空的槽。標籤：B-01 · 0001 · 備用。':
+    'At the far left of the tank hall stands an empty tank. Label: B-01 · 0001 · spare.',
+  '用 K. 的主控權限進管理區，到玻璃槽大廳': "Use K.'s master access to enter the admin block and reach the tank hall",
+  '留言碑上有 0388 刻的字：他動不了，可是聽得到；他要我告訴他女兒，他一點都不痛。':
+    "0388 carved words into the stele: he can't move, but he can hear; he asked me to tell his daughter he's not in any pain.",
+  '留言碑最下面，多了一行很淺的字，像是用指甲刻的。':
+    'At the very bottom of the stele is a new, faint line, as if scratched with a fingernail.',
+  '畢業排程：0156（已完成）· 0388 · 0412。': 'Graduation queue: 0156 (completed) · 0388 · 0412.',
+  '研究員 K. · 主控權限：有效。': 'Researcher K. · master access: valid.',
+  '研究員 K. 的前哨站 · 終端機': "Researcher K.'s outpost · terminal",
+  '研究員 K. 的終端機': "Researcher K.'s terminal",
+  '第一份：NW 計畫參與同意書。簽署人：母。': 'First: NW Project participation consent. Signed by: mother.',
+  第二份文件: 'The Second Document',
+  '第二份：原體維持終止同意書。簽署人：母。簽署日期：兩天前。':
+    'Second: consent to end original-body life support. Signed by: mother. Date: two days ago.',
+  '第四章 · 第二份文件': 'Chapter Four · The Second Document',
+  '第四章（上）完 · 第二份文件': 'End of Chapter Four (Part One) · The Second Document',
+  '第四章：到前哨站，把碎片接上 K. 的終端機。': "Chapter Four: at the outpost, connect the shards to K.'s terminal.",
+  '管理區 · 玻璃槽大廳': 'Admin block · tank hall',
+  '管理者要我留下來，當下一個晴：只要替組織工作，原體就會被維持，媽媽就會繼續收到照片。「解脫」，是誰的解脫？第四章（下）——敬請期待。':
+    'The manager wants me to stay and become the next Qing: work for the organisation, and my original body stays on support and Mum keeps getting photos. Whose release is it, really? Chapter Four (Part Two): coming soon.',
+  '載體 0001：引路人。狀態：服務中。備用載體：已備妥。': 'Vessel 0001: guide. Status: in service. Spare vessel: ready.',
+  '載體 0001：違規協助參與者逃離。處置：意識封存，載體回收。原體維持：繼續（用於家屬報告）。':
+    'Vessel 0001: helped a participant escape, in breach of protocol. Action: mind sealed, vessel recovered. Original-body support: continues (for family reports).',
+  '還有一個人醒著。下一步：用 K. 的主控權限進管理區。':
+    "Someone else is still awake. Next: use K.'s master access to enter the admin block.",
+  '附註：「參與者意識已於新世界安詳生活。原體持續承受痛苦，延長維持並無意義。」執行日期：七天後，上午九點。':
+    'Note: "The participant\'s mind lives peacefully in the new world. The original body continues to suffer; prolonging support serves no purpose." Scheduled: seven days from now, 9 a.m.',
+  '騎嘯岳翻過群山，回到新生之界': 'Ride Xiaoyue over the mountains back to the New World',
+  '（新生之界那邊，還有事情沒做完。把嘯岳派出來，走上環湖的山腳，按 E 請牠帶我翻過群山。）':
+    "(There's still unfinished business in the New World. Send out Xiaoyue, walk onto the lake's mountain foothills, and press E to ask it to carry me over.)",
   '在避難所時，上方的數字＝背包＋書桌倉庫。':
     'At the shelter, the numbers up top count the bag and the desk storage together.',
   '書桌倉庫：': 'Desk storage: ',
