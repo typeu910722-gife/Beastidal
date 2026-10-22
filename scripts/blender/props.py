@@ -15,6 +15,7 @@ import raft  # noqa: E402
 import shelter  # noqa: E402
 import skiff  # noqa: E402
 import town  # noqa: E402
+import warship  # noqa: E402
 
 PROPS = {
     'skiff': skiff.build,
@@ -32,6 +33,7 @@ PROPS = {
     'dock': raft.dock,
     'town': town.build,
     'town-street': town.street,
+    'warship': warship.build,
 }
 # where the preview camera stands and looks (game coordinates)
 VIEWS = {
@@ -50,6 +52,7 @@ VIEWS = {
     'dock': {'eye': (4.4, 3.4, 5.0), 'target': (0, 1.0, 0)},
     'town': {'eye': (-30, 38, 75), 'target': (0, 0, -5), 'lens': 30, 'size': (1400, 800)},
     'town-street': {'eye': (14, 9, 30), 'target': (0, 3, 0), 'lens': 32, 'size': (1400, 800)},
+    'warship': {'eye': (26, 16, 30), 'target': (0, 6, 0), 'lens': 35, 'size': (1400, 800)},
 }
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'dist', 'models', 'props')
 

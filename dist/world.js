@@ -44,7 +44,7 @@ import { makeHuman, animateHuman } from './human.js?v=0.77.0';
 import { loadProtagonist, dressHuman } from './protagonist.js?v=0.77.0';
 import { waveHeight, floatPose, WakeTrail } from './physics.js?v=0.77.0';
 import { buildError } from './rules.js?v=0.77.0';
-import { makeWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.77.0';
+import { makeWarship, dressWarship, dockMesh, SHIP_COLORS } from './ship-models.js?v=0.77.0';
 import { DECKS, toWorld, restPlace, restIsland, dockMoor } from './ship.js?v=0.77.0';
 import { CABIN, FLOORS, tankSlots, wanderStep } from './cabin.js?v=0.77.0';
 import { CAVE as GARDEN, mazeWalkable } from './cave-maze.js?v=0.77.0';
@@ -1039,6 +1039,8 @@ export class OceanWorld {
     this.extra = expansionModels(this.scene);
     this.ship = makeWarship(mat, halo);
     this.ship.visible = false;
+    // 0.78: the Blender hull and decks swap in once loaded
+    dressWarship(this.ship);
     // the warship's interior lives in its own corner of the world (0.20)
     // 0.23: island plots and land buildings
     this.plots = new T.Group();
