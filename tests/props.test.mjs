@@ -47,24 +47,34 @@ const PROPS = {
   // included; ground to the apartment's chimneys
   town: [[-42.55, -0.05, -43.55], [39.26, 18.0, 42.05], 40000, 2400 * 1024, []],
   // the town wall (its coping out to ±46.9), ground to the sun over the gate's arch
-  'town-street': [[-46.9, -0.03, -46.9], [46.9, 14.54, 47.1], 14000, 800 * 1024, []]
+  'town-street': [[-46.9, -0.03, -46.9], [46.9, 14.54, 47.1], 14000, 800 * 1024, []],
+  // 0.78 the warship (ship-local metres): cannon muzzles out to ±5.45, the keel beam to the pennants on the main
+  // mast, transom to the bowsprit's tip; seven parts the game cuts away deck by deck, a few materials each
+  warship: [
+    [-5.45, -2.85, -15.06],
+    [5.45, 29.4, 18.07],
+    40000,
+    1400 * 1024,
+    ['keel', 'band-0', 'band-1', 'band-2', 'band-3', 'band-4', 'cab'],
+    40
+  ]
 };
 const MATERIALS = [
   ...['wood-x', 'wood-y', 'wood-z', 'deck-x', 'deck-z', 'rope', 'cloth', 'metal', 'plain'],
   // the town (0.65): the game swaps its own night-lit glass in for 'window' and 'frosted'
   ...['plaster', 'stone', 'tile', 'gold', 'window', 'frosted', 'statue', 'carved', 'leaf']
 ];
-const MAX_DRAWS = 12; // the procedural models these replace were 30 to 70 meshes each
+const MAX_DRAWS = 12; // the procedural models these replace were 30 to 70 meshes each (the warship: hundreds)
 const TOL = 0.06;
 
-for (const [name, [min, max, maxTris, maxBytes, named]] of Object.entries(PROPS)) {
+for (const [name, [min, max, maxTris, maxBytes, named, maxDraws = MAX_DRAWS]] of Object.entries(PROPS)) {
   await test(`Prop "${name}" uses byte colours and known materials, fits its footprint and stays in budget`, async () => {
     const bytes = readFileSync(new URL(`../dist/models/props/${name}.glb`, import.meta.url)).length;
     assert.ok(bytes <= maxBytes, `${bytes} bytes`);
     const gltf = await parse(name);
     const meshes = [];
     gltf.scene.traverse(o => o.isMesh && meshes.push(o));
-    assert.ok(meshes.length >= 1 && meshes.length <= MAX_DRAWS, `${meshes.length} draw calls`);
+    assert.ok(meshes.length >= 1 && meshes.length <= maxDraws, `${meshes.length} draw calls`);
     let tris = 0;
     for (const m of meshes) {
       const color = m.geometry.getAttribute('color');

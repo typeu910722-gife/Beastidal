@@ -137,6 +137,7 @@ const FILES = [
   './models/props/lamp.glb?v=0.77.0',
   './models/props/desk.glb?v=0.77.0',
   './models/props/dock.glb?v=0.77.0',
+  './models/props/warship.glb?v=0.77.0',
   './vendor/addons/loaders/GLTFLoader.js',
   './vendor/addons/utils/BufferGeometryUtils.js',
   './bake.js?v=0.77.0',
