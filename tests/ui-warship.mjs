@@ -40,7 +40,7 @@ try {
   // a warship afloat, the crew aboard, and materials to spare
   const before = await page.evaluate(async () => {
     const B = window.__beastidal;
-    const S = await import('./ship.js?v=0.77.0');
+    const S = await import('./ship.js?v=0.78.0');
     const s = B.state;
     for (const k of Object.keys(s.resources)) s.resources[k] = 2000;
     s.ship = { x: 40, z: 40, heading: 0, cargo: {}, lounge: [], lastCannon: -999 };

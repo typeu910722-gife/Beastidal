@@ -3,10 +3,10 @@
 // the second document — a consent to end the original body's life support, seven days out. Back in 慈光港, No.0388
 // answers on the stele; K.'s master code opens the admin block again, and tank B-01 holds what became of 晴. At the
 // bridge the manager speaks a second time: whose release it really is. Pure: reads and changes the state.
-import { dayOf } from './clock.js?v=0.77.0';
-import { give } from './bag.js?v=0.77.0';
-import { normalizeChapter3 } from './chapter3.js?v=0.77.0';
-import { homeMemories } from './farewell.js?v=0.77.0';
+import { dayOf } from './clock.js?v=0.78.0';
+import { give } from './bag.js?v=0.78.0';
+import { normalizeChapter3 } from './chapter3.js?v=0.78.0';
+import { homeMemories } from './farewell.js?v=0.78.0';
 
 const log = (s, title, text) => {
   s.log.unshift({ day: dayOf(s), title, text });

@@ -1,14 +1,16 @@
 // Procedural warship "比斯泰德號": keel + five walkable deck bands that can be cut away.
-import { surface } from './surfaces.js?v=0.77.0';
+import { surface } from './surfaces.js?v=0.78.0';
+import { loadProp } from './props.js?v=0.78.0';
 import * as T from './vendor/three.module.min.js';
-import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.77.0';
+import { DECKS, BAND_HEIGHT, SHIP_POINTS, hullHalfBeam, hullFlare } from './ship.js?v=0.78.0';
 export const LOUNGE_SLOTS = [
   [-2.4, -7],
   [2.4, -7],
   [-2.8, -2.5],
   [2.8, -2.5],
-  [-2.5, 9],
-  [2.5, 9]
+  // (0.78: a little inboard, so the bolsters stay inside the narrowing bow)
+  [-2.05, 9],
+  [2.05, 9]
 ];
 const V = T.Vector3;
 export const SHIP_COLORS = {
@@ -38,6 +40,8 @@ export function makeWarship(mat, halo) {
     m.scale.set(...scale);
     m.castShadow = true;
     m.receiveShadow = true;
+    // 0.78: what glows or is see-through stays procedural when the Blender model swaps in (dressWarship)
+    if (extra && (extra.emissive !== undefined || extra.transparent)) m.userData.keep = true;
     p.add(m);
     return m;
   };
@@ -190,7 +194,7 @@ export function makeWarship(mat, halo) {
       [-2.4, -5, 0x6d7f86],
       [2.4, -5, 0x6d7f86],
       [-2.4, -1, 0x8a6a45],
-      [2.4, 8, 0x8a6a45]
+      [2.05, 8, 0x8a6a45]
     ]) {
       for (let k = 0; k < 2; k++) {
         box(b, c, x, y + 0.45 + k * 0.9, z + (k ? 0.15 : 0), 1.3, 0.85, 1.3);
@@ -198,7 +202,7 @@ export function makeWarship(mat, halo) {
       }
     }
     for (let i = 0; i < 5; i++)
-      add(b, new T.ConeGeometry(0.25, 0.9 + i * 0.15, 5), 0x9bd9e6, [-2.6 + i * 0.3, y + 0.55, 10], [1, 1, 1], {
+      add(b, new T.ConeGeometry(0.25, 0.9 + i * 0.15, 5), 0x9bd9e6, [-1.9 + i * 0.3, y + 0.55, 10], [1, 1, 1], {
         emissive: 0x5bb7d2,
         emissiveIntensity: 0.8
       });
@@ -223,7 +227,7 @@ export function makeWarship(mat, halo) {
       for (const yy of [0.25, 0.95])
         add(b, new T.TorusGeometry(0.53, 0.04, 5, 18), C.iron, [x, y + yy, z]).rotation.x = Math.PI / 2;
     }
-    for (const x of [-2.4, 2.4]) {
+    for (const x of [-2.25, 2.25]) {
       cyl(b, 0x4f8d95, x, y + 0.9, 9, 0.7, 1.8, { metalness: 0.4 });
       cyl(b, 0x9fd8e0, x, y + 1.9, 9, 0.2, 0.25, { emissive: 0x6fc8d8, emissiveIntensity: 0.5 });
     }
@@ -287,6 +291,7 @@ export function makeWarship(mat, halo) {
         // 0.35: own material, so the sails can thin out while you steer in first person
         sm.material = sm.material.clone();
         sm.material.transparent = true;
+        sm.userData.keep = true;
         (g.userData.sails ??= []).push(sm);
       }
       add(b, new T.CircleGeometry(1.1, 24), C.trim, [0, y + h * 0.62, mz + 1.05], [1, 1, 1], {
@@ -365,6 +370,7 @@ export function makeWarship(mat, halo) {
     box(b, C.strake, 0, y + 0.5, -5.9, 7.2, 1, 0.2);
     // 0.32: the wheelhouse's front and roof, hidden while you stand at the wheel so nothing blocks the view ahead
     const cab = new T.Group();
+    cab.userData.keep = true;
     b.add(cab);
     g.userData.cab = cab;
     cab.add(backWall);
@@ -383,6 +389,7 @@ export function makeWarship(mat, halo) {
     });
     halo(cab, 0xffd499, 0, y + 3.3, -9.5, 1.6);
     const helm = new T.Group();
+    helm.userData.keep = true;
     helm.position.set(0, y + 1.35, -10.6);
     b.add(helm);
     cyl(b, 0x5a3f27, 0, y + 0.6, -10.75, 0.14, 1.2);
@@ -420,6 +427,26 @@ export function makeWarship(mat, halo) {
   g.userData.bands = bands;
   g.userData.keel = keel;
   return g;
+}
+// 0.78: the Blender warship (scripts/blender/warship.py): its keel, five deck bands and the wheelhouse swap in for
+// the procedural parts of the same groups once loaded, so cutting decks away and hiding the wheelhouse work as
+// before. What stays: anything tagged userData.keep (glow, glass, sails, the wheel, the wheelhouse group itself),
+// lights and sprites. Until it loads, or if it cannot, the procedural ship stays.
+const stays = o => o.userData.keep || (!o.isMesh && !o.isGroup);
+export function dressWarship(g) {
+  const { bands, keel, cab } = g.userData,
+    targets = [['keel', keel], ['cab', cab], ...bands.map((b, i) => [`band-${i}`, b])];
+  return loadProp('warship').then(scene => {
+    if (!scene) return false;
+    for (const [name, group] of targets) {
+      const part = scene.getObjectByName(name);
+      if (!part) continue;
+      for (const c of [...group.children]) if (!stays(c)) group.remove(c);
+      group.add(part.clone());
+    }
+    g.userData.prop = 'warship';
+    return true;
+  });
 }
 // Dock station: a pier with bollards and a crane, extending from the raft edge.
 export function dockMesh(mat) {
