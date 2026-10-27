@@ -2,9 +2,9 @@
 // through the contract, the moments it kept of you (the day you met, its firsts, the great fights) and how long you
 // have been together — and the deeper the bond, the more it senses you might be leaving. Walking the raft, the things
 // you built bring back the day you built them. Nothing here is written for everyone: it is all your game. Pure.
-import { dayOf } from './clock.js?v=0.77.0';
-import { keepsakes } from './memories.js?v=0.77.0';
-import { personalityOf } from './beast-tree.js?v=0.77.0';
+import { dayOf } from './clock.js?v=0.78.0';
+import { keepsakes } from './memories.js?v=0.78.0';
+import { personalityOf } from './beast-tree.js?v=0.78.0';
 
 // how it ends, by temperament, when the bond is deep (it senses you might go)
 const LAST_WORDS = {

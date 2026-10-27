@@ -14,8 +14,8 @@ import {
   TREES,
   TRAIL,
   OBSTACLES
-} from './dome.js?v=0.77.0';
-import { BUILDINGS, WALL, GATE_HALF } from './town.js?v=0.77.0';
+} from './dome.js?v=0.78.0';
+import { BUILDINGS, WALL, GATE_HALF } from './town.js?v=0.78.0';
 
 const cache = {};
 export function domeChart(torn = false) {

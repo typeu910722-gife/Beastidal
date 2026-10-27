@@ -2,7 +2,7 @@
 // lounge with its pool and garden, the stair to the bridge, the ladder to the hold, the cargo stations, and the
 // furniture catalogue. Everything sits in its own corner of the world at CABIN.
 import * as T from './vendor/three.module.min.js';
-import { CABIN, FLOORS, WALL_H, ROOMS, TANKS, CABIN_POINTS, CABIN_ITEMS } from './cabin.js?v=0.77.0';
+import { CABIN, FLOORS, WALL_H, ROOMS, TANKS, CABIN_POINTS, CABIN_ITEMS } from './cabin.js?v=0.78.0';
 
 const C = {
   wood: 0x6b4426,

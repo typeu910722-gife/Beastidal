@@ -9,3 +9,6 @@ dist/lake-data.js
 shots/
 build/
 tests/.pt/
+
+# third-party agent skills (npx skills add), kept as published
+.claude/skills/
